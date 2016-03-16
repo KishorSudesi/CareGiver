@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/llStatusChangePopup"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_common">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_common"
+        android:weightSum="2">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="75dp"
+            android:src="@mipmap/camera"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:id="@+id/imageView"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="75dp"
+            android:src="@mipmap/gallery"
+            android:id="@+id/imageView2"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:weightSum="2">
+
+        <TextView
+             android:layout_width="0dp"
+             android:layout_height="35dp"
+             android:text="@string/camera"
+             android:textColor="@color/colorWhite"
+             android:gravity="center"
+             android:layout_marginLeft="24dp"
+             android:layout_marginStart="24dp"
+             android:layout_weight="1"/>
+
+        <TextView
+             android:layout_width="0dp"
+             android:layout_height="35dp"
+             android:text="@string/gallery"
+             android:textColor="@color/colorWhite"
+             android:gravity="center"
+             android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/header_gradient">
+
+    <ImageView
+        android:id="@+id/imgBackArrow"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/back"
+        android:layout_marginTop="@dimen/edit_text_margin"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
+
+    <ImageView
+        android:id="@+id/imgPen"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/edit"
+        android:layout_marginTop="@dimen/edit_text_margin"
+        android:layout_alignParentEnd="true"
+        android:visibility="invisible"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/imgPen">
+
+        <ImageView
+            android:id="@+id/imageClientProfile"
+           android:layout_width="96dp"
+           android:layout_height="96dp"
+           android:src="@drawable/mrs_hungal_circle2"
+           android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/textViewClientProfileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mercedes"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_general"
+            android:layout_marginBottom="@dimen/edit_text_margin"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

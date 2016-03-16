@@ -1,0 +1,222 @@
+<resources>
+    <string name="app_name">Caregiver</string>
+
+    <string name="back">Back</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="menu_tasks">My Tasks</string>
+    <string name="menu_clients">Clients</string>
+    <string name="menu_feedback">Feedback</string>
+    <string name="my_tasks">My Task</string>
+    <string name="header_creating_task">Creating Task</string>
+    <string name="header_task_details">Task Details</string>
+    <string name="user_ratings">User Ratings</string>
+    <string name="done">Done</string>
+    <string name="feedback">Feedback</string>
+    <string name="clients">Clients</string>
+
+    <string name="email">Email</string>
+    <string name="take_me_in">Take Me In</string>
+    <string name="am_new_here">I am New Here</string>
+    <string name="password">Password</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="forgot">Forgot?</string>
+    <string name="submit">Submit</string>
+
+    <string name="error_confirm_password">Invalid Confirm Password</string>
+    <string name="error_invalid_email">Invalid Email</string>
+    <string name="error_invalid_contact_no">Invalid Contact Number</string>
+    <string name="error_invalid_age">Invalid Age</string>
+    <string name="email_exists">Email Id Already Exists!!!</string>
+    <string name="error_field_required">This Field is Required</string>
+    <string name="error">Something went wrong. Try Again!!!</string>
+
+    <string name="error_same_password">New and Old Password cannot be same</string>
+
+    <string name="process_login">Authenticating…</string>
+    <string name="success_login">Login Success…</string>
+    <string name="invalid_credentials">Invalid Credentials</string>
+
+
+    <string name="warning_profile_pic">Profile Picture Needed</string>
+    <string name="warning_internet">Please check your internet connection and try again</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="GPSAlertDialogTitle">GPS Title</string>
+    <string name="GPSAlertDialogMessage">GPS is searching</string>
+
+    <string name="age">Age</string>
+    <string name="hintAge">57</string>
+    <string name="health_condition">Health Condition</string>
+    <string name="diabetic">Diabetic</string>
+    <string name="account_type">Account Type</string>
+    <string name="premium">Premium</string>
+    <string name="address">Address</string>
+    <string name="pune">Pune</string>
+    <string name="mobNo">Mobile Number</string>
+    <string name="hintMobNo">+91 9975351693</string>
+    <string name="map">Map</string>
+    <string name="getDirection">Get Direction</string>
+
+    <string name="clientName">Client Name</string>
+    <string name="title">Title</string>
+    <string name="dateAndTime">Date and Time</string>
+
+    <string name="hintPwd">*****</string>
+
+    <string name="name">Name</string>
+    <string name="hintName">Carla</string>
+    <string name="place">Place</string>
+    <string name="signOut">SIGN OUT</string>
+
+    <string name="done_button">DONE</string>
+    <string name="noFeatures">No Features</string>
+
+    <string name="age_val">59</string>
+    <string name="yrs">Yrs  |  </string>
+    <string name="high_bp">High BP</string>
+    <string name="separator">  |  </string>
+    <string name="lisbon">Lisbon, Portugal</string>
+
+    <string name="attachments">Attachments</string>
+    <string name="noClients">No Clients</string>
+
+    <string name="noFeedbacks">No Feedbacks</string>
+    <string name="mercedes">Mercedes</string>
+
+    <string name="emailHint">abc@gmail.com</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+
+    <string name="noActivities">No Activities</string>
+
+    <string name="timeHint">7 am</string>
+    <string name="taskSubject">Take me to Temple</string>
+    <string name="taskMessage">Here is your message</string>
+
+    <string name="txtFeedback">This app is very helpful. You made my routine sophisticated.</string>
+
+    <string name="william">Wilhelm Maybach</string>
+
+    <string name="vegetableName">Cauliflower</string>
+
+    <string name="barackObama">Barack Obama</string>
+
+    <string name="vegetableTime">9.10 am</string>
+    <string name="vegetables">Vegetables</string>
+
+    <string name="loading">Loading..</string>
+    <string name="uploading_image">Uploading image..</string>
+    <string name="update_profile_image">Profile picture updated</string>
+    <string name="error_load_images">Error Loading Data. Try Again!!!</string>
+
+
+    <!--Common Strings-->
+
+    <string name="edit">Edit</string>
+    <string name="string_continue">Continue</string>
+    <string name="create_password">Create a Password</string>
+    <string name="verify_password">Verify Password</string>
+    <string name="contact_number">Contact Number</string>
+
+    <string name="activity">Activity</string>
+    <string name="my_account">My Account</string>
+    <string name="my_account_edit">Edit My Account</string>
+    <string name="activity_month">Monthly</string>
+    <string name="activity_list">List</string>
+    <string name="logout">Logout</string>
+    <string name="at">at</string>
+
+    <!--Info/App Specific Strings-->
+    <string name="account_success_message">Good job. We all are set to care for your seniors. Go to your Dashboard to see how</string>
+
+    <string name="add_dependent">Add Dependent</string>
+    <string name="myself">Myself</string>
+    <string name="loved_one">A Loved One</string>
+    <string name="who_needs_care">Who Needs Care?</string>
+    <string name="your_details">Your Details</string>
+    <string name="your_details_saved">Your Details Saved</string>
+    <string name="dependents">Dependents</string>
+    <string name="number">9874560123</string>
+    <string name="gurunathan">Mr.Gurunathan</string>
+    <string name="string_email">abc@xyz.com</string>
+    <string name="search_contacts">Search from Contacts</string>
+    <string name="dependent_name">Dependent Name</string>
+    <string name="dependent_details">Dependent Details</string>
+    <string name="relation">Relationship</string>
+    <string name="illness">Any Major Illness</string>
+    <string name="notes">Notes for Caregivers</string>
+    <string name="confirm_details">Confirm Details</string>
+    <string name="view_dashboard">View Dashboard</string>
+    <string name="info_discard">All your Information will be Deleted, OK to Proceed?</string>
+    <string name="add_new_activity">Add New Activity</string>
+    <string name="coming_soon">Coming Soon</string>
+    <string name="dpndnt_medical_info_saved">Dependent Medical Details Saved</string>
+    <string name="dpndnt_details_saved">Dependent Details Saved</string>
+    <string name="delete_info">All your Information will be Deleted, OK to Proceed?</string>
+    <string name="account_updated">Account updated successfully</string>
+    <string name="confirm_logout">Are you sure want to Logout !?</string>
+    <string name="not_found">NOT FOUND</string>
+    <string name="upcoming_activity">Upcoming Activity</string>
+    <string name="completed_activity">Completed Activity</string>
+    <string name="buy_services">Buy Services</string>
+    <string name="buy_services_large_text">Pay as you go services that can be easily added to an existing package</string>
+    <string name="date_time">21-Dec-15 at 6:00pm</string>
+    <string name="paytm">Paytm</string>
+    <string name="space">&#160;</string>
+    <string name="add_message">Add a Message</string>
+
+    <!--Success Strings-->
+    <string name="account_success_header">Account Successfully Created</string>
+    <string name="service_added">Services Added Successfully</string>
+    <string name="register_success">Account Registered Successfully</string>
+
+    <!--Process Strings-->
+    <string name="uploading">Uploading…</string>
+    <string name="verify_identity">Taking you In…</string>
+    <string name="uploading_profile_pic">Setting Profile Images…</string>
+
+    <!--Error Strings-->
+    <string name="dpndnt_details_not_saved">Dependent Not Saved. Check Name</string>
+    <string name="error_register">Error in uploading with server. Please try again Later!!!</string>
+    <string name="error_register_image">Error in Setting Profile picture. Please try again Later!!!</string>
+    <string name="error_service">Select a Service</string>
+    <string name="error_service_zero">Select a Valid Service</string>
+    <string name="dependent_data_lost">Something went wrong, Please create Dependent again</string>
+    <string name="no_memory_camera">No storage mounted to save camera image</string>
+    <string name="image_write_failed">Sorry!!! we may have lost your Profile Image</string>
+
+    <!--Dashboard Menu Strings-->
+    <string name="menu_activities">Activities</string>
+    <string name="menu_reports">Reports</string>
+    <string name="menu_seniors">Seniors</string>
+    <string name="menu_notification">Notifications</string>
+    <string name="menu_account">My Account</string>
+
+    <!--Warning Strings-->
+
+
+    <!--Permission Strings-->
+    <string name="permission_contact_rationale">We need access to Contacts to Proceed Further</string>
+    <string name="permission_contact_denied">Contacts Access Denied</string>
+    <string name="permission_contact_neverask">Contacts Access Granted</string>
+    <string name="permission_storage_rationale">We need access to Storage to Proceed Further</string>
+    <string name="permission_storage_denied">Storage Access Denied</string>
+    <string name="permission_storage_neverask">Storage Access Granted</string>
+
+    <!--List View Empty Strings-->
+    <string name="no_activities">No Activities</string>
+    <string name="no_notifications">Notifications Not Available</string>
+    <string name="no_services">No Services</string>
+
+    <!--File Picker Strings-->
+    <string name="take_photo">Take Photo</string>
+    <string name="choose_library">Choose From Library</string>
+    <string name="add_profile">Add a Profile picture</string>
+    <string name="select_picture">Select a Picture</string>
+
+</resources>

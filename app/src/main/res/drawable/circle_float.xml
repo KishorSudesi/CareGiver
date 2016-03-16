@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <solid android:color="@color/polygonViewCircleStrokeColor" />
+
+    <size
+        android:width="@dimen/slv_item_height"
+        android:height="@dimen/slv_item_height" />
+
+    <stroke
+        android:width="@dimen/polygonViewStrokeWidth"
+        android:color="@color/polygonViewCircleStrokeColor"></stroke>
+</shape>

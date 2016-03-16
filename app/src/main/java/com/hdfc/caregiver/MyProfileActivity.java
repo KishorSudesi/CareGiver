@@ -1,0 +1,621 @@
+package com.hdfc.caregiver;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.hdfc.app42service.StorageService;
+import com.hdfc.app42service.UploadService;
+import com.hdfc.config.Config;
+import com.hdfc.libs.Libs;
+import com.hdfc.services.GPSTracker;
+import com.hdfc.views.RoundedImageView;
+import com.shephertz.app42.paas.sdk.android.App42CallBack;
+import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.upload.Upload;
+import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+/**
+ * Created by Admin on 28-01-2016.
+ */
+public class MyProfileActivity extends AppCompatActivity {
+
+    ImageView backbutton,edit,imageplace;
+    static RoundedImageView profileImage;
+    EditText phone,place,textViewName;
+    private static int intWhichScreen;
+    public static String strCustomerImgName = "";
+    public static Bitmap bitmap = null;
+    public static Uri uri;
+    private static Handler backgroundThreadHandler;
+    public static String strCustomerImgNameCamera;
+    public TextView email;
+    int Flag=0;
+    private static Libs libs;
+    private static ProgressDialog mProgress = null;
+    private static boolean isImageChanged=false;
+    private ProgressDialog progressDialog;
+
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_profile);
+        textViewName = (EditText)findViewById(R.id.editTextName);
+        phone = (EditText)findViewById(R.id.editTextMobile);
+        place = (EditText)findViewById(R.id.editTextPlace);
+        profileImage = (RoundedImageView) findViewById(R.id.imageMyProfile);
+        imageplace = (ImageView)findViewById(R.id.imgPlace);
+        email = (TextView)findViewById(R.id.textViewMyProfileEmail);
+        Button signOut = (Button) findViewById(R.id.signOut);
+
+        Bundle b = getIntent().getExtras();
+        intWhichScreen = b.getInt("WHICH_SCREEN", Config.intRatingsScreen);
+
+        libs = new Libs(MyProfileActivity.this);
+        progressDialog = new ProgressDialog(MyProfileActivity.this);
+        mProgress = new ProgressDialog(MyProfileActivity.this);
+
+        strCustomerImgNameCamera = String.valueOf(new Date().getDate() + "" + new Date().getTime()) + ".jpeg";
+
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                libs.selectImage(strCustomerImgNameCamera, null, MyProfileActivity.this);
+            }
+        });
+
+        imageplace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GPSTracker gpsTracker = new GPSTracker(MyProfileActivity.this);
+
+                if (gpsTracker.getIsGPSTrackingEnabled()) {
+                    String city = gpsTracker.getLocality(MyProfileActivity.this);
+                    place.setText(city);
+                }else {
+                    gpsTracker.showSettingsAlert();
+                }
+            }
+        });
+
+        signOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MyProfileActivity.this);
+                builder.setTitle("Logout");
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        logout();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+            }
+        });
+
+        //TODO set in xml
+        textViewName.setEnabled(false);
+        textViewName.setFocusableInTouchMode(false);
+        textViewName.clearFocus();
+
+        phone.setEnabled(false);
+        phone.setFocusableInTouchMode(false);
+        phone.clearFocus();
+
+        place.setEnabled(false);
+        place.setFocusableInTouchMode(false);
+        place.clearFocus();
+
+        edit = (ImageView)findViewById(R.id.imgPen);
+
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                textViewName.setError(null);
+                phone.setError(null);
+
+                boolean cancel = false;
+                View focusView = null;
+
+                if (Flag == 0) {
+
+                    edit.setImageResource(R.mipmap.done);
+
+                    textViewName.setEnabled(true);
+                    textViewName.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                    textViewName.setFocusableInTouchMode(true);
+                    textViewName.requestFocus();
+
+                    phone.setEnabled(true);
+                    phone.setInputType(InputType.TYPE_CLASS_PHONE);
+                    phone.setFocusableInTouchMode(true);
+
+                    place.setEnabled(true);
+                    place.setInputType(InputType.TYPE_CLASS_TEXT);
+                    place.setFocusableInTouchMode(true);
+                    place.requestFocus();
+                    Flag = 1;
+
+                } else if (Flag == 1) {
+
+                    textViewName.setError(null);
+                    phone.setError(null);
+                    place.setError(null);
+
+                    String strName = textViewName.getText().toString().trim();
+                    String strPhone= phone.getText().toString().trim();
+                    String strPlace= place.getText().toString().trim();
+                    //Toast.makeText(MyProfileActivity.this,"Data updated Successfully",Toast.LENGTH_LONG).show();
+
+                    if (TextUtils.isEmpty(strName)) {
+                        textViewName.setError(getString(R.string.error_field_required));
+                        focusView = textViewName;
+                        cancel = true;
+                    }
+
+                    if (TextUtils.isEmpty(strPhone)) {
+                       phone.setError(getString(R.string.error_field_required));
+                       focusView = phone;
+                       cancel = true;
+                    } else if (!libs.validCellPhone(strPhone)) {
+                        phone.setError(getString(R.string.error_invalid_contact_no));
+                        focusView = phone;
+                        cancel = true;
+                    }
+
+                    if (TextUtils.isEmpty(strPlace)) {
+                        place.setError(getString(R.string.error_field_required));
+                        focusView = place;
+                        cancel = true;
+                    }
+
+                    if(cancel){
+                        focusView.requestFocus();
+                    }else {
+
+                        progressDialog.setMessage("Loading...");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
+                        StorageService storageService = new StorageService(MyProfileActivity.this);
+
+                        JSONObject jsonToUpdate = new JSONObject();
+
+                        try {
+                            jsonToUpdate.put("provider_name", strName);
+                            //jsonToUpdate.put("provider_email",email.getText());
+                            jsonToUpdate.put("provider_contact_no", strPhone);
+                            jsonToUpdate.put("provider_address", strPlace);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        storageService.updateDocs(jsonToUpdate, Config.jsonDocId, Config.collectionName, new App42CallBack() {
+                            @Override
+                            public void onSuccess(Object o) {
+                                progressDialog.dismiss();
+                                libs.toast(1, 1, "Account Updated");
+
+                                Config.myProfileModel.setNumber(phone.getText().toString());
+                                Config.myProfileModel.setStrAddress(place.getText().toString());
+                                Config.myProfileModel.setStrName(textViewName.getText().toString());
+
+                                edit.setImageResource(R.mipmap.edit);
+                                Flag = 0;
+
+                                textViewName.setEnabled(false);
+                                textViewName.setFocusableInTouchMode(false);
+                                textViewName.clearFocus();
+
+                                phone.setEnabled(false);
+                                phone.setFocusableInTouchMode(false);
+                                phone.clearFocus();
+
+                                place.setEnabled(false);
+                                place.setFocusableInTouchMode(false);
+                                place.clearFocus();
+                            }
+
+                            @Override
+                            public void onException(Exception e) {
+                                progressDialog.dismiss();
+                                libs.toast(2, 2, "Error. Try Again!!!");
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        backbutton = (ImageView)findViewById(R.id.imgBackArrow);
+
+        backbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyProfileActivity.this,DashboardActivity.class);
+                //intent.putExtra("WHICH_SCREEN", intWhichScreen);
+                Config.intSelectedMenu=Config.intRatingsScreen;
+                startActivity(intent);
+            }
+        });
+
+        if(Config.myProfileModel!=null) {
+            email.setText(Config.myProfileModel.getEmail());
+            phone.setText(Config.myProfileModel.getNumber());
+            place.setText(Config.myProfileModel.getStrAddress());
+            textViewName.setText(Config.myProfileModel.getStrName());
+        }
+    }
+
+    public void logout() {
+        try {
+            Config.jsonObject = null;
+            Config.jsonServer = null;
+            Config.jsonDocId = "";
+
+            Config.intSelectedMenu = 0;
+
+            Intent newIntent = new Intent(MyProfileActivity.this, LoginActivity.class);
+            startActivity(newIntent);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public class BackgroundThreadHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+
+            if(mProgress.isShowing())
+                mProgress.dismiss();
+
+            if (profileImage != null && strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("") && bitmap != null)
+                profileImage.setImageBitmap(bitmap);
+
+            if(!isImageChanged){
+                if (bitmap != null)
+                    profileImage.setImageBitmap(bitmap);
+                else
+                    libs.toast(2, 2, getString(R.string.error));
+            }
+
+            if(isImageChanged&&bitmap != null) {
+                try {
+                    checkImage();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (resultCode == Activity.RESULT_OK) { //&& data != null
+            try {
+                backgroundThreadHandler = new BackgroundThreadHandler();
+                //Libs.toast(1, 1, "Getting Image...");
+                mProgress.setMessage(getString(R.string.loading));
+                mProgress.show();
+                switch (requestCode) {
+                    case Config.START_CAMERA_REQUEST_CODE:
+                        strCustomerImgName = Libs.customerImageUri.getPath();
+                        Thread backgroundThreadCamera = new BackgroundThreadCamera();
+                        backgroundThreadCamera.start();
+                        break;
+
+                    case Config.START_GALLERY_REQUEST_CODE:
+                        if (intent.getData() != null) {
+                            uri = intent.getData();
+                            Thread backgroundThread = new BackgroundThreadGallery();
+                            backgroundThread.start();
+                        }
+                        break;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        BackgroundThread backgroundThread = new BackgroundThread();
+        backgroundThread.start();
+        backgroundThreadHandler = new BackgroundThreadHandler();
+
+        mProgress.setMessage(getResources().getString(R.string.loading));
+        mProgress.show();
+    }
+
+    public class BackgroundThread extends Thread {
+        @Override
+        public void run() {
+            try {
+
+                File f = libs.getInternalFileImages(Config.strCustomerImageName);
+                Libs.log(f.getAbsolutePath(), " FP ");
+                bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
+
+                backgroundThreadHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    //
+    public class BackgroundThreadGallery extends Thread {
+        @Override
+        public void run() {
+
+            try {
+                if (uri != null) {
+                    Calendar calendar = new GregorianCalendar();
+                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
+                    File galleryFile = libs.createFileInternalImage(strFileName);
+                    strCustomerImgName = galleryFile.getAbsolutePath();
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    libs.copyInputStreamToFile(is, galleryFile);
+                    bitmap = libs.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
+                    isImageChanged=true;
+                }
+                backgroundThreadHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class BackgroundThreadCamera extends Thread {
+        @Override
+        public void run() {
+            try {
+                if (strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("")) {
+                    bitmap = libs.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
+                    isImageChanged=true;
+                }
+                backgroundThreadHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void checkImage() {
+
+        try {
+
+            if (libs.isConnectingToInternet()) {
+
+                progressDialog.setMessage(getResources().getString(R.string.uploading_image));
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+
+                UploadService uploadService = new UploadService(this);
+
+                if (progressDialog.isShowing())
+                    progressDialog.setProgress(1);
+
+                uploadService.removeImage(Config.strCustomerImageName, Config.myProfileModel.getEmail(),
+                        new App42CallBack() {
+                            public void onSuccess(Object response) {
+
+                                if(response!=null){
+                                    Libs.log(response.toString(), " Response uploadService 0 ");
+                                    uploadImage();
+                                }else{
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
+                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                }
+                            }
+                            @Override
+                            public void onException(Exception e) {
+
+                                if(e!=null) {
+                                    Libs.log(e.getMessage(), " Response failure uploadService 0");
+                                    App42Exception exception = (App42Exception) e;
+                                    int appErrorCode = exception.getAppErrorCode();
+
+                                    if (appErrorCode != 1401 ) {
+                                        uploadImage();
+                                    } else {
+                                        libs.toast(2, 2, getString(R.string.error));
+                                    }
+
+                                }else{
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
+                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                }
+                            }
+                        });
+
+            } else {
+                libs.toast(2, 2, getString(R.string.warning_internet));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            if (progressDialog.isShowing())
+                progressDialog.dismiss();
+            libs.toast(2, 2, getString(R.string.error));
+        }
+    }
+
+    public void uploadImage(){
+
+        try {
+
+            if (libs.isConnectingToInternet()) {
+
+                UploadService uploadService = new UploadService(this);
+
+                uploadService.uploadImageCommon(strCustomerImgName, "provider_image" , "Profile Picture", Config.myProfileModel.getEmail(),
+                        UploadFileType.IMAGE, new App42CallBack() {
+                            public void onSuccess(Object response) {
+
+                                if(response!=null) {
+                                   /// Libs.log(response.toString(), "response 1 ");
+                                    Upload upload = (Upload) response;
+                                    ArrayList<Upload.File> fileList = upload.getFileList();
+
+                                    if (fileList.size() > 0) {
+
+                                        Upload.File file = fileList.get(0);
+
+                                        final String url = file.getUrl();
+
+                                        if (bitmap != null) {
+
+                                            try {
+                                                //TODO Check Logic
+
+                                                StorageService storageService = new StorageService(MyProfileActivity.this);
+
+                                                JSONObject jsonToUpdate = new JSONObject();
+
+                                                try {
+
+                                                    jsonToUpdate.put("provider_profile_url", url);
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                storageService.updateDocs(jsonToUpdate, Config.jsonDocId, Config.collectionName, new App42CallBack() {
+                                                    @Override
+                                                    public void onSuccess(Object o) {
+
+                                                        profileImage.setImageBitmap(bitmap);
+
+                                                        if (progressDialog.isShowing())
+                                                            progressDialog.dismiss();
+
+                                                        if (Config.jsonObject.has("provider_profile_url")) {
+
+                                                            try {
+                                                                Config.jsonObject.put("provider_profile_url", url);
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+
+                                                        libs.toast(2, 2, getString(R.string.update_profile_image));
+                                                        isImageChanged = false;
+
+                                                        File f = libs.getInternalFileImages(Config.strCustomerImageName);
+
+                                                        if (f.exists())
+                                                            f.delete();
+
+                                                        File newFile = new File(strCustomerImgName);
+                                                        File renameFile = libs.getInternalFileImages(Config.strCustomerImageName);
+
+                                                        try {
+                                                            libs.moveFile(newFile, renameFile);
+                                                        } catch (IOException e) {
+                                                            e.printStackTrace();
+                                                        }
+
+                                                    }
+
+                                                    @Override
+                                                    public void onException(Exception e) {
+                                                        if (progressDialog.isShowing())
+                                                            progressDialog.dismiss();
+                                                        libs.toast(2, 2, "Error. Try Again!!!");
+                                                    }
+                                                });
+
+                                                //
+
+                                            }catch (Exception e){
+                                                e.printStackTrace();
+                                            }
+
+                                        }
+                                        else {
+                                            if (progressDialog.isShowing())
+                                                progressDialog.dismiss();
+                                            libs.toast(2, 2, getString(R.string.error));
+                                        }
+
+                                    } else {
+                                        if (progressDialog.isShowing())
+                                            progressDialog.dismiss();
+                                        libs.toast(2, 2, getString(R.string.error));
+                                    }
+                                }else{
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
+                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                }
+                            }
+
+                            @Override
+                            public void onException(Exception e) {
+
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
+
+                                if(e!=null) {
+                                    Libs.log(e.toString(), "response onException 1 ");
+                                    libs.toast(2, 2, e.getMessage());
+                                }else{
+                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                }
+                            }
+                        });
+
+            } else {
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
+                libs.toast(2, 2, getString(R.string.warning_internet));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            if (progressDialog.isShowing())
+                progressDialog.dismiss();
+            libs.toast(2, 2, getString(R.string.error));
+        }
+    }
+}

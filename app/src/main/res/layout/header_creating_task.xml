@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/color_common"
+    android:weightSum="2">
+
+    <ImageView
+        android:id="@+id/imgBackCreatingTaskDetail"
+        android:layout_width="0dp"
+        android:layout_height="15dp"
+        android:layout_gravity="start|center"
+        android:src="@mipmap/back"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_weight="0.2"/>
+
+    <TextView
+        android:id="@+id/textViewHeaderCreatingTask"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/header_creating_task"
+        android:textSize="20sp"
+        android:textColor="@color/colorWhite"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_weight="1.3"/>
+
+    <TextView
+        android:id="@+id/textViewDoneHeaderCreatingTask"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/done"
+        android:textSize="16sp"
+        android:textColor="@color/colorWhite"
+        android:layout_gravity="center_vertical|end"
+        android:layout_weight="0.4"
+         />
+
+</LinearLayout>

@@ -1,0 +1,283 @@
+package com.hdfc.caregiver;
+
+import android.app.ProgressDialog;
+import android.content.pm.ApplicationInfo;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import com.hdfc.caregiver.fragments.ClientFragment;
+import com.hdfc.caregiver.fragments.RatingsFragment;
+import com.hdfc.caregiver.fragments.SimpleActivityFragment;
+import com.hdfc.config.Config;
+import com.hdfc.libs.Libs;
+import com.hdfc.models.ClientModel;
+import com.hdfc.models.FileModel;
+import com.hdfc.models.Model;
+import com.yydcdut.sdlv.SlideAndDragListView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by yuyidong on 16/1/23.
+ */
+public class DashboardActivity extends AppCompatActivity {
+
+    private static Handler threadHandler;
+    public static List<ClientModel> activitiesModelArrayList;
+    private List<ApplicationInfo> mAppList;
+    private SlideAndDragListView<ApplicationInfo> mListView;
+    private List<Model> models;
+    private List<Drawable> images;
+    private Libs libs;
+    Model obj = new Model();
+    ImageView mytask,clients,feedback,next;
+    LinearLayout vegetable;
+    private ProgressDialog progressDialog;
+
+    @Override
+    protected void onCreate( Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_tasks);
+
+        libs = new Libs(DashboardActivity.this);
+
+        mytask = (ImageView)findViewById(R.id.buttonMyTasks);
+        clients = (ImageView)findViewById(R.id.buttonClients);
+        feedback = (ImageView)findViewById(R.id.buttonFeedback);
+        vegetable = (LinearLayout)findViewById(R.id.llFirst);
+        next = (ImageView)findViewById(R.id.imgNext);
+
+        progressDialog = new ProgressDialog(DashboardActivity.this);
+
+        threadHandler = new ThreadHandler();
+        Thread backgroundThread = new BackgroundThread();
+        backgroundThread.start();
+
+        progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        setMenu();
+
+        mytask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMenu();
+                mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+                Config.intSelectedMenu = 0;
+                gotoSimpleActivity();
+            }
+        });
+
+        clients.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMenu();
+                clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
+                Config.intSelectedMenu = 0;
+                gotoClient();
+            }
+        });
+
+        feedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMenu();
+                feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
+                Config.intSelectedMenu = 0;
+                gotoFeedback();
+            }
+        });
+
+        if (Config.intSelectedMenu == Config.intClientScreen) {
+            Config.intSelectedMenu = 0;
+            gotoClient();
+            clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
+        }
+
+        if (Config.intSelectedMenu == Config.intRatingsScreen) {
+            Config.intSelectedMenu = 0;
+            gotoFeedback();
+            feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
+        }
+        if (Config.intSelectedMenu == Config.intSimpleActivityScreen) {
+            Config.intSelectedMenu = 0;
+            gotoSimpleActivity();
+            mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+        }
+
+    }
+
+    public void setMenu(){
+        mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks));
+        clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients));
+        feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback));
+    }
+
+    public void gotoClient() {
+        if (Config.intSelectedMenu != Config.intClientScreen) {
+            Config.intSelectedMenu = Config.intClientScreen;
+            ClientFragment fragment = ClientFragment.newInstance();
+            Bundle args = new Bundle();
+            fragment.setArguments(args);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frameLayout, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+    }
+    public void gotoFeedback() {
+
+        if (Config.intSelectedMenu != Config.intRatingsScreen) {
+            Config.intSelectedMenu = Config.intRatingsScreen;
+
+            RatingsFragment fragment = RatingsFragment.newInstance();
+            Bundle args = new Bundle();
+            fragment.setArguments(args);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frameLayout, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+    }
+    public void gotoSimpleActivity() {
+
+        if (Config.intSelectedMenu != Config.intSimpleActivityScreen) {
+            Config.intSelectedMenu = Config.intSimpleActivityScreen;
+
+            SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
+            Bundle args = new Bundle();
+            fragment.setArguments(args);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frameLayout, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+    }
+
+    public class ThreadHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+
+            if(progressDialog.isShowing())
+                progressDialog.dismiss();
+
+            /*if (intWhichScreen == Config.intSimpleActivityScreen) {
+                gotoSimpleActivity();
+            }*/
+        }
+    }
+
+    public class BackgroundThread extends Thread {
+        @Override
+        public void run() {
+            try {
+
+                for (int i = 0; i < Config.fileModels.size(); i++) {
+
+                    FileModel fileModel = Config.fileModels.get(i);
+
+                    if (fileModel != null && fileModel.getStrFileUrl() != null && !fileModel.getStrFileUrl().equalsIgnoreCase("")) {
+
+                        String strUrl = libs.replaceSpace(fileModel.getStrFileUrl());
+
+                        String strFileName = libs.replaceSpace(fileModel.getStrFileName());
+
+                        Libs.log(strFileName, "File Name");
+
+                        File fileImage = libs.createFileInternal("images/" + strFileName);
+
+                        if (fileImage.length() <= 0) {
+
+                            InputStream input;
+                            try {
+
+                                URL url = new URL(strUrl); //URLEncoder.encode(fileModel.getStrFileUrl(), "UTF-8")
+                                input = url.openStream();
+                                byte[] buffer = new byte[1500];
+                                OutputStream output = new FileOutputStream(fileImage);
+                                try {
+                                    int bytesRead;
+                                    while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
+                                        output.write(buffer, 0, bytesRead);
+                                    }
+                                } finally {
+                                    output.close();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+                //
+            try {
+
+                activitiesModelArrayList= new ArrayList<>();
+                activitiesModelArrayList.clear();
+
+                if (Config.jsonObject.has("dependents")) {
+
+                    JSONArray jsonArrayNotifications = Config.jsonObject.getJSONArray("dependents");
+
+                    Libs.log(String.valueOf(jsonArrayNotifications.length()), " 1 ");
+
+                    for (int j = 0; j < jsonArrayNotifications.length(); j++) {
+
+                        JSONObject jsonObjectNotification = jsonArrayNotifications.getJSONObject(j);
+
+                        ClientModel clientsModel = new ClientModel();
+                        clientsModel.setAge(jsonObjectNotification.getString("dependent_age"));
+                        clientsModel.setAddress(jsonObjectNotification.getString("dependent_address"));
+                        clientsModel.setName(jsonObjectNotification.getString("dependent_name"));
+                        clientsModel.setPremium(jsonObjectNotification.getString("dependent_notes"));
+                        clientsModel.setProblem(jsonObjectNotification.getString("dependent_illness"));
+                        clientsModel.setStrMobile(jsonObjectNotification.getString("dependent_contact_no"));
+                        clientsModel.setStrClientImageUrl(jsonObjectNotification.getString("dependent_profile_url"));
+
+                        activitiesModelArrayList.add(clientsModel);
+                    }
+
+                }
+
+                //
+
+                Libs.log(String.valueOf(activitiesModelArrayList.size()), " 1 ");
+                for (int i = 0; i < activitiesModelArrayList.size(); i++) {
+                    ClientModel clientModel = activitiesModelArrayList.get(i);
+
+                    if (clientModel.getStrClientImageUrl() != null && !clientModel.getStrClientImageUrl().equalsIgnoreCase("")) {
+
+                        libs.loadImageFromWeb(clientModel.getName(), clientModel.getStrClientImageUrl());
+
+                    }
+                }
+            threadHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+}

@@ -1,0 +1,39 @@
+{
+  "services":[
+    {
+      "unit":3,
+      "service_name":"Medical Checkup",
+      "service_id": 14500,
+      "cost":600,
+      "service_features":"BP, Heart Rate, Blood Test",
+      "features":[
+            "BP",
+            "Heart Rate"
+      ]
+    },
+    {
+      "unit":2,
+      "service_name":"Master Medical Checkup",
+      "cost":1600,
+      "service_id": 14600,
+      "service_features":"Complete Master Checkup",
+      "features":[
+            "BP",
+            "Heart Rate",
+            "Blood Test"
+      ]
+    },
+    {
+      "unit": 5,
+      "features": [
+            "potato",
+            "corn"
+      ],
+      "cost": 500.55,
+      "service_id": 14700,
+      "service_name": "Grocery Service",
+      "service_features": "Buy and Delivery of Required Grocery items",//TODO duplicate to be removed
+      "service_desc": "Buy and Delivery of Required Grocery items"
+    }
+  ]
+}

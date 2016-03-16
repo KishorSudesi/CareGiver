@@ -1,0 +1,19 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <include layout="@layout/include_fragment_simple"/>
+
+  <ImageButton
+      android:id="@+id/add_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end|bottom"
+      android:layout_marginBottom="30dp"
+      android:layout_marginRight="30dp"
+      android:src="@drawable/add_icon"
+      android:background="@drawable/circle_float"
+      />
+
+</FrameLayout>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusableInTouchMode="false">
+
+        <include
+            layout="@layout/header_client_profile"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/age"
+                android:textColor="@android:color/secondary_text_dark"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                />
+
+            <TextView
+                android:id="@+id/editTextAge"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="7dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/hintAge"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/health_condition"
+                android:textColor="@android:color/secondary_text_dark"
+                android:paddingTop="@dimen/edit_text_margin"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/editTextHealthCondition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="7dp"
+                android:hint="@string/diabetic"
+                 />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/account_type"
+                android:textColor="@android:color/secondary_text_dark"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingTop="@dimen/edit_text_margin"/>
+
+            <TextView
+                android:id="@+id/editTextAccountType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="7dp"
+                android:hint="@string/premium"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/address"
+                android:textColor="@android:color/secondary_text_dark"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingTop="@dimen/edit_text_margin"/>
+
+            <TextView
+                android:id="@+id/editTextAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="7dp"
+                android:hint="@string/pune"
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mobNo"
+                android:textColor="@android:color/secondary_text_dark"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/textView"
+                android:paddingTop="@dimen/edit_text_margin"/>
+
+          <ImageView
+              android:id="@+id/imageCall"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:src="@mipmap/call"
+              android:paddingTop="@dimen/edit_text_margin"/>
+
+            <TextView
+                android:id="@+id/editTextMobileNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hintMobNo"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="7dp"
+               />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/map"
+                android:textColor="@android:color/secondary_text_dark"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/textView2"
+                android:paddingTop="@dimen/edit_text_margin"/>
+
+            <ImageView
+                  android:id="@+id/imageLocation"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:src="@mipmap/location"
+                  android:paddingTop="@dimen/edit_text_margin"/>
+
+
+            <TextView
+                android:id="@+id/editTextGetDirection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/getDirection"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="7dp"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

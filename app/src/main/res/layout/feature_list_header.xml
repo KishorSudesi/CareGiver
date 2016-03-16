@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="65dp"
+    android:background="@color/color_common"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/imgBackHeaderTaskDetail"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_gravity="center_vertical"
+        android:src="@mipmap/back"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="15dp"
+        />
+
+    <ImageView
+        android:id="@+id/imgLogoHeaderTaskDetail"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/carla2"
+        android:layout_toRightOf="@+id/imgBackHeaderTaskDetail"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="20dp"
+        />
+
+    <TextView
+        android:id="@+id/textViewHeaderTaskDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/barackObama"
+        android:textSize="20dp"
+        android:textColor="@color/colorWhite"
+        android:layout_toRightOf="@+id/imgLogoHeaderTaskDetail"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="20dp"
+        android:gravity="center"
+        />
+
+    <ImageView
+        android:id="@+id/imgAttachHeaderTaskDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:src="@mipmap/attach_file_not_active"
+        />
+
+
+</RelativeLayout>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#EEEEEE"
+    android:weightSum="3">
+
+    <include
+        android:id="@+id/include_header_my_tasks"
+        layout="@layout/header_my_tasks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/noActivities"
+        android:background="#EEEEEE"
+        android:layout_below="@+id/include_header_my_tasks"/>
+
+    <com.yydcdut.sdlv.SlideAndDragListView
+        android:id="@+id/listViewEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#EEEEEE"
+        android:clickable="true"
+        android:layout_below="@+id/include_header_my_tasks">
+    </com.yydcdut.sdlv.SlideAndDragListView>
+
+
+</RelativeLayout>
