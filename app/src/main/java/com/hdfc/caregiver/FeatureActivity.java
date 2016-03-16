@@ -76,6 +76,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     public static List<String> vegetable;
     private Libs libs;
     public static String strImageName = "", strImagePathToServer = "";
+    public static String strImageNameCamera = "";
     /*public static String strCustomerImgName = "";*/
     private String strCustomerImagePath="";
 
@@ -84,7 +85,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     static FeatureAdapter featureAdapter;
     List<String> lstFeatures;
     String chk;
-    ArrayList<String> selchkboxlist=new ArrayList<String>();
+    ArrayList<String> selchkboxlist=new ArrayList<>();
 
     Button done;
     Serializable ac;
@@ -123,7 +124,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             ActivityModel act = (ActivityModel) b.getSerializable("ACTIVITY");
 
-            lstFeatures = new ArrayList<String>(Arrays.asList(act.getFeatures()));
+            lstFeatures = new ArrayList<>(Arrays.asList(act.getFeatures()));
 
             featureAdapter = new FeatureAdapter(this, lstFeatures);
 
@@ -376,8 +377,18 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         @Override
         public void run() {
             try {
-                if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+                /*if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
                     bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
+                }*/
+                if (uri != null) {
+                    Calendar calendar = new GregorianCalendar();
+                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
+                    File cameraFile = libs.createFileInternal(strFileName);
+                    strImageNameCamera = cameraFile.getAbsolutePath();
+                    System.out.println("Your CAMERA path is : " + strImageNameCamera);
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    libs.copyInputStreamToFile(is, cameraFile);
+                    bitmap = libs.getBitmapFromFile(strImageNameCamera,Config.intWidth,Config.intHeight);
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
