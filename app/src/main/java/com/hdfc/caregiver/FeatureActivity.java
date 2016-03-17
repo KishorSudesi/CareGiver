@@ -37,8 +37,10 @@ import com.hdfc.libs.Libs;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.FeatureModel;
+import com.hdfc.models.ImageModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.imageProcessor.Image;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
 
@@ -70,6 +72,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     private static int intWhichScreen;
     public static Uri uri;
     String serializedObject = "";
+    /*CheckBox[] cbs =  new CheckBox[20];*/
+
 
     public static ActivityModel activityModel = new ActivityModel();
     static String veg;
@@ -134,68 +138,22 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             e.printStackTrace();
         }
 
-       // ac = getIntent().getSerializableExtra("ACTIVITY");
-
-       /* String val = act.toString();
-        System.out.println("INDIA : "+val);*/
-/*
-        try {
-            byte b[] = abc.getBytes();
-            ByteArrayInputStream bi = new ByteArrayInputStream(b);
-            ObjectInputStream si = new ObjectInputStream(bi);
-            activityModel = (ActivityModel) si.readObject();
-            System.out.println("ABC : "+activityModel.getStrActivityMessage());
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println("AAAA : "+activityModel.getStrCustomerEmail());
-        System.out.println("ANOTHER : "+activityModel.getJsonArrayFeatures());
-*/
-        /*Intent intent = this.getIntent();
-        Bundle bundle = intent.getExtras();
-
-        ActivityModel activityModel = (ActivityModel) bundle.getSerializable("RUSHI");
-        System.out.println("ACTIIII :"+activityModel);*/
-
-
         libs = new Libs(FeatureActivity.this);
-        CheckBox checkBox = new CheckBox(this);
+
 
         strCustomerImagePath=getFilesDir()+"/images/"+"feature_image";
         mProgress = new ProgressDialog(FeatureActivity.this);
         progressDialog = new ProgressDialog(FeatureActivity.this);
-        /*FeatureModel vegetableModel = new FeatureModel();
-        vegetableModel.setVegetable(checkBox);*/
+
+
+        String arr;
 
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CheckBox[] cbs;
-                String arr;
-                cbs = new CheckBox[20];
 
-                for(int k=0; k<lstFeatures.size(); k++)
-                {
-                    arr = lstFeatures.get(k);
-                    cbs[k] = (CheckBox)findViewById(R.id.checkbox22);
-                    cbs[k].setOnClickListener( new View.OnClickListener()
-                    {
-                        public void onClick(View v)
-                        {
-                            CheckBox cb = (CheckBox) v ;
-                            if (((CheckBox) v).isChecked()) {
-                                chk = Integer.toString(v.getId());
-                                selchkboxlist.add(chk);
-                                Toast.makeText(FeatureActivity.this, "Selected CheckBox ID" + v.getId(), Toast.LENGTH_SHORT).show();
-                                System.out.println("Katraj Bypass : "+selchkboxlist);
-                            } else {
-                                selchkboxlist.remove(chk);
-                                Toast.makeText(FeatureActivity.this, "Not selected", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
 
-                }
+
                 backgroundThreadHandler = new BackgroundThreadHandler();
             }
         });
@@ -208,9 +166,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                      jsonArray = json.getJSONArray("features");
 
                 for(int j = 0 ; j < jsonArray.length(); j++) {
-                    //checkBox.setTag(jsonArray.getString(j));
 
-                    /*vegetableModel.setVegetable(jsonArray.getString(j));*/
                     veg = jsonArray.getString(j);
                     vegetable.add(veg);
 
@@ -225,31 +181,12 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 }
                 System.out.println(jsonArray);
                 featureAdapter.notifyDataSetChanged();
-
-               /*
-                for(int k =0; k < jsonArrayServices.length(); k++) {
-                    JSONObject jsonObjectServices = jsonArrayServices.getJSONObject(k);
-                    JSONArray jsonArrayServiceFeatures = jsonObjectServices.getJSONArray("service_features");
-                    checkBox.setText(jsonArrayServiceFeatures.getString(k));
-                }
-                */
             }
         } catch(JSONException e){
             e.printStackTrace();
         }
 
-        // CheckBox checkBox1 = new CheckBox(this);
-        /*checkBox.setTag("Baby corn");
-        FeatureModel vegetableModel1 = new FeatureModel();
-        vegetableModel1.setVegetable(checkBox);
 
-        //CheckBox checkBox2 = new CheckBox(this);
-        checkBox.setTag("Beetroot");
-        FeatureModel vegetableModel2 = new FeatureModel();
-        vegetableModel2.setVegetable(checkBox);
-        checkBox.setTag("Cauliflower");
-        FeatureModel vegetableModel3 = new FeatureModel();
-        vegetableModel3.setVegetable(checkBox);*/
         list_vegetable.setAdapter(featureAdapter);
         list_vegetable.setEmptyView(textViewEmpty);
 
@@ -262,17 +199,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 startActivity(intent);
             }
         });
-
-
-        //CheckBox checkBox3 = new CheckBox(this);
-       /* done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FeatureActivity.this, TaskAttachFooter.class);
-                startActivity(intent);
-            }
-        });*/
-
 
         attach.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -360,6 +286,11 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                     File galleryFile = libs.createFileInternalImage(strFileName);
                     strImageName = galleryFile.getAbsolutePath();
                     System.out.println("YOUR GALLERY PATH IS : "+ strImageName);
+
+                    ImageModel imageModel = new ImageModel(strImageName,"","Gallery Image",String.valueOf(System.currentTimeMillis()));
+                    ArrayList<ImageModel> arrImageModelGallery = new ArrayList<>();
+                    arrImageModelGallery.add(imageModel);
+
                     InputStream is = getContentResolver().openInputStream(uri);
                     libs.copyInputStreamToFile(is, galleryFile);
 
@@ -386,9 +317,16 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                     File cameraFile = libs.createFileInternal(strFileName);
                     strImageNameCamera = cameraFile.getAbsolutePath();
                     System.out.println("Your CAMERA path is : " + strImageNameCamera);
+
+                    ImageModel imageModel = new ImageModel(strImageNameCamera,"","Camera Image",String.valueOf(System.currentTimeMillis()));
+                    ArrayList<ImageModel> arrayListImageModel = new ArrayList<>();
+                    arrayListImageModel.add(imageModel);
+
                     InputStream is = getContentResolver().openInputStream(uri);
                     libs.copyInputStreamToFile(is, cameraFile);
                     bitmap = libs.getBitmapFromFile(strImageNameCamera,Config.intWidth,Config.intHeight);
+
+
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
