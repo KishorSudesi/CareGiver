@@ -22,7 +22,7 @@ public class FeatureAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
     Context context;
     List<String> features;
-    ArrayList<String> selectedStrings = new ArrayList<>();
+   public ArrayList<String> selectedStrings = new ArrayList<>();
 
     public FeatureAdapter(Context context, List<String> features){
             this.context = context;

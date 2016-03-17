@@ -324,7 +324,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                             // Config.jsonObject = responseJSONDoc;
 
-                                            storageService.findDocsByKeyValue("customer","customer_email", sDependentModel.getStrCustomerEmail() , new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                                            storageService.findDocsByKeyValue(Config.collectionName2,"customer_email", sDependentModel.getStrCustomerEmail() , new AsyncApp42ServiceApi.App42StorageServiceListener() {
                                                 @Override
                                                 public void onDocumentInserted(Storage response) {
                                                 }
@@ -371,7 +371,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                                                 Libs.log(responseJSONDocCarla.toString(), " onj 2 ");
 
-                                                                storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, "customer", new App42CallBack() {
+                                                                storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionName2, new App42CallBack() {
                                                                     @Override
                                                                     public void onSuccess(Object o) {
 
