@@ -76,13 +76,11 @@ import java.util.regex.Pattern;
  */
 public class Libs {
 
+    public final static SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+    public final static SimpleDateFormat writeFormat = new SimpleDateFormat("kk:mm aa dd MMM yyyy", Locale.getDefault());
     public static Uri customerImageUri;
     private static Context _ctxt;
     private static SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()); //check the format and standardize it
-
-
-    public final static SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-    public final static SimpleDateFormat writeFormat = new SimpleDateFormat("kk:mm aa dd MMM yyyy", Locale.getDefault());
 
     static {
         System.loadLibrary("stringGen");
@@ -188,16 +186,6 @@ public class Libs {
         return scaledBitmap;
     }
 
-    public File getInternalFileImages(String strFileName) {
-
-        File file = null;
-        try {
-            file = new File(_ctxt.getFilesDir(), "images/" + strFileName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
     //
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
                                                          int reqWidth, int reqHeight) {
@@ -321,48 +309,6 @@ public class Libs {
         }
     }
 
-    //load image from url
-    public void loadImageFromWeb(String strFileName, String strFileUrl){
-
-        strFileName = replaceSpace(strFileName);
-        strFileUrl = replaceSpace(strFileUrl);
-
-        File fileImage = createFileInternal("images/" + strFileName);
-
-        log(strFileName+" ~ "+strFileUrl, " paths ");
-
-        if (fileImage.length() <= 0) {
-
-            InputStream input;
-            try {
-
-                log(" 1 ", " IN ");
-
-                URL url = new URL(strFileUrl); //URLEncoder.encode(fileModel.getStrFileUrl(), "UTF-8")
-                input = url.openStream();
-                byte[] buffer = new byte[1500];
-                OutputStream output = new FileOutputStream(fileImage);
-                try {
-                    int bytesRead;
-                    while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
-                        output.write(buffer, 0, bytesRead);
-                    }
-                    log(" 2.0 ", " IN ");
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }finally {
-                    output.close();
-                }
-
-                log(" 2.1 ", " IN ");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public static long getTotalExternalMemorySize() {
         if (externalMemoryAvailable()) {
             File path = Environment.getExternalStorageDirectory();
@@ -410,7 +356,6 @@ public class Libs {
 
         return pathExternals;
     }
-    //
 
     public static String sha512(final String toEncrypt) {
 
@@ -449,55 +394,13 @@ public class Libs {
         mRecorder.start();
 
     }
+    //
 
     public static String getDeviceID(Activity activity) {
         return Settings.Secure.getString(activity.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
     }
-
-    public void moveFile(File file, File newFile) throws IOException {
-        //File newFile = new File(dir, file.getName());
-        FileChannel outputChannel = null;
-        FileChannel inputChannel = null;
-        try {
-            outputChannel = new FileOutputStream(newFile).getChannel();
-            inputChannel = new FileInputStream(file).getChannel();
-            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
-            inputChannel.close();
-            file.delete();
-        } finally {
-            if (inputChannel != null) inputChannel.close();
-            if (outputChannel != null) outputChannel.close();
-        }
-    }
-
-    /*public static String encrypt(String Data) {
-
-        String encryptedValue = null;
-        Cipher c = null;
-        try {
-            Key key = generateKey();
-            c = Cipher.getInstance(mode);
-            c.init(Cipher.ENCRYPT_MODE, key);
-            byte[] encVal = c.doFinal(Data.getBytes());
-            encryptedValue = Base64.encodeToString(encVal, Base64.DEFAULT);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return encryptedValue;
-    }*/
 
     public static void hideSoftKeyboard(Activity activity) {
         try {
@@ -510,39 +413,6 @@ public class Libs {
             e.printStackTrace();
         }
     }
-
-   /* public static String decrypt(String encryptedData) {
-        String decryptedValue = null;
-        Cipher c = null;
-
-        try {
-            Key key = generateKey();
-            c = Cipher.getInstance(mode);
-            c.init(Cipher.DECRYPT_MODE, key);
-            byte[] decordedValue = Base64.decode(encryptedData, Base64.DEFAULT);
-            byte[] decValue = c.doFinal(decordedValue);
-            decryptedValue = new String(decValue);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return decryptedValue;
-    }
-
-    private static Key generateKey() throws Exception {
-        Key key = new SecretKeySpec(Config.string.getBytes(), mode);
-        return key;
-    }*/
 
     public static String loadJSONFromFile(String path) {
         String json = null;
@@ -581,6 +451,33 @@ public class Libs {
 
     }
 
+    /*public static String encrypt(String Data) {
+
+        String encryptedValue = null;
+        Cipher c = null;
+        try {
+            Key key = generateKey();
+            c = Cipher.getInstance(mode);
+            c.init(Cipher.ENCRYPT_MODE, key);
+            byte[] encVal = c.doFinal(Data.getBytes());
+            encryptedValue = Base64.encodeToString(encVal, Base64.DEFAULT);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return encryptedValue;
+    }*/
+
     public static boolean isEmpty(String strInput) {
 
         boolean isEmpty;
@@ -591,6 +488,123 @@ public class Libs {
             isEmpty = true;
 
         return isEmpty;
+    }
+
+   /* public static String decrypt(String encryptedData) {
+        String decryptedValue = null;
+        Cipher c = null;
+
+        try {
+            Key key = generateKey();
+            c = Cipher.getInstance(mode);
+            c.init(Cipher.DECRYPT_MODE, key);
+            byte[] decordedValue = Base64.decode(encryptedData, Base64.DEFAULT);
+            byte[] decValue = c.doFinal(decordedValue);
+            decryptedValue = new String(decValue);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return decryptedValue;
+    }
+
+    private static Key generateKey() throws Exception {
+        Key key = new SecretKeySpec(Config.string.getBytes(), mode);
+        return key;
+    }*/
+
+    public File getInternalFileImages(String strFileName) {
+
+        File file = null;
+        try {
+            file = new File(_ctxt.getFilesDir(), "images/" + strFileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+    //load image from url
+    public void loadImageFromWeb(String strFileName, String strFileUrl) {
+
+        strFileName = replaceSpace(strFileName);
+        strFileUrl = replaceSpace(strFileUrl);
+
+        File fileImage = createFileInternal("images/" + strFileName);
+
+        log(strFileName + " ~ " + strFileUrl, " paths ");
+
+        if (fileImage.length() <= 0) {
+
+            InputStream input;
+            try {
+
+                log(" 1 ", " IN ");
+
+                URL url = new URL(strFileUrl); //URLEncoder.encode(fileModel.getStrFileUrl(), "UTF-8")
+                input = url.openStream();
+                byte[] buffer = new byte[1500];
+                OutputStream output = new FileOutputStream(fileImage);
+                try {
+                    int bytesRead;
+                    while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
+                        output.write(buffer, 0, bytesRead);
+                    }
+                    log(" 2.0 ", " IN ");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    output.close();
+                }
+
+                log(" 2.1 ", " IN ");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void moveFile(File file, File newFile) throws IOException {
+        //File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+    }
+
+    public void moveFileDir(File file, File dir) throws IOException {
+        File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
     }
 
    /* public static void logout() {

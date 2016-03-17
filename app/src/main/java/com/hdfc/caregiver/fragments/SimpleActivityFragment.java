@@ -1,6 +1,5 @@
 package com.hdfc.caregiver.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
@@ -11,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -26,8 +24,6 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.Libs;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.models.ActivityModel;
-import com.hdfc.models.ClientModel;
-import com.hdfc.models.Model;
 import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
@@ -36,11 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 
 public class SimpleActivityFragment extends Fragment implements SlideAndDragListView.OnListItemLongClickListener,
@@ -48,26 +41,90 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
          SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnListItemClickListener,
         SlideAndDragListView.OnItemDeleteListener {
     private static final String TAG = "";
+    public ArrayList<ActivityModel> activityModels = new ArrayList<>();
+    ImageView mytask, clients, feedback, next;
+    LinearLayout vegetable;
+    ImageButton add;
     private MultiBitmapLoader multiBitmapLoader;
-
     private Menu mMenu;
     private List<ApplicationInfo> mAppList;
     private SlideAndDragListView<ApplicationInfo> mListView;
-    private List<Model> models;
-    private List<Integer> images;
-    Model obj = new Model();
-    String[] MsgSubjet = null;
-    String[] MsgDescr;
-    String[] strTimes;
     private Libs libs;
     private  TextView textViewEmpty;
+    private BaseAdapter mAdapter = new BaseAdapter() {
 
-    public ArrayList<ActivityModel> activityModels = new ArrayList<>();
+        @Override
+        public int getCount() {
 
-    ImageView mytask,clients,feedback,next;
-    LinearLayout vegetable;
-    ImageButton add;
-    private static int intWhichScreen;
+            Libs.log(String.valueOf(activityModels.size()), " size ");
+            return activityModels.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            CustomViewHolder cvh;
+
+            if (convertView == null) {
+
+                cvh = new CustomViewHolder();
+
+                convertView = LayoutInflater.from(getActivity()).inflate(R.layout.my_tasks_item, null);
+                cvh.imageTiming = (ImageView) convertView.findViewById(R.id.imageTiming);
+                cvh.textMessage = (TextView) convertView.findViewById(R.id.task_message);
+                cvh.textSubject = (TextView) convertView.findViewById(R.id.task_subject);
+                cvh.textTime = (TextView) convertView.findViewById(R.id.task_time);
+                cvh.imagePerson = (ImageView) convertView.findViewById(R.id.imagePerson);
+                convertView.setTag(cvh);
+
+            } else {
+                cvh = (CustomViewHolder) convertView.getTag();
+            }
+
+
+            if (activityModels.size() > 0) {
+
+                Libs.log(String.valueOf(activityModels.size()), " size ");
+
+                ActivityModel activityModel = activityModels.get(position);
+
+                cvh.textSubject.setText(activityModel.getStrActivityMessage());
+                cvh.textMessage.setText(activityModel.getStrActivityName());
+
+                String strDisplayDateTime = libs.formatDate(activityModel.getStrActivityDate());
+
+                cvh.textTime.setText(strDisplayDateTime);
+
+                File fileImage = libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
+
+                if (fileImage.exists()) {
+                    String filename = fileImage.getAbsolutePath();
+                    multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
+                } else {
+                    cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
+                }
+                //cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(images.get(position)));
+            }
+            return convertView;
+        }
+
+        class CustomViewHolder {
+            public ImageView imageTiming;
+            public TextView textSubject;
+            public ImageView imagePerson;
+            public TextView textMessage;
+            public TextView textTime;
+        }
+    };
 
     public static SimpleActivityFragment newInstance() {
         SimpleActivityFragment fragment = new SimpleActivityFragment();
@@ -106,7 +163,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),FeatureActivity.class);
-                intent.putExtra("WHICH_SCREEN", intWhichScreen);
+                //intent.putExtra("WHICH_SCREEN", intWhichScreen);
                 startActivity(intent);
             }
         });
@@ -118,7 +175,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 //intent.putExtra("WHICH_SCREEN1",intWhichScreen);
                 Config.intSelectedMenu=Config.intDashboardScreen;
                 startActivity(intent);
-                Toast.makeText(getContext(),"Click",Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(),"Click",Toast.LENGTH_LONG).show();
             }
         });
 
@@ -150,6 +207,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
         return view;
     }
+
 /*
     @Override
     public void onListItemClick(View v, int position) {
@@ -173,10 +231,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 JSONArray jsonArrayFeedback = Config.jsonObject.getJSONArray("activities");
 
                 int iArraySize = jsonArrayFeedback.length();
-
-                MsgSubjet = new String[iArraySize];
-                MsgDescr = new String[iArraySize];
-                strTimes = new String[iArraySize];
 
                 for (int k = 0; k < iArraySize; k++) {
 
@@ -224,8 +278,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             e.printStackTrace();
         }
     }
-
-
 
     public void initData() {
         mAppList = getActivity().getPackageManager().getInstalledApplications(0);
@@ -288,83 +340,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 .build());
     }
 
-
-
-    private BaseAdapter mAdapter = new BaseAdapter() {
-
-        @Override
-        public int getCount() {
-
-            Libs.log(String.valueOf(activityModels.size()), " size ");
-            return activityModels.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            CustomViewHolder cvh;
-
-            if (convertView == null) {
-
-                cvh = new CustomViewHolder();
-
-                convertView = LayoutInflater.from(getActivity()).inflate(R.layout.my_tasks_item, null);
-                cvh.imageTiming = (ImageView) convertView.findViewById(R.id.imageTiming);
-                cvh.textMessage = (TextView) convertView.findViewById(R.id.task_message);
-                cvh.textSubject = (TextView) convertView.findViewById(R.id.task_subject);
-                cvh.textTime = (TextView) convertView.findViewById(R.id.task_time);
-                cvh.imagePerson = (ImageView) convertView.findViewById(R.id.imagePerson);
-                convertView.setTag(cvh);
-
-            } else {
-                cvh = (CustomViewHolder) convertView.getTag();
-            }
-
-
-            if(activityModels.size()>0) {
-
-                Libs.log(String.valueOf(activityModels.size()), " size ");
-
-                ActivityModel activityModel = activityModels.get(position);
-
-                cvh.textSubject.setText(activityModel.getStrActivityMessage());
-                cvh.textMessage.setText(activityModel.getStrActivityName());
-
-                String strDisplayDateTime = libs.formatDate(activityModel.getStrActivityDate());
-
-                cvh.textTime.setText(strDisplayDateTime);
-
-                File fileImage = libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
-
-                if(fileImage.exists()) {
-                    String filename = fileImage.getAbsolutePath();
-                    multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
-                }else{
-                    cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
-                }
-                //cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(images.get(position)));
-            }
-            return convertView;
-        }
-
-        class CustomViewHolder {
-            public ImageView imageTiming;
-            public TextView textSubject;
-            public ImageView imagePerson;
-            public TextView textMessage;
-            public TextView textTime;
-        }
-    };
-
     @Override
     public void onListItemLongClick(View view, int position) {
 
@@ -418,15 +393,15 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     @Override
     public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
-        Log.e(TAG, "onMenuItemClick   " + itemPosition + "   " + buttonPosition + "   " + direction);
+        // Log.e(TAG, "onMenuItemClick   " + itemPosition + "   " + buttonPosition + "   " + direction);
         switch (direction) {
             case MenuItem.DIRECTION_LEFT:
                 switch (buttonPosition) {
                     case 0:
-                        Toast.makeText(getContext(),"You click on "+buttonPosition,Toast.LENGTH_SHORT).show();
+                        //               Toast.makeText(getContext(),"You click on "+buttonPosition,Toast.LENGTH_SHORT).show();
                         return Menu.ITEM_NOTHING;
                     case 1:
-                        Toast.makeText(getContext(),"You click on "+buttonPosition,Toast.LENGTH_SHORT).show();
+                        //             Toast.makeText(getContext(),"You click on "+buttonPosition,Toast.LENGTH_SHORT).show();
 
                         if(activityModels.size()>0) {
 
@@ -437,12 +412,16 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                             //Libs.log(String.valueOf(activityModels.size()), " size ");
                           //  ActivityModel activityModel = activityModels.get(position);
-                            Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                            if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("upcoming")) {
+                                Intent intent = new Intent(getActivity(), FeatureActivity.class);
                             /*intent.putExtra("WHICH_SCREEN", activityModels.get(itemPosition));*/
 
-                           // System.out.println("MODEL CLASS VAL :: " + activityModels.get(itemPosition).toString());
-                            intent.putExtras(args);
-                            startActivity(intent);
+                                // System.out.println("MODEL CLASS VAL :: " + activityModels.get(itemPosition).toString());
+                                intent.putExtras(args);
+                                startActivity(intent);
+                            } else {
+                                libs.toast(2, 2, "Activity Completed");
+                            }
 
                         }
                         return Menu.ITEM_SCROLL_BACK;
@@ -485,10 +464,10 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     @Override
     public void onListItemClick(View v, int position) {
-        Toast.makeText(getContext(),"You are done clicking",Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(),"You are done clicking",Toast.LENGTH_LONG).show();
         Intent intent = new Intent(getActivity(), FeatureActivity.class);
         intent.putExtra("WHICH_SCREEN",activityModels.get(position));
-        System.out.println("RUSHAAAA :: "+ activityModels.get(position));
+        //System.out.println("RUSHAAAA :: "+ activityModels.get(position));
         startActivity(intent);
     }
 }
