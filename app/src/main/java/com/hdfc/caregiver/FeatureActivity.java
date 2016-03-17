@@ -333,6 +333,10 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
         try {
 
+            progressDialog.setMessage("Uploading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
             if (libs.isConnectingToInternet()) {
 
                 for(final ImageModel imageModel: arrayListImageModel) {
@@ -422,9 +426,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         if (libs.isConnectingToInternet()) {
             storageService = new StorageService(FeatureActivity.this);
 
-            progressDialog.setMessage(getResources().getString(R.string.loading));
-            progressDialog.setCancelable(false);
-            progressDialog.show();
 
             try {
                 jsonArrayFeaturesDone = new JSONArray();
