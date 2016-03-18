@@ -4,28 +4,35 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hdfc.adapters.FeatureAdapter;
 import com.hdfc.app42service.StorageService;
@@ -33,8 +40,9 @@ import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Libs;
-import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.models.ActivityModel;
+import com.hdfc.models.ClientModel;
+import com.hdfc.models.FeatureModel;
 import com.hdfc.models.ImageModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
@@ -46,9 +54,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,103 +72,108 @@ import java.util.List;
 
 public class FeatureActivity extends AppCompatActivity implements Serializable{
 
-    public static Uri uri;
-    public static List<String> listFeatures;
-    public static String strImageName = "";
+    ImageView attach,back,imageAttach,imageCamera;
+    private static StorageService storageService;
+    private JSONObject jsonObjectCarla,jsonObjectAct,jsonObjectActCarla,responseJSONDoc,responseJSONDocCarla;
     static ImageView imageView;
     static Bitmap bitmap = null;
-    private static StorageService storageService;
-    private static ArrayList<ImageModel> arrayListImageModel = new ArrayList<>();
-    private static JSONArray jsonArrayFeaturesDone;
-    private static FeatureAdapter featureAdapter;
-    private static Handler backgroundThreadHandler;
-    private static ProgressDialog mProgress = null;
-    private static String strDoneDate;
-    private static ActivityModel act;
-    public JSONObject json;
-    private JSONObject responseJSONDoc;
-    private JSONObject responseJSONDocCarla;
+    private static int intWhichScreen;
+    public static Uri uri;
+    String serializedObject = "";
+
+    public static ActivityModel activityModel = new ActivityModel();
+    static String veg;
+    public static List<String> vegetable;
     private Libs libs;
+    public static String strImageName = "", strImagePathToServer = "";
+    public static String strImageNameCamera = "";
+    /*public static String strCustomerImgName = "";*/
+    private String strCustomerImagePath="";
+
+    public JSONObject json;
+    public static JSONArray jsonArray;
+    static FeatureAdapter featureAdapter;
+    List<String> lstFeatures;
+    String chk;
+    ArrayList<String> selchkboxlist=new ArrayList<>();
+
+    Button done;
+    Serializable ac;
+    public static String strCustomerImgNameCamera;
+    ListView list_vegetable;
+    private static Thread backgroundThread, backgroundThreadCamera;
+    private static Handler backgroundThreadHandler;
     private ProgressDialog progressDialog;
-    private Point p;
-    private JSONArray jsonArrayImagesAdded;
+    List<FeatureModel> featureModelList = new ArrayList<>();
+    ArrayList<ActivityModel> activityModels = new ArrayList<>();
+    protected static final int RESULT_GALLERY_IMAGE = 2;
+    private static boolean isImageChanged=false;
+    Point p;
+    ImageView img;
+    private static ProgressDialog mProgress = null;
+    private TextView textViewEmpty,txtDependentName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_features);
-        listFeatures = new ArrayList<>();
-        ImageView attach = (ImageView) findViewById(R.id.imgAttachHeaderTaskDetail);
-        ImageView imgLogoHeaderTaskDetail = (ImageView) findViewById(R.id.imgLogoHeaderTaskDetail);
-        Button done = (Button) findViewById(R.id.buttonVegetibleDone);
-        ImageView back = (ImageView) findViewById(R.id.imgBackHeaderTaskDetail);
-        ListView featuresList = (ListView) findViewById(R.id.list_view);
-        //surfaceView = (SurfaceView)findViewById(R.id.camerapreview);
-        TextView textViewEmpty = (TextView) findViewById(android.R.id.empty);
-       // featureAdapter = new FeatureAdapter(this, listFeatures);
+        vegetable = new ArrayList<>();
+        img = (ImageView)findViewById(R.id.imgLogoHeaderTaskDetail);
+        attach = (ImageView) findViewById(R.id.imgAttachHeaderTaskDetail);
+        done = (Button) findViewById(R.id.buttonVegetibleDone);
+        back = (ImageView) findViewById(R.id.imgBackHeaderTaskDetail);
+        list_vegetable = (ListView) findViewById(R.id.list_view);
 
-        MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(FeatureActivity.this);
+      /*  BackgroundThread12 backgroundThread = new BackgroundThread12();
+        backgroundThread.start();
+        backgroundThreadHandler = new BackgroundThreadHandler13();
+*/
+        textViewEmpty = (TextView) findViewById(android.R.id.empty);
+       // featureAdapter = new FeatureAdapter(this, vegetable);
 
-        TextView dependentName= (TextView)findViewById(R.id.textViewHeaderTaskDetail);
+        ViewHolder viewHolder = new ViewHolder();
+         viewHolder.dependentName= (TextView)findViewById(R.id.textViewHeaderTaskDetail);
 
-        jsonArrayImagesAdded = new JSONArray();
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
 
         try {
 
             Bundle b = getIntent().getExtras();
-            /*intWhichScreen = b.getInt("WHICH_SCREEN", Config.intSimpleActivityScreen);*/
+        /*intWhichScreen = b.getInt("WHICH_SCREEN", Config.intSimpleActivityScreen);*/
 
-            act = (ActivityModel) b.getSerializable("ACTIVITY");
+            ActivityModel act = (ActivityModel) b.getSerializable("ACTIVITY");
 
-            List<String> lstFeatures = new ArrayList<>(Arrays.asList(act.getFeatures()));
-
-            dependentName.setText(act.getStrActivityDependentName());
+            lstFeatures = new ArrayList<>(Arrays.asList(act.getFeatures()));
 
             featureAdapter = new FeatureAdapter(this, lstFeatures);
 
-            //Libs.log(act.getStrActivityDate(), " Date ");
-            //Libs.log(act.getFeatures().toString(),"Features");
-
-
-            //
-            File fileImage = libs.createFileInternal("images/" + libs.replaceSpace(act.getStrActivityDependentName()));
-
-            if(fileImage.exists()) {
-                String filename = fileImage.getAbsolutePath();
-                multiBitmapLoader.loadBitmap(filename, imgLogoHeaderTaskDetail);
-            }else{
-                imgLogoHeaderTaskDetail.setImageDrawable(getResources().getDrawable(R.drawable.mrs_hungal_circle2));
-            }
-
+            Libs.log(act.getStrActivityDate(), " Date ");
+            Libs.log(act.getFeatures().toString(),"Features");
         }catch (Exception e){
             e.printStackTrace();
         }
 
         libs = new Libs(FeatureActivity.this);
 
-        //String strCustomerImagePath = getFilesDir() + "/images/" + "feature_image";
 
+        strCustomerImagePath=getFilesDir()+"/images/"+"feature_image";
         mProgress = new ProgressDialog(FeatureActivity.this);
         progressDialog = new ProgressDialog(FeatureActivity.this);
+
+
+        String arr;
 
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(arrayListImageModel.size()>0)
-                    if(FeatureAdapter.selectedStrings.size()>0)
-                        uploadImage();
-                    else
-                        libs.toast(2,2, "Select a feature");
-                else
-                    libs.toast(2,2, "Select a Image");
-                //uploadCheckBox();
-                 //backgroundThreadHandler = new BackgroundThreadHandler();
+
+                 uploadCheckBox();
+               backgroundThreadHandler = new BackgroundThreadHandler();
             }
         });
-
-
-      /*  try {
+        try {
             if (Config.jsonObject.has("activities")) {
                 JSONArray jsonArrayServices = Config.jsonObject.getJSONArray("activities");
                 for (int i=0;i<jsonArrayServices.length();i++){
@@ -166,7 +184,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 for(int j = 0 ; j < jsonArray.length(); j++) {
 
                     veg = jsonArray.getString(j);
-                    listFeatures.add(veg);
+                    vegetable.add(veg);
 
                 }
 
@@ -182,11 +200,11 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             }
         } catch(JSONException e){
             e.printStackTrace();
-        }*/
+        }
 
 
-        featuresList.setAdapter(featureAdapter);
-        featuresList.setEmptyView(textViewEmpty);
+        list_vegetable.setAdapter(featureAdapter);
+        list_vegetable.setEmptyView(textViewEmpty);
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,7 +230,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     private void showStatusPopup(final Activity context, Point p) {
 
         // Inflate the popup_layout.xml
-        //LinearLayout viewGroup = (LinearLayout) context.findViewById(R.id.llStatusChangePopup);
+        LinearLayout viewGroup = (LinearLayout) context.findViewById(R.id.llStatusChangePopup);
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.header_task_detail_attach, null);
 
@@ -233,7 +251,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         // Displaying the popup at the specified location, + offsets.
         changeStatusPopUp.showAtLocation(layout, Gravity.NO_GRAVITY, p.x + OFFSET_X, p.y + OFFSET_Y);
      //   imageAttach = (ImageView)layout.findViewById(R.id.imageView2);
-        ImageView imageCamera = (ImageView) layout.findViewById(R.id.imageView);
+        imageCamera = (ImageView)layout.findViewById(R.id.imageView);
        /* imageAttach.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -269,7 +287,9 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             }
         });
     }
-
+    static class ViewHolder {
+        TextView dependentName;
+    }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
 
@@ -288,6 +308,130 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
 
     }
+    public class BackgroundThreadHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            mProgress.dismiss();
+            imageView = new ImageView(FeatureActivity.this);
+
+
+            LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
+
+            if ( imageView!= null && strImageName != null && !strImageName.equalsIgnoreCase("") && bitmap != null)
+                try {
+                    imageView.setImageBitmap(bitmap);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            for (int i = 0; i < 1; i++) {
+                imageView.setId(i);
+                imageView.setPadding(0, 0, 10, 0);
+                imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+                imageView.setImageBitmap(bitmap);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                layout.addView(imageView);
+            }
+            try {
+                checkImage();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public class BackgroundThread extends Thread {
+        @Override
+        public void run() {
+
+            try {
+                System.out.println("URI IS : "+ uri);
+                if (uri != null) {
+                    Calendar calendar = new GregorianCalendar();
+                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
+                    File galleryFile = libs.createFileInternalImage(strFileName);
+                    strImageName = galleryFile.getAbsolutePath();
+                    System.out.println("YOUR GALLERY PATH IS : "+ strImageName);
+
+                    ImageModel imageModel = new ImageModel(strImageName,"","Gallery Image",String.valueOf(System.currentTimeMillis()));
+                    ArrayList<ImageModel> arrImageModelGallery = new ArrayList<>();
+                    arrImageModelGallery.add(imageModel);
+
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    libs.copyInputStreamToFile(is, galleryFile);
+
+                    bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
+                }
+                backgroundThreadHandler.sendEmptyMessage(0);
+            } catch (IOException e) {
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class BackgroundThreadCamera extends Thread {
+        @Override
+        public void run() {
+            try {
+                /*if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+                    bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
+                }*/
+                if (uri != null) {
+                    Calendar calendar = new GregorianCalendar();
+                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
+                    File cameraFile = libs.createFileInternal(strFileName);
+                    strImageName = cameraFile.getAbsolutePath();
+                    System.out.println("Your CAMERA path is : " + strImageName);
+
+                    ImageModel imageModel = new ImageModel(strImageName,"","Camera Image",String.valueOf(System.currentTimeMillis()));
+                    ArrayList<ImageModel> arrayListImageModel = new ArrayList<>();
+                    arrayListImageModel.add(imageModel);
+
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    libs.copyInputStreamToFile(is, cameraFile);
+                    bitmap = libs.getBitmapFromFile(strImageName,Config.intWidth,Config.intHeight);
+                }
+                backgroundThreadHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class BackgroundThread12 extends Thread {
+        @Override
+        public void run() {
+            try {
+
+                FeatureModel featureModel = new FeatureModel();
+                String strDependent = featureModel.setDependentName(json.getString("dependent_name"));
+                File f = libs.getInternalFileImages(libs.replaceSpace(strDependent));
+
+                Libs.log(strDependent, "FP ");
+
+                if(f!=null&&f.exists()) {
+                    bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
+                    bitmap = libs.roundedBitmap(bitmap);
+                }
+
+                backgroundThreadHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class BackgroundThreadHandler13 extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            mProgress.dismiss();
+            if (img != null && bitmap != null)
+                img.setImageBitmap(bitmap);
+        }
+    }
+//https://github.com/balamurugan-adstringo/CareTaker.git
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -305,8 +449,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                         backgroundThreadHandler = new BackgroundThreadHandler();
                         mProgress.setMessage(getString(R.string.loading));
                         mProgress.show();
-                        strImageName = Libs.customerImageUri.getPath();
-                        Thread backgroundThreadCamera = new BackgroundThreadCamera();
+                       strImageName = Libs.customerImageUri.getPath();
+                        backgroundThreadCamera = new BackgroundThreadCamera();
                         backgroundThreadCamera.start();
                         break;
 
@@ -317,7 +461,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                        // strCustomerImgName = Libs.customerImageUri.getPath();
                        // if (intent.getData() != null) {
                             uri = intent.getData();
-                        Thread backgroundThread = new BackgroundThread();
+                            backgroundThread = new BackgroundThread();
                             backgroundThread.start();
                       //  }
                         break;
@@ -328,119 +472,235 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             }
         }
     }
+   /* public  void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2) {
+            if (resultCode == RESULT_OK) {
+                mProgress.setMessage("Loading..");
+                mProgress.show();
+                if (data != null) {
+                    uri = data.getData();
+                    System.out.println("YOUR URI IS THIS : "+ uri);
+                    backgroundThreadHandler = new BackgroundThreadHandler();
+                    backgroundThread = new BackgroundThread();
+                    backgroundThread.start();
+                    //   bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+
+                    switch (requestCode) {
+                        case Config.START_CAMERA_REQUEST_CODE:
+                            strCustomerImgName = Libs.customerImageUri.getPath();
+                            backgroundThreadCamera = new BackgroundThreadCamera();
+                            backgroundThreadCamera.start();
+                            break;
+
+                        case Config.START_GALLERY_REQUEST_CODE:
+                            if (data.getData() != null) {
+                                uri = data.getData();
+                                Thread backgroundThread = new BackgroundThread();
+                                backgroundThread.start();
+                            }
+                            break;
+                    }
+
+                } else if (resultCode ==RESULT_CANCELED) {
+                    Toast.makeText(FeatureActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }*/
+
+
+    public void checkImage() {
+
+        try {
+
+            if (libs.isConnectingToInternet()) {
+
+                progressDialog.setMessage(getResources().getString(R.string.uploading_image));
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+
+                UploadService uploadService = new UploadService(this);
+
+                if (progressDialog.isShowing())
+                    progressDialog.setProgress(1);
+
+                uploadService.removeImage("Upload_image", Config.myProfileModel.getEmail(),
+                        new App42CallBack() {
+                            public void onSuccess(Object response) {
+
+                                if(response!=null){
+                                    uploadImage();
+                                }else{
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
+                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                }
+                            }
+                            @Override
+                            public void onException(Exception e) {
+
+                                if(e!=null) {
+
+                                    App42Exception exception = (App42Exception) e;
+                                    int appErrorCode = exception.getAppErrorCode();
+
+                                    if (appErrorCode != 1401 ) {
+                                        uploadImage();
+                                    } else {
+                                        libs.toast(2, 2, getString(R.string.error));
+                                    }
+
+                                }else{
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
+                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                }
+                            }
+                        });
+
+            } else {
+                libs.toast(2, 2, getString(R.string.warning_internet));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            if (progressDialog.isShowing())
+                progressDialog.dismiss();
+            libs.toast(2, 2, getString(R.string.error));
+        }
+    }
 
     public void uploadImage(){
 
         try {
 
-            progressDialog.setMessage("Uploading...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-
             if (libs.isConnectingToInternet()) {
 
-                for(final ImageModel imageModel: arrayListImageModel) {
+                UploadService uploadService = new UploadService(this);
 
-                    UploadService uploadService = new UploadService(this);
+                Calendar c = Calendar.getInstance();
+                int seconds = c.get(Calendar.SECOND);
+                String sec = String.valueOf(seconds);
 
-                    uploadService.uploadImageCommon(imageModel.getStrImageName(), imageModel.getStrImageDesc(), imageModel.getStrImageDesc(), Config.myProfileModel.getEmail(), UploadFileType.IMAGE, new App42CallBack() {
+                long time= System.currentTimeMillis();
+                String tm = String.valueOf(time);
 
-                        public void onSuccess(Object response) {
+                uploadService.uploadImageCommon(strImageName,"Upload_image" , "Upload Image", Config.myProfileModel.getEmail(),
+                        UploadFileType.IMAGE, new App42CallBack() {
+                            public void onSuccess(Object response) {
 
-                            if (response != null) {
+                                if(response!=null) {
+                                    // Libs.log(response.toString(), "response");
+                                    Upload upload = (Upload) response;
+                                    ArrayList<Upload.File> fileList = upload.getFileList();
 
-                                Upload upload = (Upload) response;
-                                ArrayList<Upload.File> fileList = upload.getFileList();
+                                    if (fileList.size() > 0) {
 
-                                if (fileList.size() > 0) {
+                                        if (bitmap != null) {
+                                            //imageView.setImageBitmap(bitmap);
+                                            if (progressDialog.isShowing())
+                                                progressDialog.dismiss();
+                                            libs.toast(2, 2, getString(R.string.uploading_image));
+                                           // isImageChanged = false;
 
-                                    Upload.File file = fileList.get(0);
+                                            try {
 
-                                    JSONObject jsonObjectImages = new JSONObject();
+                                                File f = libs.getInternalFileImages("Upload_image");
 
-                                    try {
-                                        jsonObjectImages.put("image_name", imageModel.getStrImageDesc());
-                                        jsonObjectImages.put("image_url", file.getUrl());
-                                        jsonObjectImages.put("image_description", imageModel.getStrImageDesc());
-                                        jsonObjectImages.put("image_taken", imageModel.getStrImageUrl());
+                                                if (f.exists())
+                                                    f.delete();
 
-                                        jsonArrayImagesAdded.put(jsonObjectImages);
+                                                File newFile = new File(strImageName);
+                                                File renameFile = new File(strCustomerImagePath);
 
-                                        arrayListImageModel.remove(imageModel);
+                                                libs.moveFile(newFile, renameFile);
+                                                //TODO Check Logic
+                                            }catch (Exception e){
+                                                e.printStackTrace();
+                                            }
 
-                                        if(arrayListImageModel.size()<=0)
-                                            uploadCheckBox();
+                                        }
+                                        else {
+                                            if (progressDialog.isShowing())
+                                                progressDialog.dismiss();
+                                            libs.toast(2, 2, getString(R.string.error));
+                                        }
 
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
+                                    } else {
+                                        if (progressDialog.isShowing())
+                                            progressDialog.dismiss();
+                                        libs.toast(2, 2, ((Upload) response).getStrResponse());
                                     }
-
-                                } else {
+                                }else{
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    uploadImage();
-                                    libs.toast(2, 2, ((Upload) response).getStrResponse());
+                                    libs.toast(2, 2, getString(R.string.warning_internet));
                                 }
-                            } else {
+                            }
+
+                            @Override
+                            public void onException(Exception e) {
+
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                libs.toast(2, 2, getString(R.string.warning_internet));
+
+                                if(e!=null) {
+                                    Libs.log(e.toString(), "response");
+                                    libs.toast(2, 2, e.getMessage());
+                                }else{
+                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                }
                             }
-                        }
-
-                        @Override
-                        public void onException(Exception e) {
-
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
-
-                            if (e != null) {
-                                Libs.log(e.toString(), "response");
-                                libs.toast(2, 2, e.getMessage());
-                                uploadImage();
-                            } else {
-                                libs.toast(2, 2, getString(R.string.warning_internet));
-                            }
-                        }
-                    });
-                }
+                        });
 
             } else {
                 if (progressDialog.isShowing())
                     progressDialog.dismiss();
                 libs.toast(2, 2, getString(R.string.warning_internet));
             }
-
         }catch (Exception e){
             e.printStackTrace();
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
-
-            uploadImage();
             libs.toast(2, 2, getString(R.string.error));
         }
     }
 
-    public void uploadCheckBox() {
 
-        if (libs.isConnectingToInternet()) {
-            storageService = new StorageService(FeatureActivity.this);
+public void uploadCheckBox() {
+    if (libs.isConnectingToInternet()) {
+        storageService = new StorageService(FeatureActivity.this);
+
+        jsonObjectCarla = Config.jsonObject;
+        jsonObjectAct = new JSONObject();
+
+        progressDialog.setMessage(getResources().getString(R.string.loading));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        try {
+
+            if (jsonObjectCarla != null && jsonObjectCarla.has("provider_email")) {
+
+                //for customer
+                JSONArray jsonArrAct1 = new JSONArray(featureAdapter.selectedStrings);
+                System.out.println("BAVADHAN   :: "+ jsonArrAct1);
+                jsonObjectAct.put("features_done", jsonArrAct1);
+
+                //for Carla
+                JSONArray jsonArrAct2 = new JSONArray(featureAdapter.selectedStrings);
+                System.out.println("BAVADHAN   :: "+ jsonArrAct2);
+                jsonObjectActCarla.put("features_done", jsonArrAct2);
 
 
-            try {
-                jsonArrayFeaturesDone = new JSONArray();
-
-                for(String strings: FeatureAdapter.selectedStrings){
-                    jsonArrayFeaturesDone.put(strings);
-                }
-
-                Date doneDate = new Date();
-
-                strDoneDate=libs.convertDateToString(doneDate);
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        if (jsonObjectAct != null) {
 
             storageService.findDocsByIdApp42CallBack(Config.jsonDocId, Config.collectionName, new App42CallBack() {
                 @Override
@@ -456,27 +716,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                 JSONArray dependantsA = responseJSONDoc.
                                         getJSONArray("activities");
 
-                                for(int i=0; i< dependantsA.length(); i++){
+                                dependantsA.put(jsonObjectActCarla);
 
-                                    JSONObject jsonObjectActivity = dependantsA.getJSONObject(i);
-
-                                    if(jsonObjectActivity.getString("activity_date").equalsIgnoreCase(act.getStrActivityDate())) {
-
-                                        jsonObjectActivity.put("activity_done_date", strDoneDate);
-                                        jsonObjectActivity.put("status", "completed");
-
-                                        JSONArray jsonArrayFeatures = jsonObjectActivity.getJSONArray("features_done");
-
-                                        jsonArrayFeatures.put(jsonArrayFeaturesDone);
-
-                                        JSONArray jsonArrayImages = jsonObjectActivity.getJSONArray("images");
-
-                                        jsonArrayImages.put(jsonArrayImagesAdded);
-                                    }
-
-                                }
-
-                                //dependantsA.put(jsonObjectActCarla);
 
                             }
                         } catch (JSONException jSe) {
@@ -486,17 +727,23 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                         Libs.log(responseJSONDoc.toString(), " onj 1 ");
 
+
                         if (libs.isConnectingToInternet()) {//TODO check activity added
 
                             storageService.updateDocs(responseJSONDoc, Config.jsonDocId, Config.collectionName, new App42CallBack() {
                                 @Override
                                 public void onSuccess(Object o) {
 
+                                    //
+
                                     Config.jsonObject = responseJSONDoc;
+                                    //
 
                                     if (o != null) {
 
-                                        storageService.findDocsByKeyValue(Config.collectionName2, "customer_email", act.getStrCustomerEmail() , new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                                        // Config.jsonObject = responseJSONDoc;
+
+                                        storageService.findDocsByKeyValue(Config.collectionName2,"customer_email", "balamscint@gmail.com" , new AsyncApp42ServiceApi.App42StorageServiceListener() {
                                             @Override
                                             public void onDocumentInserted(Storage response) {
                                             }
@@ -523,48 +770,27 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                                                             if (responseJSONDocCarla.has("dependents")) {
 
-                                                                JSONArray dependantsA = responseJSONDocCarla.
-                                                                        getJSONArray("dependents");
+                                                                JSONArray dependantsA = responseJSONDocCarla.getJSONArray("dependents");
 
-                                                                for(int i=0; i< dependantsA.length(); i++){
+                                                                //TODO
 
-                                                                    JSONObject jsonObjectActivities = dependantsA.
-                                                                            getJSONObject(i);
+                                                                //products = new String[jsonArrayNotifications.length()];
+                                                                for (int i = 0; i < dependantsA.length(); i++) {
 
-                                                                    if(jsonObjectActivities.has("activities")) {
+                                                                    JSONObject jsonObjectDependent = dependantsA.getJSONObject(i);
 
-                                                                        JSONArray dependantsActivities = jsonObjectActivities.
-                                                                                getJSONArray("activities");
+                                                                   // if (inputSearch.getText().toString().equalsIgnoreCase(jsonObjectDependent.getString("dependent_name"))) {
 
-                                                                        for (int j = 0; j < dependantsActivities.length(); j++) {
+                                                                        JSONArray jsonArrayActivities = jsonObjectDependent.getJSONArray("activities");
 
-                                                                            JSONObject jsonObjectActivity = dependantsActivities.getJSONObject(j);
-
-                                                                            if (jsonObjectActivity.getString("activity_date").equalsIgnoreCase(act.getStrActivityDate())) {
-
-                                                                                jsonObjectActivity.put("activity_done_date", strDoneDate);
-                                                                                jsonObjectActivity.put("status", "completed");
-
-                                                                                JSONArray jsonArrayFeatures = jsonObjectActivity.getJSONArray("features_done");
-
-                                                                                jsonArrayFeatures.put(jsonArrayFeaturesDone);
-
-                                                                                JSONArray jsonArrayImages = jsonObjectActivity.getJSONArray("images");
-
-                                                                                jsonArrayImages.put(jsonArrayImagesAdded);
-                                                                            }
-                                                                        }
-                                                                    }
+                                                                        jsonArrayActivities.put(jsonObjectAct);
+                                                                  //  }
                                                                 }
-
-                                                                //dependantsA.put(jsonObjectActCarla);
-
                                                             }
-
 
                                                             Libs.log(responseJSONDocCarla.toString(), " onj 2 ");
 
-                                                            storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionName2, new App42CallBack() {
+                                                            storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, "customer", new App42CallBack() {
                                                                 @Override
                                                                 public void onSuccess(Object o) {
 
@@ -572,7 +798,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                                                         Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
                                                                         if (progressDialog.isShowing())
                                                                             progressDialog.dismiss();
-
                                                                         Config.intSelectedMenu=Config.intDashboardScreen;
                                                                         startActivity(intent);
                                                                         finish();
@@ -671,94 +896,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 }
             });
 
+
+        }
     }
 }
-    //https://github.com/balamurugan-adstringo/CareTaker.git
-
-    public class BackgroundThreadHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            mProgress.dismiss();
-            imageView = new ImageView(FeatureActivity.this);
-
-            LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
-
-            if ( imageView!= null && strImageName != null && !strImageName.equalsIgnoreCase("") && bitmap != null)
-                try {
-                    imageView.setImageBitmap(bitmap);
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-            for (int i = 0; i < 1; i++) {
-                imageView.setId(i);
-                imageView.setPadding(0, 0, 10, 0);
-                imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
-                imageView.setImageBitmap(bitmap);
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                layout.addView(imageView);
-            }
-        }
-    }
-
-    public class BackgroundThread extends Thread {
-        @Override
-        public void run() {
-
-            try {
-                System.out.println("URI IS : "+ uri);
-                if (uri != null) {
-                    Calendar calendar = new GregorianCalendar();
-                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
-                    File galleryFile = libs.createFileInternalImage(strFileName);
-                    strImageName = galleryFile.getAbsolutePath();
-
-                    System.out.println("YOUR GALLERY PATH IS : "+ strImageName);
-
-                    Date date = new Date();
-
-                    ImageModel imageModel = new ImageModel(strImageName,"", galleryFile.getName(), libs.convertDateToString(date));
-                    arrayListImageModel.add(imageModel);
-
-                    InputStream is = getContentResolver().openInputStream(uri);
-                    libs.copyInputStreamToFile(is, galleryFile);
-
-                    bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
-                }
-                backgroundThreadHandler.sendEmptyMessage(0);
-            } catch (IOException e) {
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public class BackgroundThreadCamera extends Thread {
-        @Override
-        public void run() {
-            try {
-                /*if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
-                    bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
-                }*/
-                if (uri != null) {
-                    Calendar calendar = new GregorianCalendar();
-                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
-                    File cameraFile = libs.createFileInternal(strFileName);
-                    strImageName = cameraFile.getAbsolutePath();
-                    System.out.println("Your CAMERA path is : " + strImageName);
-
-                    Date date = new Date();
-
-                    ImageModel imageModel = new ImageModel(strImageName,"", cameraFile.getName(), libs.convertDateToString(date));
-                    arrayListImageModel.add(imageModel);
-
-                    InputStream is = getContentResolver().openInputStream(uri);
-                    libs.copyInputStreamToFile(is, cameraFile);
-                    bitmap = libs.getBitmapFromFile(strImageName,Config.intWidth,Config.intHeight);
-                }
-                backgroundThreadHandler.sendEmptyMessage(0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

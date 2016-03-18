@@ -188,10 +188,8 @@ public class ClientProfileActivity extends AppCompatActivity  {
         });
 
 
-        locationMangaer = (LocationManager)
+                locationMangaer = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
-
-
     }
 
     @Override

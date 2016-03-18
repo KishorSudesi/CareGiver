@@ -88,13 +88,11 @@ public class ClientFragment extends Fragment {
                  startActivity(intent);
              }
          });
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
     }
 }

@@ -893,8 +893,10 @@ public class Libs {
             @Override
             public void onClick(DialogInterface dialog, int item) {
 
+                System.out.println(items[item].equals("Take Photo"));
                 if (items[item].equals("Take Photo")) {
                     openCamera(strFileName, fragment, activity);
+                    System.out.println("DDDDDDDIC DIC DIC DIC ::: "+strFileName);
 
                 } else if (items[item].equals("Choose from Library")) {
                     Intent intent = new Intent();

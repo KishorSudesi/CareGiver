@@ -413,9 +413,10 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             //Libs.log(String.valueOf(activityModels.size()), " size ");
                           //  ActivityModel activityModel = activityModels.get(position);
                             if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("upcoming")) {
+                                ActivityModel obj = activityModels.get(itemPosition);
                                 Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                                args.putSerializable("Client", obj);
                             /*intent.putExtra("WHICH_SCREEN", activityModels.get(itemPosition));*/
-
                                 // System.out.println("MODEL CLASS VAL :: " + activityModels.get(itemPosition).toString());
                                 intent.putExtras(args);
                                 startActivity(intent);

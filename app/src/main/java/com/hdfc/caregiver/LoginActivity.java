@@ -87,10 +87,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showPasswordfield() {
         if (relLayout.getVisibility() == View.GONE) {
-
             relLayout.setVisibility(View.VISIBLE);
             try {
-
                 TranslateAnimation ta = new TranslateAnimation(0, 0, 15, Animation.RELATIVE_TO_SELF);
                 ta.setDuration(1000);
                 ta.setFillAfter(true);
