@@ -12,8 +12,8 @@
       android:layout_gravity="end|bottom"
       android:layout_marginBottom="30dp"
       android:layout_marginRight="30dp"
-      android:src="@drawable/add_icon"
       android:background="@drawable/circle_float"
+      android:src="@drawable/add_icon"
       />
 
 </FrameLayout>

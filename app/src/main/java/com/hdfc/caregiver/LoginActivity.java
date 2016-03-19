@@ -276,28 +276,10 @@ public class LoginActivity extends AppCompatActivity {
                                                 }
 
                                                 public void onException(Exception ex) {
-                                                    //progressDialog.dismiss();
-                                                    //libs.toast(2, 2, getString(R.string.error_load_images));
-                                                    Libs.log(ex.getMessage(), " 123 ");
-
                                                     progressDialog.dismiss();
-
-                                                    libs.toast(1, 1, getString(R.string.success_login));
-                                                    Intent dashboardIntent = new Intent(LoginActivity.this, DashboardActivity.class);
-                                                    //dashboardIntent.putExtra("WHICH_SCREEN", Config.intSimpleActivityScreen);
-                                                    Config.intSelectedMenu=Config.intDashboardScreen;
-                                                    //  Config.boolIsLoggedIn = true;
-                                                    startActivity(dashboardIntent);
-                                                    finish();
-
+                                                    libs.toast(2, 2, getString(R.string.error_load_images));
                                                 }
                                             });
-
-
-
-                                            //end
-
-                                          //  libs.parseData();
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -330,8 +312,10 @@ public class LoginActivity extends AppCompatActivity {
                         public void onException(Exception e) {
                             progressDialog.dismiss();
 
-                            if (e != null)
-                                libs.toast(2, 2, "Invalid Credentials" + e.getMessage());//TODO string
+                            if (e != null) {
+                                libs.toast(2, 2, getString(R.string.invalid_login));//TODO string
+                                Libs.log(e.getMessage(), " MESS ");
+                            }
                             else libs.toast(2, 2, getString(R.string.warning_internet));
                         }
                     });

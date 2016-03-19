@@ -53,7 +53,7 @@
     <string name="hintAge">57</string>
     <string name="health_condition">Health Condition</string>
     <string name="diabetic">Diabetic</string>
-    <string name="account_type">Account Type</string>
+    <string name="notes_text">Notes</string>
     <string name="premium">Premium</string>
     <string name="address">Address</string>
     <string name="pune">Pune</string>
@@ -107,7 +107,7 @@
     <string name="barackObama">Barack Obama</string>
 
     <string name="vegetableTime">9.10 am</string>
-    <string name="vegetables">Vegetables</string>
+    <string name="features">Features</string>
 
     <string name="loading">Loading..</string>
     <string name="uploading_image">Uploading image..</string>
@@ -189,6 +189,8 @@
     <string name="dependent_data_lost">Something went wrong, Please create Dependent again</string>
     <string name="no_memory_camera">No storage mounted to save camera image</string>
     <string name="image_write_failed">Sorry!!! we may have lost your Profile Image</string>
+    <string name="invalid_login">Invalid Credentials</string>
+
 
     <!--Dashboard Menu Strings-->
     <string name="menu_activities">Activities</string>

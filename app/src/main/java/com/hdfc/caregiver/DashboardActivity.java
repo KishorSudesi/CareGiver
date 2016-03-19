@@ -1,8 +1,6 @@
 package com.hdfc.caregiver;
 
 import android.app.ProgressDialog;
-import android.content.pm.ApplicationInfo;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,7 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
@@ -19,8 +17,6 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.Libs;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.FileModel;
-import com.hdfc.models.Model;
-import com.yydcdut.sdlv.SlideAndDragListView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,17 +34,12 @@ import java.util.List;
  */
 public class DashboardActivity extends AppCompatActivity {
 
-    private static Handler threadHandler;
     public static List<ClientModel> activitiesModelArrayList;
-    private List<ApplicationInfo> mAppList;
-    private SlideAndDragListView<ApplicationInfo> mListView;
-    private List<Model> models;
-    private List<Drawable> images;
+    private static Handler threadHandler;
     private Libs libs;
-    Model obj = new Model();
-    ImageView mytask,clients,feedback,next;
-    LinearLayout vegetable;
+    private ImageView mytask, clients, feedback;
     private ProgressDialog progressDialog;
+    private TextView textViewTasks, textViewClients, textViewFeedback;
 
     @Override
     protected void onCreate( Bundle savedInstanceState) {
@@ -60,8 +51,10 @@ public class DashboardActivity extends AppCompatActivity {
         mytask = (ImageView)findViewById(R.id.buttonMyTasks);
         clients = (ImageView)findViewById(R.id.buttonClients);
         feedback = (ImageView)findViewById(R.id.buttonFeedback);
-        vegetable = (LinearLayout)findViewById(R.id.llFirst);
-        next = (ImageView)findViewById(R.id.imgNext);
+
+        textViewTasks = (TextView) findViewById(R.id.textViewTasks);
+        textViewClients = (TextView) findViewById(R.id.textViewClients);
+        textViewFeedback = (TextView) findViewById(R.id.textViewFeedback);
 
         progressDialog = new ProgressDialog(DashboardActivity.this);
 
@@ -80,6 +73,7 @@ public class DashboardActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setMenu();
                 mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+                textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                 Config.intSelectedMenu = 0;
                 gotoSimpleActivity();
             }
@@ -90,6 +84,7 @@ public class DashboardActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setMenu();
                 clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
+                textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                 Config.intSelectedMenu = 0;
                 gotoClient();
             }
@@ -100,6 +95,7 @@ public class DashboardActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setMenu();
                 feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
+                textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                 Config.intSelectedMenu = 0;
                 gotoFeedback();
             }
@@ -109,17 +105,21 @@ public class DashboardActivity extends AppCompatActivity {
             Config.intSelectedMenu = 0;
             gotoClient();
             clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
+            textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
         if (Config.intSelectedMenu == Config.intRatingsScreen) {
             Config.intSelectedMenu = 0;
             gotoFeedback();
             feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
+            textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         }
+
         if (Config.intSelectedMenu == Config.intSimpleActivityScreen) {
             Config.intSelectedMenu = 0;
             gotoSimpleActivity();
             mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+            textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
     }
@@ -128,6 +128,15 @@ public class DashboardActivity extends AppCompatActivity {
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks));
         clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients));
         feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback));
+
+        textViewTasks.setTextColor(getResources().getColor(R.color.colorAccentDark));
+        textViewClients.setTextColor(getResources().getColor(R.color.colorAccentDark));
+        textViewFeedback.setTextColor(getResources().getColor(R.color.colorAccentDark));
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
     }
 
     public void gotoClient() {

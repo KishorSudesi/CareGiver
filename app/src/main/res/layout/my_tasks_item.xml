@@ -1,92 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/rel"
-    android:layout_height="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llFirst"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/margin_general"
+    android:background="@color/gray_holo_light"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/imageTiming"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="@dimen/margin_general"
+        android:background="@drawable/circle"
+        android:gravity="center" />
 
     <LinearLayout
-        android:id="@+id/llFirst"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:weightSum="2">
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/margin_general"
+        android:layout_marginRight="@dimen/margin_general"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imageTiming"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:src="@mipmap/done"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="0.3"
+        <TextView
+            android:id="@+id/task_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_general"
+            android:text="@string/timeHint"
+            android:textSize="14sp"
             />
 
-        <RelativeLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/task_subject"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.7">
+            android:padding="@dimen/padding_general"
+            android:text="@string/taskSubject"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <LinearLayout
-                android:id="@+id/llText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="1.7">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:orientation="vertical"
-                    android:layout_weight="1.4">
-
-                    <TextView
-                        android:id="@+id/task_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/timeHint"
-                        android:textSize="14sp"
-                        />
-
-                    <TextView
-                        android:id="@+id/task_subject"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/taskSubject"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        />
-
-                    <TextView
-                        android:id="@+id/task_message"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/taskMessage"
-                        android:layout_marginTop="5dp"
-                        android:textSize="15sp"/>
-
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/imagePerson"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="0.3"
-                    android:src="@drawable/mrs_hungal_circle"/>
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="15dp"
-                android:layout_below="@+id/llText"
-                android:padding="15dp"
-                android:background="#E0E0E0"/>
-
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/task_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:padding="@dimen/padding_general"
+            android:text="@string/taskMessage"
+            android:textSize="15sp" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imagePerson"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/margin_general" />
 
 </RelativeLayout>

@@ -3,33 +3,34 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_below="@+id/include_header_my_tasks"
-    >
+    android:layout_below="@+id/include_header_my_tasks">
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp">
+        android:layout_margin="15dp"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/vegetableTime"
-            android:textSize="15sp"
-            android:textColor="#BDBDBD"/>
+            android:textColor="#BDBDBD"
+            android:textSize="15sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/vegetables"
+            android:text="@string/features"
             android:textSize="25sp"/>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_marginTop="15dp"
-            android:padding="15dp"
-            android:background="#E0E0E0"/>
+            android:background="#E0E0E0"
+            android:padding="15dp" />
 
     </LinearLayout>
+
 </ScrollView>

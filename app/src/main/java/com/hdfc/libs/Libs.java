@@ -78,6 +78,7 @@ public class Libs {
 
     public final static SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
     public final static SimpleDateFormat writeFormat = new SimpleDateFormat("kk:mm aa dd MMM yyyy", Locale.getDefault());
+    public final static SimpleDateFormat writeFormatMonth = new SimpleDateFormat("kk:mm aa", Locale.getDefault());
     public static Uri customerImageUri;
     private static Context _ctxt;
     private static SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()); //check the format and standardize it
@@ -893,10 +894,8 @@ public class Libs {
             @Override
             public void onClick(DialogInterface dialog, int item) {
 
-                System.out.println(items[item].equals("Take Photo"));
                 if (items[item].equals("Take Photo")) {
                     openCamera(strFileName, fragment, activity);
-                    System.out.println("DDDDDDDIC DIC DIC DIC ::: "+strFileName);
 
                 } else if (items[item].equals("Choose from Library")) {
                     Intent intent = new Intent();
@@ -921,6 +920,8 @@ public class Libs {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File file = createFileInternalImage(strFileName);
         customerImageUri = Uri.fromFile(file);
+
+        Libs.log(customerImageUri.getPath(), " FILE ");
         if (file != null) {
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, customerImageUri);
 
@@ -1609,6 +1610,20 @@ public class Libs {
 
             if(date!=null)
                 strDisplayDate = writeFormat.format(date);
+        }
+
+        return strDisplayDate;
+    }
+
+    public String formatDateTime(String strDate) {
+
+        String strDisplayDate = "06-03-2016 20:55:00";
+
+        if (strDate != null && !strDate.equalsIgnoreCase("")) {
+            Date date = convertStringToDate(strDate);
+
+            if (date != null)
+                strDisplayDate = writeFormatMonth.format(date);
         }
 
         return strDisplayDate;

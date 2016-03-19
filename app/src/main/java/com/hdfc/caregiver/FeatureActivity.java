@@ -309,6 +309,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                         backgroundThreadHandler = new BackgroundThreadHandler();
                         strImageName = Libs.customerImageUri.getPath();
+                        Libs.log(strImageName, " IMSGR ");
                         Thread backgroundThreadCamera = new BackgroundThreadCamera();
                         backgroundThreadCamera.start();
                         break;
@@ -316,11 +317,11 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                     case Config.START_GALLERY_REQUEST_CODE:
                         backgroundThreadHandler = new BackgroundThreadHandler();
                         // strCustomerImgName = Libs.customerImageUri.getPath();
-                        // if (intent.getData() != null) {
-                        uri = intent.getData();
-                        Thread backgroundThread = new BackgroundThread();
-                        backgroundThread.start();
-                        //  }
+                        if (intent.getData() != null) {
+                            uri = intent.getData();
+                            Thread backgroundThread = new BackgroundThread();
+                            backgroundThread.start();
+                        }
                         break;
                 }
 
@@ -694,9 +695,10 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             imageView = new ImageView(FeatureActivity.this);
 
-
-            if (imageView != null && strImageName != null && !strImageName.equalsIgnoreCase("") && bitmap != null)
+            if (bitmap != null)
                 try {
+                    Libs.log(" 2 " + String.valueOf(bitmap.getHeight()), " IN ");
+
                     imageView.setPadding(0, 0, 10, 0);
                     imageView.setImageBitmap(bitmap);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -722,15 +724,11 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         public void run() {
 
             try {
-                System.out.println("URI IS : " + uri);
                 if (uri != null) {
                     Calendar calendar = new GregorianCalendar();
                     String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
                     File galleryFile = libs.createFileInternalImage(strFileName);
                     strImageName = galleryFile.getAbsolutePath();
-
-                    System.out.println("YOUR GALLERY PATH IS : " + strImageName);
-
                     Date date = new Date();
 
                     ImageModel imageModel = new ImageModel(strImageName, "", galleryFile.getName(), libs.convertDateToString(date));
@@ -753,23 +751,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         @Override
         public void run() {
             try {
-                /*if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
-                    bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
-                }*/
-                if (uri != null) {
-                    Calendar calendar = new GregorianCalendar();
-                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
-                    File cameraFile = libs.createFileInternal(strFileName);
-                    strImageName = cameraFile.getAbsolutePath();
-                    System.out.println("Your CAMERA path is : " + strImageName);
-
-                    Date date = new Date();
-
-                    ImageModel imageModel = new ImageModel(strImageName, "", cameraFile.getName(), libs.convertDateToString(date));
-                    arrayListImageModel.add(imageModel);
-
-                    InputStream is = getContentResolver().openInputStream(uri);
-                    libs.copyInputStreamToFile(is, cameraFile);
+                if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
                     bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
