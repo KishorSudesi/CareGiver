@@ -328,9 +328,7 @@
           "provider_email": "carla1@gmail.com",
           "activity_message": "Testing ",
           "features_done": [
-            [
-              "potato"
-            ]
+            "corn"
           ],
           "status": "completed",
           "videos": [],
@@ -346,22 +344,14 @@
             "corn"
           ],
           "images": [
-            [
-              {
-                "image_name": "1458276881685.jpeg",
-                "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/de9e59e8ed4dee36b1b06112d8172be271c046b8/1458276881685.jpeg",
-                "image_description": "1458276881685.jpeg",
-                "image_taken": ""
-              },
-              {
-                "image_name": "1458276855229.jpeg",
-                "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/abad273a7c37fb7e7d20fda58f1b26e0f67a0620/1458276855229.jpeg",
-                "image_description": "1458276855229.jpeg",
-                "image_taken": ""
-              }
-            ]
+            {
+              "image_name": "1458365176420.jpeg",
+              "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/2b529b97fcb1b3c99f21e0078cd9e13df67ec68a/1458365176420.jpeg",
+              "image_description": "1458365176420.jpeg",
+              "image_taken": ""
+            }
           ],
-          "activity_done_date": "2016-03-18T10:25:09.657Z",
+          "activity_done_date": "2016-03-19T10:56:31.039Z",
           "provider_name": "Rushi"
         },
         {

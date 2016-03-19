@@ -43,7 +43,6 @@ public class ClientFragment extends Fragment {
 
     public ClientFragment() {
         // Required empty public constructor
-
     }
 
     public static ClientFragment newInstance() {
