@@ -415,7 +415,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("upcoming")) {
                                 ActivityModel obj = activityModels.get(itemPosition);
                                 Intent intent = new Intent(getActivity(), FeatureActivity.class);
-                                args.putSerializable("Client", obj);
+                                args.putSerializable("ACTIVITY", obj);
                             /*intent.putExtra("WHICH_SCREEN", activityModels.get(itemPosition));*/
                                 // System.out.println("MODEL CLASS VAL :: " + activityModels.get(itemPosition).toString());
                                 intent.putExtras(args);

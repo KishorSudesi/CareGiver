@@ -13,9 +13,8 @@ public class FeatureModel {
         return dependentName;
     }
 
-    public String setDependentName(String dependentName) {
+    public void setDependentName(String dependentName) {
         this.dependentName = dependentName;
-        return dependentName;
     }
 
     public CheckBox getVegetable() {

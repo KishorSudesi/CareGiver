@@ -64,9 +64,9 @@ public class FeatureAdapter extends BaseAdapter {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    selectedStrings.add(viewHolder.checkBox.getText().toString());
+                    selectedStrings.add(viewHolder.checkBox.getText().toString().trim());
                 } else {
-                    selectedStrings.remove(viewHolder.checkBox.getText().toString());
+                    selectedStrings.remove(viewHolder.checkBox.getText().toString().trim());
                 }
             }
         });
