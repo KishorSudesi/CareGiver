@@ -330,7 +330,8 @@ public class LoginActivity extends AppCompatActivity {
                         public void onException(Exception e) {
                             progressDialog.dismiss();
 
-                            if(e!=null) libs.toast(2, 2, "Invalid Credentials");//TODO string
+                            if (e != null)
+                                libs.toast(2, 2, "Invalid Credentials" + e.getMessage());//TODO string
                             else libs.toast(2, 2, getString(R.string.warning_internet));
                         }
                     });
