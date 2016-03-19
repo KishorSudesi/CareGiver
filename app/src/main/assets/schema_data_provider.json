@@ -68,9 +68,11 @@
   "activities": [
     {
       "service_id": 14700,
-      "features_done": [],
+      "features_done": [
+        "corn"
+      ],
       "activity_message": "Testing ",
-      "status": "upcoming",
+      "status": "completed",
       "videos": [],
       "customer_email": "balamscint@gmail.com",
       "activity_name": "Grocery Service",
@@ -83,28 +85,14 @@
         "corn"
       ],
       "images": [
-        [
-          {
-            "image_name": "1458285607609.jpeg",
-            "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/a2aca0f6394812f9201245b07ee79111b812ac68/1458285607609.jpeg",
-            "image_description": "1458285607609.jpeg",
-            "image_taken": ""
-          },
-          {
-            "image_name": "1458285593797.jpeg",
-            "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/bce9ae0859599646a5d93f78b6a45acf913fcafe/1458285593797.jpeg",
-            "image_description": "1458285593797.jpeg",
-            "image_taken": ""
-          },
-          {
-            "image_name": "1458285684468.jpeg",
-            "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/75ab3ea7f9f670c6dc3a32b1226db8d2943f98d3/1458285684468.jpeg",
-            "image_description": "1458285684468.jpeg",
-            "image_taken": ""
-          }
-        ]
+        {
+          "image_name": "1458373657806.jpeg",
+          "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/8e9c1ebf07f95027a2fce4d4d8e80f290b97d5c9/1458373657806.jpeg",
+          "image_description": "1458373657806.jpeg",
+          "image_taken": ""
+        }
       ],
-      "activity_done_date": "2016-03-18T12:51:57.742Z"
+      "activity_done_date": "2016-03-19T13:17:50.703Z"
     },
     {
       "service_id": "0",
@@ -154,8 +142,10 @@
     {
       "service_id": 14700,
       "activity_message": "Testing ",
-      "features_done": [],
-      "status": "upcoming",
+      "features_done": [
+        "corn"
+      ],
+      "status": "completed",
       "videos": [],
       "customer_email": "balamscint@gmail.com",
       "activity_name": "Grocery Service",
@@ -168,22 +158,14 @@
         "corn"
       ],
       "images": [
-        [
-          {
-            "image_name": "1458276881685.jpeg",
-            "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/de9e59e8ed4dee36b1b06112d8172be271c046b8/1458276881685.jpeg",
-            "image_description": "1458276881685.jpeg",
-            "image_taken": ""
-          },
-          {
-            "image_name": "1458276855229.jpeg",
-            "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/abad273a7c37fb7e7d20fda58f1b26e0f67a0620/1458276855229.jpeg",
-            "image_description": "1458276855229.jpeg",
-            "image_taken": ""
-          }
-        ]
+        {
+          "image_name": "1458365176420.jpeg",
+          "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/2b529b97fcb1b3c99f21e0078cd9e13df67ec68a/1458365176420.jpeg",
+          "image_description": "1458365176420.jpeg",
+          "image_taken": ""
+        }
       ],
-      "activity_done_date": "2016-03-18T10:25:09.657Z"
+      "activity_done_date": "2016-03-19T10:56:31.039Z"
     },
     {
       "service_id": "0",
