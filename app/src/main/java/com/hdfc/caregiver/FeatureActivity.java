@@ -110,7 +110,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             act = (ActivityModel) b.getSerializable("ACTIVITY");
 
-            libs = new Libs(FeatureActivity.this);
+            //libs = new Libs(FeatureActivity.this);
 
             List<String> lstFeatures = new ArrayList<>(Arrays.asList(act.getFeatures()));
 
@@ -544,32 +544,35 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                                                     JSONObject jsonObjectActivities = dependantsA.
                                                                             getJSONObject(i);
 
-                                                                    if (jsonObjectActivities.has("activities")) {
+                                                                    if (jsonObjectActivities.getString("dependent_name").equalsIgnoreCase(act.getStrActivityDependentName())) {
 
-                                                                        JSONArray dependantsActivities = jsonObjectActivities.
-                                                                                getJSONArray("activities");
+                                                                        if (jsonObjectActivities.has("activities")) {
 
-                                                                        for (int j = 0; j < dependantsActivities.length(); j++) {
+                                                                            JSONArray dependantsActivities = jsonObjectActivities.
+                                                                                    getJSONArray("activities");
 
-                                                                            JSONObject jsonObjectActivity = dependantsActivities.getJSONObject(j);
+                                                                            for (int j = 0; j < dependantsActivities.length(); j++) {
 
-                                                                            if (jsonObjectActivity.getString("activity_date").equalsIgnoreCase(act.getStrActivityDate()) &&
-                                                                                    jsonObjectActivity.getString("activity_name").equalsIgnoreCase(act.getStrActivityName()) &&
-                                                                                    jsonObjectActivity.getString("activity_message").equalsIgnoreCase(act.getStrActivityMessage())) {
+                                                                                JSONObject jsonObjectActivity = dependantsActivities.getJSONObject(j);
 
-                                                                                jsonObjectActivity.put("activity_done_date", strDoneDate);
-                                                                                jsonObjectActivity.put("status", "completed");
+                                                                                if (jsonObjectActivity.getString("activity_date").equalsIgnoreCase(act.getStrActivityDate()) &&
+                                                                                        jsonObjectActivity.getString("activity_name").equalsIgnoreCase(act.getStrActivityName()) &&
+                                                                                        jsonObjectActivity.getString("activity_message").equalsIgnoreCase(act.getStrActivityMessage())) {
 
-                                                                                jsonObjectActivity.put("features_done", jsonArrayFeaturesDone);
-                                                                                jsonObjectActivity.put("images", jsonArrayImagesAdded);
+                                                                                    jsonObjectActivity.put("activity_done_date", strDoneDate);
+                                                                                    jsonObjectActivity.put("status", "completed");
 
-                                                                                /*JSONArray jsonArrayFeatures = jsonObjectActivity.getJSONArray("features_done");
+                                                                                    jsonObjectActivity.put("features_done", jsonArrayFeaturesDone);
+                                                                                    jsonObjectActivity.put("images", jsonArrayImagesAdded);
 
-                                                                                jsonArrayFeatures.put(jsonArrayFeaturesDone);
+                                                                                    /*JSONArray jsonArrayFeatures = jsonObjectActivity.getJSONArray("features_done");
 
-                                                                                JSONArray jsonArrayImages = jsonObjectActivity.getJSONArray("images");
+                                                                                    jsonArrayFeatures.put(jsonArrayFeaturesDone);
 
-                                                                                jsonArrayImages.put(jsonArrayImagesAdded);*/
+                                                                                    JSONArray jsonArrayImages = jsonObjectActivity.getJSONArray("images");
+
+                                                                                    jsonArrayImages.put(jsonArrayImagesAdded);*/
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
@@ -693,7 +696,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
         }
     }
-    //https://github.com/balamurugan-adstringo/CareTaker.git
 
     public class BackgroundThreadHandler extends Handler {
         @Override
