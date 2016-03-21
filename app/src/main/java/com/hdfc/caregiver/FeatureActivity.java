@@ -72,6 +72,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     private static String strDoneDate;
     private static ActivityModel act;
     private static LinearLayout layout;
+    private static String strName;
     public JSONObject json;
     private JSONObject responseJSONDoc;
     private JSONObject responseJSONDocCarla;
@@ -252,7 +253,11 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             }
         });*/
-        strImageName = String.valueOf(new Date().getDate() + "" + new Date().getTime()) + ".jpeg";
+
+        strName = String.valueOf(new Date().getDate() + "" + new Date().getTime());
+        strImageName = strName + ".jpeg";
+
+
         imageCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -364,7 +369,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                         jsonObjectImages.put("image_name", imageModel.getStrImageDesc());
                                         jsonObjectImages.put("image_url", file.getUrl());
                                         jsonObjectImages.put("image_description", imageModel.getStrImageDesc());
-                                        jsonObjectImages.put("image_taken", imageModel.getStrImageUrl());
+                                        jsonObjectImages.put("image_taken", imageModel.getStrImageTime());
 
                                         jsonArrayImagesAdded.put(jsonObjectImages);
 
@@ -586,6 +591,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                                                         if (progressDialog.isShowing())
                                                                             progressDialog.dismiss();
 
+                                                                        libs.toast(2, 2, getString(R.string.activity_closed));
+
                                                                         Config.intSelectedMenu=Config.intDashboardScreen;
                                                                         startActivity(intent);
                                                                         finish();
@@ -753,6 +760,10 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             try {
                 if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
                     bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
+
+                    Date date = new Date();
+                    ImageModel imageModel = new ImageModel(strImageName, "", strName, libs.convertDateToString(date));
+                    arrayListImageModel.add(imageModel);
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
             } catch (Exception e) {

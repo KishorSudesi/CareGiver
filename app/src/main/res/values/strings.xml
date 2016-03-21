@@ -133,7 +133,6 @@
 
     <!--Info/App Specific Strings-->
     <string name="account_success_message">Good job. We all are set to care for your seniors. Go to your Dashboard to see how</string>
-
     <string name="add_dependent">Add Dependent</string>
     <string name="myself">Myself</string>
     <string name="loved_one">A Loved One</string>
@@ -174,6 +173,7 @@
     <string name="account_success_header">Account Successfully Created</string>
     <string name="service_added">Services Added Successfully</string>
     <string name="register_success">Account Registered Successfully</string>
+    <string name="activity_closed">Activity Closed Successfully</string>
 
     <!--Process Strings-->
     <string name="uploading">Uploading…</string>
