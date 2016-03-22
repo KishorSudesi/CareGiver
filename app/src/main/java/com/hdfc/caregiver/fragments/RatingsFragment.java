@@ -3,6 +3,7 @@ package com.hdfc.caregiver.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,7 +22,7 @@ import com.hdfc.caregiver.MyProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.Libs;
-import com.hdfc.models.RatingModel;
+import com.hdfc.models.FeedBackModel;
 import com.hdfc.views.RoundedImageView;
 
 import org.json.JSONArray;
@@ -34,19 +36,20 @@ import java.util.List;
 
 public class RatingsFragment extends Fragment {
 
-    ImageView mytask,clients,feedback;
+    public static Bitmap bitmap = null;
+    public static RatingsAdapter ratingsAdapter;
+    static List<FeedBackModel> activityFeedBackModels;
+    private static int intWhichScreen;
+    private static Handler backgroundThreadHandler;
+    private static ProgressDialog mProgress = null;
+    private static Libs libs;
+    private static double iRatings = 0;
+    private static LinearLayout layout;
+    public TextView textViewName, textViewEmpty;
+    ImageView mytask, clients, feedback;
     RoundedImageView imageProfilePic;
     RelativeLayout myprofile;
     ListView listratings;
-    public static Bitmap bitmap = null;
-    private static int intWhichScreen;
-    static List<RatingModel> activityFeedBackModels;
-    private static Handler backgroundThreadHandler;
-    public static RatingsAdapter ratingsAdapter;
-    public TextView textViewName, textViewEmpty;
-    private static ProgressDialog mProgress = null;
-    private static Libs libs;
-
 
     public RatingsFragment(){
         activityFeedBackModels = new ArrayList<>();
@@ -78,18 +81,15 @@ public class RatingsFragment extends Fragment {
         textViewName = (TextView) view.findViewById(R.id.name);
         textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
 
+        layout = (LinearLayout) view.findViewById(R.id.linearLayoutRatings);
+
         imageProfilePic = (RoundedImageView)view.findViewById(R.id.img);
         mProgress = new ProgressDialog(getActivity());
-       // Bundle b = getActivity().getIntent().getExtras();
         libs = new Libs(getActivity());
-        intWhichScreen = Config.intRatingsScreen;//b.getInt("WHICH_SCREEN", Config.intRatingsScreen);
+        intWhichScreen = Config.intRatingsScreen;
 
         if(Config.myProfileModel.getStrName()!=null)
             textViewName.setText(Config.myProfileModel.getStrName());
-
-        ratingsAdapter = new RatingsAdapter(getContext(),activityFeedBackModels );
-        listratings.setAdapter(ratingsAdapter);
-        listratings.setEmptyView(textViewEmpty);
 
         myprofile = (RelativeLayout) view.findViewById(R.id.relativelayoutRatings);
 
@@ -119,12 +119,20 @@ public class RatingsFragment extends Fragment {
 
                 for (int k = 0; k < jsonArrayFeedback.length(); k++) {
                     JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
-                    RatingModel ratingModel = new RatingModel();
-                    ratingModel.setMessage(jsonObjectFeedback.getString("feedback_message"));
-                    ratingModel.setStrAuthorName(jsonObjectFeedback.getString("feedback_by"));
+                    FeedBackModel feedBackModel = new FeedBackModel(
+                            jsonObjectFeedback.getString("feedback_message"),
+                            jsonObjectFeedback.getString("feedback_by"),
+                            jsonObjectFeedback.getInt("feedback_rating"),
+                            jsonObjectFeedback.getBoolean("feedback_report"),
+                            jsonObjectFeedback.getString("feedback_time"),
+                            jsonObjectFeedback.getString("feedback_by_url"));
 
-                    activityFeedBackModels.add(ratingModel);
+                    iRatings += jsonObjectFeedback.getInt("feedback_rating");
+
+                    activityFeedBackModels.add(feedBackModel);
                 }
+
+                iRatings = Libs.round(iRatings / jsonArrayFeedback.length(), 2);
             }
 
             ratingsAdapter.notifyDataSetChanged();
@@ -133,7 +141,7 @@ public class RatingsFragment extends Fragment {
             backgroundThread.start();
             backgroundThreadHandler = new BackgroundThreadHandler();
 
-            mProgress.setMessage("Loading...");
+            mProgress.setMessage(getString(R.string.loading));
             mProgress.show();
 
         } catch (JSONException e) {
@@ -147,8 +155,43 @@ public class RatingsFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             mProgress.dismiss();
+
             if (imageProfilePic != null && bitmap != null)
                 imageProfilePic.setImageBitmap(bitmap);
+
+            try {
+
+                int i = (int) iRatings;
+
+                for (int j = 0; j < i; j++) {
+
+                    ImageView imageView = new ImageView(getActivity());
+
+                    imageView.setPadding(0, 0, 10, 0);
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.stars_white));
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                    layout.addView(imageView);
+                }
+
+                for (int k = i; k < 5; k++) {
+
+                    ImageView imageView = new ImageView(getActivity());
+
+                    imageView.setPadding(0, 0, 10, 0);
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.star_grey));
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                    layout.addView(imageView);
+                }
+
+                ratingsAdapter = new RatingsAdapter(getContext(), activityFeedBackModels);
+                listratings.setAdapter(ratingsAdapter);
+                listratings.setEmptyView(textViewEmpty);
+
+            } catch (Exception | OutOfMemoryError e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -162,10 +205,22 @@ public class RatingsFragment extends Fragment {
                 if(f!=null&&f.exists())
                     bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
 
-                backgroundThreadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            try {
+                if (activityFeedBackModels != null) {
+                    for (int i = 0; i < activityFeedBackModels.size(); i++) {
+                        Libs.log(activityFeedBackModels.get(i).getStrFeedBackByUrl(), " URL ");
+                        libs.loadImageFromWeb(activityFeedBackModels.get(i).getStrFeedBackBy(), activityFeedBackModels.get(i).getStrFeedBackByUrl());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            backgroundThreadHandler.sendEmptyMessage(0);
         }
     }
 

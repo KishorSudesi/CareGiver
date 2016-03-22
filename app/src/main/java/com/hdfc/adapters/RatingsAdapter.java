@@ -11,8 +11,7 @@ import android.widget.TextView;
 import com.hdfc.caregiver.R;
 import com.hdfc.libs.Libs;
 import com.hdfc.libs.MultiBitmapLoader;
-import com.hdfc.models.RatingModel;
-import com.hdfc.views.RoundedImageView;
+import com.hdfc.models.FeedBackModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,13 +23,13 @@ import java.util.List;
  */
 public class RatingsAdapter extends BaseAdapter {
 
-    Context _context;
     private static LayoutInflater inflater = null;
-    List<RatingModel> data1= new ArrayList<>();
+    Context _context;
+    List<FeedBackModel> data1 = new ArrayList<>();
     private Libs libs;
     private MultiBitmapLoader multiBitmapLoader;
 
-    public RatingsAdapter(Context context, List<RatingModel> rating_models) {
+    public RatingsAdapter(Context context, List<FeedBackModel> rating_models) {
         _context = context;
         libs=new Libs(context);
         multiBitmapLoader = new MultiBitmapLoader(_context);
@@ -68,15 +67,15 @@ public class RatingsAdapter extends BaseAdapter {
 
         if(data1.size()>0) {
 
-            RatingModel ratingModel = data1.get(position);
+            FeedBackModel feedBackModel = data1.get(position);
 
-            viewHolder.feedback.setText(ratingModel.getMessage());
+            viewHolder.feedback.setText(feedBackModel.getStrFeedBackMessage());
 
-            File fileImage = libs.createFileInternal("images/" + libs.replaceSpace(ratingModel.getStrAuthorName()));
+            File fileImage = libs.createFileInternal("images/" + libs.replaceSpace(feedBackModel.getStrFeedBackBy()));
 
             if(fileImage.exists()) {
-                String filename = fileImage.getAbsolutePath();
-                multiBitmapLoader.loadBitmap(filename, viewHolder.image);
+                String strFilePath = fileImage.getAbsolutePath();
+                multiBitmapLoader.loadBitmap(strFilePath, viewHolder.image);
             }else{
                 viewHolder.image.setImageDrawable(_context.getResources().getDrawable(R.drawable.hungal_circle));
             }

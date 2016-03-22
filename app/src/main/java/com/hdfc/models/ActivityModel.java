@@ -1,7 +1,5 @@
 package com.hdfc.models;
 
-import org.json.JSONArray;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -29,6 +27,11 @@ public class ActivityModel implements Serializable {
 
     private int iServiceId;
     private String strProviderImageUrl;
+    private ArrayList<ActivityImageModel> activityImageModels = new ArrayList<>();
+    private ArrayList<ActivityVideoModel> activityVideoModels = new ArrayList<>();
+
+    public ActivityModel() {
+    }
 
     public String getStrCustomerEmail() {
         return strCustomerEmail;
@@ -81,16 +84,10 @@ public class ActivityModel implements Serializable {
     public String getStrActivityDesc() {
         return strActivityDesc;
     }
+    //private ArrayList<ActivityFeedBackModel> activityFeedBackModels = new ArrayList<>();
 
     public void setStrActivityDesc(String strActivityDesc) {
         this.strActivityDesc = strActivityDesc;
-    }
-
-    private ArrayList<ActivityImageModel> activityImageModels = new ArrayList<>();
-    private ArrayList<ActivityVideoModel> activityVideoModels = new ArrayList<>();
-    private ArrayList<ActivityFeedBackModel> activityFeedBackModels = new ArrayList<>();
-
-    public ActivityModel() {
     }
 
     public String getStrProviderImageUrl() {
@@ -106,87 +103,87 @@ public class ActivityModel implements Serializable {
         return strActivityProviderEmail;
     }
 
-    public String getStrActivityProviderContactNo() {
-        return strActivityProviderContactNo;
-    }
-
-    public String getStrActivityProviderDesc() {
-        return strActivityProviderDesc;
-    }
-
-    public String getStrActivityName() {
-        return strActivityName;
-    }
-
-    public String getStrActivityMessage() {
-        return strActivityMessage;
-    }
-
-    public String getStrAtivityProvider() {
-        return strAtivityProvider;
-    }
-
-    public String getStrActivityDate() {
-        return strActivityDate;
-    }
-
-    public void setStrActivityName(String strActivityName) {
-        this.strActivityName = strActivityName;
-    }
-
-    public void setStrActivityMessage(String strActivityMessage) {
-        this.strActivityMessage = strActivityMessage;
-    }
-
-    public void setStrAtivityProvider(String strAtivityProvider) {
-        this.strAtivityProvider = strAtivityProvider;
-    }
-
-    public void setStrActivityDate(String strActivityDate) {
-        this.strActivityDate = strActivityDate;
-    }
-
-    public void setStrActivityStatus(String strActivityStatus) {
-        this.strActivityStatus = strActivityStatus;
-    }
-
     public void setStrActivityProviderEmail(String strActivityProviderEmail) {
         this.strActivityProviderEmail = strActivityProviderEmail;
+    }
+
+    public String getStrActivityProviderContactNo() {
+        return strActivityProviderContactNo;
     }
 
     public void setStrActivityProviderContactNo(String strActivityProviderContactNo) {
         this.strActivityProviderContactNo = strActivityProviderContactNo;
     }
 
+    public String getStrActivityProviderDesc() {
+        return strActivityProviderDesc;
+    }
+
     public void setStrActivityProviderDesc(String strActivityProviderDesc) {
         this.strActivityProviderDesc = strActivityProviderDesc;
     }
 
-    public void setActivityImageModels(ArrayList<ActivityImageModel> activityImageModels) {
-        this.activityImageModels = activityImageModels;
+    public String getStrActivityName() {
+        return strActivityName;
     }
 
-    public void setActivityVideoModels(ArrayList<ActivityVideoModel> activityVideoModels) {
-        this.activityVideoModels = activityVideoModels;
+    public void setStrActivityName(String strActivityName) {
+        this.strActivityName = strActivityName;
     }
 
-    public void setActivityFeedBackModels(ArrayList<ActivityFeedBackModel> activityFeedBackModels) {
-        this.activityFeedBackModels = activityFeedBackModels;
+    public String getStrActivityMessage() {
+        return strActivityMessage;
+    }
+
+    public void setStrActivityMessage(String strActivityMessage) {
+        this.strActivityMessage = strActivityMessage;
+    }
+
+    public String getStrAtivityProvider() {
+        return strAtivityProvider;
+    }
+
+    public void setStrAtivityProvider(String strAtivityProvider) {
+        this.strAtivityProvider = strAtivityProvider;
+    }
+
+    public String getStrActivityDate() {
+        return strActivityDate;
+    }
+
+    public void setStrActivityDate(String strActivityDate) {
+        this.strActivityDate = strActivityDate;
     }
 
     public String getStrActivityStatus() {
         return strActivityStatus;
     }
 
+    public void setStrActivityStatus(String strActivityStatus) {
+        this.strActivityStatus = strActivityStatus;
+    }
+
     public ArrayList<ActivityImageModel> getActivityImageModels() {
         return activityImageModels;
+    }
+
+   /* public void setActivityFeedBackModels(ArrayList<ActivityFeedBackModel> activityFeedBackModels) {
+        this.activityFeedBackModels = activityFeedBackModels;
+    }*/
+
+    public void setActivityImageModels(ArrayList<ActivityImageModel> activityImageModels) {
+        this.activityImageModels = activityImageModels;
     }
 
     public ArrayList<ActivityVideoModel> getActivityVideoModels() {
         return activityVideoModels;
     }
 
-    public ArrayList<ActivityFeedBackModel> getActivityFeedBackModels() {
-        return activityFeedBackModels;
+    public void setActivityVideoModels(ArrayList<ActivityVideoModel> activityVideoModels) {
+        this.activityVideoModels = activityVideoModels;
     }
+
+    /*public ArrayList<ActivityFeedBackModel> getActivityFeedBackModels() {
+        return activityFeedBackModels;
+    }*/
 }
