@@ -1,10 +1,14 @@
 package com.hdfc.caregiver.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hdfc.caregiver.CreatingTaskActivity;
 import com.hdfc.caregiver.FeatureActivity;
@@ -39,12 +44,12 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         SlideAndDragListView.OnItemDeleteListener {
 
     private static final String TAG = "";
+    private static final int PICK_CONTACT = 979;
     public ArrayList<ActivityModel> activityModels = new ArrayList<>();
     private MultiBitmapLoader multiBitmapLoader;
     private Menu mMenu;
     private SlideAndDragListView<ApplicationInfo> mListView;
     private Libs libs;
-
     private BaseAdapter mAdapter = new BaseAdapter() {
 
         @Override
@@ -368,18 +373,49 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             case MenuItem.DIRECTION_RIGHT:
                 switch (buttonPosition) {
                     case 0:
+                        Toast.makeText(getContext(), "Contact", Toast.LENGTH_LONG).show();
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
+                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                        sendIntent.putExtra("sms_body", "default content");
+                        sendIntent.setType("vnd.android-dir/mms-sms");
+                        startActivity(sendIntent);
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
+                        Intent callIntent = new Intent(Intent.ACTION_CALL);
+                        callIntent.setData(Uri.parse("tel:8605547669"));
+                        startActivity(callIntent);
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:
+                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, PICK_CONTACT);
+
                         return Menu.ITEM_SCROLL_BACK;
                 }
+
+
         }
         return Menu.ITEM_NOTHING;
     }
 
+    @Override
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+
+        switch (reqCode) {
+            case PICK_CONTACT:
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri contactData = data.getData();
+                    Cursor c = getActivity().getContentResolver().query(contactData, null, null, null, null);
+                    if (c.moveToFirst()) {
+                        String name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                        System.out.println(name);
+                        // TODO Whatever you want to do with the selected contact name.
+                    }
+                }
+                break;
+        }
+    }
     @Override
     public void onItemDelete(View view, int position) {
         mAdapter.notifyDataSetChanged();

@@ -16,6 +16,7 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -328,6 +329,15 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                             backgroundThread.start();
                         }
                         break;
+
+                        /*backgroundThreadHandler = new BackgroundThreadHandler();
+                        // strCustomerImgName = Libs.customerImageUri.getPath();
+                        if (intent.getData() != null) {
+                            uri = intent.getData();
+                            Thread backgroundThread = new BackgroundThread();
+                            backgroundThread.start();
+                        }
+                        break;*/
                 }
 
             } catch (Exception e) {
@@ -367,8 +377,10 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                                     try {
                                         jsonObjectImages.put("image_name", imageModel.getStrImageDesc());
+                                        Log.e("Image URL : ", file.getUrl());
                                         jsonObjectImages.put("image_url", file.getUrl());
                                         jsonObjectImages.put("image_description", imageModel.getStrImageDesc());
+                                        Log.e("Time of image : ", imageModel.getStrImageTime());
                                         jsonObjectImages.put("image_taken", imageModel.getStrImageTime());
 
                                         jsonArrayImagesAdded.put(jsonObjectImages);
@@ -486,7 +498,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                                         jsonArrayImages.put(jsonArrayImagesAdded);*/
                                     }
-
                                 }
 
                                 //dependantsA.put(jsonObjectActCarla);
@@ -693,7 +704,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                     }
                 }
             });
-
         }
     }
 
@@ -701,19 +711,25 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         @Override
         public void handleMessage(Message msg) {
             mProgress.dismiss();
-
             imageView = new ImageView(FeatureActivity.this);
-
             if (bitmap != null)
                 try {
                     Libs.log(" 2 " + String.valueOf(bitmap.getHeight()), " IN ");
-
                     imageView.setPadding(0, 0, 10, 0);
                     imageView.setImageBitmap(bitmap);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+           /* if (imageView != null && strImageName != null && !strImageName.equalsIgnoreCase("") && bitmap != null)
+                try {
+                    imageView.setPadding(0, 0, 10, 0);
+                    imageView.setImageBitmap(bitmap);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }*/
 
             /*for (int i = 0; i < 1; i++) {
                 imageView.setId(i);
@@ -733,11 +749,15 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         public void run() {
 
             try {
+                System.out.println("URI IS : " + uri);
                 if (uri != null) {
                     Calendar calendar = new GregorianCalendar();
                     String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
                     File galleryFile = libs.createFileInternalImage(strFileName);
                     strImageName = galleryFile.getAbsolutePath();
+
+                    System.out.println("YOUR GALLERY PATH IS : " + strImageName);
+
                     Date date = new Date();
 
                     ImageModel imageModel = new ImageModel(strImageName, "", galleryFile.getName(), libs.convertDateToString(date));
@@ -767,6 +787,22 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                     ImageModel imageModel = new ImageModel(strImageName, "", strName, libs.convertDateToString(date));
                     arrayListImageModel.add(imageModel);
                 }
+                /*if (uri != null) {
+                    Calendar calendar = new GregorianCalendar();
+                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
+                    File cameraFile = libs.createFileInternal(strFileName);
+                    strImageName = cameraFile.getAbsolutePath();
+                    System.out.println("Your CAMERA path is : " + strImageName);
+
+                    Date date = new Date();
+
+                    ImageModel imageModel = new ImageModel(strImageName, "", cameraFile.getName(), libs.convertDateToString(date));
+                    arrayListImageModel.add(imageModel);
+
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    libs.copyInputStreamToFile(is, cameraFile);
+                    bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
+                }*/
                 backgroundThreadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
                 e.printStackTrace();
