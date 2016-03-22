@@ -46,20 +46,20 @@ import java.util.GregorianCalendar;
  */
 public class MyProfileActivity extends AppCompatActivity {
 
-    ImageView backbutton,edit,imageplace;
-    static RoundedImageView profileImage;
-    EditText phone,place,textViewName;
-    private static int intWhichScreen;
+    //private static int intWhichScreen;
     public static String strCustomerImgName = "";
     public static Bitmap bitmap = null;
     public static Uri uri;
-    private static Handler backgroundThreadHandler;
     public static String strCustomerImgNameCamera;
-    public TextView email;
-    int Flag=0;
+    static RoundedImageView profileImage;
+    private static Handler backgroundThreadHandler;
     private static Libs libs;
     private static ProgressDialog mProgress = null;
     private static boolean isImageChanged=false;
+    public TextView email;
+    ImageView backbutton, edit, imageplace;
+    EditText phone, place, textViewName;
+    int Flag = 0;
     private ProgressDialog progressDialog;
 
 
@@ -74,8 +74,8 @@ public class MyProfileActivity extends AppCompatActivity {
         email = (TextView)findViewById(R.id.textViewMyProfileEmail);
         Button signOut = (Button) findViewById(R.id.signOut);
 
-        Bundle b = getIntent().getExtras();
-        intWhichScreen = b.getInt("WHICH_SCREEN", Config.intRatingsScreen);
+        //Bundle b = getIntent().getExtras();
+        //intWhichScreen = b.getInt("WHICH_SCREEN", Config.intRatingsScreen);
 
         libs = new Libs(MyProfileActivity.this);
         progressDialog = new ProgressDialog(MyProfileActivity.this);
@@ -297,32 +297,6 @@ public class MyProfileActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    public class BackgroundThreadHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-
-            if(mProgress.isShowing())
-                mProgress.dismiss();
-
-            if (profileImage != null && strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("") && bitmap != null)
-                profileImage.setImageBitmap(bitmap);
-
-            if(!isImageChanged){
-                if (bitmap != null)
-                    profileImage.setImageBitmap(bitmap);
-                else
-                    libs.toast(2, 2, getString(R.string.error));
-            }
-
-            if(isImageChanged&&bitmap != null) {
-                try {
-                    checkImage();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -365,59 +339,6 @@ public class MyProfileActivity extends AppCompatActivity {
 
         mProgress.setMessage(getResources().getString(R.string.loading));
         mProgress.show();
-    }
-
-    public class BackgroundThread extends Thread {
-        @Override
-        public void run() {
-            try {
-
-                File f = libs.getInternalFileImages(Config.strCustomerImageName);
-                Libs.log(f.getAbsolutePath(), " FP ");
-                bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
-
-                backgroundThreadHandler.sendEmptyMessage(0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    //
-    public class BackgroundThreadGallery extends Thread {
-        @Override
-        public void run() {
-
-            try {
-                if (uri != null) {
-                    Calendar calendar = new GregorianCalendar();
-                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
-                    File galleryFile = libs.createFileInternalImage(strFileName);
-                    strCustomerImgName = galleryFile.getAbsolutePath();
-                    InputStream is = getContentResolver().openInputStream(uri);
-                    libs.copyInputStreamToFile(is, galleryFile);
-                    bitmap = libs.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
-                    isImageChanged=true;
-                }
-                backgroundThreadHandler.sendEmptyMessage(0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public class BackgroundThreadCamera extends Thread {
-        @Override
-        public void run() {
-            try {
-                if (strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("")) {
-                    bitmap = libs.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
-                    isImageChanged=true;
-                }
-                backgroundThreadHandler.sendEmptyMessage(0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public void checkImage() {
@@ -491,6 +412,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
                 uploadService.uploadImageCommon(strCustomerImgName, "provider_image" , "Profile Picture", Config.myProfileModel.getEmail(),
                         UploadFileType.IMAGE, new App42CallBack() {
+
                             public void onSuccess(Object response) {
 
                                 if(response!=null) {
@@ -498,32 +420,39 @@ public class MyProfileActivity extends AppCompatActivity {
                                     Upload upload = (Upload) response;
                                     ArrayList<Upload.File> fileList = upload.getFileList();
 
-                                    if (fileList.size() > 0) {
+                                    if (fileList.size() > 0 && bitmap != null) {
 
                                         Upload.File file = fileList.get(0);
 
                                         final String url = file.getUrl();
 
-                                        if (bitmap != null) {
+                                        JSONObject jsonToUpdate = new JSONObject();
 
-                                            try {
-                                                //TODO Check Logic
+                                        StorageService storageService = new StorageService(MyProfileActivity.this);
 
-                                                StorageService storageService = new StorageService(MyProfileActivity.this);
+                                        try {
 
-                                                JSONObject jsonToUpdate = new JSONObject();
+                                            jsonToUpdate.put("provider_profile_url", url);
+                                            //
+                                            storageService.updateDocs(jsonToUpdate, Config.jsonDocId, Config.collectionName, new App42CallBack() {
+                                                @Override
+                                                public void onSuccess(Object o) {
 
-                                                try {
+                                                    if (o != null) {
 
-                                                    jsonToUpdate.put("provider_profile_url", url);
+                                                        File f = libs.getInternalFileImages(Config.strCustomerImageName);
 
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
+                                                        if (f.exists())
+                                                            f.delete();
 
-                                                storageService.updateDocs(jsonToUpdate, Config.jsonDocId, Config.collectionName, new App42CallBack() {
-                                                    @Override
-                                                    public void onSuccess(Object o) {
+                                                        File newFile = new File(strCustomerImgName);
+                                                        File renameFile = libs.getInternalFileImages(Config.strCustomerImageName);
+
+                                                        try {
+                                                            libs.moveFile(newFile, renameFile);
+                                                        } catch (IOException e) {
+                                                            e.printStackTrace();
+                                                        }
 
                                                         profileImage.setImageBitmap(bitmap);
 
@@ -542,41 +471,27 @@ public class MyProfileActivity extends AppCompatActivity {
                                                         libs.toast(2, 2, getString(R.string.update_profile_image));
                                                         isImageChanged = false;
 
-                                                        File f = libs.getInternalFileImages(Config.strCustomerImageName);
-
-                                                        if (f.exists())
-                                                            f.delete();
-
-                                                        File newFile = new File(strCustomerImgName);
-                                                        File renameFile = libs.getInternalFileImages(Config.strCustomerImageName);
-
-                                                        try {
-                                                            libs.moveFile(newFile, renameFile);
-                                                        } catch (IOException e) {
-                                                            e.printStackTrace();
-                                                        }
-
+                                                    } else {
+                                                        libs.toast(2, 2, getString(R.string.warning_internet));
                                                     }
+                                                }
 
-                                                    @Override
-                                                    public void onException(Exception e) {
-                                                        if (progressDialog.isShowing())
-                                                            progressDialog.dismiss();
-                                                        libs.toast(2, 2, "Error. Try Again!!!");
+                                                @Override
+                                                public void onException(Exception e) {
+                                                    if (progressDialog.isShowing())
+                                                        progressDialog.dismiss();
+
+                                                    if (e != null) {
+                                                        Libs.log(e.toString(), "response onException 1 ");
+                                                        libs.toast(2, 2, e.getMessage());
+                                                    } else {
+                                                        libs.toast(2, 2, getString(R.string.warning_internet));
                                                     }
-                                                });
-
-                                                //
-
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-
-                                        }
-                                        else {
-                                            if (progressDialog.isShowing())
-                                                progressDialog.dismiss();
-                                            libs.toast(2, 2, getString(R.string.error));
+                                                }
+                                            });
+                                            //
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
                                         }
 
                                     } else {
@@ -616,6 +531,87 @@ public class MyProfileActivity extends AppCompatActivity {
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
             libs.toast(2, 2, getString(R.string.error));
+        }
+    }
+
+    public class BackgroundThreadHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+
+            if (mProgress.isShowing())
+                mProgress.dismiss();
+
+            if (profileImage != null && strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("") && bitmap != null)
+                profileImage.setImageBitmap(bitmap);
+
+            if (!isImageChanged) {
+                if (bitmap != null)
+                    profileImage.setImageBitmap(bitmap);
+                else
+                    libs.toast(2, 2, getString(R.string.error));
+            }
+
+            if (isImageChanged && bitmap != null) {
+                try {
+                    checkImage();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public class BackgroundThread extends Thread {
+        @Override
+        public void run() {
+            try {
+
+                File f = libs.getInternalFileImages(Config.strCustomerImageName);
+                Libs.log(f.getAbsolutePath(), " FP ");
+                bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
+
+                backgroundThreadHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //
+    public class BackgroundThreadGallery extends Thread {
+        @Override
+        public void run() {
+
+            try {
+                if (uri != null) {
+                    Calendar calendar = new GregorianCalendar();
+                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
+                    File galleryFile = libs.createFileInternalImage(strFileName);
+                    strCustomerImgName = galleryFile.getAbsolutePath();
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    libs.copyInputStreamToFile(is, galleryFile);
+                    bitmap = libs.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
+                    isImageChanged = true;
+                }
+                backgroundThreadHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class BackgroundThreadCamera extends Thread {
+        @Override
+        public void run() {
+            try {
+                if (strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("")) {
+                    bitmap = libs.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
+                    isImageChanged = true;
+                }
+                backgroundThreadHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
