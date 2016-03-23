@@ -111,7 +111,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             act = (ActivityModel) b.getSerializable("ACTIVITY");
 
-            //libs = new Libs(FeatureActivity.this);
+            libs = new Libs(FeatureActivity.this);
 
             List<String> lstFeatures = new ArrayList<>(Arrays.asList(act.getFeatures()));
 

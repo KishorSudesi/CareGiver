@@ -132,14 +132,16 @@ public class RatingsFragment extends Fragment {
                     activityFeedBackModels.add(feedBackModel);
                 }
 
-                iRatings = Libs.round(iRatings / jsonArrayFeedback.length(), 2);
+                if (jsonArrayFeedback.length() > 0)
+                    iRatings = Libs.round(iRatings / jsonArrayFeedback.length(), 2);
             }
 
             //ratingsAdapter.notifyDataSetChanged();
 
+            backgroundThreadHandler = new BackgroundThreadHandler();
             BackgroundThread backgroundThread = new BackgroundThread();
             backgroundThread.start();
-            backgroundThreadHandler = new BackgroundThreadHandler();
+
 
             mProgress.setMessage(getString(R.string.loading));
             mProgress.show();
