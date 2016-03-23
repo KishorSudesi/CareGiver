@@ -33,7 +33,7 @@
     public static ** valueOf(java.lang.String);
 }
 
-@#app42
+#app42
 -keep class com.shephertz.app42.** { *; }
 -keep interface com.shephertz.app42.** { *; }
 -dontwarn com.shephertz.app42.**

@@ -28,8 +28,8 @@ public class Config {
     public static final String[] weekNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     public static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
     public static final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    public static final boolean isDebuggable = false;
-    public static final boolean release = true;
+    public static final boolean isDebuggable = true;
+    public static final boolean release = false;
     public final static String strCustomerImageName = "provider_image";
     public static ArrayList<FileModel> fileModels = new ArrayList<>();
     public static int intClientScreen = 2;
@@ -37,6 +37,7 @@ public class Config {
     public static int intSimpleActivityScreen = 1;
     public static int intScreenWidth = 0;
     public static int intScreenHeight = 0;
+
     //User Specific clear at logout or whenever needed
     public static JSONObject jsonObject = null;
     public static JSONObject jsonServer = null;
