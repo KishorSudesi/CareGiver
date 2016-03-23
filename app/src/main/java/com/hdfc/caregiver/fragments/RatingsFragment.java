@@ -111,6 +111,8 @@ public class RatingsFragment extends Fragment {
 
         try {
 
+            iRatings = 0;
+
             activityFeedBackModels.clear();
 
             if (Config.jsonObject.has("feedbacks")) {
@@ -165,7 +167,12 @@ public class RatingsFragment extends Fragment {
 
                 int i = (int) iRatings;
 
-                for (int j = 0; j < i; j++) {
+                layout.removeAllViews();
+
+
+                int j, k;
+
+                for (j = 0; j < i; j++) {
 
                     ImageView imageView = new ImageView(getActivity());
 
@@ -176,7 +183,9 @@ public class RatingsFragment extends Fragment {
                     layout.addView(imageView);
                 }
 
-                for (int k = i; k < 5; k++) {
+                Libs.log(String.valueOf(i + " ! " + j), " R ");
+
+                for (k = i; k < 5; k++) {
 
                     ImageView imageView = new ImageView(getActivity());
 
@@ -186,6 +195,8 @@ public class RatingsFragment extends Fragment {
 
                     layout.addView(imageView);
                 }
+
+                Libs.log(String.valueOf(i + " ! " + k), " R ");
 
                 ratingsAdapter = new RatingsAdapter(getContext(), activityFeedBackModels);
                 listratings.setAdapter(ratingsAdapter);

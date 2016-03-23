@@ -92,8 +92,19 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                 ActivityModel activityModel = activityModels.get(position);
 
-                cvh.textSubject.setText(activityModel.getStrActivityMessage());
-                cvh.textMessage.setText(activityModel.getStrActivityName());
+                String strMessage = activityModel.getStrActivityMessage();
+
+                if (strMessage.length() > 20)
+                    strMessage = activityModel.getStrActivityMessage().substring(0, 18) + "..";
+
+                cvh.textSubject.setText(strMessage);
+
+                String strName = activityModel.getStrActivityName();
+
+                if (strName.length() > 20)
+                    strName = activityModel.getStrActivityName().substring(0, 18) + "..";
+
+                cvh.textMessage.setText(strName);
 
                 cvh.textTime.setText(libs.formatDate(activityModel.getStrActivityDate()));
                 cvh.imageTiming.setText(libs.formatDateTime(activityModel.getStrActivityDate()));
