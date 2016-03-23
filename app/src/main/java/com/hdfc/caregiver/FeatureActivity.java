@@ -96,6 +96,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         ListView featuresList = (ListView) findViewById(R.id.list_view);
         //surfaceView = (SurfaceView)findViewById(R.id.camerapreview);
         TextView textViewEmpty = (TextView) findViewById(android.R.id.empty);
+        TextView textViewTime = (TextView) findViewById(R.id.textViewTime);
         // featureAdapter = new FeatureAdapter(this, listFeatures);
 
         layout = (LinearLayout) findViewById(R.id.linear);
@@ -120,6 +121,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             dependentName.setText(act.getStrActivityDependentName());
 
             featureAdapter = new FeatureAdapter(this, lstFeatures);
+
+            textViewTime.setText(libs.formatDateTime(act.getStrActivityDate()));
 
             //Libs.log(act.getStrActivityDate(), " Date ");
             //Libs.log(act.getFeatures().toString(),"Features");
