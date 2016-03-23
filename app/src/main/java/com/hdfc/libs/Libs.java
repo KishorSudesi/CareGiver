@@ -538,8 +538,8 @@ public class Libs {
     //load image from url
     public void loadImageFromWeb(String strFileName, String strFileUrl) {
 
-        strFileName = replaceSpace(strFileName);
-        strFileUrl = replaceSpace(strFileUrl);
+        strFileName = replaceSpace(strFileName.trim());
+        strFileUrl = replaceSpace(strFileUrl.trim());
 
         File fileImage = createFileInternal("images/" + strFileName);
 

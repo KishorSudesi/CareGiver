@@ -21,11 +21,6 @@ import com.hdfc.models.FileModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -204,7 +199,9 @@ public class DashboardActivity extends AppCompatActivity {
 
                     if (fileModel != null && fileModel.getStrFileUrl() != null && !fileModel.getStrFileUrl().equalsIgnoreCase("")) {
 
-                        String strUrl = libs.replaceSpace(fileModel.getStrFileUrl());
+                        libs.loadImageFromWeb(fileModel.getStrFileName(), fileModel.getStrFileUrl());
+
+                       /* String strUrl = libs.replaceSpace(fileModel.getStrFileUrl());
 
                         String strFileName = libs.replaceSpace(fileModel.getStrFileName());
 
@@ -232,7 +229,7 @@ public class DashboardActivity extends AppCompatActivity {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        }
+                        }*/
                     }
                 }
 
@@ -282,10 +279,10 @@ public class DashboardActivity extends AppCompatActivity {
 
                     }
                 }
-            threadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            threadHandler.sendEmptyMessage(0);
         }
     }
 

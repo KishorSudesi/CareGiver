@@ -135,7 +135,7 @@ public class RatingsFragment extends Fragment {
                 iRatings = Libs.round(iRatings / jsonArrayFeedback.length(), 2);
             }
 
-            ratingsAdapter.notifyDataSetChanged();
+            //ratingsAdapter.notifyDataSetChanged();
 
             BackgroundThread backgroundThread = new BackgroundThread();
             backgroundThread.start();
