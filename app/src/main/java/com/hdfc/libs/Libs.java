@@ -46,6 +46,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 
@@ -887,39 +888,48 @@ public class Libs {
 
     public void selectImage(final String strFileName, final Fragment fragment, final Activity activity) {
         final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
+        System.out.println("Pilu : " + FeatureActivity.IMAGE_COUNT);
+        if (FeatureActivity.IMAGE_COUNT < 2) {
 
-        builder.setTitle("Add a Profile Photo!");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
 
-                System.out.println(items[item].equals("Take Photo"));
-                if (items[item].equals("Take Photo")) {
-                    openCamera(strFileName, fragment, activity);
-                    System.out.println("DDDDDDDIC DIC DIC DIC ::: " + strFileName);
+            builder.setTitle("Add a Profile Photo!");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
 
-                } else if (items[item].equals("Choose from Library")) {
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    System.out.println(items[item].equals("Take Photo"));
+                    if (items[item].equals("Take Photo")) {
+                        openCamera(strFileName, fragment, activity);
+                        System.out.println("DDDDDDDIC DIC DIC DIC ::: " + strFileName);
 
-                    if (fragment != null)
-                        fragment.startActivityForResult(Intent.createChooser(intent, "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
-                    else
-                        activity.startActivityForResult(Intent.createChooser(intent, "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
+                    } else if (items[item].equals("Choose from Library")) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
 
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
+                        FeatureActivity.IMAGE_COUNT = FeatureActivity.IMAGE_COUNT + 1;
+
+                        if (fragment != null)
+                            fragment.startActivityForResult(Intent.createChooser(intent, "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
+                        else
+                            activity.startActivityForResult(Intent.createChooser(intent, "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
+
+                    } else if (items[item].equals("Cancel")) {
+                        dialog.dismiss();
+                    }
                 }
-            }
-        });
-        builder.show();
+            });
+            builder.show();
+        } else {
+            Toast.makeText(_ctxt, "You can add two images only", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void openCamera(String strFileName, Fragment fragment, final Activity activity) {
 
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        FeatureActivity.IMAGE_COUNT = FeatureActivity.IMAGE_COUNT + 1;
         File file = createFileInternalImage(strFileName);
         customerImageUri = Uri.fromFile(file);
         if (file != null) {

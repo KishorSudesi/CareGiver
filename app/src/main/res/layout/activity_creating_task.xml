@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <include
-        layout="@layout/header_creating_task"
+    <include xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/includeHeaderCreatingTasks"
-        android:layout_height="56dp"
+        layout="@layout/header_creating_task"
         android:layout_width="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android" />
+        android:layout_height="56dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin">
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_horizontal_margin">
 
         <TextView
             android:id="@+id/textViewClientName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:text="@string/clientName"
             android:textColor="@android:color/secondary_text_dark"
             android:textSize="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
            />
 
         <AutoCompleteTextView
@@ -45,10 +44,10 @@
             android:id="@+id/textViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:text="@string/title"
             android:textColor="@android:color/secondary_text_dark"
             android:textSize="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
             />
 
         <EditText
@@ -61,7 +60,7 @@
             android:id="@+id/editDateTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="datetime"/>
+            android:editable="false" />
 
     </LinearLayout>
 
