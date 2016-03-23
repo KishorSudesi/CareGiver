@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hdfc.adapters.FeatureAdapter;
 import com.hdfc.app42service.StorageService;
@@ -79,6 +80,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     private JSONObject responseJSONDocCarla;
     private Libs libs;
     private ProgressDialog progressDialog;
+    private static int IMAGE_COUNT = 0;
     private Point p;
     private JSONArray jsonArrayImagesAdded;
 
@@ -148,7 +150,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (arrayListImageModel.size() > 0)
                     if (FeatureAdapter.selectedStrings.size() > 0)
                         uploadImage();
@@ -273,6 +274,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                     return;
                 }
                 libs.selectImage(strImageName, null, FeatureActivity.this);
+
                 //  Intent intent = new Intent();
                 // intent.setType("image/*");
                 //  intent.setAction(Intent.ACTION_CAMERA_BUTTON);
@@ -740,7 +742,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 layout.addView(imageView);
             }
 */
-            layout.addView(imageView);
+                layout.addView(imageView);
+
         }
     }
 

@@ -53,7 +53,6 @@ public class RatingsFragment extends Fragment {
 
     public RatingsFragment(){
         activityFeedBackModels = new ArrayList<>();
-
     }
 
     public static RatingsFragment newInstance() {

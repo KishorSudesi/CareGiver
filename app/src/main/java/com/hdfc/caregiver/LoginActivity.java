@@ -253,15 +253,7 @@ public class LoginActivity extends AppCompatActivity {
                                                                     new FileModel(fileList.get(i).getName()
                                                                             , fileList.get(i).getUrl(),
                                                                             fileList.get(i).getType()));
-
                                                         }
-
-                                                      //  libs.parseData();
-
-                                                       // progressDialog.dismiss();
-
-
-
                                                     }
 
                                                     progressDialog.dismiss();
