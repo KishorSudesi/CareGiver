@@ -36,8 +36,13 @@ public class AsyncApp42ServiceApi {
     private AsyncApp42ServiceApi(Context context) {
 
         try {
-            apiKey = AESCrypt.decrypt(Config.string, "a3tEVMM63P40VdMvybYAHvhjdR91k6uRHnBoRIjQq7bEYH0jWh22DnT6eYLCPv+3X0UrhjF4nwresW4BA1bKBXvUIl2/Z2cqfdtY5la00U4=");
-            apiSecret = AESCrypt.decrypt(Config.string, "TizgBe+sjPzxHZKp7eQwwgd78xjELdu3+NLfNqFZvVNStxezaFr1xkkYHRr2FJDYDsd46xK1UxeC9tlHG5kf9xkUc8n9Ompf5sr1DQaxbmQ=");
+            if (Config.release) {//for release
+                apiKey = AESCrypt.decrypt(Config.string, "gybi3gsBYxnuYlyOlEExwGiyLd0um74K2fVLphtFpt3GkTBoxvew3lPxrVtBpFVJhdJDhHg3wfXR3HmshlC5XBmMM50dEWXZ7/Z8TJ78wt4=");
+                apiSecret = AESCrypt.decrypt(Config.string, "tdSH3TJGp/KiMIVp9CZOTi5Rdw+x1xADUQiMzdWIf8gbI5V+VlQACV3IIE4EMfqNy9qv1YW4tMJyq90xP0tKa99pmIDzNVbIZ3eiVOeWG+4=");
+            } else {
+                apiKey = AESCrypt.decrypt(Config.string, "a3tEVMM63P40VdMvybYAHvhjdR91k6uRHnBoRIjQq7bEYH0jWh22DnT6eYLCPv+3X0UrhjF4nwresW4BA1bKBXvUIl2/Z2cqfdtY5la00U4=");
+                apiSecret = AESCrypt.decrypt(Config.string, "TizgBe+sjPzxHZKp7eQwwgd78xjELdu3+NLfNqFZvVNStxezaFr1xkkYHRr2FJDYDsd46xK1UxeC9tlHG5kf9xkUc8n9Ompf5sr1DQaxbmQ=");
+            }
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         }

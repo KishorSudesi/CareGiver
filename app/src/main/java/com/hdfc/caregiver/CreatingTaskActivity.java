@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
@@ -30,32 +29,27 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 /**
  * Created by Admin on 28-01-2016.
  */
 public class CreatingTaskActivity extends AppCompatActivity {
 
-    private ProgressDialog progressDialog;
-    private JSONObject jsonObjectAct, responseJSONDoc, jsonObjectActCarla, responseJSONDocCarla, jsonObjectCarla;
-    private Libs libs;
-    private static StorageService storageService;
-    String _strDate;
-
-    TextView createtaskDone;
     public static String valDateTime, valTitle, valSearch;
-    private EditText dateTime,editTextTitle;
+    public static DependentModel sDependentModel = new DependentModel();
+    private static StorageService storageService;
+    private static ArrayList<DependentModel> dependentModels = new ArrayList<>();
+    private static String products[];
+    String _strDate;
+    TextView createtaskDone;
     boolean cancel = false;
     View focusView = null;
     ImageView backImage;
     AutoCompleteTextView inputSearch;
-
-    private static ArrayList<DependentModel> dependentModels = new ArrayList<>();
-    public static DependentModel sDependentModel = new DependentModel();
-
-    private  static  String products[];
-
+    private ProgressDialog progressDialog;
+    private JSONObject jsonObjectAct, responseJSONDoc, jsonObjectActCarla, responseJSONDocCarla, jsonObjectCarla;
+    private Libs libs;
+    private EditText dateTime, editTextTitle;
         private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
             @Override

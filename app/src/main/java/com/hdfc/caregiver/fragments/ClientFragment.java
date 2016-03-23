@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,28 +17,19 @@ import com.hdfc.adapters.ClientsAdapter;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
-import com.hdfc.config.Config;
 import com.hdfc.libs.Libs;
 import com.hdfc.models.ClientModel;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class ClientFragment extends Fragment {
 
+    public static ClientsAdapter clients_adapter;
+    private static Handler backgroundThreadHandler;
+    private static ProgressDialog mProgress = null;
+    public TextView textViewEmpty;
     ImageView profileImg;
     ListView listViewClients;
-
-    public static ClientsAdapter clients_adapter;
-    public TextView textViewEmpty;
-    private static Handler backgroundThreadHandler;
     private Libs libs;
-    private static ProgressDialog mProgress = null;
 
     public ClientFragment() {
         // Required empty public constructor
