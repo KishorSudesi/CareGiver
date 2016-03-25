@@ -115,6 +115,9 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             libs = new Libs(FeatureActivity.this);
 
+            /*if(act.getFeatures().length<=0)
+                act.setFeatures(new String[]{"corn", "potato"});
+*/
             List<String> lstFeatures = new ArrayList<>(Arrays.asList(act.getFeatures()));
 
             dependentName.setText(act.getStrActivityDependentName());

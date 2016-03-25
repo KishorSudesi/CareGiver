@@ -215,27 +215,20 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     jsonObjectAct.put("activity_name", editTextTitle.getText().toString());
 
                     jsonObjectAct.put("activity_description", editTextTitle.getText().toString());
-                    //  jsonObjectAct.put("service_id",dependentServiceModel.getiServiceId());
-                    // jsonObjectAct.put("features",dependentServiceModel.getJsonArrayFeatures());
+                    jsonObjectAct.put("service_id", "14700");
+
 
                     jsonObjectAct.put("activity_date", _strDate);
                     jsonObjectAct.put("activity_done_date", _strDate);
-                    jsonObjectAct.put("service_id", "0");
 
-                    JSONArray jsonArrAct1 = new JSONArray();
-                    jsonObjectAct.put("feedbacks", jsonArrAct1);
 
-                    JSONArray jsonArrAct2 = new JSONArray();
-                    jsonObjectAct.put("videos", jsonArrAct2);
-
-                    JSONArray jsonArrAct3 = new JSONArray();
-                    jsonObjectAct.put("images", jsonArrAct3);
-
-                   JSONArray jsonArrAct4 = new JSONArray();
-                   jsonObjectAct.put("features", jsonArrAct4);
-
-                    JSONArray jsonArrAct5 = new JSONArray();
-                    jsonObjectAct.put("features_done", jsonArrAct5);
+                    JSONArray jsonArray = new JSONArray();
+                    jsonObjectAct.put("features", new String[]{"corn", "potato"});
+                    jsonObjectAct.put("feedbacks", jsonArray);
+                    jsonObjectAct.put("videos", jsonArray);
+                    jsonObjectAct.put("images", jsonArray);
+                    jsonObjectAct.put("features", jsonArray);
+                    jsonObjectAct.put("features_done", jsonArray);
 
                     //for carla
                     jsonObjectActCarla.put("customer_email", sDependentModel.getStrCustomerEmail());//
@@ -243,13 +236,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     jsonObjectActCarla.put("activity_name", editTextTitle.getText().toString());
 
                     jsonObjectActCarla.put("activity_description", editTextTitle.getText().toString());
-                    jsonObjectActCarla.put("service_id", "0");
-
-                    JSONArray jsonArrAct6 = new JSONArray();
-                    jsonObjectActCarla.put("features_done", jsonArrAct6);
-
-                    JSONArray jsonArrAct7 = new JSONArray();
-                    jsonObjectActCarla.put("features", jsonArrAct7);
+                    jsonObjectActCarla.put("service_id", "14700");
 
                     jsonObjectActCarla.put("activity_date", _strDate);
                     jsonObjectActCarla.put("activity_done_date", _strDate);
@@ -257,15 +244,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     jsonObjectActCarla.put("dependent_name", sDependentModel.getStrDependentName());
                     jsonObjectActCarla.put("status", "upcoming");
 
-            //        jsonObjectAct.put("provider_image_url", DEPENDENT_IMAGE_URL);
-
-                    // jsonObjectActCarla.put("features",dependentServiceModel.getJsonArrayFeatures());
-
-                    JSONArray jsonArrAct8 = new JSONArray();
-                    jsonObjectActCarla.put("videos", jsonArrAct8);
-
-                    JSONArray jsonArrAct9 = new JSONArray();
-                    jsonObjectActCarla.put("images", jsonArrAct9);
+                    jsonObjectAct.put("feedbacks", jsonArray);
+                    jsonObjectAct.put("videos", jsonArray);
+                    jsonObjectAct.put("images", jsonArray);
+                    jsonObjectAct.put("features", new String[]{"corn", "potato"});
+                    jsonObjectAct.put("features_done", jsonArray);
                 }
 
             } catch (JSONException e) {
