@@ -382,19 +382,21 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 }
                 break;
             case MenuItem.DIRECTION_RIGHT:
+                ActivityModel activityModel = activityModels.get(itemPosition);
                 switch (buttonPosition) {
                     case 0:
                         Toast.makeText(getContext(), "Contact", Toast.LENGTH_LONG).show();
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
                         Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                        sendIntent.putExtra("sms_body", "default content");
+                        sendIntent.putExtra("sms_body", activityModel != null ? activityModel.getStrActivityName() : "Activity Name");
+                        sendIntent.putExtra("address", activityModel != null ? activityModel.getStrActivityProviderContactNo() : "0000000000");
                         sendIntent.setType("vnd.android-dir/mms-sms");
                         startActivity(sendIntent);
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
                         Intent callIntent = new Intent(Intent.ACTION_CALL);
-                        callIntent.setData(Uri.parse("tel:8605547669"));
+                        callIntent.setData(Uri.parse("tel:" + activityModel != null ? activityModel.getStrActivityProviderContactNo() : "0000000000"));
                         startActivity(callIntent);
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:
