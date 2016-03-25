@@ -29,7 +29,7 @@ public class Config {
     public static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
     public static final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     public static final boolean isDebuggable = true;
-    public static final boolean release = false;
+    public static final boolean release = true;
     public final static String strCustomerImageName = "provider_image";
     public static ArrayList<FileModel> fileModels = new ArrayList<>();
     public static int intClientScreen = 2;
