@@ -395,8 +395,9 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                         startActivity(sendIntent);
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
-                        Intent callIntent = new Intent(Intent.ACTION_CALL);
-                        callIntent.setData(Uri.parse("tel:" + activityModel != null ? activityModel.getStrActivityProviderContactNo() : "0000000000"));
+                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        String strNo = "tel:" + String.valueOf(activityModel != null ? activityModel.getStrActivityProviderContactNo() : "0000000000");
+                        callIntent.setData(Uri.parse(strNo));
                         startActivity(callIntent);
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:
