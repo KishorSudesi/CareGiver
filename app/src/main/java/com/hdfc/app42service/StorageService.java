@@ -17,11 +17,11 @@ public class StorageService {
     }
 
     public void insertDocs(JSONObject jsonToSave, AsyncApp42ServiceApi.App42StorageServiceListener app42CallBack) {
-        asyncService.insertJSONDoc(Config.dbName, Config.collectionName, jsonToSave, app42CallBack);
+        asyncService.insertJSONDoc(Config.dbName, Config.collectionProvider, jsonToSave, app42CallBack);
     }
 
     /*public void findDocsByName(String checkValue) {
-        asyncService.findDocByDocId(Config.dbName, Config.collectionName, checkValue, this);
+        asyncService.findDocByDocId(Config.dbName, Config.collectionProvider, checkValue, this);
     }*/
 
     public void findDocsById(String strDocId, String strCollectionName, AsyncApp42ServiceApi.App42StorageServiceListener app42CallBack) {
@@ -37,7 +37,7 @@ public class StorageService {
     }
 
     /*public void updateDocs(JSONObject jsonToUpdate, String fieldName, String checkValue) {
-        asyncService.updateDocByKeyValue(Config.dbName, Config.collectionName, fieldName, checkValue, jsonToUpdate, this);
+        asyncService.updateDocByKeyValue(Config.dbName, Config.collectionProvider, fieldName, checkValue, jsonToUpdate, this);
     }*/
 
     public void updateDocs(JSONObject jsonToUpdate, String strDocId, String strCollectionName, App42CallBack app42CallBack) {

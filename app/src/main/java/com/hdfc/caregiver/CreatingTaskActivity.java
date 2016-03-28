@@ -259,7 +259,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
             if (jsonObjectAct != null) {
 
-                storageService.findDocsByIdApp42CallBack(Config.jsonDocId, Config.collectionName, new App42CallBack() {
+                storageService.findDocsByIdApp42CallBack(Config.jsonDocId, Config.collectionProvider, new App42CallBack() {
                     @Override
                     public void onSuccess(Object o) {
 
@@ -288,7 +288,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                             if (libs.isConnectingToInternet()) {//TODO check activity added
 
-                                storageService.updateDocs(responseJSONDoc, Config.jsonDocId, Config.collectionName, new App42CallBack() {
+                                storageService.updateDocs(responseJSONDoc, Config.jsonDocId, Config.collectionProvider, new App42CallBack() {
                                     @Override
                                     public void onSuccess(Object o) {
 
@@ -301,7 +301,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                             // Config.jsonObject = responseJSONDoc;
 
-                                            storageService.findDocsByKeyValue(Config.collectionName2,"customer_email", sDependentModel.getStrCustomerEmail() , new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                                            storageService.findDocsByKeyValue(Config.collectionCustomer, "customer_email", sDependentModel.getStrCustomerEmail(), new AsyncApp42ServiceApi.App42StorageServiceListener() {
                                                 @Override
                                                 public void onDocumentInserted(Storage response) {
                                                 }
@@ -348,7 +348,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                                                 Libs.log(responseJSONDocCarla.toString(), " onj 2 ");
 
-                                                                storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionName2, new App42CallBack() {
+                                                                storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionCustomer, new App42CallBack() {
                                                                     @Override
                                                                     public void onSuccess(Object o) {
 

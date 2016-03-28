@@ -164,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             StorageService storageService = new StorageService(LoginActivity.this);
 
-                            storageService.findDocsByKeyValue(Config.collectionName,"provider_email", userName, new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                            storageService.findDocsByKeyValue(Config.collectionProvider, "provider_email", userName, new AsyncApp42ServiceApi.App42StorageServiceListener() {
                                 @Override
                                 public void onDocumentInserted(Storage response) {
 

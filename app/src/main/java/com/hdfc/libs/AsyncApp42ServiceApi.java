@@ -360,14 +360,14 @@ public class AsyncApp42ServiceApi {
     }
 
     /*public void updateDocByKeyValue(final String dbName,
-                                    final String collectionName, final String key, final String value,
+                                    final String collectionProvider, final String key, final String value,
                                     final JSONObject newJsonDoc, final App42CallBack callBack) {
         final Handler callerThreadHandler = new Handler();
         new Thread() {
             @Override
             public void run() {
                 try {
-                    final Storage response = storageService.updateDocumentByKeyValue(dbName, collectionName, key, value, newJsonDoc);
+                    final Storage response = storageService.updateDocumentByKeyValue(dbName, collectionProvider, key, value, newJsonDoc);
                     callerThreadHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -388,7 +388,7 @@ public class AsyncApp42ServiceApi {
         }.start();
     }*/
 
-    //addOrUpdateKeys(dbName, collectionName, docId, keys,
+    //addOrUpdateKeys(dbName, collectionProvider, docId, keys,
     public void updateDocPartByKeyValue(final String dbName,
                                         final String collectionName, final String key,
                                         final JSONObject newJsonDoc, final App42CallBack callBack) {

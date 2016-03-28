@@ -15,10 +15,9 @@ import java.util.ArrayList;
 public class Config {
 
     public static final String dbName = "newzeal";
-    public static final String collectionNameServices = "services";
-    public static final String collectionName = "providers";
-    public static final String collectionName2="customer";
-    public static final String strServiceDocId = "56c70aefe4b0067c8c7658bf";//remove this
+    public static final String collectionServices = "services";
+    public static final String collectionProvider = "providers";
+    public static final String collectionCustomer = "customer";
     public static final String string = Libs.getStringJni();
 
     public static final int START_CAMERA_REQUEST_CODE = 1;

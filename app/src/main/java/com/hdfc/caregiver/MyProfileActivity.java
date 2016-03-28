@@ -225,7 +225,7 @@ public class MyProfileActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        storageService.updateDocs(jsonToUpdate, Config.jsonDocId, Config.collectionName, new App42CallBack() {
+                        storageService.updateDocs(jsonToUpdate, Config.jsonDocId, Config.collectionProvider, new App42CallBack() {
                             @Override
                             public void onSuccess(Object o) {
                                 progressDialog.dismiss();
@@ -434,7 +434,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
                                             jsonToUpdate.put("provider_profile_url", url);
                                             //
-                                            storageService.updateDocs(jsonToUpdate, Config.jsonDocId, Config.collectionName, new App42CallBack() {
+                                            storageService.updateDocs(jsonToUpdate, Config.jsonDocId, Config.collectionProvider, new App42CallBack() {
                                                 @Override
                                                 public void onSuccess(Object o) {
 

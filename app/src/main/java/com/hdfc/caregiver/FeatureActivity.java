@@ -16,7 +16,6 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,9 +114,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             libs = new Libs(FeatureActivity.this);
 
-            /*if(act.getFeatures().length<=0)
+            if (act.getFeatures() == null || act.getFeatures().length <= 0)
                 act.setFeatures(new String[]{"corn", "potato"});
-*/
             List<String> lstFeatures = new ArrayList<>(Arrays.asList(act.getFeatures()));
 
             dependentName.setText(act.getStrActivityDependentName());
@@ -131,8 +129,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
 
             //
-            Libs.log(libs.replaceSpace(act.getStrActivityDependentName()), " NAME ");
-            File fileImage = libs.createFileInternal("images/" + libs.replaceSpace(act.getStrActivityDependentName()));
+            //Libs.log(libs.replaceSpace(act.getStrActivityDependentName()), " NAME ");
+            File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(act.getStrActivityDependentName()));
 
             if (fileImage.exists()) {
                 String filename = fileImage.getAbsolutePath();
@@ -145,7 +143,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             e.printStackTrace();
         }
 
-        libs = new Libs(FeatureActivity.this);
+        //libs = new Libs(FeatureActivity.this);
 
         //String strCustomerImagePath = getFilesDir() + "/images/" + "feature_image";
 
@@ -386,10 +384,10 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                                     try {
                                         jsonObjectImages.put("image_name", imageModel.getStrImageDesc());
-                                        Log.e("Image URL : ", file.getUrl());
+                                        //Log.e("Image URL : ", file.getUrl());
                                         jsonObjectImages.put("image_url", file.getUrl());
                                         jsonObjectImages.put("image_description", imageModel.getStrImageDesc());
-                                        Log.e("Time of image : ", imageModel.getStrImageTime());
+                                        //Log.e("Time of image : ", imageModel.getStrImageTime());
                                         jsonObjectImages.put("image_taken", imageModel.getStrImageTime());
 
                                         jsonArrayImagesAdded.put(jsonObjectImages);
@@ -470,7 +468,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 e.printStackTrace();
             }
 
-            storageService.findDocsByIdApp42CallBack(Config.jsonDocId, Config.collectionName, new App42CallBack() {
+            storageService.findDocsByIdApp42CallBack(Config.jsonDocId, Config.collectionProvider, new App42CallBack() {
                 @Override
                 public void onSuccess(Object o) {
 
@@ -517,11 +515,11 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                             progressDialog.dismiss();
                         }
 
-                        Libs.log(responseJSONDoc.toString(), " onj 1 ");
+                        //Libs.log(responseJSONDoc.toString(), " onj 1 ");
 
                         if (libs.isConnectingToInternet()) {//TODO check activity added
 
-                            storageService.updateDocs(responseJSONDoc, Config.jsonDocId, Config.collectionName, new App42CallBack() {
+                            storageService.updateDocs(responseJSONDoc, Config.jsonDocId, Config.collectionProvider, new App42CallBack() {
                                 @Override
                                 public void onSuccess(Object o) {
 
@@ -529,7 +527,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                                     if (o != null) {
 
-                                        storageService.findDocsByKeyValue(Config.collectionName2, "customer_email", act.getStrCustomerEmail(), new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                                        storageService.findDocsByKeyValue(Config.collectionCustomer, "customer_email", act.getStrCustomerEmail(), new AsyncApp42ServiceApi.App42StorageServiceListener() {
                                             @Override
                                             public void onDocumentInserted(Storage response) {
                                             }
@@ -603,9 +601,9 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                                             }
 
 
-                                                            Libs.log(responseJSONDocCarla.toString(), " onj 2 ");
+                                                            //Libs.log(responseJSONDocCarla.toString(), " onj 2 ");
 
-                                                            storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionName2, new App42CallBack() {
+                                                            storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionCustomer, new App42CallBack() {
                                                                 @Override
                                                                 public void onSuccess(Object o) {
 
@@ -723,7 +721,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             imageView = new ImageView(FeatureActivity.this);
             if (bitmap != null)
                 try {
-                    Libs.log(" 2 " + String.valueOf(bitmap.getHeight()), " IN ");
+                    //Libs.log(" 2 " + String.valueOf(bitmap.getHeight()), " IN ");
                     imageView.setPadding(0, 0, 10, 0);
                     imageView.setImageBitmap(bitmap);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -759,14 +757,14 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         public void run() {
 
             try {
-                System.out.println("URI IS : " + uri);
+                //System.out.println("URI IS : " + uri);
                 if (uri != null) {
                     Calendar calendar = new GregorianCalendar();
                     String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
                     File galleryFile = libs.createFileInternalImage(strFileName);
                     strImageName = galleryFile.getAbsolutePath();
 
-                    System.out.println("YOUR GALLERY PATH IS : " + strImageName);
+                    //System.out.println("YOUR GALLERY PATH IS : " + strImageName);
 
                     Date date = new Date();
 

@@ -1,0 +1,10 @@
+{
+  "unit": 3,
+  "service_name": "Medical Checkup",
+  "cost": 600,
+  "service_desc": "Medical Checkup, BP, Heart Rate, Blood Test",
+  "features": [
+    "BP",
+    "Heart Rate"
+  ]
+}

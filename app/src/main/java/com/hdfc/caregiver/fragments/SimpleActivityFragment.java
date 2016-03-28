@@ -109,7 +109,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 cvh.textTime.setText(libs.formatDate(activityModel.getStrActivityDate()));
                 cvh.imageTiming.setText(libs.formatDateTime(activityModel.getStrActivityDate()));
 
-                File fileImage = libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
+                File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
 
                 if (fileImage.exists()) {
                     String filename = fileImage.getAbsolutePath();
@@ -222,19 +222,29 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                     activityModel.setStrActivityStatus(jsonObject.getString("status"));
                     activityModel.setStrActivityDependentName(jsonObject.getString("dependent_name"));
 
-                    String features[] = new String[jsonObject.getJSONArray("features").length()];
-                    String featuresDone[] = new String[jsonObject.getJSONArray("features_done").length()];
+                    String featuresDone[];
+                    String features[];
 
-                    for(int i=0;i< jsonObject.getJSONArray("features").length();i++){
-                        features[i]= jsonObject.getJSONArray("features").getString(i);
+                    if (jsonObject.has("features")) {
+                        features = new String[jsonObject.getJSONArray("features").length()];
+
+                        for (int i = 0; i < jsonObject.getJSONArray("features").length(); i++) {
+                            features[i] = jsonObject.getJSONArray("features").getString(i);
+                        }
+
+                        activityModel.setFeatures(features);
                     }
 
-                    for (int i=0;i<jsonObject.getJSONArray("features_done").length();i++){
-                        featuresDone[i] = jsonObject.getJSONArray("features_done").getString(i);
+                    if (jsonObject.has("features_done")) {
+                        featuresDone = new String[jsonObject.getJSONArray("features_done").length()];
+
+                        for (int i = 0; i < jsonObject.getJSONArray("features_done").length(); i++) {
+                            featuresDone[i] = jsonObject.getJSONArray("features_done").getString(i);
+                        }
+
+                        activityModel.setDoneFeatures(featuresDone);
                     }
 
-                    activityModel.setFeatures(features);
-                    activityModel.setDoneFeatures(featuresDone);
 
                     activityModel.setStrCustomerEmail(jsonObject.getString("customer_email"));
                     activityModels.add(activityModel);

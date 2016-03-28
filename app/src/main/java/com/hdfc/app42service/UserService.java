@@ -30,9 +30,9 @@ public class UserService/* implements
         asyncService.authenticateUser(userName, password, app42CallBack);
     }
 
-    /*public void addJSONObject(String collectionName, String password) {
+    /*public void addJSONObject(String collectionProvider, String password) {
         //libs.showProgress(true, formView, progressView);
-        //asyncService.addJSONObject(collectionName, jsonDoc);
+        //asyncService.addJSONObject(collectionProvider, jsonDoc);
     }*/
 
     public void onChangePassword(String userName, String oldPassword, String confirmPassword, App42CallBack app42CallBack) {

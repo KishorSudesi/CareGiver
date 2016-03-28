@@ -47,6 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hdfc.caregiver.FeatureActivity;
+import com.hdfc.caregiver.LoginActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 
@@ -525,6 +526,72 @@ public class Libs {
         return key;
     }*/
 
+    public static boolean deleteAllFiles(File directory) {
+
+        final File[] files = directory.listFiles();
+
+        try {
+
+            if (files != null) {
+                for (File file : files) {
+                    if (file != null) {
+                        if (file.isDirectory()) {  // it is a folder.
+                            deleteAllFiles(file);
+                        } else {
+                            if (file.exists() && file.canRead() && file.canWrite()) {
+                                file.delete();
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    public static void logout() {
+        try {
+            Config.jsonObject = null;
+            Config.jsonServer = null;
+            Config.jsonDocId = "";
+
+            Config.intSelectedMenu = 0;
+
+            Config.intDependantsCount = 0;
+            Config.boolIsLoggedIn = false;
+            Config.strUserName = "";
+            Config.fileModels.clear();
+
+            //todo clear shared pref.
+
+            File fileImage = createFileInternal("images/");
+            deleteAllFiles(fileImage);
+
+            Intent dashboardIntent = new Intent(_ctxt, LoginActivity.class);
+            _ctxt.startActivity(dashboardIntent);
+            ((Activity) _ctxt).finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static File createFileInternal(String strFileName) {
+
+        File file = null;
+        try {
+            file = new File(_ctxt.getFilesDir(), strFileName);
+            file.getParentFile().mkdirs();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return file;
+    }
+
     public File getInternalFileImages(String strFileName) {
 
         File file = null;
@@ -609,41 +676,6 @@ public class Libs {
         }
     }
 
-   /* public static void logout() {
-        try {
-            Config.jsonObject = null;
-            Config.jsonServer = null;
-            Config.jsonDocId = "";
-
-            Config.intSelectedMenu = 0;
-
-            Config.intDependantsCount = 0;
-
-            Config.serviceModels.clear();
-            Config.dependantNames.clear();
-            Config.notificationModels.clear();
-
-
-            Config.intSelectedDependant = 0;
-
-            Config.boolIsLoggedIn = false;
-
-            Config.customerModel = null;
-            Config.strUserName = "";
-
-            Config.fileModels.clear();
-
-            Config.bitmaps.clear();
-
-
-            Intent dashboardIntent = new Intent(_ctxt, LoginActivity.class);
-            _ctxt.startActivity(dashboardIntent);
-            ((Activity) _ctxt).finish();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
     public void toast(int type, int duration, String message) {
 
         String strColor = "#ffffff";
@@ -696,20 +728,6 @@ public class Libs {
         alertbox.show();
     }
 
-    public boolean isEmailValid(String email) {
-        boolean b;
-
-        b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-
-        if (b) {
-            Pattern p = Pattern.compile("^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE);
-            Matcher m = p.matcher(email);
-            b = m.matches();
-        }
-
-        return b;
-    }
-
 
    /* public String getUUID() {
         final TelephonyManager tm = (TelephonyManager) _ctxt.getSystemService(Context.TELEPHONY_SERVICE);
@@ -726,6 +744,20 @@ public class Libs {
 
         return deviceId;
     }*/
+
+    public boolean isEmailValid(String email) {
+        boolean b;
+
+        b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
+        if (b) {
+            Pattern p = Pattern.compile("^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE);
+            Matcher m = p.matcher(email);
+            b = m.matches();
+        }
+
+        return b;
+    }
 
     public void getMemory() {
         Runtime rt = Runtime.getRuntime();
@@ -752,7 +784,6 @@ public class Libs {
             e.printStackTrace();
         }
     }
-
 
     public String convertDateToString(Date dtDate) {
 
@@ -873,22 +904,9 @@ public class Libs {
         return file;
     }
 
-    public File createFileInternal(String strFileName) {
-
-        File file = null;
-        try {
-            file = new File(_ctxt.getFilesDir(), strFileName);
-            file.getParentFile().mkdirs();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return file;
-    }
-
     public void selectImage(final String strFileName, final Fragment fragment, final Activity activity) {
         final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
-        System.out.println("Pilu : " + FeatureActivity.IMAGE_COUNT);
+        // System.out.println("Pilu : " + FeatureActivity.IMAGE_COUNT);
         if (FeatureActivity.IMAGE_COUNT < 2) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
@@ -898,10 +916,10 @@ public class Libs {
                 @Override
                 public void onClick(DialogInterface dialog, int item) {
 
-                    System.out.println(items[item].equals("Take Photo"));
+                    //System.out.println(items[item].equals("Take Photo"));
                     if (items[item].equals("Take Photo")) {
                         openCamera(strFileName, fragment, activity);
-                        System.out.println("DDDDDDDIC DIC DIC DIC ::: " + strFileName);
+                        //System.out.println("DDDDDDDIC DIC DIC DIC ::: " + strFileName);
 
                     } else if (items[item].equals("Choose from Library")) {
                         Intent intent = new Intent();
