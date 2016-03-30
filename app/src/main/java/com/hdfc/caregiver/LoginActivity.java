@@ -197,7 +197,8 @@ public class LoginActivity extends AppCompatActivity {
                                                         Config.jsonObject.getString("provider_email"),
                                                         Config.jsonObject.getString("provider_contact_no"),
                                                         Config.jsonObject.getString("provider_address"),
-                                                        Config.jsonObject.getString("provider_name")
+                                                        Config.jsonObject.getString("provider_name"),
+                                                        Config.jsonObject.getString("provider_profile_url")
                                                 );
                                             }
 

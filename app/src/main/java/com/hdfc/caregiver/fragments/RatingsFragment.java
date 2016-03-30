@@ -115,7 +115,8 @@ public class RatingsFragment extends Fragment {
 
         StorageService storageService = new StorageService(getActivity());
 
-        storageService.findDocsByKeyValue(Config.collectionActivity, "service_id", "123213123", new AsyncApp42ServiceApi.App42StorageServiceListener() {
+        storageService.findDocsByKeyValue(Config.collectionActivity, "service_id", "123213123",
+                new AsyncApp42ServiceApi.App42StorageServiceListener() {
             @Override
             public void onDocumentInserted(Storage response) {
 
@@ -169,7 +170,6 @@ public class RatingsFragment extends Fragment {
                         BackgroundThread backgroundThread = new BackgroundThread();
                         backgroundThread.start();
 
-
                         mProgress.setMessage(getString(R.string.loading));
                         mProgress.show();
 
@@ -182,17 +182,14 @@ public class RatingsFragment extends Fragment {
 
             @Override
             public void onInsertionFailed(App42Exception ex) {
-
             }
 
             @Override
             public void onFindDocFailed(App42Exception ex) {
-
             }
 
             @Override
             public void onUpdateDocFailed(App42Exception ex) {
-
             }
         });
     }
@@ -207,11 +204,8 @@ public class RatingsFragment extends Fragment {
                 imageProfilePic.setImageBitmap(bitmap);
 
             try {
-
                 int i = (int) iRatings;
-
                 layout.removeAllViews();
-
 
                 int j, k;
 
@@ -220,7 +214,8 @@ public class RatingsFragment extends Fragment {
                     ImageView imageView = new ImageView(getActivity());
 
                     imageView.setPadding(0, 0, 10, 0);
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.stars_white));
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+                            R.mipmap.stars_white));
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
                     layout.addView(imageView);
@@ -233,7 +228,8 @@ public class RatingsFragment extends Fragment {
                     ImageView imageView = new ImageView(getActivity());
 
                     imageView.setPadding(0, 0, 10, 0);
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.star_grey));
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+                            R.mipmap.star_grey));
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
                     layout.addView(imageView);
@@ -255,11 +251,11 @@ public class RatingsFragment extends Fragment {
         @Override
         public void run() {
             try {
-
                 File f = libs.getInternalFileImages(Config.strCustomerImageName);
 
                 if(f!=null&&f.exists())
-                    bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
+                    bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth,
+                            Config.intHeight);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -269,15 +265,14 @@ public class RatingsFragment extends Fragment {
                 if (activityFeedBackModels != null) {
                     for (int i = 0; i < activityFeedBackModels.size(); i++) {
                         Libs.log(activityFeedBackModels.get(i).getStrFeedBackByUrl(), " URL ");
-                        libs.loadImageFromWeb(activityFeedBackModels.get(i).getStrFeedBackBy(), activityFeedBackModels.get(i).getStrFeedBackByUrl());
+                        libs.loadImageFromWeb(activityFeedBackModels.get(i).getStrFeedBackBy(),
+                                activityFeedBackModels.get(i).getStrFeedBackByUrl());
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             backgroundThreadHandler.sendEmptyMessage(0);
         }
     }
-
 }

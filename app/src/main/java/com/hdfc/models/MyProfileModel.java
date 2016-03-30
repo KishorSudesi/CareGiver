@@ -8,16 +8,15 @@ public class MyProfileModel {
     String number;
     String strAddress;
     String strName;
+    private String strImgUrl;
 
-    public MyProfileModel(String email, String number, String strAddress, String strName) {
+    public MyProfileModel(String email, String number, String strAddress, String strName,
+                          String strImgUrl) {
         this.email = email;
         this.number = number;
         this.strAddress = strAddress;
         this.strName = strName;
-    }
-
-    public void setStrAddress(String strAddress) {
-        this.strAddress = strAddress;
+        this.strImgUrl = strImgUrl;
     }
 
     public String getNumber() {
@@ -40,11 +39,23 @@ public class MyProfileModel {
         return strAddress;
     }
 
+    public void setStrAddress(String strAddress) {
+        this.strAddress = strAddress;
+    }
+
     public String getStrName() {
         return strName;
     }
 
     public void setStrName(String strName) {
         this.strName = strName;
+    }
+
+    public String getStrImgUrl() {
+        return strImgUrl;
+    }
+
+    public void setStrImgUrl(String strImgUrl) {
+        this.strImgUrl = strImgUrl;
     }
 }
