@@ -18,12 +18,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hdfc.adapters.RatingsAdapter;
+import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.MyProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Libs;
 import com.hdfc.models.FeedBackModel;
 import com.hdfc.views.RoundedImageView;
+import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -87,8 +91,8 @@ public class RatingsFragment extends Fragment {
         libs = new Libs(getActivity());
         intWhichScreen = Config.intRatingsScreen;
 
-        if(Config.myProfileModel.getStrName()!=null)
-            textViewName.setText(Config.myProfileModel.getStrName());
+       /* if(Config.myProfileModel.getStrName()!=null)
+            textViewName.setText(Config.myProfileModel.getStrName());*/
 
         myprofile = (RelativeLayout) view.findViewById(R.id.relativelayoutRatings);
 
@@ -108,49 +112,89 @@ public class RatingsFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        try {
 
-            iRatings = 0;
+        StorageService storageService = new StorageService(getActivity());
 
-            activityFeedBackModels.clear();
+        storageService.findDocsByKeyValue(Config.collectionActivity, "service_id", "123213123", new AsyncApp42ServiceApi.App42StorageServiceListener() {
+            @Override
+            public void onDocumentInserted(Storage response) {
 
-            if (Config.jsonObject.has("feedbacks")) {
-
-                JSONArray jsonArrayFeedback = Config.jsonObject.getJSONArray("feedbacks");
-
-                for (int k = 0; k < jsonArrayFeedback.length(); k++) {
-                    JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
-                    FeedBackModel feedBackModel = new FeedBackModel(
-                            jsonObjectFeedback.getString("feedback_message"),
-                            jsonObjectFeedback.getString("feedback_by"),
-                            jsonObjectFeedback.getInt("feedback_rating"),
-                            jsonObjectFeedback.getBoolean("feedback_report"),
-                            jsonObjectFeedback.getString("feedback_time"),
-                            jsonObjectFeedback.getString("feedback_by_url"));
-
-                    iRatings += jsonObjectFeedback.getInt("feedback_rating");
-
-                    activityFeedBackModels.add(feedBackModel);
-                }
-
-                if (jsonArrayFeedback.length() > 0)
-                    iRatings = Libs.round(iRatings / jsonArrayFeedback.length(), 2);
             }
 
-            //ratingsAdapter.notifyDataSetChanged();
+            @Override
+            public void onUpdateDocSuccess(Storage response) {
 
-            backgroundThreadHandler = new BackgroundThreadHandler();
-            BackgroundThread backgroundThread = new BackgroundThread();
-            backgroundThread.start();
+            }
+
+            @Override
+            public void onFindDocSuccess(Storage response) {
+                Libs.log(String.valueOf(response.getJsonDocList().size()), " count ");
+                if (response.getJsonDocList().size() > 0) {
+
+                    Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
+
+                    String strDocument = jsonDocument.getJsonDoc();
+                    try {
+                        Config.jsonObject = new JSONObject(strDocument);
+                        iRatings = 0;
+
+                        activityFeedBackModels.clear();
+
+                        if (Config.jsonObject.has("feedbacks")) {
+
+                            JSONArray jsonArrayFeedback = Config.jsonObject.getJSONArray("feedbacks");
+
+                            for (int k = 0; k < jsonArrayFeedback.length(); k++) {
+                                JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
+                                FeedBackModel feedBackModel = new FeedBackModel(
+                                        jsonObjectFeedback.getString("feedback_message"),
+                                        jsonObjectFeedback.getString("feedback_by"),
+                                        jsonObjectFeedback.getInt("feedback_rating"),
+                                        jsonObjectFeedback.getBoolean("feedback_report"),
+                                        jsonObjectFeedback.getString("feedback_time"),
+                                        jsonObjectFeedback.getString("feedback_by_type"));
+
+                                iRatings += jsonObjectFeedback.getInt("feedback_rating");
+
+                                activityFeedBackModels.add(feedBackModel);
+                            }
+
+                            if (jsonArrayFeedback.length() > 0)
+                                iRatings = Libs.round(iRatings / jsonArrayFeedback.length(), 2);
+                        }
+
+                        //ratingsAdapter.notifyDataSetChanged();
+
+                        backgroundThreadHandler = new BackgroundThreadHandler();
+                        BackgroundThread backgroundThread = new BackgroundThread();
+                        backgroundThread.start();
 
 
-            mProgress.setMessage(getString(R.string.loading));
-            mProgress.show();
+                        mProgress.setMessage(getString(R.string.loading));
+                        mProgress.show();
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
+                }
+            }
+
+            @Override
+            public void onInsertionFailed(App42Exception ex) {
+
+            }
+
+            @Override
+            public void onFindDocFailed(App42Exception ex) {
+
+            }
+
+            @Override
+            public void onUpdateDocFailed(App42Exception ex) {
+
+            }
+        });
     }
 
 

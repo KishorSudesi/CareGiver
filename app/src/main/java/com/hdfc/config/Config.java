@@ -16,8 +16,12 @@ public class Config {
 
     public static final String dbName = "newzeal";
     public static final String collectionServices = "services";
-    public static final String collectionProvider = "providers";
+    public static final String collectionProvider = "provider";
     public static final String collectionCustomer = "customer";
+    public static final String collectionActivity = "activity";
+    public static final String collectionDependent = "dependent";
+
+
     public static final String string = Libs.getStringJni();
 
     public static final int START_CAMERA_REQUEST_CODE = 1;
@@ -28,7 +32,7 @@ public class Config {
     public static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
     public static final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     public static final boolean isDebuggable = true;
-    public static final boolean release = true;
+    public static final boolean release = false;
     public final static String strCustomerImageName = "provider_image";
     public static ArrayList<FileModel> fileModels = new ArrayList<>();
     public static int intClientScreen = 2;

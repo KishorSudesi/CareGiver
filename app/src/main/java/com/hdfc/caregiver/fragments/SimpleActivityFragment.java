@@ -20,13 +20,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.CreatingTaskActivity;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Libs;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.models.ActivityModel;
+import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
@@ -108,15 +112,15 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                 cvh.textTime.setText(libs.formatDate(activityModel.getStrActivityDate()));
                 cvh.imageTiming.setText(libs.formatDateTime(activityModel.getStrActivityDate()));
-
-                File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
+                cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
+               /* File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
 
                 if (fileImage.exists()) {
                     String filename = fileImage.getAbsolutePath();
                     multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
                 } else {
                     cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
-                }
+                }*/
             }
             return convertView;
         }
@@ -195,67 +199,103 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         return view;
     }
 
-    public void parseData(){
+    public void parseData() {
 
-        try {
+        StorageService storageService = new StorageService(getActivity());
 
-            activityModels.clear();
+        storageService.findDocsByKeyValue(Config.collectionActivity, "service_id", "123213123", new AsyncApp42ServiceApi.App42StorageServiceListener() {
+            @Override
+            public void onDocumentInserted(Storage response) {
 
-            if (Config.jsonObject.has("activities")) {
+            }
 
-                JSONArray jsonArrayFeedback = Config.jsonObject.getJSONArray("activities");
+            @Override
+            public void onUpdateDocSuccess(Storage response) {
 
-                int iArraySize = jsonArrayFeedback.length();
+            }
 
-                for (int k = 0; k < iArraySize; k++) {
+            @Override
+            public void onFindDocSuccess(Storage response) {
+                Libs.log(String.valueOf(response.getJsonDocList().size()), " count ");
+                if (response.getJsonDocList().size() > 0) {
 
-                    JSONObject jsonObject = jsonArrayFeedback.getJSONObject(k);
+                    Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
 
-                    ActivityModel activityModel = new ActivityModel();
+                    String strDocument = jsonDocument.getJsonDoc();
 
-                    activityModel.setStrActivityMessage(jsonObject.getString("activity_message"));
-                    activityModel.setStrActivityName(jsonObject.getString("activity_name"));
-                    activityModel.setStrActivityDesc(jsonObject.getString("activity_description"));
-                    activityModel.setiServiceId(jsonObject.getInt("service_id"));
-                    activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
-                    activityModel.setStrActivityDoneDate(jsonObject.getString("activity_done_date"));
-                    activityModel.setStrActivityStatus(jsonObject.getString("status"));
-                    activityModel.setStrActivityDependentName(jsonObject.getString("dependent_name"));
 
-                    String featuresDone[];
-                    String features[];
+                    try {
 
-                    if (jsonObject.has("features")) {
-                        features = new String[jsonObject.getJSONArray("features").length()];
+                        Config.jsonObject = new JSONObject(strDocument);
 
-                        for (int i = 0; i < jsonObject.getJSONArray("features").length(); i++) {
-                            features[i] = jsonObject.getJSONArray("features").getString(i);
-                        }
 
-                        activityModel.setFeatures(features);
+                        activityModels.clear();
+
+
+
+                                ActivityModel activityModel = new ActivityModel();
+
+                                activityModel.setStrActivityMessage(Config.jsonObject.getString("activity_message"));
+                                activityModel.setStrActivityName(Config.jsonObject.getString("activity_name"));
+                                activityModel.setStrActivityDesc(Config.jsonObject.getString("activity_description"));
+                                activityModel.setiServiceId(Config.jsonObject.getInt("service_id"));
+                              //  activityModel.setStrActivityDate(Config.jsonObject.getString("activity_date"));
+                                activityModel.setStrActivityDoneDate(Config.jsonObject.getString("activity_done_date"));
+                                activityModel.setStrActivityStatus(Config.jsonObject.getString("status"));
+                               // activityModel.setStrActivityDependentName(Config.jsonObject.getString("dependent_name"));
+
+                                String featuresDone[];
+                                String features[];
+
+                                if (Config.jsonObject.has("features")) {
+                                    features = new String[Config.jsonObject.getJSONArray("features").length()];
+
+                                    for (int i = 0; i < Config.jsonObject.getJSONArray("features").length(); i++) {
+                                        features[i] = Config.jsonObject.getJSONArray("features").getString(i);
+                                    }
+
+                                    activityModel.setFeatures(features);
+                                }
+
+                                if (Config.jsonObject.has("features_done")) {
+                                    featuresDone = new String[Config.jsonObject.getJSONArray("features_done").length()];
+
+                                    for (int i = 0; i < Config.jsonObject.getJSONArray("features_done").length(); i++) {
+                                        featuresDone[i] = Config.jsonObject.getJSONArray("features_done").getString(i);
+                                    }
+
+                                    activityModel.setDoneFeatures(featuresDone);
+                                }
+
+
+                              //  activityModel.setStrCustomerEmail(Config.jsonObject.getString("customer_email"));
+                                activityModels.add(activityModel);
+
+
+
+                        mListView.setAdapter(mAdapter);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                    if (jsonObject.has("features_done")) {
-                        featuresDone = new String[jsonObject.getJSONArray("features_done").length()];
-
-                        for (int i = 0; i < jsonObject.getJSONArray("features_done").length(); i++) {
-                            featuresDone[i] = jsonObject.getJSONArray("features_done").getString(i);
-                        }
-
-                        activityModel.setDoneFeatures(featuresDone);
-                    }
-
-
-                    activityModel.setStrCustomerEmail(jsonObject.getString("customer_email"));
-                    activityModels.add(activityModel);
                 }
             }
 
-            mListView.setAdapter(mAdapter);
+            @Override
+            public void onInsertionFailed(App42Exception ex) {
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+            }
+
+            @Override
+            public void onFindDocFailed(App42Exception ex) {
+
+            }
+
+            @Override
+            public void onUpdateDocFailed(App42Exception ex) {
+
+            }
+        });
     }
 
     public void initMenu() {

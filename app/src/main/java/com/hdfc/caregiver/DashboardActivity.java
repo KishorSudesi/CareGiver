@@ -10,13 +10,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
 import com.hdfc.caregiver.fragments.SimpleActivityFragment;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Libs;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.FileModel;
+import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,11 +32,10 @@ import java.util.List;
  */
 public class DashboardActivity extends AppCompatActivity {
 
-    public static List<ClientModel> activitiesModelArrayList;
-    private static Handler threadHandler;
+
     private Libs libs;
     private ImageView mytask, clients, feedback;
-    private ProgressDialog progressDialog;
+
     private TextView textViewTasks, textViewClients, textViewFeedback;
 
     @Override
@@ -50,17 +52,6 @@ public class DashboardActivity extends AppCompatActivity {
         textViewTasks = (TextView) findViewById(R.id.textViewTasks);
         textViewClients = (TextView) findViewById(R.id.textViewClients);
         textViewFeedback = (TextView) findViewById(R.id.textViewFeedback);
-
-        progressDialog = new ProgressDialog(DashboardActivity.this);
-
-        threadHandler = new ThreadHandler();
-        Thread backgroundThread = new BackgroundThread();
-        backgroundThread.start();
-
-        progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
         setMenu();
 
         mytask.setOnClickListener(new View.OnClickListener() {
@@ -175,115 +166,7 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-    public class ThreadHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
 
-            if(progressDialog.isShowing())
-                progressDialog.dismiss();
 
-            /*if (intWhichScreen == Config.intSimpleActivityScreen) {
-                gotoSimpleActivity();
-            }*/
-        }
-    }
-
-    public class BackgroundThread extends Thread {
-        @Override
-        public void run() {
-            try {
-
-                for (int i = 0; i < Config.fileModels.size(); i++) {
-
-                    FileModel fileModel = Config.fileModels.get(i);
-
-                    if (fileModel != null && fileModel.getStrFileUrl() != null && !fileModel.getStrFileUrl().equalsIgnoreCase("")) {
-
-                        libs.loadImageFromWeb(fileModel.getStrFileName(), fileModel.getStrFileUrl());
-
-                       /* String strUrl = libs.replaceSpace(fileModel.getStrFileUrl());
-
-                        String strFileName = libs.replaceSpace(fileModel.getStrFileName());
-
-                        Libs.log(strFileName, "File Name");
-
-                        File fileImage = libs.createFileInternal("images/" + strFileName);
-
-                        if (fileImage.length() <= 0) {
-
-                            InputStream input;
-                            try {
-
-                                URL url = new URL(strUrl); //URLEncoder.encode(fileModel.getStrFileUrl(), "UTF-8")
-                                input = url.openStream();
-                                byte[] buffer = new byte[1500];
-                                OutputStream output = new FileOutputStream(fileImage);
-                                try {
-                                    int bytesRead;
-                                    while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
-                                        output.write(buffer, 0, bytesRead);
-                                    }
-                                } finally {
-                                    output.close();
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }*/
-                    }
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-                //
-            try {
-
-                activitiesModelArrayList= new ArrayList<>();
-                activitiesModelArrayList.clear();
-
-                if (Config.jsonObject.has("dependents")) {
-
-                    JSONArray jsonArrayNotifications = Config.jsonObject.getJSONArray("dependents");
-
-                    Libs.log(String.valueOf(jsonArrayNotifications.length()), " 1 ");
-
-                    for (int j = 0; j < jsonArrayNotifications.length(); j++) {
-
-                        JSONObject jsonObjectNotification = jsonArrayNotifications.getJSONObject(j);
-
-                        ClientModel clientsModel = new ClientModel();
-                        clientsModel.setAge(jsonObjectNotification.getString("dependent_age"));
-                        clientsModel.setAddress(jsonObjectNotification.getString("dependent_address"));
-                        clientsModel.setName(jsonObjectNotification.getString("dependent_name"));
-                        clientsModel.setPremium(jsonObjectNotification.getString("dependent_notes"));
-                        clientsModel.setProblem(jsonObjectNotification.getString("dependent_illness"));
-                        clientsModel.setStrMobile(jsonObjectNotification.getString("dependent_contact_no"));
-                        clientsModel.setStrClientImageUrl(jsonObjectNotification.getString("dependent_profile_url"));
-
-                        activitiesModelArrayList.add(clientsModel);
-                    }
-
-                }
-
-                //
-
-                Libs.log(String.valueOf(activitiesModelArrayList.size()), " 1 ");
-                for (int i = 0; i < activitiesModelArrayList.size(); i++) {
-                    ClientModel clientModel = activitiesModelArrayList.get(i);
-
-                    if (clientModel.getStrClientImageUrl() != null && !clientModel.getStrClientImageUrl().equalsIgnoreCase("")) {
-
-                        libs.loadImageFromWeb(clientModel.getName(), clientModel.getStrClientImageUrl());
-
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            threadHandler.sendEmptyMessage(0);
-        }
-    }
 
 }
