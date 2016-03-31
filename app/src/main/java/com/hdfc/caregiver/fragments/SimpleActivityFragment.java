@@ -203,7 +203,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
         StorageService storageService = new StorageService(getActivity());
 
-        storageService.findDocsByKeyValue(Config.collectionActivity, "service_id", "123213123", new AsyncApp42ServiceApi.App42StorageServiceListener() {
+        storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id", Config.jsonDocId, new AsyncApp42ServiceApi.App42StorageServiceListener() {
             @Override
             public void onDocumentInserted(Storage response) {
 
@@ -238,7 +238,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                                 activityModel.setStrActivityMessage(Config.jsonObject.getString("activity_message"));
                                 activityModel.setStrActivityName(Config.jsonObject.getString("activity_name"));
                                 activityModel.setStrActivityDesc(Config.jsonObject.getString("activity_description"));
-                                activityModel.setiServiceId(Config.jsonObject.getInt("service_id"));
+                             //   activityModel.setiServiceId(Config.jsonObject.getInt("service_id"));
                               //  activityModel.setStrActivityDate(Config.jsonObject.getString("activity_date"));
                                 activityModel.setStrActivityDoneDate(Config.jsonObject.getString("activity_done_date"));
                                 activityModel.setStrActivityStatus(Config.jsonObject.getString("status"));

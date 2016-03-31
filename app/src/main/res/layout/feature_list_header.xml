@@ -20,6 +20,7 @@
         android:id="@+id/imgLogoHeaderTaskDetail"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:src="@drawable/mrs_hungal_circle2"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/imgBackHeaderTaskDetail"
