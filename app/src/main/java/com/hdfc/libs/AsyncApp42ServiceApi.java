@@ -335,6 +335,7 @@ public class AsyncApp42ServiceApi {
                                        final String strKey, final String strValue, final App42StorageServiceListener callBack) {
         final Handler callerThreadHandler = new Handler();
         new Thread() {
+
             @Override
             public void run() {
                 try {

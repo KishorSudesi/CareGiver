@@ -728,6 +728,20 @@ public class Libs {
         alertbox.show();
     }
 
+    public boolean isEmailValid(String email) {
+        boolean b;
+
+        b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
+        if (b) {
+            Pattern p = Pattern.compile("^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE);
+            Matcher m = p.matcher(email);
+            b = m.matches();
+        }
+
+        return b;
+    }
+
 
    /* public String getUUID() {
         final TelephonyManager tm = (TelephonyManager) _ctxt.getSystemService(Context.TELEPHONY_SERVICE);
@@ -745,7 +759,7 @@ public class Libs {
         return deviceId;
     }*/
 
-    public boolean isEmailValid(String email) {
+    /*public boolean isEmailValid(String email) {
         boolean b;
 
         b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
@@ -757,7 +771,7 @@ public class Libs {
         }
 
         return b;
-    }
+    }*/
 
     public void getMemory() {
         Runtime rt = Runtime.getRuntime();

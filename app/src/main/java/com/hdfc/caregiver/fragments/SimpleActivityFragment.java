@@ -232,7 +232,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                         activityModels.clear();
 
 
-
                                 ActivityModel activityModel = new ActivityModel();
 
                                 activityModel.setStrActivityMessage(Config.jsonObject.getString("activity_message"));

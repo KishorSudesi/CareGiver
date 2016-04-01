@@ -109,8 +109,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onResume();
     }
 
-
-
     public void validateLogin(View v) {
 
         libs.setEditTextDrawable(editEmail, getResources().getDrawable(R.drawable.edit_text));
@@ -191,7 +189,6 @@ public class LoginActivity extends AppCompatActivity {
                                             Config.jsonObject = new JSONObject(strDocument);
 
                                             if(Config.jsonObject.has("provider_email")) {
-
                                                 //(String email, String number, String strAddress, String place)
                                                 Config.myProfileModel = new MyProfileModel(
                                                         Config.jsonObject.getString("provider_email"),

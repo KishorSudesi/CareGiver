@@ -112,10 +112,12 @@ public class RatingsFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-
+        BackgroundThread backgroundThread = new BackgroundThread();
+        backgroundThread.start();
+        backgroundThreadHandler = new BackgroundThreadHandler();
         StorageService storageService = new StorageService(getActivity());
 
-        storageService.findDocsByKeyValue(Config.collectionActivity, "service_id", "123213123",
+        storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id", Config.jsonDocId,
                 new AsyncApp42ServiceApi.App42StorageServiceListener() {
             @Override
             public void onDocumentInserted(Storage response) {

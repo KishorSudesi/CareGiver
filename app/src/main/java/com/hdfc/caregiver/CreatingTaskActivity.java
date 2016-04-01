@@ -73,19 +73,19 @@ public class CreatingTaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creating_task);
-        dateTime = (EditText) findViewById(R.id.editDateTime);
-        editTextTitle = (EditText) findViewById(R.id.editTextTitle);
+        dateTime = (EditText)findViewById(R.id.editDateTime);
+        editTextTitle = (EditText)findViewById(R.id.editTextTitle);
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
 
         libs = new Libs(CreatingTaskActivity.this);
         progressDialog = new ProgressDialog(CreatingTaskActivity.this);
 
-        backImage = (ImageView) findViewById(R.id.imgBackCreatingTaskDetail);
+        backImage = (ImageView)findViewById(R.id.imgBackCreatingTaskDetail);
         backImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
-                Config.intSelectedMenu = Config.intDashboardScreen;
+                Intent intent = new Intent(CreatingTaskActivity.this,DashboardActivity.class);
+                Config.intSelectedMenu=Config.intDashboardScreen;
                 startActivity(intent);
             }
         });
@@ -103,7 +103,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             }
         });
 
-        createtaskDone = (TextView) findViewById(R.id.textViewDoneHeaderCreatingTask);
+        createtaskDone = (TextView)findViewById(R.id.textViewDoneHeaderCreatingTask);
 
         createtaskDone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,77 +137,44 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         });
 
-        StorageService storageService = new StorageService(CreatingTaskActivity.this);
+        try {
 
-        storageService.findDocsByKeyValue(Config.collectionDependent, "dependent_name", "komu", new AsyncApp42ServiceApi.App42StorageServiceListener() {
-            @Override
-            public void onDocumentInserted(Storage response) {
+            dependentModels.clear();
 
-            }
+            if (Config.jsonObject.has("dependents")) {
 
-            @Override
-            public void onUpdateDocSuccess(Storage response) {
+                JSONArray jsonArrayNotifications = Config.jsonObject.getJSONArray("dependents");
 
-            }
+                products = new String[jsonArrayNotifications.length()];
 
-            @Override
-            public void onFindDocSuccess(Storage response) {
-                Libs.log(String.valueOf(response.getJsonDocList().size()), " count ");
-                if (response.getJsonDocList().size() > 0) {
+                for (int j = 0; j < jsonArrayNotifications.length(); j++) {
 
-                    Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
+                    JSONObject jsonObjectNotification = jsonArrayNotifications.getJSONObject(j);
 
-                    String strDocument = jsonDocument.getJsonDoc();
+                    DependentModel dependentModel = new DependentModel();
 
-                    try {
-                        Config.jsonObject = new JSONObject(strDocument);
-                        dependentModels.clear();
-                        products = new String[Config.jsonObject.length()];
+                    dependentModel.setStrCustomerEmail(jsonObjectNotification.getString("customer_email"));
+                    dependentModel.setStrDependentName(jsonObjectNotification.getString("dependent_name"));
 
-                        for (int j = 0; j < Config.jsonObject.length(); j++) {
+                    products[j]=jsonObjectNotification.getString("dependent_name");
 
-
-                            DependentModel dependentModel = new DependentModel();
-
-                           // dependentModel.setStrCustomerEmail(Config.jsonObject.getString("customer_email"));
-                            dependentModel.setStrDependentName(Config.jsonObject.getString("dependent_name"));
-
-                            products[j] = Config.jsonObject.getString("dependent_name");
-
-                            dependentModels.add(dependentModel);
-                        }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    //inputSearch = (TextView) findViewById(R.id.inputSearch);
-
-                    //Creating the instance of ArrayAdapter containing list of language names
-                   // ArrayAdapter<String> adapter = new ArrayAdapter<String>
-                   //         (this, android.R.layout.select_dialog_item, products);
-                    //Getting the instance of AutoCompleteTextView
-                    //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
-                    inputSearch.setThreshold(1);//will start working from first character
-                   // inputSearch.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
+                    dependentModels.add(dependentModel);
                 }
             }
 
-            @Override
-            public void onInsertionFailed(App42Exception ex) {
 
-            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //inputSearch = (TextView) findViewById(R.id.inputSearch);
 
-            @Override
-            public void onFindDocFailed(App42Exception ex) {
-
-            }
-
-            @Override
-            public void onUpdateDocFailed(App42Exception ex) {
-
-            }
-        });
+        //Creating the instance of ArrayAdapter containing list of language names
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (this,android.R.layout.select_dialog_item,products);
+        //Getting the instance of AutoCompleteTextView
+        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
+        inputSearch.setThreshold(1);//will start working from first character
+        inputSearch.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
     }
 
     public void uploadData() {
@@ -359,7 +326,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                                             try {
                                                                 responseJSONDocCarla = new JSONObject(strDocument);
 
-                                                                if (responseJSONDocCarla.has("dependent")) {
+                                                                if (responseJSONDocCarla.has("dependents")) {
 
                                                                     JSONArray dependantsA = responseJSONDocCarla.getJSONArray("dependents");
 

@@ -462,7 +462,6 @@ public class MyProfileActivity extends AppCompatActivity {
                                                             progressDialog.dismiss();
 
                                                         if (Config.jsonObject.has("provider_profile_url")) {
-
                                                             try {
                                                                 Config.jsonObject.put("provider_profile_url", url);
                                                             } catch (JSONException e) {
