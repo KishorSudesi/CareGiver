@@ -48,6 +48,7 @@ public class Config {
     public static int intSelectedMenu = 0;
     public static int intDependantsCount = 0;
     public static String strUserName = "";
+    public static String dependent_name="komu";
     public static MyProfileModel myProfileModel = null;
     public static CreateTaskModel createTaskModel=null;
     public static int intDashboardScreen = 1;

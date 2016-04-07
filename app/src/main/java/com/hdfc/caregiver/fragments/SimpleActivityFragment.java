@@ -112,15 +112,15 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                 cvh.textTime.setText(libs.formatDate(activityModel.getStrActivityDate()));
                 cvh.imageTiming.setText(libs.formatDateTime(activityModel.getStrActivityDate()));
-                cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
-               /* File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
+               // cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
+                File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
 
                 if (fileImage.exists()) {
                     String filename = fileImage.getAbsolutePath();
                     multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
                 } else {
                     cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
-                }*/
+                }
             }
             return convertView;
         }
@@ -217,6 +217,10 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             @Override
             public void onFindDocSuccess(Storage response) {
                 Libs.log(String.valueOf(response.getJsonDocList().size()), " count ");
+
+                Storage  storage  = (Storage )response;
+                //This will return JSONObject list, however since Object Id is unique, list will only have one object
+                ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
                 if (response.getJsonDocList().size() > 0) {
 
                     Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
@@ -231,17 +235,23 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                         activityModels.clear();
 
+                        ActivityModel activityModel = new ActivityModel();
 
-                                ActivityModel activityModel = new ActivityModel();
-
-                                activityModel.setStrActivityMessage(Config.jsonObject.getString("activity_message"));
-                                activityModel.setStrActivityName(Config.jsonObject.getString("activity_name"));
-                                activityModel.setStrActivityDesc(Config.jsonObject.getString("activity_description"));
-                             //   activityModel.setiServiceId(Config.jsonObject.getInt("service_id"));
-                              //  activityModel.setStrActivityDate(Config.jsonObject.getString("activity_date"));
-                                activityModel.setStrActivityDoneDate(Config.jsonObject.getString("activity_done_date"));
-                                activityModel.setStrActivityStatus(Config.jsonObject.getString("status"));
-                               // activityModel.setStrActivityDependentName(Config.jsonObject.getString("dependent_name"));
+                        System.out.println("Size he "+jsonDocList.size());
+                        JSONArray jsonArray = Config.jsonObject.getJSONArray("activities");
+                        for (int i = 0 ; i < jsonDocList.size() ; i++) {
+                            JSONObject jObject = jsonArray.getJSONObject(i);
+                           // activityModel.setStrActivityMessage(jObject.getString("activity_message"));
+                            activityModel.setStrActivityMessage(Config.jsonObject.getString("activity_message"));
+                            System.out.println("your name is : "+jObject.getString("activity_name"));
+                            //  activityModel.setStrActivityName(jObject.getString("activity_name"));
+                            activityModel.setStrActivityDesc(Config.jsonObject.getString("activity_description"));
+                            //   activityModel.setiServiceId(Config.jsonObject.getInt("service_id"));
+                            //  activityModel.setStrActivityDate(Config.jsonObject.getString("activity_date"));
+                            activityModel.setStrActivityDoneDate(jObject.getString("activity_done_date"));
+                            activityModel.setStrActivityStatus(Config.jsonObject.getString("status"));
+                            activityModel.setStrActivityDependentName(jObject.getString("dependent_name"));
+                        }
 
                                 String featuresDone[];
                                 String features[];
