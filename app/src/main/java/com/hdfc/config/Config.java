@@ -45,6 +45,7 @@ public class Config {
     public static JSONObject jsonObject = null;
     public static JSONObject jsonServer = null;
     public static String jsonDocId = "";
+    public static String dependent_name = "komu";
     public static int intSelectedMenu = 0;
     public static int intDependantsCount = 0;
     public static String strUserName = "";

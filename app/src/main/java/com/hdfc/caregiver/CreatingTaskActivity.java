@@ -569,12 +569,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                                                                 Libs.log(responseJSONDocCarla.toString(), " onj 2 ");
 
-                                                                                storageService.updateDocs(responseJSONDocCarla, "56fd07c9e4b0bb8f525b080e", Config.collectionActivity, new App42CallBack() {
+                                                                                storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionCustomer, new App42CallBack() {
                                                                                     @Override
                                                                                     public void onSuccess(Object o) {
                                                                                         System.out.println("Success");
 
                                                                                         if (o != null) {
+                                                                                            System.out.println("Success2");
                                                                                             Intent intent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
                                                                                             if (progressDialog.isShowing())
                                                                                                 progressDialog.dismiss();
@@ -583,6 +584,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                                                                             finish();
 
                                                                                         } else {
+                                                                                            System.out.println("Success3");
                                                                                             if (progressDialog.isShowing())
                                                                                                 progressDialog.dismiss();
                                                                                             libs.toast(2, 2, getString(R.string.warning_internet));

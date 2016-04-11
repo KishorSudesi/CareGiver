@@ -112,8 +112,11 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                 cvh.textTime.setText(libs.formatDate(activityModel.getStrActivityDate()));
                 cvh.imageTiming.setText(libs.formatDateTime(activityModel.getStrActivityDate()));
-               // cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
+                cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
+
+                System.out.println("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
                 File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
+                System.out.println("Ye YE eeee: "+fileImage);
 
                 if (fileImage.exists()) {
                     String filename = fileImage.getAbsolutePath();
@@ -217,10 +220,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             @Override
             public void onFindDocSuccess(Storage response) {
                 Libs.log(String.valueOf(response.getJsonDocList().size()), " count ");
-
-                Storage  storage  = (Storage )response;
-                //This will return JSONObject list, however since Object Id is unique, list will only have one object
-                ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
                 if (response.getJsonDocList().size() > 0) {
 
                     Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
@@ -231,33 +230,30 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                     try {
 
                         Config.jsonObject = new JSONObject(strDocument);
-
+                        Storage storage = (Storage)response;
+                        ArrayList<Storage.JSONDocument> fileSize = storage.getJsonDocList();
 
                         activityModels.clear();
-
                         ActivityModel activityModel = new ActivityModel();
+                        System.out.println("Vaaand reeee : "+fileSize.size());
 
-                        System.out.println("Size he "+jsonDocList.size());
-                        JSONArray jsonArray = Config.jsonObject.getJSONArray("activities");
-                        for (int i = 0 ; i < jsonDocList.size() ; i++) {
-                            JSONObject jObject = jsonArray.getJSONObject(i);
-                           // activityModel.setStrActivityMessage(jObject.getString("activity_message"));
+                        for(int i= 0;i<fileSize.size();i++) {
+
                             activityModel.setStrActivityMessage(Config.jsonObject.getString("activity_message"));
-                            System.out.println("your name is : "+jObject.getString("activity_name"));
-                            //  activityModel.setStrActivityName(jObject.getString("activity_name"));
+                            activityModel.setStrActivityName(Config.jsonObject.getString("activity_name"));
                             activityModel.setStrActivityDesc(Config.jsonObject.getString("activity_description"));
                             //   activityModel.setiServiceId(Config.jsonObject.getInt("service_id"));
                             //  activityModel.setStrActivityDate(Config.jsonObject.getString("activity_date"));
-                            activityModel.setStrActivityDoneDate(jObject.getString("activity_done_date"));
+                            activityModel.setStrActivityDoneDate(Config.jsonObject.getString("activity_done_date"));
                             activityModel.setStrActivityStatus(Config.jsonObject.getString("status"));
-                            activityModel.setStrActivityDependentName(jObject.getString("dependent_name"));
+                            activityModel.setStrActivityDependentName(Config.jsonObject.getString("dependent_name"));
                         }
-
                                 String featuresDone[];
                                 String features[];
 
                                 if (Config.jsonObject.has("features")) {
                                     features = new String[Config.jsonObject.getJSONArray("features").length()];
+
 
                                     for (int i = 0; i < Config.jsonObject.getJSONArray("features").length(); i++) {
                                         features[i] = Config.jsonObject.getJSONArray("features").getString(i);
