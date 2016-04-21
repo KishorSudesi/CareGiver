@@ -60,6 +60,7 @@ public class RatingsAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.feedback = (TextView) convertView.findViewById(R.id.txtMessage);
             viewHolder.image = (ImageView) convertView.findViewById(R.id.imageViewRatingsItem);
+            viewHolder.smily = (ImageView)convertView.findViewById(R.id.imageViewRatingsSmily);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -71,6 +72,18 @@ public class RatingsAdapter extends BaseAdapter {
 
             viewHolder.feedback.setText(feedBackModel.getStrFeedBackMessage());
 
+            if (feedBackModel.getIntFeedBackRating()== 1){
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.mipmap.rate_icon_4));
+            }else if(feedBackModel.getIntFeedBackRating()== 2)
+            {
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.smiley_icon));
+            }else if (feedBackModel.getIntFeedBackRating()== 3){
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.rate_icon_3));
+            }else if (feedBackModel.getIntFeedBackRating()== 4){
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.rate_icon_2));
+            }else {
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.rate_icon_1));
+            }
             File fileImage = libs.createFileInternal("images/" + libs.replaceSpace(feedBackModel.getStrFeedBackBy()));
 
             if(fileImage.exists()) {
@@ -85,6 +98,6 @@ public class RatingsAdapter extends BaseAdapter {
     }
     public class ViewHolder{
         TextView feedback;
-        ImageView image;
+        ImageView image,smily;
     }
 }

@@ -83,7 +83,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creating_task);
-        dateTime = (EditText)findViewById(R.id.editDateTime);
+        dateTime = (EditText)findViewById(R.id.editTextDate);
         editTextTitle = (EditText)findViewById(R.id.editTextTitle);
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
 
@@ -449,7 +449,10 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                             final Storage findObj = (Storage) o;
 
+
+                            if (inputSearch.getText().toString().equals(sDependentModel.getStrDependentName())) {
                             try {
+
                                 responseJSONDoc = new JSONObject(findObj.
                                         getJsonDocList().get(0).getJsonDoc());
                                 System.out.println("responseJSONDoc: "+responseJSONDoc);
@@ -463,6 +466,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 jSe.printStackTrace();
                                 progressDialog.dismiss();
                             }
+                            }else{
+                                libs.toast(2,2,"Enter Valid Client Name");
+                            }
+
+
 
                             Libs.log(responseJSONDoc.toString(), " onj 1 ");
 

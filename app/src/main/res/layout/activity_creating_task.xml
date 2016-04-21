@@ -63,10 +63,18 @@
             />
 
         <EditText
-            android:id="@+id/editDateTime"
+            android:id="@+id/editTextDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:editable="false" />
+            android:layout_gravity="center_horizontal"
+            android:paddingEnd="20dp"
+            android:drawableRight="@drawable/activity_icon_32"
+            android:drawableEnd="@drawable/activity_icon_32"
+            android:hint="@string/dateAndTime"
+            android:paddingLeft="20dp"
+            android:paddingStart="20dp"
+            android:inputType="datetime" />
+
 
     </LinearLayout>
 

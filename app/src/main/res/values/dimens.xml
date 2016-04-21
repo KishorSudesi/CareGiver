@@ -28,4 +28,7 @@
 
     <dimen name="txt_size">7sp</dimen>
     <dimen name="txt_qq">5sp</dimen>
+
+    <dimen name="photo_width">100dp</dimen>
+    <dimen name="photo_height">100dp</dimen>
 </resources>

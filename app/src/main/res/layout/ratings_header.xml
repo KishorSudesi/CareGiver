@@ -35,7 +35,7 @@
             android:layout_height="20dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="15dp"
-            android:background="@drawable/arrow159" />
+            android:background="@drawable/signoff" />
 
         <TextView
             android:id="@+id/txtUserRatings"

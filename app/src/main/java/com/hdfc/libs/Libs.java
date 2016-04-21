@@ -50,6 +50,7 @@ import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.LoginActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
+import com.hdfc.models.Action;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -659,6 +660,21 @@ public class Libs {
             if (outputChannel != null) outputChannel.close();
         }
     }
+    public void copyFile(File file, File newFile) throws IOException {
+        //File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            //file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+    }
 
     public void moveFileDir(File file, File dir) throws IOException {
         File newFile = new File(dir, file.getName());
@@ -734,6 +750,7 @@ public class Libs {
         b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
 
         if (b) {
+            //^[\w\-]([\.\w])+[\w]+@([\w\-]+\.)+[A-Z]{2,4}$
             Pattern p = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+", Pattern.CASE_INSENSITIVE);
             Matcher m = p.matcher(email);
             b = m.matches();
@@ -918,44 +935,52 @@ public class Libs {
         return file;
     }
 
-    public void selectImage(final String strFileName, final Fragment fragment, final Activity activity) {
+    public void selectImage(final String strFileName, final Fragment fragment, final Activity activity, final boolean isSingle) {
         final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
         // System.out.println("Pilu : " + FeatureActivity.IMAGE_COUNT);
-        if (FeatureActivity.IMAGE_COUNT < 2) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
+        AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
 
-            builder.setTitle("Add a Profile Photo!");
-            builder.setItems(items, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int item) {
+        builder.setTitle("Select a Image");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
 
-                    //System.out.println(items[item].equals("Take Photo"));
-                    if (items[item].equals("Take Photo")) {
-                        openCamera(strFileName, fragment, activity);
-                        //System.out.println("DDDDDDDIC DIC DIC DIC ::: " + strFileName);
+                //System.out.println(items[item].equals("Take Photo"));
+                if (items[item].equals("Take Photo")) {
+                    openCamera(strFileName, fragment, activity);
+                    //System.out.println("DDDDDDDIC DIC DIC DIC ::: " + strFileName);
 
-                    } else if (items[item].equals("Choose from Library")) {
-                        Intent intent = new Intent();
+                } else if (items[item].equals("Choose from Library")) {
+
+                    Intent intent;
+
+                    if(isSingle) {
+                        intent = new Intent();
                         intent.setType("image/*");
                         intent.setAction(Intent.ACTION_GET_CONTENT);
-
-                        FeatureActivity.IMAGE_COUNT = FeatureActivity.IMAGE_COUNT + 1;
 
                         if (fragment != null)
                             fragment.startActivityForResult(Intent.createChooser(intent, "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
                         else
                             activity.startActivityForResult(Intent.createChooser(intent, "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
+                    }else {
+                        intent = new Intent(Action.ACTION_MULTIPLE_PICK);
 
-                    } else if (items[item].equals("Cancel")) {
-                        dialog.dismiss();
+                        if (fragment != null)
+                            fragment.startActivityForResult(intent, Config.START_GALLERY_REQUEST_CODE);
+                        else
+                            activity.startActivityForResult(intent, Config.START_GALLERY_REQUEST_CODE);
                     }
+
+
+
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
                 }
-            });
-            builder.show();
-        } else {
-            Toast.makeText(_ctxt, "You can add two images only", Toast.LENGTH_LONG).show();
-        }
+            }
+        });
+        builder.show();
     }
 
     public void openCamera(String strFileName, Fragment fragment, final Activity activity) {
