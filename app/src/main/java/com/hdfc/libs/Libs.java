@@ -734,7 +734,7 @@ public class Libs {
         b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
 
         if (b) {
-            Pattern p = Pattern.compile("^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE);
+            Pattern p = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+", Pattern.CASE_INSENSITIVE);
             Matcher m = p.matcher(email);
             b = m.matches();
         }

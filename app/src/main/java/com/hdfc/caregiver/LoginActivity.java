@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public static Libs libs;
     private static ProgressDialog progressDialog;
-    private static String userName;
+    private static String userName,uName;
     private RelativeLayout relLayout;
     private EditText editEmail, editPassword;
     private RelativeLayout layoutLogin;
@@ -119,7 +119,8 @@ public class LoginActivity extends AppCompatActivity {
             editEmail.setError(null);
             editPassword.setError(null);
 
-            userName = editEmail.getText().toString();
+            uName = editEmail.getText().toString();
+            userName = uName.toLowerCase();
             String password = editPassword.getText().toString();
 
             boolean cancel = false;

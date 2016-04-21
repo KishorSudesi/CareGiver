@@ -18,6 +18,7 @@ import com.shephertz.app42.paas.sdk.android.upload.UploadService;
 import com.shephertz.app42.paas.sdk.android.user.User;
 import com.shephertz.app42.paas.sdk.android.user.UserService;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.GeneralSecurityException;
@@ -33,7 +34,7 @@ public class AsyncApp42ServiceApi {
     private UploadService uploadService;
 
 
-    private AsyncApp42ServiceApi(Context context) {
+    public AsyncApp42ServiceApi(Context context) {
 
         try {
             if (Config.release) {//for release
@@ -286,7 +287,11 @@ public class AsyncApp42ServiceApi {
                     callerThreadHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callBack.onFindDocSuccess(response);
+                            try {
+                                callBack.onFindDocSuccess(response);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 } catch (final App42Exception ex) {
@@ -343,7 +348,11 @@ public class AsyncApp42ServiceApi {
                     callerThreadHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callBack.onFindDocSuccess(response);
+                            try {
+                                callBack.onFindDocSuccess(response);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 } catch (final App42Exception ex) {
@@ -707,7 +716,7 @@ public class AsyncApp42ServiceApi {
 
         void onUpdateDocSuccess(Storage response);
 
-        void onFindDocSuccess(Storage response);
+        void onFindDocSuccess(Storage response) throws JSONException;
 
         void onInsertionFailed(App42Exception ex);
 

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Config {
 
     public static final String dbName = "newzeal";
-    public static final String collectionServices = "services";
+    public static final String collectionServices = "service";
     public static final String collectionProvider = "provider";
     public static final String collectionCustomer = "customer";
     public static final String collectionActivity = "activity";
@@ -46,10 +46,10 @@ public class Config {
     public static JSONObject jsonServer = null;
     public static String jsonDocId = "";
     public static String dependent_name = "komu";
+    public static String provider_email = "carla1@gmail.com";
     public static int intSelectedMenu = 0;
     public static int intDependantsCount = 0;
     public static String strUserName = "";
-    public static String dependent_name="komu";
     public static MyProfileModel myProfileModel = null;
     public static CreateTaskModel createTaskModel=null;
     public static int intDashboardScreen = 1;

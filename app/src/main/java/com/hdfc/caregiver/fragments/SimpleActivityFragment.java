@@ -1,6 +1,7 @@
 package com.hdfc.caregiver.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
@@ -8,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -36,6 +39,7 @@ import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -54,6 +58,14 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
     private Menu mMenu;
     private SlideAndDragListView<ApplicationInfo> mListView;
     private Libs libs;
+    public ActivityModel activityModel;
+    private JSONObject responseJSONDoc;
+    private static StorageService storageService;
+    private JSONObject responseJSONDocCarla;
+    private ProgressDialog progressDialog;
+
+    private static Handler threadHandler;
+
     private BaseAdapter mAdapter = new BaseAdapter() {
 
         @Override
@@ -91,10 +103,9 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 cvh = (CustomViewHolder) convertView.getTag();
             }
 
-
             if (activityModels.size() > 0) {
 
-                ActivityModel activityModel = activityModels.get(position);
+                activityModel = activityModels.get(position);
 
                 String strMessage = activityModel.getStrActivityMessage();
 
@@ -111,12 +122,21 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 cvh.textMessage.setText(strName);
 
                 cvh.textTime.setText(libs.formatDate(activityModel.getStrActivityDate()));
-                cvh.imageTiming.setText(libs.formatDateTime(activityModel.getStrActivityDate()));
-                cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
+                if(activityModel.getStrActivityStatus().equalsIgnoreCase("upcoming")){
+                    cvh.imageTiming.setBackgroundResource(R.drawable.circle);
+                    cvh.imageTiming.setText(libs.formatDateTime(activityModel.getStrActivityDate()));
+                    cvh.imageTiming.setTextColor(getResources().getColor(R.color.gray_holo_dark));
+                }else{
+                    cvh.imageTiming.setBackgroundResource(R.drawable.done);
+                    cvh.imageTiming.setTextColor(getResources().getColor(R.color.colorWhite));
+                    cvh.imageTiming.setText("");
+                }
 
-                System.out.println("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
+              /*  cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
+
+                System.out.println("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));*/
                 File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
-                System.out.println("Ye YE eeee: "+fileImage);
+
 
                 if (fileImage.exists()) {
                     String filename = fileImage.getAbsolutePath();
@@ -164,7 +184,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
 
-
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,14 +216,164 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 }
             });*/
 
-            parseData();
+    //        parseData();
 
         return view;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        refreshData();
+    }
+
+    private void refreshData() {
+        if (libs.isConnectingToInternet()) {
+            progressDialog  =new ProgressDialog(getContext());
+
+            progressDialog.setMessage(getString(R.string.loading));
+            progressDialog.setCancelable(true);
+            progressDialog.show();
+
+            StorageService storageService = new StorageService(getActivity());
+
+            storageService.findDocsByKeyValue(Config.collectionActivity, "dependent_name",
+                    "komu",
+                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                        @Override
+                        public void onDocumentInserted(Storage response) {
+                        }
+
+                        @Override
+                        public void onUpdateDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onFindDocSuccess(Storage response) {
+
+                            if (response != null) {
+
+                                if (response.getJsonDocList().size() > 0) {
+
+                                    Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
+
+                                    String strDocument = jsonDocument.getJsonDoc();
+
+                                    try {
+                                        Config.jsonObject = new JSONObject(strDocument);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                parseDataPM();
+                            } else {
+
+                                if(progressDialog.isShowing())
+                                    progressDialog.dismiss();
+
+                                libs.toast(2,2, getString(R.string.warning_internet));
+                            }
+                        }
+
+                        @Override
+                        public void onInsertionFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onFindDocFailed(App42Exception ex) {
+                            if(progressDialog.isShowing())
+                                progressDialog.dismiss();
+
+                            libs.toast(2,2, getString(R.string.warning_internet));
+                        }
+
+                        @Override
+                        public void onUpdateDocFailed(App42Exception ex) {
+                        }
+                    });
+        }
+    }
+
+    public void parseDataPM(){
+        threadHandler = new ThreadHandler();
+    }
+
+    public class ThreadHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+
+            if(progressDialog.isShowing())
+                progressDialog.dismiss();
+
+                try {
+                activityModels.clear();
+
+                    JSONArray jsonArrayFeedback = Config.jsonObject.getJSONArray("activities");
+
+                    int iArraySize = jsonArrayFeedback.length();
+
+                    for (int k = 0; k < iArraySize; k++) {
+
+                        JSONObject jsonObject = jsonArrayFeedback.getJSONObject(k);
+
+                        ActivityModel activityModel = new ActivityModel();
+
+                        activityModel.setStrActivityMessage(jsonObject.getString("activity_message"));
+                        activityModel.setStrActivityName(jsonObject.getString("activity_name"));
+                        activityModel.setStrActivityDesc(jsonObject.getString("activity_description"));
+                        activityModel.setiServiceId(jsonObject.getInt("service_id"));
+                        activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
+                        activityModel.setStrActivityDoneDate(jsonObject.getString("activity_done_date"));
+
+
+
+                        activityModel.setStrActivityStatus(jsonObject.getString("status"));
+                        activityModel.setStrActivityDependentName(jsonObject.getString("dependent_name"));
+
+                        String featuresDone[];
+                        String features[];
+
+                        if (jsonObject.has("features")) {
+                            features = new String[jsonObject.getJSONArray("features").length()];
+
+                            for (int i = 0; i < jsonObject.getJSONArray("features").length(); i++) {
+                                features[i] = jsonObject.getJSONArray("features").getString(i);
+                            }
+
+                            activityModel.setFeatures(features);
+                        }
+
+                        if (jsonObject.has("features_done")) {
+                            featuresDone = new String[jsonObject.getJSONArray("features_done").length()];
+
+                            for (int i = 0; i < jsonObject.getJSONArray("features_done").length(); i++) {
+                                featuresDone[i] = jsonObject.getJSONArray("features_done").getString(i);
+                            }
+
+                            activityModel.setDoneFeatures(featuresDone);
+                        }
+
+
+                        activityModel.setStrCustomerEmail(jsonObject.getString("customer_email"));
+                        activityModels.add(activityModel);
+
+
+                    }
+                mListView.setAdapter(mAdapter);
+
+
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            //
+        }
     }
 
     public void parseData() {
 
         StorageService storageService = new StorageService(getActivity());
+
 
         storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id", Config.jsonDocId, new AsyncApp42ServiceApi.App42StorageServiceListener() {
             @Override
@@ -219,6 +388,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
             @Override
             public void onFindDocSuccess(Storage response) {
+
                 Libs.log(String.valueOf(response.getJsonDocList().size()), " count ");
                 if (response.getJsonDocList().size() > 0) {
 
@@ -235,10 +405,9 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                         activityModels.clear();
                         ActivityModel activityModel = new ActivityModel();
-                        System.out.println("Vaaand reeee : "+fileSize.size());
 
                         for(int i= 0;i<fileSize.size();i++) {
-
+                            System.out.println("DEVA DEVA DEVA : "+(Config.jsonObject.getString("activity_message")));
                             activityModel.setStrActivityMessage(Config.jsonObject.getString("activity_message"));
                             activityModel.setStrActivityName(Config.jsonObject.getString("activity_name"));
                             activityModel.setStrActivityDesc(Config.jsonObject.getString("activity_description"));
@@ -251,9 +420,9 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                                 String featuresDone[];
                                 String features[];
 
+                        System.out.println("Here is your JSON object : "+Config.jsonObject);
                                 if (Config.jsonObject.has("features")) {
                                     features = new String[Config.jsonObject.getJSONArray("features").length()];
-
 
                                     for (int i = 0; i < Config.jsonObject.getJSONArray("features").length(); i++) {
                                         features[i] = Config.jsonObject.getJSONArray("features").getString(i);
