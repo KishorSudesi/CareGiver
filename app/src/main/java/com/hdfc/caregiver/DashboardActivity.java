@@ -24,6 +24,11 @@ import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +40,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     private Libs libs;
     private ImageView mytask, clients, feedback;
+    private static Handler threadHandler;
 
     private TextView textViewTasks, textViewClients, textViewFeedback;
 
@@ -48,6 +54,8 @@ public class DashboardActivity extends AppCompatActivity {
         mytask = (ImageView)findViewById(R.id.buttonMyTasks);
         clients = (ImageView)findViewById(R.id.buttonClients);
         feedback = (ImageView)findViewById(R.id.buttonFeedback);
+
+        threadHandler = new ThreadHandler();
 
         textViewTasks = (TextView) findViewById(R.id.textViewTasks);
         textViewClients = (TextView) findViewById(R.id.textViewClients);
@@ -166,7 +174,61 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
+    public class ThreadHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            Thread backgroundThread = new BackgroundThread();
+            backgroundThread.start();
+        }
+    }
 
+    public class BackgroundThread extends Thread {
+        @Override
+        public void run() {
+            try {
 
+                for (int i = 0; i < Config.fileModels.size(); i++) {
 
+                    FileModel fileModel = Config.fileModels.get(i);
+
+                    if (fileModel != null && fileModel.getStrFileUrl() != null && !fileModel.getStrFileUrl().equalsIgnoreCase("")) {
+
+                        String strUrl = libs.replaceSpace(fileModel.getStrFileUrl());
+
+                        String strFileName = libs.replaceSpace(fileModel.getStrFileName());
+
+                        Libs.log(strFileName, "File Name");
+
+                        File fileImage = libs.createFileInternal("images/" + strFileName);
+
+                        if (fileImage.length() <= 0) {
+
+                            InputStream input;
+                            try {
+
+                                URL url = new URL(strUrl); //URLEncoder.encode(fileModel.getStrFileUrl(), "UTF-8")
+                                input = url.openStream();
+                                byte[] buffer = new byte[1500];
+                                OutputStream output = new FileOutputStream(fileImage);
+                                try {
+                                    int bytesRead;
+                                    while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
+                                        output.write(buffer, 0, bytesRead);
+                                    }
+                                } finally {
+                                    output.close();
+                                }
+                                Libs.log("0" + fileImage.getAbsolutePath(), "File Name");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+                threadHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

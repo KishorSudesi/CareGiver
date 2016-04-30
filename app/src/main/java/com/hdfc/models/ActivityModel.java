@@ -17,6 +17,55 @@ public class ActivityModel implements Serializable {
     private String strActivityStatus;
     private String strCustomerEmail;
 
+    public ArrayList<FeedBackModel> getFeedBackModels() {
+        return feedBackModels;
+    }
+
+    public ArrayList<ActivityImageModel> getImageModels() {
+        return imageModels;
+    }
+
+    public void setImageModels(ArrayList<ActivityImageModel> imageModels) {
+        this.imageModels = imageModels;
+    }
+
+    public ArrayList<ActivityVideoModel> getVideoModels() {
+        return videoModels;
+    }
+
+    public void setVideoModels(ArrayList<ActivityVideoModel> videoModels) {
+        this.videoModels = videoModels;
+    }
+
+    public void setFeedBackModels(ArrayList<FeedBackModel> feedBackModels) {
+        this.feedBackModels = feedBackModels;
+    }
+
+    private String strActivityId;
+    private String strServiceName;
+
+    private ArrayList<ActivityImageModel> imageModels = new ArrayList<>();
+    private ArrayList<ActivityVideoModel> videoModels = new ArrayList<>();
+    private ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
+
+    public String getStrServiceName() {
+        return strServiceName;
+    }
+
+    public void setStrServiceName(String strServiceName) {
+        this.strServiceName = strServiceName;
+    }
+
+    public String getStrServiceDesc() {
+        return strServiceDesc;
+    }
+
+    public void setStrServiceDesc(String strServiceDesc) {
+        this.strServiceDesc = strServiceDesc;
+    }
+
+    private String strServiceDesc;
+
     private String[] features;
     private String[] doneFeatures;
 
@@ -25,7 +74,25 @@ public class ActivityModel implements Serializable {
     private String strActivityProviderDesc;
     private String strActivityDependentName;
 
-    private int iServiceId;
+    public String getStrActivityId() {
+        return strActivityId;
+    }
+
+    public void setStrActivityId(String strActivityId) {
+        this.strActivityId = strActivityId;
+    }
+
+    private String strDependentId;
+
+    public String getStrDependentId() {
+        return strDependentId;
+    }
+
+    public void setStrDependentId(String strDependentId) {
+        this.strDependentId = strDependentId;
+    }
+
+    private String iServiceId;
     private String strProviderImageUrl;
     private ArrayList<ActivityImageModel> activityImageModels = new ArrayList<>();
     private ArrayList<ActivityVideoModel> activityVideoModels = new ArrayList<>();
@@ -73,11 +140,11 @@ public class ActivityModel implements Serializable {
         this.strActivityDoneDate = strActivityDoneDate;
     }
 
-    public int getiServiceId() {
+    public String getiServiceId() {
         return iServiceId;
     }
 
-    public void setiServiceId(int iServiceId) {
+    public void setiServiceId(String iServiceId) {
         this.iServiceId = iServiceId;
     }
 

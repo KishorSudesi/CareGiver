@@ -5,6 +5,7 @@ import android.content.Context;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
+import com.shephertz.app42.paas.sdk.android.storage.Query;
 
 import org.json.JSONObject;
 
@@ -30,6 +31,11 @@ public class StorageService {
 
     public void findDocsByIdApp42CallBack(String strDocId, String strCollectionName, App42CallBack app42CallBack) {
         asyncService.findDocByDocIdApp42CallBack(Config.dbName, strCollectionName, strDocId, app42CallBack);
+    }
+
+    public void findDocsByQuery(String strCollectionName, Query query,
+                                App42CallBack app42CallBack) {
+        asyncService.findDocumentByQuery(Config.dbName, strCollectionName, query, app42CallBack);
     }
 
     public void findDocsByKeyValue(String strCollectionName, String strKey, String strValue, AsyncApp42ServiceApi.App42StorageServiceListener app42CallBack) {
