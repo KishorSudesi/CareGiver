@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -23,20 +25,20 @@
         android:layout_marginRight="10dp"
         android:orientation="vertical">
 
-        <include
+       <!-- <include
             android:id="@+id/include_task_details_item"
             layout="@layout/feature_list_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            />-->
 
-        <TextView
+       <!-- <TextView
             android:id="@android:id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/noFeatures"
-            android:visibility="gone" />
+            android:visibility="gone" />-->
 
        <!-- <ListView
             android:id="@+id/list_view"
@@ -44,6 +46,7 @@
             android:layout_height="match_parent"/>-->
 
         <ExpandableListView
+            android:layout_marginTop="5dp"
             android:id="@+id/lvExp"
             android:layout_height="match_parent"
             android:layout_width="match_parent"/>

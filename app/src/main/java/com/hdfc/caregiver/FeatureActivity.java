@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hdfc.adapters.ExpandableListAdapter;
 import com.hdfc.adapters.FeatureAdapter;
@@ -277,7 +278,7 @@ if (attach != null) {
         listDataHeader.add("Appointment Confirmation");
         listDataHeader.add("Travel Update");
         listDataHeader.add("Activity closure");
-        listDataHeader.add("Feedback Rating");
+
 
         // Adding child data
         List<String> appointment = new ArrayList<String>();
@@ -292,16 +293,16 @@ if (attach != null) {
 
 
         List<String> activity = new ArrayList<String>();
-        activity.add("Delivery of Reports");
+        activity.add("Comments");
 
-        List<String> feedback = new ArrayList<String>();
-        feedback.add("Feedback");
 
         listDataChild.put(listDataHeader.get(0), appointment); // Header, Child data
         listDataChild.put(listDataHeader.get(1), travel);
         listDataChild.put(listDataHeader.get(2), activity);
-        listDataChild.put(listDataHeader.get(3), feedback);
-    }
+}
+
+
+
 
 
 
