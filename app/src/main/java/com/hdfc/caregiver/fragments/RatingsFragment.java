@@ -91,8 +91,8 @@ public class RatingsFragment extends Fragment {
         libs = new Libs(getActivity());
         intWhichScreen = Config.intRatingsScreen;
 
-       /* if(Config.myProfileModel.getStrName()!=null)
-            textViewName.setText(Config.myProfileModel.getStrName());*/
+        if (Config.myProfileModel.getStrName() != null)
+            textViewName.setText(Config.myProfileModel.getStrName());
 
         myprofile = (RelativeLayout) view.findViewById(R.id.relativelayoutRatings);
 
