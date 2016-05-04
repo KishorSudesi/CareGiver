@@ -274,38 +274,33 @@ if (attach != null) {
         listDataChild = new HashMap<String, List<String>>();
 
         // Adding child data
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
+        listDataHeader.add("Appointment Confirmation");
+        listDataHeader.add("Travel Update");
+        listDataHeader.add("Activity closure");
+        listDataHeader.add("Feedback Rating");
 
         // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
+        List<String> appointment = new ArrayList<String>();
+        appointment.add("Lab Name");
+        appointment.add("Test Performed");
+        appointment.add("Date and Time");
 
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
+        List<String> travel = new ArrayList<String>();
+        travel.add("Self");
+        travel.add("Accompany");
+        travel.add("Car Booking");
 
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
 
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
+        List<String> activity = new ArrayList<String>();
+        activity.add("Delivery of Reports");
+
+        List<String> feedback = new ArrayList<String>();
+        feedback.add("Feedback");
+
+        listDataChild.put(listDataHeader.get(0), appointment); // Header, Child data
+        listDataChild.put(listDataHeader.get(1), travel);
+        listDataChild.put(listDataHeader.get(2), activity);
+        listDataChild.put(listDataHeader.get(3), feedback);
     }
 
 
