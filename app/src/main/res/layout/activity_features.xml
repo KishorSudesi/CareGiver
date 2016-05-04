@@ -38,10 +38,16 @@
             android:text="@string/noFeatures"
             android:visibility="gone" />
 
-        <ListView
+       <!-- <ListView
             android:id="@+id/list_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"/>-->
+
+        <ExpandableListView
+            android:id="@+id/lvExp"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+
 
     </LinearLayout>
 
