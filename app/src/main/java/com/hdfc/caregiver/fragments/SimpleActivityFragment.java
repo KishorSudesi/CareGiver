@@ -136,16 +136,17 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                     cvh.imageTiming.setTextColor(getResources().getColor(R.color.colorWhite));
                     cvh.imageTiming.setText("");
                 }
-                cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
+               // cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
 
-               /* File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
+                //System.out.println("Rahul : "+activityModel.getStrActivityDependentName());
+                File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrDependentId()));
 
                 if (fileImage.exists()) {
                     String filename = fileImage.getAbsolutePath();
                     multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
                 } else {
-                    cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
-                }*/
+                    cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.person_icon));
+                }
             }
             return convertView;
         }

@@ -91,8 +91,11 @@ public class RatingsFragment extends Fragment {
         libs = new Libs(getActivity());
         intWhichScreen = Config.intRatingsScreen;
 
-        if (Config.myProfileModel.getStrName() != null)
-            textViewName.setText(Config.myProfileModel.getStrName());
+       /* if(Config.myProfileModel.getStrName()!=null)
+            textViewName.setText(Config.myProfileModel.getStrName());*/
+        BackgroundThread backgroundThread = new BackgroundThread();
+        backgroundThread.start();
+        backgroundThreadHandler = new BackgroundThreadHandler();
 
         myprofile = (RelativeLayout) view.findViewById(R.id.relativelayoutRatings);
 
@@ -112,9 +115,7 @@ public class RatingsFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        BackgroundThread backgroundThread = new BackgroundThread();
-        backgroundThread.start();
-        backgroundThreadHandler = new BackgroundThreadHandler();
+
         StorageService storageService = new StorageService(getActivity());
 
         storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id", Config.jsonDocId,
@@ -149,6 +150,7 @@ public class RatingsFragment extends Fragment {
 
                             for (int k = 0; k < jsonArrayFeedback.length(); k++) {
                                 JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
+                                System.out.println("Here is feedback array : "+jsonArrayFeedback.toString());
                                 FeedBackModel feedBackModel = new FeedBackModel(
                                         jsonObjectFeedback.getString("feedback_message"),
                                         jsonObjectFeedback.getString("feedback_by"),

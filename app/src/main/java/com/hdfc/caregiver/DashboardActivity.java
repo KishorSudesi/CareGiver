@@ -57,6 +57,9 @@ public class DashboardActivity extends AppCompatActivity {
 
         threadHandler = new ThreadHandler();
 
+        Thread backgroundThread = new BackgroundThread();
+        backgroundThread.start();
+
         textViewTasks = (TextView) findViewById(R.id.textViewTasks);
         textViewClients = (TextView) findViewById(R.id.textViewClients);
         textViewFeedback = (TextView) findViewById(R.id.textViewFeedback);
@@ -207,6 +210,7 @@ public class DashboardActivity extends AppCompatActivity {
                             try {
 
                                 URL url = new URL(strUrl); //URLEncoder.encode(fileModel.getStrFileUrl(), "UTF-8")
+                                System.out.println("Abhishek Patil : "+url.toString());
                                 input = url.openStream();
                                 byte[] buffer = new byte[1500];
                                 OutputStream output = new FileOutputStream(fileImage);
