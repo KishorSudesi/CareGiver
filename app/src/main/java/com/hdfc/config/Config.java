@@ -5,6 +5,7 @@ import com.hdfc.models.ActivityModel;
 import com.hdfc.models.CreateTaskModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FileModel;
+import com.hdfc.models.MyProfileModel;
 import com.hdfc.models.ProviderModel;
 
 import org.json.JSONObject;
@@ -42,6 +43,7 @@ public class Config {
     public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
     public static ActivityModel activityModel = new ActivityModel();
+    public static MyProfileModel myProfileModel = new MyProfileModel();
     public static int intClientScreen = 2;
     public static int intRatingsScreen = 3;
     public static int intSimpleActivityScreen = 1;

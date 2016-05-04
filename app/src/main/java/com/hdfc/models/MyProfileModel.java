@@ -10,6 +10,10 @@ public class MyProfileModel {
     String strName;
     private String strImgUrl;
 
+    public MyProfileModel(){
+
+    }
+
     public MyProfileModel(String email, String number, String strAddress, String strName,
                           String strImgUrl) {
         this.email = email;

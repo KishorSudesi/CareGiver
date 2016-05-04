@@ -32,6 +32,7 @@ import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Libs;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.models.ActivityModel;
+import com.hdfc.models.MyProfileModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
@@ -61,7 +62,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
     private SlideAndDragListView<ApplicationInfo> mListView;
     private Libs libs;
     public ActivityModel activityModel = Config.activityModel;
-    private JSONObject responseJSONDoc;
+    private JSONObject responseJSONDoc,responseProvider;
     private static StorageService storageService;
     private JSONObject responseJSONDocCarla;
     private ProgressDialog progressDialog;
@@ -501,6 +502,8 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             }
         });
     }*/
+
+
     public void updateData() {
 
         storageService = new StorageService(getActivity());
@@ -511,7 +514,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 if (o != null) {
 
                     final Storage findObj = (Storage) o;
-
                     try {
                         responseJSONDoc = new JSONObject(findObj.getJsonDocList().get(0).getJsonDoc());
                         if (responseJSONDoc.has("activities")) {

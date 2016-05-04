@@ -197,6 +197,10 @@ public class Utils {
                         Config.jsonObject.getString("provider_name"),
                         Config.jsonObject.getString("provider_profile_url")
                 );
+
+                Config.fileModels.add(new FileModel(Config.jsonDocId,
+                        Config.jsonObject.getString("provider_profile_url"), "IMAGE"));
+
             }
             fetchActivities();
         } catch (JSONException e) {

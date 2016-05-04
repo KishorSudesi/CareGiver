@@ -219,7 +219,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
                         try {
                             jsonToUpdate.put("provider_name", strName);
-                            //jsonToUpdate.put("provider_email",email.getText());
+                            jsonToUpdate.put("provider_email",email.getText());
                             jsonToUpdate.put("provider_contact_no", strPhone);
                             jsonToUpdate.put("provider_address", strPlace);
 

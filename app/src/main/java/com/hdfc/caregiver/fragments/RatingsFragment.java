@@ -25,6 +25,7 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Libs;
 import com.hdfc.models.FeedBackModel;
+import com.hdfc.models.ProviderModel;
 import com.hdfc.views.RoundedImageView;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
@@ -91,8 +92,9 @@ public class RatingsFragment extends Fragment {
         libs = new Libs(getActivity());
         intWhichScreen = Config.intRatingsScreen;
 
-       /* if(Config.myProfileModel.getStrName()!=null)
-            textViewName.setText(Config.myProfileModel.getStrName());*/
+        //if(Config.myProfileModel.getStrName()!=null)
+            textViewName.setText(Config.providerModel.getStrName());
+
         BackgroundThread backgroundThread = new BackgroundThread();
         backgroundThread.start();
         backgroundThreadHandler = new BackgroundThreadHandler();
@@ -218,10 +220,8 @@ public class RatingsFragment extends Fragment {
                     ImageView imageView = new ImageView(getActivity());
 
                     imageView.setPadding(0, 0, 10, 0);
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-                            R.mipmap.stars_white));
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.stars_white));
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
                     layout.addView(imageView);
                 }
 
@@ -255,7 +255,7 @@ public class RatingsFragment extends Fragment {
         @Override
         public void run() {
             try {
-                File f = libs.getInternalFileImages(Config.strCustomerImageName);
+                File f = libs.getInternalFileImages(Config.providerModel.getProviderId());
 
                 if(f!=null&&f.exists())
                     bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth,

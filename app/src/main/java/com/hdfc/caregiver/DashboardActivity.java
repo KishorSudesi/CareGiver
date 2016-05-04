@@ -204,13 +204,13 @@ public class DashboardActivity extends AppCompatActivity {
 
                         File fileImage = libs.createFileInternal("images/" + strFileName);
 
+                        System.out.println("Sairat Zaal jiiii....: "+fileImage.getAbsolutePath());
                         if (fileImage.length() <= 0) {
 
                             InputStream input;
                             try {
 
                                 URL url = new URL(strUrl); //URLEncoder.encode(fileModel.getStrFileUrl(), "UTF-8")
-                                System.out.println("Abhishek Patil : "+url.toString());
                                 input = url.openStream();
                                 byte[] buffer = new byte[1500];
                                 OutputStream output = new FileOutputStream(fileImage);
