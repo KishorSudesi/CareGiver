@@ -152,6 +152,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
        public void setItems(){
 
         storageService = new StorageService(CreatingTaskActivity.this);
@@ -179,9 +184,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
                            spinner= (Spinner) findViewById(R.id.spinner);
                            Config.jsonObject = new JSONObject(strDocument);
                            jsonArrayFeatures=Config.jsonObject.getJSONArray("features");
-                           jsonObjectAct = new JSONObject();
-                           jsonObjectAct.put("features",jsonArrayFeatures);
-                           System.out.println("Bangalore : "+jsonObjectAct);
                            String service_name = Config.jsonObject.getString("service_name");
                            list.add(service_name);
                            ArrayAdapter<String> adapter=new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.simple_list_item_1,list);
@@ -261,13 +263,16 @@ public class CreatingTaskActivity extends AppCompatActivity {
 //                                dependentModel.setStrCustomerEmail(jsonObjectNotification.getString("feedback_by"));
 //                                dependentModel.setStrDependentName(jsonObjectNotification.getString("dependent_name"));
 
+                            System.out.println("YEDAPAT  : "+Config.jsonObject.getString("dependent_name"));
                             dependentModel.setStrDependentName(Config.jsonObject.getString("dependent_name"));
 
                             products=Config.jsonObject.getString("dependent_name");
 
                             dependentModels.add(dependentModel);
 //                            }
-                            String producto[] = {"komu","kovendam","rushi","aniket"};
+                            //String[] producto = new String[]{};
+                            List<String> producto= new ArrayList<String>();
+                            producto.add(products);
 
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(CreatingTaskActivity.this,android.R.layout.select_dialog_item,producto);
                             //Getting the instance of AutoCompleteTextView
@@ -334,7 +339,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                         jsonObjectAct.put("videos",jsonArrayVideos);
                         jsonObjectAct.put("feedbacks",jsonArrayFeedbacks);
                         jsonObjectAct.put("images",jsonArrayImages);
-                        System.out.println("JSONArrayFeatures : "+jsonArrayFeatures);
+
 
                         storageService.findDocsByKeyValue(Config.collectionServices, "service_name", "Medical Checkup", new AsyncApp42ServiceApi.App42StorageServiceListener() {
                             @Override
@@ -359,6 +364,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                         Config.jsonObject = new JSONObject(strDocument);
                                         jsonArrayFeatures=Config.jsonObject.getJSONArray("features");
                                         System.out.println("Bangalore : "+jsonArrayFeatures);
+
                                     } catch (Exception e){
                                         e.printStackTrace();
                                     }
@@ -381,7 +387,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             }
                         });
 
-                        jsonObjectAct.put("features",jsonArrayFeatures);
+
                         jsonObjectAct.put("service_id","");
                         jsonObjectAct.put("service_name",spinner.getItemAtPosition(spinner.getSelectedItemPosition()));
                         jsonObjectAct.put("customer_id","");
@@ -659,5 +665,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
             } else libs.toast(2, 2, getString(R.string.error));
 
         }
-    }
 
+
+}

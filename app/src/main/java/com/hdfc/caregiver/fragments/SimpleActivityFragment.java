@@ -55,20 +55,19 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     private static final String TAG = "";
     private static final int PICK_CONTACT = 979;
-    public ArrayList<ActivityModel> activityModels = new ArrayList<>();
+    public ArrayList<ActivityModel> activityModels = Config.activityModels;
     private MultiBitmapLoader multiBitmapLoader;
     private Menu mMenu;
     private SlideAndDragListView<ApplicationInfo> mListView;
     private Libs libs;
-    public ActivityModel activityModel;
+    public ActivityModel activityModel = Config.activityModel;
     private JSONObject responseJSONDoc;
     private static StorageService storageService;
     private JSONObject responseJSONDocCarla;
     private ProgressDialog progressDialog;
 
-    private static Handler threadHandler;
-
-    private BaseAdapter mAdapter = new BaseAdapter() {
+    public static Handler threadHandler;
+    BaseAdapter mAdapter = new BaseAdapter() {
 
         @Override
         public int getCount() {
@@ -90,7 +89,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             CustomViewHolder cvh;
 
             if (convertView == null) {
-
                 cvh = new CustomViewHolder();
 
                 convertView = LayoutInflater.from(getActivity()).inflate(R.layout.my_tasks_item, null);
@@ -105,11 +103,12 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 cvh = (CustomViewHolder) convertView.getTag();
             }
 
+            if (Config.activityModels.size() > 0) {
 
-            if (activityModels.size() > 0) {
+                ActivityModel activityModel = new ActivityModel();
+                        activityModel = Config.activityModels.get(position);
 
-                ActivityModel activityModel = activityModels.get(position);
-
+                System.out.println("Message value: "+activityModel.getStrActivityMessage());
                 String strMessage = activityModel.getStrActivityMessage();
 
                 if (strMessage.length() > 20)
@@ -126,7 +125,9 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                 cvh.textTime.setText(libs.formatDate(activityModel.getStrActivityDate()));
 
-                if (activityModel.getStrActivityStatus().equalsIgnoreCase("upcoming")) {
+                System.out.println("MIKI OUR YOUR");
+//                System.out.println("4 YEARS : "+activityModel.getStrActivityStatus().equalsIgnoreCase("upcoming"));
+                if (false) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(libs.formatDateTime(activityModel.getStrActivityDate()));
                     cvh.imageTiming.setTextColor(getResources().getColor(R.color.gray_holo_dark));
@@ -135,16 +136,16 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                     cvh.imageTiming.setTextColor(getResources().getColor(R.color.colorWhite));
                     cvh.imageTiming.setText("");
                 }
+                cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
 
-
-                File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
+               /* File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(activityModel.getStrActivityDependentName()));
 
                 if (fileImage.exists()) {
                     String filename = fileImage.getAbsolutePath();
                     multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
                 } else {
                     cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
-                }
+                }*/
             }
             return convertView;
         }
@@ -157,6 +158,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             public TextView textTime;
         }
     };
+
 
     public static SimpleActivityFragment newInstance() {
         SimpleActivityFragment fragment = new SimpleActivityFragment();
@@ -176,6 +178,11 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_simple_activity, container, false);
 
+        System.out.println("TOTAL COUNT  : "+Config.activityModels.size());
+        for(int i = 0 ; i < Config.activityModels.size(); i++){
+            System.out.println("Value : "+Config.activityModel.getStrActivityMessage());
+        }
+
         initMenu();
         progressDialog = new ProgressDialog(getActivity());
         libs =new Libs(getActivity());
@@ -184,7 +191,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         ImageButton add = (ImageButton) view.findViewById(R.id.add_button);
 
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
-
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,9 +201,12 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             }
         });
 
-            mListView = (SlideAndDragListView)view.findViewById(R.id.listViewEdit);
-            mListView.setMenu(mMenu);
 
+
+            mListView = (SlideAndDragListView)view.findViewById(R.id.listViewEdit);
+
+            mListView.setMenu(mMenu);
+            mListView.setAdapter(mAdapter);
             mListView.setEmptyView(textViewEmpty);
             mListView.setOnListItemLongClickListener(this);
         //mListView.setOnDragListener(this, mAppList);
@@ -218,7 +227,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 }
             });*/
 
-            parseData();
+          //  parseData();
 
        /* StorageService storageService = new StorageService(getActivity());
         HashMap<String, String> otherMetaHeaders = new HashMap<String, String>();
@@ -244,15 +253,17 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
             StorageService storageService = new StorageService(getActivity());
 
-            storageService.findDocsByKeyValue(Config.collectionActivity, "dependent_name",
-                    "komu",
-                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+            System.out.println("Config.docId "+Config.jsonDocId);
+            storageService.findDocsByKeyValue(Config.collectionActivity, "dependent_id",
+                    Config.activityModel.getStrDependentId(), new AsyncApp42ServiceApi.App42StorageServiceListener() {
                         @Override
                         public void onDocumentInserted(Storage response) {
+
                         }
 
                         @Override
                         public void onUpdateDocSuccess(Storage response) {
+
                         }
 
                         @Override
@@ -268,11 +279,14 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                                     try {
                                         Config.jsonObject = new JSONObject(strDocument);
+
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    //parseDataPM();
+                                        progressDialog.dismiss();
                                 }
-                                parseDataPM();
+
                             } else {
 
                                 if(progressDialog.isShowing())
@@ -301,11 +315,15 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         }
     }
 
-    public void parseDataPM(){
-        threadHandler = new ThreadHandler();
-    }
+   /* public void parseDataPM(){
 
-    public class ThreadHandler extends Handler {
+ //       threadHandler = new ThreadHandler();
+        Thread backgroundThread = new BackgroundThread();
+        backgroundThread.start();
+
+    }
+*/
+    /*public class ThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
 
@@ -315,27 +333,20 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 try {
                 activityModels.clear();
 
-                    JSONArray jsonArrayFeedback = Config.jsonObject.getJSONArray("activities");
-
-                    int iArraySize = jsonArrayFeedback.length();
-
-                    for (int k = 0; k < iArraySize; k++) {
-
-                        JSONObject jsonObject = jsonArrayFeedback.getJSONObject(k);
+                    JSONObject jsonObject = new JSONObject();
 
                         ActivityModel activityModel = new ActivityModel();
+                        activityModel.setStrActivityMessage(Config.jsonObject.getString("activity_message"));
+                        activityModel.setStrActivityName(Config.jsonObject.getString("activity_name"));
+                        activityModel.setStrActivityDesc(Config.jsonObject.getString("activity_description"));
+      //                  activityModel.setiServiceId(Config.jsonObject.getInt("service_id"));
+                        //activityModel.setStrActivityDate(Config.jsonObject.getString("activity_date"));
+                        activityModel.setStrActivityDoneDate(Config.jsonObject.getString("activity_done_date"));
 
-                        activityModel.setStrActivityMessage(jsonObject.getString("activity_message"));
-                        activityModel.setStrActivityName(jsonObject.getString("activity_name"));
-                        activityModel.setStrActivityDesc(jsonObject.getString("activity_description"));
-                        activityModel.setiServiceId(jsonObject.getInt("service_id"));
-                        activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
-                        activityModel.setStrActivityDoneDate(jsonObject.getString("activity_done_date"));
+                        activityModel.setStrActivityStatus(Config.jsonObject.getString("status"));
 
-
-
-                        activityModel.setStrActivityStatus(jsonObject.getString("status"));
-                        activityModel.setStrActivityDependentName(jsonObject.getString("dependent_name"));
+                    System.out.println("KKKKKKK "+activityModel.toString());
+                      //  activityModel.setStrActivityDependentName(Config.jsonObject.getString("dependent_name"));
 
                         String featuresDone[];
                         String features[];
@@ -361,11 +372,9 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                         }
 
 
-                        activityModel.setStrCustomerEmail(jsonObject.getString("customer_email"));
+//                        activityModel.setStrCustomerEmail(jsonObject.getString("customer_email"));
                         activityModels.add(activityModel);
 
-
-                    }
                 mListView.setAdapter(mAdapter);
 
 
@@ -375,9 +384,15 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             }
             //
         }
-    }
+    }*/
 
-    public void parseData() {
+    public class BackgroundThread extends Thread {
+        @Override
+        public void run() {
+//            threadHandler.sendEmptyMessage(0);
+        }
+    }
+  /*  public void parseData() {
 
         StorageService storageService = new StorageService(getActivity());
 
@@ -484,7 +499,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
             }
         });
-    }
+    }*/
     public void updateData() {
 
         storageService = new StorageService(getActivity());
@@ -542,13 +557,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                                 for (int i = 0; i < dependantsA.length(); i++) {
 
                                     JSONObject jsonObjectActivity = dependantsA.getJSONObject(i);
-
-
-
-
                                     jsonObjectActivity.put("status", "completed");
-
-
 
                                         /*JSONArray jsonArrayFeatures = jsonObjectActivity.getJSONArray("features_done");
 
@@ -967,4 +976,5 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
     public void onListItemClick(View v, int position) {
 
     }
+
 }

@@ -429,7 +429,7 @@ mProgress.setCancelable(false);
 
                     uploadService.uploadImageCommon(imageModel.getStrImageName(),
                             imageModel.getStrImageDesc(), imageModel.getStrImageDesc(),
-                            Config.myProfileModel.getEmail(), UploadFileType.IMAGE,
+                            Config.providerModel.getEmail(), UploadFileType.IMAGE,
                             new App42CallBack() {
  public void onSuccess(Object response) {
 
@@ -833,7 +833,7 @@ mProgress.setCancelable(false);
                                            // }
 
                                           
-                                            jsonNotification.put("author", Config.myProfileModel.getStrName());
+                                            jsonNotification.put("author", Config.providerModel.getStrName());
                                             jsonNotification.put("time", strDoneDate);
                                             jsonNotification.put("author_profile_url", "");
                                             jsonNotification.put("notification_message", "Service  Successfully");

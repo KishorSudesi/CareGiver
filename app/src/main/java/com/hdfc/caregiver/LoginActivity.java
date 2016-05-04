@@ -1,6 +1,7 @@
 package com.hdfc.caregiver;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,12 +19,14 @@ import com.hdfc.app42service.UserService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Libs;
+import com.hdfc.libs.Utils;
 import com.hdfc.models.FileModel;
-import com.hdfc.models.MyProfileModel;
+import com.hdfc.models.ProviderModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
+import com.shephertz.app42.paas.sdk.android.util.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,11 +36,13 @@ import java.util.ArrayList;
 public class LoginActivity extends AppCompatActivity {
 
     public static Libs libs;
+    private static Context _ctxt;
     private static ProgressDialog progressDialog;
-    private static String userName,uName;
+    public static String userName,uName,password;
     private RelativeLayout relLayout;
     private EditText editEmail, editPassword;
     private RelativeLayout layoutLogin;
+    public static Utils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
         layoutLogin = (RelativeLayout) findViewById(R.id.layoutLogin);
         editEmail = (EditText) findViewById(R.id.editEmail);
         editPassword = (EditText) findViewById(R.id.editPassword);
+        _ctxt= LoginActivity.this;
+        utils = new Utils(LoginActivity.this);
 
         libs = new Libs(LoginActivity.this);
         progressDialog = new ProgressDialog(LoginActivity.this);
@@ -121,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
 
             uName = editEmail.getText().toString();
             userName = uName.toLowerCase();
-            String password = editPassword.getText().toString();
+            password = editPassword.getText().toString();
 
             boolean cancel = false;
             View focusView = null;
@@ -141,14 +148,13 @@ public class LoginActivity extends AppCompatActivity {
             if (cancel) {
                 focusView.requestFocus();
             } else {
-
                 if (libs.isConnectingToInternet()) {
 
-                    progressDialog.setMessage(getString(R.string.process_login));
+                    progressDialog.setMessage(_ctxt.getString(R.string.process_login));
                     progressDialog.setCancelable(false);
                     progressDialog.show();
 
-                    UserService userService = new UserService(LoginActivity.this);
+                    UserService userService = new UserService(_ctxt);
 
                   /*  String strPass = null;
                     try {
@@ -160,143 +166,15 @@ public class LoginActivity extends AppCompatActivity {
                     userService.authenticate(userName, password, new App42CallBack() {
                         @Override
                         public void onSuccess(Object o) {
-
-                            StorageService storageService = new StorageService(LoginActivity.this);
-
-                            storageService.findDocsByKeyValue(Config.collectionProvider, "provider_email", userName, new AsyncApp42ServiceApi.App42StorageServiceListener() {
-                                @Override
-                                public void onDocumentInserted(Storage response) {
-
-                                }
-
-                                @Override
-                                public void onUpdateDocSuccess(Storage response) {
-
-                                }
-
-                                @Override
-                                public void onFindDocSuccess(Storage response) {
-                                    Libs.log(String.valueOf(response.getJsonDocList().size()), " count ");
-                                    if (response.getJsonDocList().size() > 0) {
-
-                                        Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
-
-                                        String strDocument = jsonDocument.getJsonDoc();
-
-                                        Config.jsonDocId = jsonDocument.getDocId();
-
-                                        try {
-
-                                            Config.jsonObject = new JSONObject(strDocument);
-
-                                            if(Config.jsonObject.has("provider_email")) {
-                                                //(String email, String number, String strAddress, String place)
-                                                Config.myProfileModel = new MyProfileModel(
-                                                        Config.jsonObject.getString("provider_email"),
-                                                        Config.jsonObject.getString("provider_contact_no"),
-                                                        Config.jsonObject.getString("provider_address"),
-                                                        Config.jsonObject.getString("provider_name"),
-                                                        Config.jsonObject.getString("provider_profile_url")
-                                                );
-                                            }
-
-
-                                       // UploadService uploadService = new UploadService(LoginActivity.this);
-
-                                        /*uploadService.getAllFilesByUser(Config.strUserName, new App42CallBack() {
-                                            public void onSuccess(Object response) {
-
-                                                Libs.log(response.toString(), "");
-
-                                                Upload upload = (Upload) response;
-                                                ArrayList<Upload.File> fileList = upload.getFileList();
-
-                                                if (fileList.size() > 0) {
-
-                                                    for (int i = 0; i < fileList.size(); i++) {
-                                                      //  Config.fileModels.add(
-                                                                new FileModel(fileList.get(i).getName()
-                                                                        , fileList.get(i).getUrl(),
-                                                                        fileList.get(i).getType());
-
-                                                    }
-
-
-
-                                                } else
-                                                    libs.toast(2, 2, getString(R.string.error));
-
-                                            }
-
-                                            public void onException(Exception ex) {
-                                                progressDialog.dismiss();
-                                                libs.toast(2, 2, getString(R.string.error));
-                                                Libs.log(ex.getMessage(), " ");
-                                                //ex.printStackTrace();
-                                            }
-                                        });*/
-                                            UploadService uploadService = new UploadService(LoginActivity.this);
-
-                                            uploadService.getAllFilesByUser(userName, new App42CallBack() {
-                                                public void onSuccess(Object response) {
-
-                                                    Libs.log(response.toString(), " Files Response ");
-
-                                                    Upload upload = (Upload) response;
-                                                    ArrayList<Upload.File> fileList = upload.getFileList();
-
-                                                    if (fileList.size() > 0) {
-
-                                                        for (int i = 0; i < fileList.size(); i++) {
-                                                            Config.fileModels.add(
-                                                                    new FileModel(fileList.get(i).getName()
-                                                                            , fileList.get(i).getUrl(),
-                                                                            fileList.get(i).getType()));
-                                                        }
-                                                    }
-
-                                                    progressDialog.dismiss();
-
-                                                    libs.toast(1, 1, getString(R.string.success_login));
-                                                    Intent dashboardIntent = new Intent(LoginActivity.this, DashboardActivity.class);
-                                                    //dashboardIntent.putExtra("WHICH_SCREEN", Config.intSimpleActivityScreen);
-                                                    Config.intSelectedMenu=Config.intDashboardScreen;
-                                                    //  Config.boolIsLoggedIn = true;
-                                                    startActivity(dashboardIntent);
-                                                    finish();
-                                                }
-
-                                                public void onException(Exception ex) {
-                                                    progressDialog.dismiss();
-                                                    libs.toast(2, 2, getString(R.string.error_load_images));
-                                                }
-                                            });
-
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-
-                                    } else libs.toast(2, 2, getString(R.string.error));
-
-                                }
-
-                                @Override
-                                public void onInsertionFailed(App42Exception ex) {
-
-                                }
-
-                                @Override
-                                public void onFindDocFailed(App42Exception ex) {
+                            if(o != null){
+                                Config.strUserName = userName;
+                                utils.fetchProviders(progressDialog);
+                            }else {
+                                if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                    libs.toast(2, 2, getString(R.string.error));
-                                    Libs.log(ex.getMessage(), " 321 ");
-                                }
+                                libs.toast(2, 2, getString(R.string.warning_internet));
+                            }
 
-                                @Override
-                                public void onUpdateDocFailed(App42Exception ex) {
-
-                                }
-                            });
                         }
 
                         @Override
@@ -304,16 +182,17 @@ public class LoginActivity extends AppCompatActivity {
                             progressDialog.dismiss();
 
                             if (e != null) {
-                                libs.toast(2, 2, getString(R.string.invalid_login));//TODO string
+                                libs.toast(2, 2, _ctxt.getString(R.string.invalid_login));//TODO string
                                 Libs.log(e.getMessage(), " MESS ");
                             }
-                            else libs.toast(2, 2, getString(R.string.warning_internet));
+                            else libs.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                         }
                     });
 
-                } else libs.toast(2, 2, getString(R.string.warning_internet));
+                }
+
             }
-        }
+        }else libs.toast(2, 2, _ctxt.getString(R.string.warning_internet));
     }
 
 

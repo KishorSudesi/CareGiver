@@ -86,7 +86,7 @@ public class MyProfileActivity extends AppCompatActivity {
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                libs.selectImage(strCustomerImgNameCamera, null, MyProfileActivity.this);
+                libs.selectImage(strCustomerImgNameCamera, null, MyProfileActivity.this,false);
             }
         });
 
@@ -233,9 +233,9 @@ public class MyProfileActivity extends AppCompatActivity {
                                 progressDialog.dismiss();
                                 libs.toast(1, 1, "Account Updated");
 
-                                Config.myProfileModel.setNumber(phone.getText().toString());
-                                Config.myProfileModel.setStrAddress(place.getText().toString());
-                                Config.myProfileModel.setStrName(textViewName.getText().toString());
+                                Config.providerModel.setNumber(phone.getText().toString());
+                                Config.providerModel.setStrAddress(place.getText().toString());
+                                Config.providerModel.setStrName(textViewName.getText().toString());
 
                                 edit.setImageResource(R.mipmap.edit);
                                 Flag = 0;
@@ -276,11 +276,11 @@ public class MyProfileActivity extends AppCompatActivity {
             }
         });
 
-        if(Config.myProfileModel!=null) {
-            email.setText(Config.myProfileModel.getEmail());
-            phone.setText(Config.myProfileModel.getNumber());
-            place.setText(Config.myProfileModel.getStrAddress());
-            textViewName.setText(Config.myProfileModel.getStrName());
+        if(Config.providerModel!=null) {
+            email.setText(Config.providerModel.getEmail());
+            phone.setText(Config.providerModel.getNumber());
+            place.setText(Config.providerModel.getStrAddress());
+            textViewName.setText(Config.providerModel.getStrName());
         }
     }
 
@@ -358,7 +358,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 if (progressDialog.isShowing())
                     progressDialog.setProgress(1);
 
-                uploadService.removeImage(Config.strCustomerImageName, Config.myProfileModel.getEmail(),
+                uploadService.removeImage(Config.strCustomerImageName, Config.providerModel.getEmail(),
                         new App42CallBack() {
                             public void onSuccess(Object response) {
 
@@ -412,7 +412,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
                 UploadService uploadService = new UploadService(this);
 
-                uploadService.uploadImageCommon(strCustomerImgName, "provider_image" , "Profile Picture", Config.myProfileModel.getEmail(),
+                uploadService.uploadImageCommon(strCustomerImgName, "provider_image" , "Profile Picture", Config.providerModel.getEmail(),
                         UploadFileType.IMAGE, new App42CallBack() {
 
                             public void onSuccess(Object response) {

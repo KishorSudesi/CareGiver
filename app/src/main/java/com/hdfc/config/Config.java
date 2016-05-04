@@ -1,9 +1,11 @@
 package com.hdfc.config;
 
 import com.hdfc.libs.Libs;
+import com.hdfc.models.ActivityModel;
 import com.hdfc.models.CreateTaskModel;
+import com.hdfc.models.DependentModel;
 import com.hdfc.models.FileModel;
-import com.hdfc.models.MyProfileModel;
+import com.hdfc.models.ProviderModel;
 
 import org.json.JSONObject;
 
@@ -35,6 +37,11 @@ public class Config {
     public static final boolean release = false;
     public final static String strCustomerImageName = "provider_image";
     public static ArrayList<FileModel> fileModels = new ArrayList<>();
+    public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
+    public static ArrayList<String> dependentIds = new ArrayList<>();
+    public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
+    public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
+    public static ActivityModel activityModel = new ActivityModel();
     public static int intClientScreen = 2;
     public static int intRatingsScreen = 3;
     public static int intSimpleActivityScreen = 1;
@@ -50,7 +57,7 @@ public class Config {
     public static int intSelectedMenu = 0;
     public static int intDependantsCount = 0;
     public static String strUserName = "";
-    public static MyProfileModel myProfileModel = null;
+    public static ProviderModel providerModel = null;
     public static CreateTaskModel createTaskModel=null;
     public static int intDashboardScreen = 1;
 

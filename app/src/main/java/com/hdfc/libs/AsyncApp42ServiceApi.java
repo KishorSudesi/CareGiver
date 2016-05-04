@@ -10,6 +10,7 @@ import com.shephertz.app42.paas.sdk.android.App42CacheManager;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.App42Response;
+import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.shephertz.app42.paas.sdk.android.storage.StorageService;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
@@ -397,6 +398,35 @@ public class AsyncApp42ServiceApi {
             }
         }.start();
     }*/
+
+    public void findDocumentByQuery(final String dbName, final String collectionName,
+                                    final Query query, final App42CallBack callBack) {
+        final Handler callerThreadHandler = new Handler();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final Storage response = storageService.findDocumentsByQuery(dbName,
+                            collectionName, query);
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSuccess(response);
+                        }
+                    });
+                } catch (final App42Exception ex) {
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callBack != null) {
+                                callBack.onException(ex);
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
 
     //addOrUpdateKeys(dbName, collectionProvider, docId, keys,
     public void updateDocPartByKeyValue(final String dbName,
