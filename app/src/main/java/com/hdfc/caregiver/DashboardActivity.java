@@ -204,7 +204,6 @@ public class DashboardActivity extends AppCompatActivity {
 
                         File fileImage = libs.createFileInternal("images/" + strFileName);
 
-                        System.out.println("Sairat Zaal jiiii....: "+fileImage.getAbsolutePath());
                         if (fileImage.length() <= 0) {
 
                             InputStream input;
