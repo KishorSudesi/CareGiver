@@ -1,8 +1,18 @@
 {
   "paytm_account": "paytm_account",
-  "customer_address": "address",
   "customer_email": "balamscint@gmail.com",
   "customer_name": "Balamurugan G",
   "customer_profile_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/900ea8e340806df5a34c18e79f8ff1ba1bd7887e/Balamurugan_G.jpg",
-  "customer_contact_no": "9789863136"
+  "customer_dob": "2016-12-22T23:08:11.343Z",
+  "customer_contact_no": "2212358555",
+  "customer_address": "address",
+  "customer_city": "address",
+  "customer_state": "address",
+  //removed
+  "customer_country": "country_name",
+  // added newly
+  "customer_country_code": "country_isd_code",
+  // added newly
+  "customer_area_code": "123456"
+  // added newly
 }

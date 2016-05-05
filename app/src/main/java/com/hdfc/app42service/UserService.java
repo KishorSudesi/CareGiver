@@ -13,25 +13,25 @@ public class UserService/* implements
     private ArrayList<String> roleList = new ArrayList<>();
     private AsyncApp42ServiceApi asyncService;
    /* private Context _ctxt;
-    private Libs libs;
+    private Utils utils;
     private View formView, progressView;
     private SharedPreferences sPre;*/
 
     public UserService(Context context) {
         //this._ctxt = context;
         asyncService = AsyncApp42ServiceApi.instance(context);
-        // libs = new Libs(context);
+        // utils = new Utils(context);
 
         roleList.add("Customer");
     }
 
     public void authenticate(String userName, String password, App42CallBack app42CallBack) {
-        //libs.showProgress(true, formView, progressView);
+        //utils.showProgress(true, formView, progressView);
         asyncService.authenticateUser(userName, password, app42CallBack);
     }
 
     /*public void addJSONObject(String collectionProvider, String password) {
-        //libs.showProgress(true, formView, progressView);
+        //utils.showProgress(true, formView, progressView);
         //asyncService.addJSONObject(collectionProvider, jsonDoc);
     }*/
 
@@ -40,12 +40,12 @@ public class UserService/* implements
     }
 
     public void getUser(String userName, App42CallBack app42CallBack) {
-        //libs.showProgress(true, formView, progressView);
+        //utils.showProgress(true, formView, progressView);
         asyncService.getUser(userName, app42CallBack);
     }
 
    /* public void onGetUserRoles(String userName) {
-        // libs.showProgress(true, formView, progressView);
+        // utils.showProgress(true, formView, progressView);
         asyncService.getRolesByUser(userName, new App42CallBack() {
             @Override
             public void onSuccess(Object o) {
@@ -54,22 +54,22 @@ public class UserService/* implements
                 for (int i = 0; i < user.getRoleList().size(); i++) {
                     strBuffer.append(user.getRoleList().get(i) + "\n");
                 }
-                //libs.showProgress(false, formView, progressView);
-                libs.createAlertDialog(strBuffer.toString());
+                //utils.showProgress(false, formView, progressView);
+                utils.createAlertDialog(strBuffer.toString());
             }
 
             @Override
             public void onException(Exception e) {
-                //libs.showProgress(false, formView, progressView);
-                libs.createAlertDialog(e.getMessage());
+                //utils.showProgress(false, formView, progressView);
+                utils.createAlertDialog(e.getMessage());
             }
         });
     }*/
 
     /*@Override
     public void onUserCreated(User user) {
-        //libs.showProgress(false, formView, progressView);
-        libs.createAlertDialog("User Created");
+        //utils.showProgress(false, formView, progressView);
+        utils.createAlertDialog("User Created");
 
         Intent loginActivity = new Intent(_ctxt, LoginActivity.class);
         _ctxt.startActivity(loginActivity);
@@ -79,8 +79,8 @@ public class UserService/* implements
 
     @Override
     public void onUserAuthenticated(User response) {
-        //libs.showProgress(false, formView, progressView);
-        //libs.createAlertDialog(response.getUserName().toString().trim());
+        //utils.showProgress(false, formView, progressView);
+        //utils.createAlertDialog(response.getUserName().toString().trim());
 
         sPre = _ctxt.getSharedPreferences("App42Sample", Context.MODE_PRIVATE);
 
@@ -100,7 +100,7 @@ public class UserService/* implements
 
 
     /*public void createOrUpdateUser(User user, String strFirstName, int intSex, Date dateDob) {
-        //libs.showProgress(true, formView, progressView);
+        //utils.showProgress(true, formView, progressView);
 
         User.Profile profile = user.new Profile();
         profile.setFirstName(strFirstName);
@@ -124,14 +124,14 @@ public class UserService/* implements
         asyncService.createOrUpdateUser(user, new App42CallBack() {
             @Override
             public void onSuccess(Object o) {
-                //libs.showProgress(false, formView, progressView);
-                libs.createAlertDialog("Details Saved");
+                //utils.showProgress(false, formView, progressView);
+                utils.createAlertDialog("Details Saved");
             }
 
             @Override
             public void onException(Exception e) {
-                libs.createAlertDialog(e.getMessage());
-                //libs.showProgress(false, formView, progressView);
+                utils.createAlertDialog(e.getMessage());
+                //utils.showProgress(false, formView, progressView);
             }
         });
     }*/
@@ -142,27 +142,27 @@ public class UserService/* implements
 
     /*@Override
     public void onCreationFailed(App42Exception exception) {
-        libs.createAlertDialog(exception.getMessage());
-        //libs.showProgress(false, formView, progressView);
+        utils.createAlertDialog(exception.getMessage());
+        //utils.showProgress(false, formView, progressView);
     }
 
     @Override
     public void onAuthenticationFailed(App42Exception exception) {
-        //libs.showProgress(false, formView, progressView);
-        libs.createAlertDialog("Login Failed");
+        //utils.showProgress(false, formView, progressView);
+        utils.createAlertDialog("Login Failed");
     }
 
 
     @Override
     public void onGetUserSuccess(User response) {
-        //libs.showProgress(false, formView, progressView);
+        //utils.showProgress(false, formView, progressView);
         // setData(response);
     }
 
     @Override
     public void onGetUserFailed(App42Exception exception) {
-        libs.createAlertDialog(exception.getMessage());
-        //libs.showProgress(false, formView, progressView);
+        utils.createAlertDialog(exception.getMessage());
+        //utils.showProgress(false, formView, progressView);
     }*/
 
 }

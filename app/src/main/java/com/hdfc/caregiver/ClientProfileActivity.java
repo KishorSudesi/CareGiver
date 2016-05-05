@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hdfc.config.Config;
-import com.hdfc.libs.Libs;
+import com.hdfc.libs.Utils;
 import com.hdfc.models.ClientModel;
 import com.hdfc.services.GPSTracker;
 
@@ -28,27 +28,21 @@ import java.io.File;
  */
 public class ClientProfileActivity extends AppCompatActivity  {
 
+    private static final String TAG = "Debug";
+    public static Bitmap bitmap = null;
+    private static Handler backgroundThreadHandler;
+    private static ProgressDialog mProgress = null;
     ImageView backbutton, edit;
     TextView age, health, account, address, mobile, direction;
     TextView clientName;
-    Libs libs;
+    Utils utils;
     ImageView clientProfile, location;
-    public static Bitmap bitmap = null;
-    private static Handler backgroundThreadHandler;
-
     private LocationManager locationMangaer = null;
     private LocationListener locationListener = null;
-
     private ImageView btnGetLocation = null;
     private TextView editLocation = null;
-
     private String strClientName;
-
-
-    private static final String TAG = "Debug";
     private Boolean flag = false;
-    private static ProgressDialog mProgress = null;
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,18 +64,18 @@ public class ClientProfileActivity extends AppCompatActivity  {
 
         ClientModel client_model = (ClientModel) bundle.getSerializable("Client");
 
-        strClientName=client_model.getName();
+        strClientName = client_model.getCustomerModel().getStrName();
 
-        libs = new Libs(ClientProfileActivity.this);
+        utils = new Utils(ClientProfileActivity.this);
 
         clientProfile.setImageResource(R.drawable.carla2);
         clientName.setText(strClientName);
-        age.setText(client_model.getAge());
+      /*  age.setText(client_model.getAge());
         health.setText(client_model.getProblem());
         account.setText(client_model.getPremium());
         address.setText(client_model.getAddress());
         mobile.setText(client_model.getStrMobile());
-
+*/
 
         edit = (ImageView) findViewById(R.id.imgPen);
 
@@ -209,13 +203,13 @@ public class ClientProfileActivity extends AppCompatActivity  {
         public void run() {
             try {
 
-                File f = libs.getInternalFileImages(libs.replaceSpace(strClientName));
+                File f = utils.getInternalFileImages(utils.replaceSpace(strClientName));
 
-                Libs.log(strClientName, "FP ");
+                Utils.log(strClientName, "FP ");
 
                 if(f!=null&&f.exists()) {
-                    bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
-                    bitmap = libs.roundedBitmap(bitmap);
+                    bitmap = utils.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
+                    bitmap = utils.roundedBitmap(bitmap);
                 }
 
                 backgroundThreadHandler.sendEmptyMessage(0);

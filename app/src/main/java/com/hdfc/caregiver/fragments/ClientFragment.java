@@ -17,17 +17,15 @@ import android.widget.TextView;
 import com.hdfc.adapters.ClientsAdapter;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.ClientProfileActivity;
-import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
-import com.hdfc.libs.Libs;
+import com.hdfc.libs.Utils;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.FileModel;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -37,15 +35,15 @@ import java.util.List;
 public class ClientFragment extends Fragment {
 
     public static List<ClientModel> activitiesModelArrayList;
-    private static Handler threadHandler;
     public static ClientsAdapter clients_adapter;
+    private static Handler threadHandler;
     private static Handler ThreadHandler;
     private static ProgressDialog mProgress = null;
 
     public TextView textViewEmpty;
     ImageView profileImg;
     ListView listViewClients;
-    private Libs libs;
+    private Utils utils;
 
     public ClientFragment() {
         // Required empty public constructor
@@ -70,7 +68,7 @@ public class ClientFragment extends Fragment {
 
         textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
 
-        libs = new Libs(getActivity());
+        utils = new Utils(getActivity());
         profileImg = (ImageView)view.findViewById(R.id.imageClients);
 
         mProgress = new ProgressDialog(getActivity());
@@ -112,7 +110,7 @@ public class ClientFragment extends Fragment {
 
             @Override
             public void onFindDocSuccess(Storage response) {
-                Libs.log(String.valueOf(response.getJsonDocList().size()), " count ");
+                Utils.log(String.valueOf(response.getJsonDocList().size()), " count ");
                 if (response.getJsonDocList().size() > 0) {
 
                     Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
@@ -127,28 +125,28 @@ public class ClientFragment extends Fragment {
 
 
                                 ClientModel clientsModel = new ClientModel();
-                                clientsModel.setAge( Config.jsonObject.getString("dependent_age"));
+                                /*clientsModel.setAge( Config.jsonObject.getString("dependent_age"));
                                 clientsModel.setAddress( Config.jsonObject.getString("dependent_address"));
                                 clientsModel.setName( Config.jsonObject.getString("dependent_name"));
                                 clientsModel.setPremium( Config.jsonObject.getString("dependent_notes"));
                                 clientsModel.setProblem( Config.jsonObject.getString("dependent_illness"));
                                 clientsModel.setStrMobile( Config.jsonObject.getString("dependent_contact_no"));
-                                clientsModel.setStrClientImageUrl( Config.jsonObject.getString("dependent_profile_url"));
+                                clientsModel.setStrClientImageUrl( Config.jsonObject.getString("dependent_profile_url"));*/
 
                                 activitiesModelArrayList.add(clientsModel);
 
 
                         //
 
-                        Libs.log(String.valueOf(activitiesModelArrayList.size()), " 1 ");
+                        Utils.log(String.valueOf(activitiesModelArrayList.size()), " 1 ");
                         for (int i = 0; i < activitiesModelArrayList.size(); i++) {
                             ClientModel clientModel = activitiesModelArrayList.get(i);
 
-                            if (clientModel.getStrClientImageUrl() != null && !clientModel.getStrClientImageUrl().equalsIgnoreCase("")) {
+                           /* if (clientModel.getStrClientImageUrl() != null && !clientModel.getStrClientImageUrl().equalsIgnoreCase("")) {
 
-                                libs.loadImageFromWeb(clientModel.getName(), clientModel.getStrClientImageUrl());
+                                utils.loadImageFromWeb(clientModel.getName(), clientModel.getStrClientImageUrl());
 
-                            }
+                            }*/
                         }
 
                         threadHandler = new ThreadHandler();
@@ -206,15 +204,15 @@ public class ClientFragment extends Fragment {
 
                     if (fileModel != null && fileModel.getStrFileUrl() != null && !fileModel.getStrFileUrl().equalsIgnoreCase("")) {
 
-                        libs.loadImageFromWeb(fileModel.getStrFileName(), fileModel.getStrFileUrl());
+                        utils.loadImageFromWeb(fileModel.getStrFileName(), fileModel.getStrFileUrl());
 
-                       /* String strUrl = libs.replaceSpace(fileModel.getStrFileUrl());
+                       /* String strUrl = utils.replaceSpace(fileModel.getStrFileUrl());
 
-                        String strFileName = libs.replaceSpace(fileModel.getStrFileName());
+                        String strFileName = utils.replaceSpace(fileModel.getStrFileName());
 
-                        Libs.log(strFileName, "File Name");
+                        Utils.log(strFileName, "File Name");
 
-                        File fileImage = libs.createFileInternal("images/" + strFileName);
+                        File fileImage = utils.createFileInternal("images/" + strFileName);
 
                         if (fileImage.length() <= 0) {
 

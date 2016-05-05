@@ -22,13 +22,13 @@ import java.lang.ref.WeakReference;
 public class MultiBitmapLoader {
 
     private static Context _context;
-    private LruCache<String, Bitmap> mMemoryCache;
     private static Bitmap preLoadBitmap;
-    private static Libs libs;
+    private static Utils utils;
+    private LruCache<String, Bitmap> mMemoryCache;
 
     public MultiBitmapLoader(Context context) {
         _context = context;
-        libs = new Libs(context);
+        utils = new Utils(context);
 
         final int maxMemory = getMemory();
         preLoadBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.person_icon);
@@ -44,37 +44,6 @@ public class MultiBitmapLoader {
                 return bitmap.getByteCount() / 1024;
             }
         };
-    }
-
-    public int getMemory() {
-        Runtime rt = Runtime.getRuntime();
-        return (int) rt.maxMemory() / 1024;
-    }
-
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(key) == null) {
-            mMemoryCache.put(key, bitmap);
-        }
-    }
-
-    public Bitmap getBitmapFromMemCache(String key) {
-        return mMemoryCache.get(key);
-    }
-
-    public void loadBitmap(String strPath, ImageView imgView) {
-        if (strPath != null && !strPath.equalsIgnoreCase("")) {
-            if (cancelPotentialWork(strPath, imgView)) {
-                final Bitmap bitmap = getBitmapFromMemCache(strPath);
-                if (bitmap != null) {
-                    imgView.setImageBitmap(bitmap);
-                } else {
-                    BitmapWorkerTask task = new BitmapWorkerTask(imgView);
-                    final AsyncDrawable asyncDrawable = new AsyncDrawable(_context.getResources(), preLoadBitmap, task);
-                    imgView.setImageDrawable(asyncDrawable);
-                    task.execute(strPath);
-                }
-            }
-        }
     }
 
     public static boolean cancelPotentialWork(String data, ImageView imageView) {
@@ -104,58 +73,6 @@ public class MultiBitmapLoader {
             }
         }
         return null;
-    }
-
-    class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
-        private final WeakReference<ImageView> imageViewReference;
-        private String data = "";
-
-        public BitmapWorkerTask(ImageView imageView) {
-            // Use a WeakReference to ensure the ImageView can be garbage collected
-            imageViewReference = new WeakReference<>(imageView);
-        }
-
-        // Decode image in background.
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            data = params[0];
-            Bitmap tempBitmap = getBitmapFromFile(data, Config.intWidth, Config.intHeight);
-            tempBitmap=libs.roundedBitmap(tempBitmap);
-            addBitmapToMemoryCache(String.valueOf(params[0]), tempBitmap);
-            return tempBitmap;
-        }
-
-        // Once complete, see if ImageView is still around and set bitmap.
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (isCancelled()) {
-                bitmap = null;
-            }
-
-            if (imageViewReference != null && bitmap != null) {
-                final ImageView imageView = imageViewReference.get();
-                final BitmapWorkerTask bitmapWorkerTask =
-                        getBitmapWorkerTask(imageView);
-                if (this == bitmapWorkerTask && imageView != null) {
-                    imageView.setImageBitmap(bitmap);
-                }
-            }
-        }
-    }
-
-    public static class AsyncDrawable extends BitmapDrawable {
-        private final WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
-
-        public AsyncDrawable(Resources res, Bitmap bitmap,
-                             BitmapWorkerTask bitmapWorkerTask) {
-            super(res, bitmap);
-            bitmapWorkerTaskReference =
-                    new WeakReference<>(bitmapWorkerTask);
-        }
-
-        public BitmapWorkerTask getBitmapWorkerTask() {
-            return bitmapWorkerTaskReference.get();
-        }
     }
 
     private static Bitmap getBitmapFromFile(String strPath, int intWidth, int intHeight) {
@@ -193,5 +110,88 @@ public class MultiBitmapLoader {
             }
         }
         return inSampleSize;
+    }
+
+    public int getMemory() {
+        Runtime rt = Runtime.getRuntime();
+        return (int) rt.maxMemory() / 1024;
+    }
+
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+        }
+    }
+
+    public Bitmap getBitmapFromMemCache(String key) {
+        return mMemoryCache.get(key);
+    }
+
+    public void loadBitmap(String strPath, ImageView imgView) {
+        if (strPath != null && !strPath.equalsIgnoreCase("")) {
+            if (cancelPotentialWork(strPath, imgView)) {
+                final Bitmap bitmap = getBitmapFromMemCache(strPath);
+                if (bitmap != null) {
+                    imgView.setImageBitmap(bitmap);
+                } else {
+                    BitmapWorkerTask task = new BitmapWorkerTask(imgView);
+                    final AsyncDrawable asyncDrawable = new AsyncDrawable(_context.getResources(), preLoadBitmap, task);
+                    imgView.setImageDrawable(asyncDrawable);
+                    task.execute(strPath);
+                }
+            }
+        }
+    }
+
+    public static class AsyncDrawable extends BitmapDrawable {
+        private final WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
+
+        public AsyncDrawable(Resources res, Bitmap bitmap,
+                             BitmapWorkerTask bitmapWorkerTask) {
+            super(res, bitmap);
+            bitmapWorkerTaskReference =
+                    new WeakReference<>(bitmapWorkerTask);
+        }
+
+        public BitmapWorkerTask getBitmapWorkerTask() {
+            return bitmapWorkerTaskReference.get();
+        }
+    }
+
+    class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+        private String data = "";
+
+        public BitmapWorkerTask(ImageView imageView) {
+            // Use a WeakReference to ensure the ImageView can be garbage collected
+            imageViewReference = new WeakReference<>(imageView);
+        }
+
+        // Decode image in background.
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            data = params[0];
+            Bitmap tempBitmap = getBitmapFromFile(data, Config.intWidth, Config.intHeight);
+            tempBitmap = utils.roundedBitmap(tempBitmap);
+            addBitmapToMemoryCache(String.valueOf(params[0]), tempBitmap);
+            return tempBitmap;
+        }
+
+        // Once complete, see if ImageView is still around and set bitmap.
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (isCancelled()) {
+                bitmap = null;
+            }
+
+            if (imageViewReference != null && bitmap != null) {
+                final ImageView imageView = imageViewReference.get();
+                final BitmapWorkerTask bitmapWorkerTask =
+                        getBitmapWorkerTask(imageView);
+                if (this == bitmapWorkerTask && imageView != null) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            }
+        }
     }
 }

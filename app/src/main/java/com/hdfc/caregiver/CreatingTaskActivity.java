@@ -18,7 +18,7 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
-import com.hdfc.libs.Libs;
+import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.DependentModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
@@ -40,9 +40,10 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
     public static String valDateTime, valTitle, valSearch;
     public static String serviceName;
-    static Spinner spinner;
-    private AsyncApp42ServiceApi asyncService;
     public static DependentModel sDependentModel = new DependentModel();
+    public static JSONArray jsonArrayFeatures;
+    public static JSONObject jsonObjectActCarla;
+    static Spinner spinner;
     private static StorageService storageService;
     private static ArrayList<DependentModel> dependentModels = new ArrayList<>();
     private static ArrayList<ActivityModel> activityModels = new ArrayList<>();
@@ -53,12 +54,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
     View focusView = null;
     ImageView backImage;
     AutoCompleteTextView inputSearch;
+    private AsyncApp42ServiceApi asyncService;
     private ProgressDialog progressDialog;
     private JSONObject responseJSONDoc, responseJSONDocCarla, jsonObjectCarla,jsonObjectAct;
     private JSONArray jsonArrayVideos,jsonArrayFeedbacks,jsonArrayImages;
-    public static JSONArray jsonArrayFeatures;
-    public static JSONObject jsonObjectActCarla;
-    private Libs libs;
+    private Utils utils;
     private EditText dateTime, editTextTitle;
         private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -69,8 +69,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 // Do something with the date. This Date object contains
                 // the date and time that the user has selected.
 
-                String strDate = Libs.writeFormat.format(date);
-                _strDate = Libs.readFormat.format(date);
+                String strDate = Utils.writeFormat.format(date);
+                _strDate = Utils.readFormat.format(date);
                 dateTime.setText(strDate);
             }
 
@@ -87,7 +87,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         editTextTitle = (EditText)findViewById(R.id.editTextTitle);
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
 
-        libs = new Libs(CreatingTaskActivity.this);
+        utils = new Utils(CreatingTaskActivity.this);
         progressDialog = new ProgressDialog(CreatingTaskActivity.this);
 
         setItems();
@@ -215,7 +215,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         StorageService storageService = new StorageService(this);
 
-        storageService.findDocsByKeyValue(Config.collectionDependent, "dependent_name",Config.dependent_name, new AsyncApp42ServiceApi.App42StorageServiceListener() {
+        storageService.findDocsByKeyValue(Config.collectionDependent, "dependent_name",
+                "dsfdsfsdf", new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                    //Config.dependent_name
             @Override
             public void onDocumentInserted(Storage response) {
 
@@ -229,7 +231,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             @Override
             public void onFindDocSuccess(Storage response) {
 
-                Libs.log(String.valueOf(response.getJsonDocList().size()), " count ");
+                Utils.log(String.valueOf(response.getJsonDocList().size()), " count ");
 
                 if (response.getJsonDocList().size() > 0) {
 
@@ -241,7 +243,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                         Config.jsonObject = new JSONObject(strDocument);
 
-                        Storage storage = (Storage)response;
+                        Storage storage = response;
                         ArrayList<Storage.JSONDocument> fileSize = storage.getJsonDocList();
 
                         activityModels.clear();
@@ -264,7 +266,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 //                                dependentModel.setStrDependentName(jsonObjectNotification.getString("dependent_name"));
 
                             System.out.println("YEDAPAT  : "+Config.jsonObject.getString("dependent_name"));
-                            dependentModel.setStrDependentName(Config.jsonObject.getString("dependent_name"));
+                            dependentModel.setStrName(Config.jsonObject.getString("dependent_name"));
 
                             products=Config.jsonObject.getString("dependent_name");
 
@@ -314,10 +316,10 @@ public class CreatingTaskActivity extends AppCompatActivity {
         jsonArrayImages = new JSONArray();
         jsonArrayFeatures = new JSONArray();
 
-        if (libs.isConnectingToInternet()) {
+        if (utils.isConnectingToInternet()) {
 
             for(DependentModel dependentModelFind: dependentModels){
-                if(dependentModelFind.getStrDependentName().equalsIgnoreCase(valSearch)){
+                if (dependentModelFind.getStrDependentID().equalsIgnoreCase(valSearch)) {
                     sDependentModel = dependentModelFind;
                 }
             }
@@ -435,7 +437,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
 
                  else {
-            libs.toast(2, 2, getString(R.string.warning_internet));
+            utils.toast(2, 2, getString(R.string.warning_internet));
         }
 
 
@@ -447,7 +449,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
             if (jsonObjectAct != null) {
 
-                storageService.findDocsByIdApp42CallBack(Config.jsonDocId, Config.collectionProvider, new App42CallBack() {
+                storageService.findDocsByIdApp42CallBack(Config.providerModel.getStrProviderId(), Config.collectionProvider, new App42CallBack() {
                     @Override
                     public void onSuccess(Object o) {
 
@@ -456,7 +458,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             final Storage findObj = (Storage) o;
 
 
-                            if (inputSearch.getText().toString().equals(sDependentModel.getStrDependentName())) {
+                            if (inputSearch.getText().toString().equals(sDependentModel.getStrName())) {
                             try {
 
                                 responseJSONDoc = new JSONObject(findObj.
@@ -473,15 +475,14 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 progressDialog.dismiss();
                             }
                             }else{
-                                libs.toast(2,2,"Enter Valid Client Name");
+                                utils.toast(2, 2, "Enter Valid Client Name");
                             }
 
 
+                            Utils.log(responseJSONDoc.toString(), " onj 1 ");
 
-                            Libs.log(responseJSONDoc.toString(), " onj 1 ");
 
-
-                            if (libs.isConnectingToInternet()) {//TODO check activity added
+                            if (utils.isConnectingToInternet()) {//TODO check activity added
 
                                 System.out.println("Here is Object on App42");
 
@@ -526,7 +527,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                                     }*/
                                                     // }
 
-                                                    Libs.log(responseJSONDocCarla.toString(), " onj 2 ");
+                                                    Utils.log(responseJSONDocCarla.toString(), " onj 2 ");
 
                                                     storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionProvider, new App42CallBack() {
                                                         @Override
@@ -546,7 +547,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                                                 System.out.println("Success3");
                                                                 if (progressDialog.isShowing())
                                                                     progressDialog.dismiss();
-                                                                libs.toast(2, 2, getString(R.string.warning_internet));
+                                                                utils.toast(2, 2, getString(R.string.warning_internet));
                                                             }
                                                         }
 
@@ -556,9 +557,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                                             if (progressDialog.isShowing())
                                                                 progressDialog.dismiss();
                                                             if (e != null) {
-                                                                libs.toast(2, 2, e.getMessage());
+                                                                utils.toast(2, 2, e.getMessage());
                                                             } else {
-                                                                libs.toast(2, 2, getString(R.string.warning_internet));
+                                                                utils.toast(2, 2, getString(R.string.warning_internet));
                                                             }
                                                         }
                                                     });
@@ -594,9 +595,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                             progressDialog.dismiss();
 
                                         if (ex != null) {
-                                            libs.toast(2, 2, ex.getMessage());
+                                            utils.toast(2, 2, ex.getMessage());
                                         } else {
-                                            libs.toast(2, 2, getString(R.string.warning_internet));
+                                            utils.toast(2, 2, getString(R.string.warning_internet));
                                         }
                                     }
 
@@ -639,13 +640,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             } else {
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                libs.toast(2, 2, getString(R.string.warning_internet));
+                                utils.toast(2, 2, getString(R.string.warning_internet));
                             }
 
                         } else {
                             if (progressDialog.isShowing())
                                 progressDialog.dismiss();
-                            libs.toast(2, 2, getString(R.string.warning_internet));
+                            utils.toast(2, 2, getString(R.string.warning_internet));
                         }
                     }
 
@@ -654,15 +655,15 @@ public class CreatingTaskActivity extends AppCompatActivity {
                         if (progressDialog.isShowing())
                             progressDialog.dismiss();
                         if (e != null) {
-                            libs.toast(2, 2, e.getMessage());
+                            utils.toast(2, 2, e.getMessage());
                         } else {
-                            libs.toast(2, 2, getString(R.string.warning_internet));
+                            utils.toast(2, 2, getString(R.string.warning_internet));
                         }
                     }
                 });
 
 
-            } else libs.toast(2, 2, getString(R.string.error));
+            } else utils.toast(2, 2, getString(R.string.error));
 
         }
 

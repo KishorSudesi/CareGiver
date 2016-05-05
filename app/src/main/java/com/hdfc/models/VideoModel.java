@@ -5,14 +5,15 @@ import java.io.Serializable;
 /**
  * Created by Suhail on 2/19/2016.
  */
-public class ActivityVideoModel implements Serializable {
+public class VideoModel implements Serializable {
 
     private String strVideoName;
     private String strVideoUrl;
     private String strVideoDesc;
     private String strVideoTime;
 
-    public ActivityVideoModel(String strVideoName, String strVideoUrl, String strVideoDesc, String strVideoTime) {
+    public VideoModel(String strVideoName, String strVideoUrl, String strVideoDesc,
+                      String strVideoTime) {
         this.strVideoName = strVideoName;
         this.strVideoUrl = strVideoUrl;
         this.strVideoDesc = strVideoDesc;

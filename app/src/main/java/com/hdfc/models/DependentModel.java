@@ -1,119 +1,236 @@
 package com.hdfc.models;
 
+import java.util.ArrayList;
+
 /**
- * Created by Suhail on 3/13/2016.
+ * Created by balamurugan@adstringo.in on 01-01-2016.
  */
 public class DependentModel {
 
-    private String strDependentName;
+    private String strName;
+    private String strRelation;
+    private String strNotes;
+    private String strAddress;
+    private String strContacts;
+    private String strEmail;
+    private String strIllness;
+    private String strImagePath;
+    private String strImageUrl;
+    private String strDob;
 
-    private String strDependentIllness;
-    private String strDependentRelation;
-    private String strDependentAddress;
-    private String strDependentNotes;
+    private int intAge;
+    private int intHealthBp;
+    private int intHealthHeartRate;
 
-    private String strDependentContactNo;
-    private String strDependentProfileUrl;
-    private String strDependentEmail;
-    private String strDependentAge;
-    private String strCustomerId;
+    private String strDependentID;
+    private String strCustomerID;
 
-    public DependentModel(){
+    private ArrayList<ServiceModel> serviceModels = new ArrayList<>();
+    private ArrayList<ActivityModel> activityModels = new ArrayList<>();
+    private ArrayList<NotificationModel> notificationModels = new ArrayList<>();
 
-    }
-    public DependentModel(String strDependentName,String strDependentIllness, String strDependentRelation, String strDependentProfileUrl,
-                          String strDependentAddress, String strDependentNotes, String strDependentContactNo, String strDependentEmail,String strDependentAge,String strCustomerId){
-            this.strDependentName = strDependentName;
-            this.strDependentIllness = strDependentIllness;
-            this.strDependentRelation = strDependentRelation;
-            this.strDependentProfileUrl = strDependentProfileUrl;
-            this.strDependentAddress = strDependentAddress;
-            this.strDependentNotes = strDependentNotes;
-            this.strDependentContactNo = strDependentContactNo;
-            this.strDependentEmail = strDependentEmail;
-            this.strDependentAge = strDependentAge;
-            this.strCustomerId = strCustomerId;
+    public DependentModel() {
     }
 
-
-    public String getStrDependentIllness() {
-        return strDependentIllness;
+    public DependentModel(String strName, String strRelation, String strNotes, String strAddress,
+                          String strContacts, String strEmail, String strIllness,
+                          String strImagePath, String strImageUrl, int intAge, int intHealthBp,
+                          int intHealthHeartRate, String strDependentID, String strCustomerID,
+                          ArrayList<ServiceModel> serviceModels) {
+        this.strName = strName;
+        this.strRelation = strRelation;
+        this.strNotes = strNotes;
+        this.strAddress = strAddress;
+        this.strContacts = strContacts;
+        this.strEmail = strEmail;
+        this.strIllness = strIllness;
+        this.strImagePath = strImagePath;
+        this.strImageUrl = strImageUrl;
+        this.intAge = intAge;
+        this.intHealthBp = intHealthBp;
+        this.intHealthHeartRate = intHealthHeartRate;
+        this.strDependentID = strDependentID;
+        this.strCustomerID = strCustomerID;
+        this.serviceModels = serviceModels;
     }
 
-    public void setStrDependentIllness(String strDependentIllness) {
-        this.strDependentIllness = strDependentIllness;
+    public DependentModel(String strName, String strRelation, String strNotes, String strAddress,
+                          String strContacts, String strEmail, String strIllness,
+                          String strImagePath, String strImageUrl, int intAge, int intHealthBp,
+                          int intHealthHeartRate, String strDependentID, String strCustomerID) {
+        this.strName = strName;
+        this.strRelation = strRelation;
+        this.strNotes = strNotes;
+        this.strAddress = strAddress;
+        this.strContacts = strContacts;
+        this.strEmail = strEmail;
+        this.strIllness = strIllness;
+        this.strImagePath = strImagePath;
+        this.strImageUrl = strImageUrl;
+        this.intAge = intAge;
+        this.intHealthBp = intHealthBp;
+        this.intHealthHeartRate = intHealthHeartRate;
+        this.strDependentID = strDependentID;
+        this.strCustomerID = strCustomerID;
     }
 
-    public String getStrDependentRelation() {
-        return strDependentRelation;
+    public String getStrDob() {
+        return strDob;
     }
 
-    public void setStrDependentRelation(String strDependentRelation) {
-        this.strDependentRelation = strDependentRelation;
+    public void setStrDob(String strDob) {
+        this.strDob = strDob;
     }
 
-    public String getStrDependentAddress() {
-        return strDependentAddress;
+    public void setActivityModels(ArrayList<ActivityModel> activityModels) {
+        this.activityModels = activityModels;
     }
 
-    public void setStrDependentAddress(String strDependentAddress) {
-        this.strDependentAddress = strDependentAddress;
+    public void setNotificationModels(ArrayList<NotificationModel> notificationModels) {
+        this.notificationModels = notificationModels;
     }
 
-    public String getStrDependentNotes() {
-        return strDependentNotes;
+    public ArrayList<ActivityModel> getActivityModels() {
+        return activityModels;
     }
 
-    public void setStrDependentNotes(String strDependentNotes) {
-        this.strDependentNotes = strDependentNotes;
+    /*public void setActivityModels(ArrayList<ActivityModel> activityModels) {
+        this.activityModels = activityModels;
+    }*/
+
+    public void setActivityModels(ActivityModel activityModel) {
+        this.activityModels.add(activityModel);
     }
 
-    public String getStrDependentContactNo() {
-        return strDependentContactNo;
+    public String getStrName() {
+        return strName;
     }
 
-    public void setStrDependentContactNo(String strDependentContactNo) {
-        this.strDependentContactNo = strDependentContactNo;
+    public void setStrName(String strName) {
+        this.strName = strName;
     }
 
-    public String getStrDependentProfileUrl() {
-        return strDependentProfileUrl;
+    public String getStrRelation() {
+        return strRelation;
     }
 
-    public void setStrDependentProfileUrl(String strDependentProfileUrl) {
-        this.strDependentProfileUrl = strDependentProfileUrl;
+    public void setStrRelation(String strRelation) {
+        this.strRelation = strRelation;
     }
 
-    public String getStrDependentEmail() {
-        return strDependentEmail;
+    public String getStrNotes() {
+        return strNotes;
     }
 
-    public void setStrDependentEmail(String strDependentEmail) {
-        this.strDependentEmail = strDependentEmail;
+    public void setStrNotes(String strNotes) {
+        this.strNotes = strNotes;
     }
 
-    public String getStrDependentAge() {
-        return strDependentAge;
+    public String getStrAddress() {
+        return strAddress;
     }
 
-    public void setStrDependentAge(String strDependentAge) {
-        this.strDependentAge = strDependentAge;
+    public void setStrAddress(String strAddress) {
+        this.strAddress = strAddress;
     }
 
-    public String getStrCustomerId() {
-        return strCustomerId;
+    public String getStrContacts() {
+        return strContacts;
     }
 
-    public void setStrCustomerId(String strCustomerId) {
-        this.strCustomerId = strCustomerId;
+    public void setStrContacts(String strContacts) {
+        this.strContacts = strContacts;
     }
 
-    public String getStrDependentName() {
-        return strDependentName;
+    public String getStrEmail() {
+        return strEmail;
     }
 
-    public void setStrDependentName(String strDependentName) {
-        this.strDependentName = strDependentName;
+    public void setStrEmail(String strEmail) {
+        this.strEmail = strEmail;
     }
 
+    public String getStrIllness() {
+        return strIllness;
+    }
+
+    public void setStrIllness(String strIllness) {
+        this.strIllness = strIllness;
+    }
+
+    public String getStrImagePath() {
+        return strImagePath;
+    }
+
+    public void setStrImagePath(String strImagePath) {
+        this.strImagePath = strImagePath;
+    }
+
+    public String getStrImageUrl() {
+        return strImageUrl;
+    }
+
+    public void setStrImageUrl(String strImageUrl) {
+        this.strImageUrl = strImageUrl;
+    }
+
+    public int getIntAge() {
+        return intAge;
+    }
+
+    public void setIntAge(int intAge) {
+        this.intAge = intAge;
+    }
+
+    public int getIntHealthBp() {
+        return intHealthBp;
+    }
+
+    public void setIntHealthBp(int intHealthBp) {
+        this.intHealthBp = intHealthBp;
+    }
+
+    public int getIntHealthHeartRate() {
+        return intHealthHeartRate;
+    }
+
+    public void setIntHealthHeartRate(int intHealthHeartRate) {
+        this.intHealthHeartRate = intHealthHeartRate;
+    }
+
+    public String getStrDependentID() {
+        return strDependentID;
+    }
+
+    public void setStrDependentID(String strDependentID) {
+        this.strDependentID = strDependentID;
+    }
+
+    public String getStrCustomerID() {
+        return strCustomerID;
+    }
+
+    public void setStrCustomerID(String strCustomerID) {
+        this.strCustomerID = strCustomerID;
+    }
+
+    public ArrayList<ServiceModel> getServiceModels() {
+        return serviceModels;
+    }
+
+    public void setServiceModels(ArrayList<ServiceModel> serviceModels) {
+        this.serviceModels = serviceModels;
+    }
+
+    public void setServiceModel(ServiceModel serviceModel) {
+        this.serviceModels.add(serviceModel);
+    }
+
+    public ArrayList<NotificationModel> getNotificationModels() {
+        return notificationModels;
+    }
+
+    public void setNotificationModels(NotificationModel notificationModels) {
+        this.notificationModels.add(notificationModels);
+    }
 }

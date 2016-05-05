@@ -11,6 +11,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.StatFs;
+import android.support.v4.app.NotificationCompat;
 
 import com.hdfc.caregiver.R;
 
@@ -25,10 +26,15 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.Random;
 
+/**
+ * Catches uncaught exceptions to allow user to mail the exception report to an email ID specified in res/strings.xml > error_email
+ *
+ * @author Aravind Baskaran <aravind@cloudpact.com>
+ */
 @SuppressWarnings("deprecation")
 public class CrashLogger implements Thread.UncaughtExceptionHandler {
-    public static final String CRASH_LOG_MAIL_SUBJECT = "Creash Log";
-    public static final String CRASH_LOG_MAIL_BODY = "Crash Log info of the application.";
+    public static final String CRASH_LOG_MAIL_SUBJECT = " Crash Log";
+    public static final String CRASH_LOG_MAIL_BODY = "Following is the crash log info of the application.";
     private static CrashLogger mCrashLogger;
     private String
             VersionName,
@@ -96,7 +102,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
             // Files dir for storing the stack traces
             //FilePath = Configurator.getInstance(context).getLogsDirectory().getAbsolutePath();
             FilePath = context.getFilesDir().getAbsolutePath();
-            // Device models
+            // Device model
             PhoneModel = android.os.Build.MODEL;
             // Android version
             AndroidVersion = android.os.Build.VERSION.RELEASE;
@@ -279,21 +285,22 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
 
     public void createNotification(Context context, String log) {
 
-        String applicationName = "m-HelpLine";
-        NotificationManager mNotificationManager = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        String applicationName = context.getString(R.string.app_name);
+        //NotificationManager mNotificationManager = (NotificationManager)
+        //context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         int icon = R.mipmap.ic_launcher;
         CharSequence tickerText = applicationName + " error";
         long when = System.currentTimeMillis();
-        Notification notification = new Notification(icon, tickerText, when);
-        //notification.flags = Notification.FLAG_AUTO_CANCEL;
+        //Notification notification = new Notification(icon, tickerText, when);
+        ///notification.flags = Notification.FLAG_AUTO_CANCEL;
 
         String subject = applicationName + CRASH_LOG_MAIL_SUBJECT;
         String body = CRASH_LOG_MAIL_BODY + "\n" + log;
 
         Intent sendIntent = new Intent(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"balamscint@gmail.com", "murugan@adstringo.in"});
+
+        sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"balamurugan@adstringo.in"});
         sendIntent.putExtra(Intent.EXTRA_TEXT, body);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         sendIntent.setType("message/rfc822");
@@ -302,18 +309,33 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
                 PendingIntent.getActivity(context, 0,
                         Intent.createChooser(sendIntent, tickerText), 0);
 
-		/*notification.setLatestEventInfo(context,
-				tickerText + " report. Click to review and send.", 
-				"from " + applicationName + " Service", contentIntent);*/
+        NotificationCompat.Builder b = new NotificationCompat.Builder(context);
 
-        ////////////
-        /*NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        notification = builder.setContentIntent(contentIntent)
-                .setSmallIcon(icon).setTicker(text).setWhen(time)
-                .setAutoCancel(true).setContentTitle(title)
-                .setContentText(text).build();
-        mNM.notify(NOTIFICATION, notification);*/
-        ////////////
-        mNotificationManager.notify(1, notification);
+        b.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(when)
+                .setSmallIcon(icon)
+                .setTicker(tickerText)
+                .setContentTitle(tickerText + " report. Click to review and send.")
+                .setContentText("from " + applicationName + " Service")
+                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                .setContentIntent(contentIntent)
+                .setContentInfo("Info");
+
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, b.build());
+
+        checkAndSendLogs(context);
+
+        try {
+            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+            homeIntent.addCategory(Intent.CATEGORY_HOME);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            context.startActivity(homeIntent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hdfc.caregiver.R;
-import com.hdfc.libs.Libs;
 import com.hdfc.libs.MultiBitmapLoader;
+import com.hdfc.libs.Utils;
 import com.hdfc.models.FeedBackModel;
 
 import java.io.File;
@@ -26,12 +26,12 @@ public class RatingsAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
     Context _context;
     List<FeedBackModel> data1 = new ArrayList<>();
-    private Libs libs;
+    private Utils utils;
     private MultiBitmapLoader multiBitmapLoader;
 
     public RatingsAdapter(Context context, List<FeedBackModel> rating_models) {
         _context = context;
-        libs=new Libs(context);
+        utils = new Utils(context);
         multiBitmapLoader = new MultiBitmapLoader(_context);
         data1 = rating_models;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -84,7 +84,7 @@ public class RatingsAdapter extends BaseAdapter {
             }else {
                 viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.rate_icon_1));
             }
-            File fileImage = libs.createFileInternal("images/" + libs.replaceSpace(feedBackModel.getStrFeedBackBy()));
+            File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(feedBackModel.getStrFeedBackBy()));
 
             if(fileImage.exists()) {
                 String strFilePath = fileImage.getAbsolutePath();

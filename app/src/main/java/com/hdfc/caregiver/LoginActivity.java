@@ -2,7 +2,6 @@ package com.hdfc.caregiver;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -13,36 +12,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.hdfc.app42service.StorageService;
-import com.hdfc.app42service.UploadService;
 import com.hdfc.app42service.UserService;
 import com.hdfc.config.Config;
-import com.hdfc.libs.AsyncApp42ServiceApi;
-import com.hdfc.libs.Libs;
+import com.hdfc.libs.AppUtils;
+import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.FileModel;
-import com.hdfc.models.ProviderModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
-import com.shephertz.app42.paas.sdk.android.App42Exception;
-import com.shephertz.app42.paas.sdk.android.storage.Storage;
-import com.shephertz.app42.paas.sdk.android.upload.Upload;
-import com.shephertz.app42.paas.sdk.android.util.Util;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static Libs libs;
+    public static Utils utils;
+    public static String userName, uName, password;
+    public static AppUtils appUtils;
     private static Context _ctxt;
     private static ProgressDialog progressDialog;
-    public static String userName,uName,password;
     private RelativeLayout relLayout;
     private EditText editEmail, editPassword;
     private RelativeLayout layoutLogin;
-    public static Utils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +40,19 @@ public class LoginActivity extends AppCompatActivity {
         editEmail = (EditText) findViewById(R.id.editEmail);
         editPassword = (EditText) findViewById(R.id.editPassword);
         _ctxt= LoginActivity.this;
-        utils = new Utils(LoginActivity.this);
+        appUtils = new AppUtils(LoginActivity.this);
 
-        libs = new Libs(LoginActivity.this);
+        utils = new Utils(LoginActivity.this);
         progressDialog = new ProgressDialog(LoginActivity.this);
 
         try {
             ImageView imgBg = (ImageView) findViewById(R.id.imageBg);
-            imgBg.setImageBitmap(Libs.decodeSampledBitmapFromResource(getResources(), R.drawable.bg_blue, Config.intScreenWidth, Config.intScreenHeight));
+            if (imgBg != null) {
+                imgBg.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
+                        R.drawable.bg_blue, Config.intScreenWidth, Config.intScreenHeight));
+            }
 
+            CrashLogger.getInstance().init(LoginActivity.this);
         } catch (Exception | OutOfMemoryError e) {
             e.printStackTrace();
         }
@@ -79,14 +69,16 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 showPasswordfield();
-                libs.traverseEditTexts(layoutLogin, getResources().getDrawable(R.drawable.edit_text), getResources().getDrawable(R.drawable.edit_text_blue), editPassword);
+                utils.traverseEditTexts(layoutLogin, getResources().getDrawable(R.drawable.edit_text),
+                        getResources().getDrawable(R.drawable.edit_text_blue), editPassword);
             }
         });
 
         editEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                libs.traverseEditTexts(layoutLogin, getResources().getDrawable(R.drawable.edit_text), getResources().getDrawable(R.drawable.edit_text_blue), editEmail);
+                utils.traverseEditTexts(layoutLogin, getResources().getDrawable(R.drawable.edit_text),
+                        getResources().getDrawable(R.drawable.edit_text_blue), editEmail);
             }
         });
 
@@ -118,8 +110,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void validateLogin(View v) {
 
-        libs.setEditTextDrawable(editEmail, getResources().getDrawable(R.drawable.edit_text));
-        libs.setEditTextDrawable(editPassword, getResources().getDrawable(R.drawable.edit_text));
+        utils.setEditTextDrawable(editEmail, getResources().getDrawable(R.drawable.edit_text));
+        utils.setEditTextDrawable(editPassword, getResources().getDrawable(R.drawable.edit_text));
 
         if (relLayout.getVisibility() == View.VISIBLE) {
 
@@ -148,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
             if (cancel) {
                 focusView.requestFocus();
             } else {
-                if (libs.isConnectingToInternet()) {
+                if (utils.isConnectingToInternet()) {
 
                     progressDialog.setMessage(_ctxt.getString(R.string.process_login));
                     progressDialog.setCancelable(false);
@@ -156,43 +148,31 @@ public class LoginActivity extends AppCompatActivity {
 
                     UserService userService = new UserService(_ctxt);
 
-                  /*  String strPass = null;
-                    try {
-                        strPass = AESCrypt.encrypt(Config.string, password);
-                    } catch (GeneralSecurityException e) {
-                        e.printStackTrace();
-                    }*/
-
                     userService.authenticate(userName, password, new App42CallBack() {
                         @Override
                         public void onSuccess(Object o) {
                             if(o != null){
-                                Config.strUserName = userName;
-                                utils.fetchProviders(progressDialog);
+                                appUtils.fetchProviders(progressDialog, userName);
                             }else {
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                libs.toast(2, 2, getString(R.string.warning_internet));
+                                utils.toast(2, 2, getString(R.string.warning_internet));
                             }
-
                         }
 
                         @Override
                         public void onException(Exception e) {
-                            progressDialog.dismiss();
-
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                             if (e != null) {
-                                libs.toast(2, 2, _ctxt.getString(R.string.invalid_login));//TODO string
-                                Libs.log(e.getMessage(), " MESS ");
-                            }
-                            else libs.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                utils.toast(2, 2, _ctxt.getString(R.string.invalid_login));
+                            } else utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                         }
                     });
-
                 }
 
             }
-        }else libs.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+        } else utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
     }
 
 

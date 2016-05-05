@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
-import com.hdfc.libs.Libs;
+import com.hdfc.libs.Utils;
 import com.hdfc.services.GPSTracker;
 import com.hdfc.views.RoundedImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
@@ -53,7 +53,7 @@ public class MyProfileActivity extends AppCompatActivity {
     public static String strCustomerImgNameCamera;
     static RoundedImageView profileImage;
     private static Handler backgroundThreadHandler;
-    private static Libs libs;
+    private static Utils utils;
     private static ProgressDialog mProgress = null;
     private static boolean isImageChanged=false;
     public TextView email;
@@ -77,7 +77,7 @@ public class MyProfileActivity extends AppCompatActivity {
         //Bundle b = getIntent().getExtras();
         //intWhichScreen = b.getInt("WHICH_SCREEN", Config.intRatingsScreen);
 
-        libs = new Libs(MyProfileActivity.this);
+        utils = new Utils(MyProfileActivity.this);
         progressDialog = new ProgressDialog(MyProfileActivity.this);
         mProgress = new ProgressDialog(MyProfileActivity.this);
 
@@ -86,7 +86,7 @@ public class MyProfileActivity extends AppCompatActivity {
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                libs.selectImage(strCustomerImgNameCamera, null, MyProfileActivity.this,false);
+                utils.selectImage(strCustomerImgNameCamera, null, MyProfileActivity.this, false);
             }
         });
 
@@ -193,7 +193,7 @@ public class MyProfileActivity extends AppCompatActivity {
                        phone.setError(getString(R.string.error_field_required));
                        focusView = phone;
                        cancel = true;
-                    } else if (!libs.validCellPhone(strPhone)) {
+                    } else if (!utils.validCellPhone(strPhone)) {
                         phone.setError(getString(R.string.error_invalid_contact_no));
                         focusView = phone;
                         cancel = true;
@@ -227,13 +227,15 @@ public class MyProfileActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        storageService.updateDocs(jsonToUpdate, Config.jsonDocId, Config.collectionProvider, new App42CallBack() {
+                        storageService.updateDocs(jsonToUpdate,
+                                Config.providerModel.getStrProviderId(),
+                                Config.collectionProvider, new App42CallBack() {
                             @Override
                             public void onSuccess(Object o) {
                                 progressDialog.dismiss();
-                                libs.toast(1, 1, "Account Updated");
+                                utils.toast(1, 1, "Account Updated");
 
-                                Config.providerModel.setNumber(phone.getText().toString());
+                                Config.providerModel.setStrContacts(phone.getText().toString());
                                 Config.providerModel.setStrAddress(place.getText().toString());
                                 Config.providerModel.setStrName(textViewName.getText().toString());
 
@@ -256,7 +258,7 @@ public class MyProfileActivity extends AppCompatActivity {
                             @Override
                             public void onException(Exception e) {
                                 progressDialog.dismiss();
-                                libs.toast(2, 2, "Error. Try Again!!!");
+                                utils.toast(2, 2, "Error. Try Again!!!");
                             }
                         });
                     }
@@ -277,8 +279,8 @@ public class MyProfileActivity extends AppCompatActivity {
         });
 
         if(Config.providerModel!=null) {
-            email.setText(Config.providerModel.getEmail());
-            phone.setText(Config.providerModel.getNumber());
+            email.setText(Config.providerModel.getStrEmail());
+            phone.setText(Config.providerModel.getStrContacts());
             place.setText(Config.providerModel.getStrAddress());
             textViewName.setText(Config.providerModel.getStrName());
         }
@@ -287,8 +289,8 @@ public class MyProfileActivity extends AppCompatActivity {
     public void logout() {
         try {
             Config.jsonObject = null;
-            Config.jsonServer = null;
-            Config.jsonDocId = "";
+            //Config.jsonServer = null;
+            //Config.jsonDocId = "";
 
             Config.intSelectedMenu = 0;
 
@@ -307,12 +309,12 @@ public class MyProfileActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) { //&& data != null
             try {
                 backgroundThreadHandler = new BackgroundThreadHandler();
-                //Libs.toast(1, 1, "Getting Image...");
+                //Utils.toast(1, 1, "Getting Image...");
                 mProgress.setMessage(getString(R.string.loading));
                 mProgress.show();
                 switch (requestCode) {
                     case Config.START_CAMERA_REQUEST_CODE:
-                        strCustomerImgName = Libs.customerImageUri.getPath();
+                        strCustomerImgName = Utils.customerImageUri.getPath();
                         Thread backgroundThreadCamera = new BackgroundThreadCamera();
                         backgroundThreadCamera.start();
                         break;
@@ -347,7 +349,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
         try {
 
-            if (libs.isConnectingToInternet()) {
+            if (utils.isConnectingToInternet()) {
 
                 progressDialog.setMessage(getResources().getString(R.string.uploading_image));
                 progressDialog.setCancelable(false);
@@ -358,49 +360,49 @@ public class MyProfileActivity extends AppCompatActivity {
                 if (progressDialog.isShowing())
                     progressDialog.setProgress(1);
 
-                uploadService.removeImage(Config.strCustomerImageName, Config.providerModel.getEmail(),
+                uploadService.removeImage(Config.strCustomerImageName, Config.providerModel.getStrEmail(),
                         new App42CallBack() {
                             public void onSuccess(Object response) {
 
                                 if(response!=null){
-                                    Libs.log(response.toString(), " Response uploadService 0 ");
+                                    Utils.log(response.toString(), " Response uploadService 0 ");
                                     uploadImage();
                                 }else{
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
                             }
                             @Override
                             public void onException(Exception e) {
 
                                 if(e!=null) {
-                                    Libs.log(e.getMessage(), " Response failure uploadService 0");
+                                    Utils.log(e.getMessage(), " Response failure uploadService 0");
                                     App42Exception exception = (App42Exception) e;
                                     int appErrorCode = exception.getAppErrorCode();
 
                                     if (appErrorCode != 1401 ) {
                                         uploadImage();
                                     } else {
-                                        libs.toast(2, 2, getString(R.string.error));
+                                        utils.toast(2, 2, getString(R.string.error));
                                     }
 
                                 }else{
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
                             }
                         });
 
             } else {
-                libs.toast(2, 2, getString(R.string.warning_internet));
+                utils.toast(2, 2, getString(R.string.warning_internet));
             }
         }catch (Exception e){
             e.printStackTrace();
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
-            libs.toast(2, 2, getString(R.string.error));
+            utils.toast(2, 2, getString(R.string.error));
         }
     }
 
@@ -408,17 +410,18 @@ public class MyProfileActivity extends AppCompatActivity {
 
         try {
 
-            if (libs.isConnectingToInternet()) {
+            if (utils.isConnectingToInternet()) {
 
                 UploadService uploadService = new UploadService(this);
 
-                uploadService.uploadImageCommon(strCustomerImgName, "provider_image" , "Profile Picture", Config.providerModel.getEmail(),
+                uploadService.uploadImageCommon(strCustomerImgName, "provider_image",
+                        "Profile Picture", Config.providerModel.getStrEmail(),
                         UploadFileType.IMAGE, new App42CallBack() {
 
                             public void onSuccess(Object response) {
 
                                 if(response!=null) {
-                                   /// Libs.log(response.toString(), "response 1 ");
+                                    /// Utils.log(response.toString(), "response 1 ");
                                     Upload upload = (Upload) response;
                                     ArrayList<Upload.File> fileList = upload.getFileList();
 
@@ -430,28 +433,31 @@ public class MyProfileActivity extends AppCompatActivity {
 
                                         JSONObject jsonToUpdate = new JSONObject();
 
-                                        StorageService storageService = new StorageService(MyProfileActivity.this);
+                                        StorageService storageService = new StorageService(
+                                                MyProfileActivity.this);
 
                                         try {
 
                                             jsonToUpdate.put("provider_profile_url", url);
                                             //
-                                            storageService.updateDocs(jsonToUpdate, Config.jsonDocId, Config.collectionProvider, new App42CallBack() {
+                                            storageService.updateDocs(jsonToUpdate,
+                                                    Config.providerModel.getStrProviderId(),
+                                                    Config.collectionProvider, new App42CallBack() {
                                                 @Override
                                                 public void onSuccess(Object o) {
 
                                                     if (o != null) {
 
-                                                        File f = libs.getInternalFileImages(Config.strCustomerImageName);
+                                                        File f = utils.getInternalFileImages(Config.strCustomerImageName);
 
                                                         if (f.exists())
                                                             f.delete();
 
                                                         File newFile = new File(strCustomerImgName);
-                                                        File renameFile = libs.getInternalFileImages(Config.strCustomerImageName);
+                                                        File renameFile = utils.getInternalFileImages(Config.strCustomerImageName);
 
                                                         try {
-                                                            libs.moveFile(newFile, renameFile);
+                                                            utils.moveFile(newFile, renameFile);
                                                         } catch (IOException e) {
                                                             e.printStackTrace();
                                                         }
@@ -469,11 +475,11 @@ public class MyProfileActivity extends AppCompatActivity {
                                                             }
                                                         }
 
-                                                        libs.toast(2, 2, getString(R.string.update_profile_image));
+                                                        utils.toast(2, 2, getString(R.string.update_profile_image));
                                                         isImageChanged = false;
 
                                                     } else {
-                                                        libs.toast(2, 2, getString(R.string.warning_internet));
+                                                        utils.toast(2, 2, getString(R.string.warning_internet));
                                                     }
                                                 }
 
@@ -483,10 +489,10 @@ public class MyProfileActivity extends AppCompatActivity {
                                                         progressDialog.dismiss();
 
                                                     if (e != null) {
-                                                        Libs.log(e.toString(), "response onException 1 ");
-                                                        libs.toast(2, 2, e.getMessage());
+                                                        Utils.log(e.toString(), "response onException 1 ");
+                                                        utils.toast(2, 2, e.getMessage());
                                                     } else {
-                                                        libs.toast(2, 2, getString(R.string.warning_internet));
+                                                        utils.toast(2, 2, getString(R.string.warning_internet));
                                                     }
                                                 }
                                             });
@@ -498,12 +504,12 @@ public class MyProfileActivity extends AppCompatActivity {
                                     } else {
                                         if (progressDialog.isShowing())
                                             progressDialog.dismiss();
-                                        libs.toast(2, 2, getString(R.string.error));
+                                        utils.toast(2, 2, getString(R.string.error));
                                     }
                                 }else{
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
                             }
 
@@ -514,10 +520,10 @@ public class MyProfileActivity extends AppCompatActivity {
                                     progressDialog.dismiss();
 
                                 if(e!=null) {
-                                    Libs.log(e.toString(), "response onException 1 ");
-                                    libs.toast(2, 2, e.getMessage());
+                                    Utils.log(e.toString(), "response onException 1 ");
+                                    utils.toast(2, 2, e.getMessage());
                                 }else{
-                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
                             }
                         });
@@ -525,13 +531,13 @@ public class MyProfileActivity extends AppCompatActivity {
             } else {
                 if (progressDialog.isShowing())
                     progressDialog.dismiss();
-                libs.toast(2, 2, getString(R.string.warning_internet));
+                utils.toast(2, 2, getString(R.string.warning_internet));
             }
         }catch (Exception e){
             e.printStackTrace();
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
-            libs.toast(2, 2, getString(R.string.error));
+            utils.toast(2, 2, getString(R.string.error));
         }
     }
 
@@ -549,7 +555,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 if (bitmap != null)
                     profileImage.setImageBitmap(bitmap);
                 else
-                    libs.toast(2, 2, getString(R.string.error));
+                    utils.toast(2, 2, getString(R.string.error));
             }
 
             if (isImageChanged && bitmap != null) {
@@ -567,9 +573,9 @@ public class MyProfileActivity extends AppCompatActivity {
         public void run() {
             try {
 
-                File f = libs.getInternalFileImages(Config.strCustomerImageName);
-                Libs.log(f.getAbsolutePath(), " FP ");
-                bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
+                File f = utils.getInternalFileImages(Config.strCustomerImageName);
+                Utils.log(f.getAbsolutePath(), " FP ");
+                bitmap = utils.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
 
                 backgroundThreadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
@@ -587,11 +593,11 @@ public class MyProfileActivity extends AppCompatActivity {
                 if (uri != null) {
                     Calendar calendar = new GregorianCalendar();
                     String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
-                    File galleryFile = libs.createFileInternalImage(strFileName);
+                    File galleryFile = utils.createFileInternalImage(strFileName);
                     strCustomerImgName = galleryFile.getAbsolutePath();
                     InputStream is = getContentResolver().openInputStream(uri);
-                    libs.copyInputStreamToFile(is, galleryFile);
-                    bitmap = libs.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
+                    utils.copyInputStreamToFile(is, galleryFile);
+                    bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
                     isImageChanged = true;
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
@@ -606,7 +612,7 @@ public class MyProfileActivity extends AppCompatActivity {
         public void run() {
             try {
                 if (strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("")) {
-                    bitmap = libs.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
+                    bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
                     isImageChanged = true;
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);

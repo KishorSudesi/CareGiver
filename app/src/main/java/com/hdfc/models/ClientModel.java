@@ -1,85 +1,37 @@
 package com.hdfc.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
- * Created by Admin on 24-02-2016.
+ * Created by balamurugan@adstringo.in on 2/19/2016.
  */
-public class ClientModel implements Serializable{
-    String name = "";
-    String age = "";
-    String problem = "";
-    String premium = "";
-    String address = "";
-    String strMobile = "";
-    String strClientImageUrl = "";
+public class ClientModel implements Serializable {
 
+    private CustomerModel customerModel;
 
-    public String getStrClientImageUrl() {
-        return strClientImageUrl;
+    private ArrayList<DependentModel> dependentModels = new ArrayList<>();
+
+    public ClientModel() {
     }
 
-    public void setStrClientImageUrl(String strClientImageUrl) {
-        this.strClientImageUrl = strClientImageUrl;
+    public CustomerModel getCustomerModel() {
+        return customerModel;
     }
 
-    public String getStrMobile() {
-        return strMobile;
+    public void setCustomerModel(CustomerModel customerModel) {
+        this.customerModel = customerModel;
     }
 
-    public void setStrMobile(String strMobile) {
-        this.strMobile = strMobile;
+    public ArrayList<DependentModel> getDependentModels() {
+        return dependentModels;
     }
 
-    public String getStrStatus() {
-        return strStatus;
+    public void setDependentModels(ArrayList<DependentModel> dependentModels) {
+        this.dependentModels = dependentModels;
     }
 
-    public void setStrStatus(String strStatus) {
-        this.strStatus = strStatus;
+    public void setDependentModel(DependentModel dependentModel) {
+        this.dependentModels.add(dependentModel);
     }
-
-    private String strStatus = "";
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getProblem() {
-        return problem;
-    }
-
-    public void setProblem(String problem) {
-        this.problem = problem;
-    }
-
-    public String getPremium() {
-        return premium;
-    }
-
-    public void setPremium(String premium) {
-        this.premium = premium;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-
 }

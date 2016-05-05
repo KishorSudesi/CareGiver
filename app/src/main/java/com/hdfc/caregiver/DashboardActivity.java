@@ -1,6 +1,5 @@
 package com.hdfc.caregiver;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,38 +9,24 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hdfc.app42service.StorageService;
+import com.hdfc.app42service.App42GCMController;
+import com.hdfc.app42service.App42GCMService;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
 import com.hdfc.caregiver.fragments.SimpleActivityFragment;
 import com.hdfc.config.Config;
-import com.hdfc.libs.AsyncApp42ServiceApi;
-import com.hdfc.libs.Libs;
-import com.hdfc.models.ClientModel;
-import com.hdfc.models.FileModel;
-import com.shephertz.app42.paas.sdk.android.storage.Storage;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import com.hdfc.libs.AppUtils;
+import com.shephertz.app42.paas.sdk.android.App42API;
 
 /**
  * Created by yuyidong on 16/1/23.
  */
-public class DashboardActivity extends AppCompatActivity {
+public class DashboardActivity extends AppCompatActivity implements App42GCMController.App42GCMListener {
 
 
-    private Libs libs;
-    private ImageView mytask, clients, feedback;
     private static Handler threadHandler;
-
+    private AppUtils appUtils;
+    private ImageView mytask, clients, feedback;
     private TextView textViewTasks, textViewClients, textViewFeedback;
 
     @Override
@@ -49,7 +34,7 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_tasks);
 
-        libs = new Libs(DashboardActivity.this);
+        appUtils = new AppUtils(DashboardActivity.this);
 
         mytask = (ImageView)findViewById(R.id.buttonMyTasks);
         clients = (ImageView)findViewById(R.id.buttonClients);
@@ -118,8 +103,61 @@ public class DashboardActivity extends AppCompatActivity {
             mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
             textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         }
+        App42API.setLoggedInUser(Config.providerModel.getStrEmail());
+    }
+
+    @Override
+    public void onError(String var1) {
 
     }
+
+    @Override
+    public void onGCMRegistrationId(String gcmRegId) {
+        //Log.e("Registr" , gcmRegId);
+        App42GCMController.storeRegistrationId(this, gcmRegId);
+        if (!App42GCMController.isApp42Registerd(DashboardActivity.this))
+            App42GCMController.registerOnApp42(App42API.getLoggedInUser(), gcmRegId, this);
+    }
+
+    @Override
+    public void onApp42Response(String var1) {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (App42GCMController.isPlayServiceAvailable(this)) {
+            App42GCMController.getRegistrationId(DashboardActivity.this,
+                    Config.strAppId, this);//prod. - 272065924531
+        } else {
+            /*Log.i("App42PushNotification",
+                    "No valid Google Play Services APK found.");*/
+        }
+    }
+
+    @Override
+    public void onRegisterApp42(String var1) {
+        App42GCMController.storeApp42Success(DashboardActivity.this);
+    }
+
+    public void unregisterGcm() {
+
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    App42GCMService.unRegisterGcm();
+                } catch (Exception bug) {
+                    bug.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+
 
     public void setMenu(){
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks));
@@ -189,45 +227,7 @@ public class DashboardActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-
-                for (int i = 0; i < Config.fileModels.size(); i++) {
-
-                    FileModel fileModel = Config.fileModels.get(i);
-
-                    if (fileModel != null && fileModel.getStrFileUrl() != null && !fileModel.getStrFileUrl().equalsIgnoreCase("")) {
-
-                        String strUrl = libs.replaceSpace(fileModel.getStrFileUrl());
-
-                        String strFileName = libs.replaceSpace(fileModel.getStrFileName());
-
-                        Libs.log(strFileName, "File Name");
-
-                        File fileImage = libs.createFileInternal("images/" + strFileName);
-
-                        if (fileImage.length() <= 0) {
-
-                            InputStream input;
-                            try {
-
-                                URL url = new URL(strUrl); //URLEncoder.encode(fileModel.getStrFileUrl(), "UTF-8")
-                                input = url.openStream();
-                                byte[] buffer = new byte[1500];
-                                OutputStream output = new FileOutputStream(fileImage);
-                                try {
-                                    int bytesRead;
-                                    while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
-                                        output.write(buffer, 0, bytesRead);
-                                    }
-                                } finally {
-                                    output.close();
-                                }
-                                Libs.log("0" + fileImage.getAbsolutePath(), "File Name");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
+                appUtils.loadAllFiles();
                 threadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
                 e.printStackTrace();

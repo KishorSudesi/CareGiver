@@ -221,4 +221,7 @@
     <string name="add_profile">Add a Profile picture</string>
     <string name="select_picture">Select a Picture</string>
 
+    <!--Google Strings-->
+    <string name="google_app_id">910502819263</string>
+
 </resources>

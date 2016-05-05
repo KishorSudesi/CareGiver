@@ -4,7 +4,10 @@
   "service_name": "Medical Test",
   "cost": 0.0,
   "category_name": "Health Care",
-  "service_type": "adhoc",
+  "customer_id": "56f53951e4b004bad20daf54",
+  "service_id": "56f53980e4b003cbd56f2cea",
+  "updated_date": "2016-04-28T18:13:27.369Z",
+  "unit_consumed": 0,
   "milestones": [
     {
       "name": "Appointment Confirmation",

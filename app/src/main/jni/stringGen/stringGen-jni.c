@@ -21,7 +21,7 @@
 
 #include "stringGen-jni.h"
 
-#define LOG_TAG "com.hdfc.libs.Libs"
+#define LOG_TAG "com.hdfc.libs.Utils"
 
 #define LOG_F(fn_name) __android_log_write(ANDROID_LOG_DEBUG, LOG_TAG, "Called : " fn_name )
 
@@ -34,7 +34,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
     return JNI_VERSION_1_6;
 }
 
-JNIEXPORT jstring  JNICALL Java_com_hdfc_libs_Libs_getString(JNIEnv* env,jobject thiz)
+JNIEXPORT jstring  JNICALL Java_com_hdfc_libs_Utils_getString(JNIEnv* env,jobject thiz)
 {
 	#if defined(__arm__)
 		#if defined(__ARM_ARCH_7A__)

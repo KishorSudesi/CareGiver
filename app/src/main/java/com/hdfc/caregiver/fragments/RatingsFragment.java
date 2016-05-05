@@ -23,9 +23,8 @@ import com.hdfc.caregiver.MyProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
-import com.hdfc.libs.Libs;
+import com.hdfc.libs.Utils;
 import com.hdfc.models.FeedBackModel;
-import com.hdfc.models.ProviderModel;
 import com.hdfc.views.RoundedImageView;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
@@ -47,7 +46,7 @@ public class RatingsFragment extends Fragment {
     private static int intWhichScreen;
     private static Handler backgroundThreadHandler;
     private static ProgressDialog mProgress = null;
-    private static Libs libs;
+    private static Utils utils;
     private static double iRatings = 0;
     private static LinearLayout layout;
     public TextView textViewName, textViewEmpty;
@@ -89,7 +88,7 @@ public class RatingsFragment extends Fragment {
 
         imageProfilePic = (RoundedImageView)view.findViewById(R.id.img);
         mProgress = new ProgressDialog(getActivity());
-        libs = new Libs(getActivity());
+        utils = new Utils(getActivity());
         intWhichScreen = Config.intRatingsScreen;
 
         //if(Config.myProfileModel.getStrName()!=null)
@@ -120,7 +119,8 @@ public class RatingsFragment extends Fragment {
 
         StorageService storageService = new StorageService(getActivity());
 
-        storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id", Config.jsonDocId,
+        storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id",
+                Config.providerModel.getStrProviderId(),
                 new AsyncApp42ServiceApi.App42StorageServiceListener() {
             @Override
             public void onDocumentInserted(Storage response) {
@@ -134,7 +134,7 @@ public class RatingsFragment extends Fragment {
 
             @Override
             public void onFindDocSuccess(Storage response) {
-                Libs.log(String.valueOf(response.getJsonDocList().size()), " count ");
+                Utils.log(String.valueOf(response.getJsonDocList().size()), " count ");
                 if (response.getJsonDocList().size() > 0) {
 
                     Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
@@ -167,7 +167,7 @@ public class RatingsFragment extends Fragment {
                             }
 
                             if (jsonArrayFeedback.length() > 0)
-                                iRatings = Libs.round(iRatings / jsonArrayFeedback.length(), 2);
+                                iRatings = Utils.round(iRatings / jsonArrayFeedback.length(), 2);
                         }
 
                         //ratingsAdapter.notifyDataSetChanged();
@@ -225,7 +225,7 @@ public class RatingsFragment extends Fragment {
                     layout.addView(imageView);
                 }
 
-                Libs.log(String.valueOf(i + " ! " + j), " R ");
+                Utils.log(String.valueOf(i + " ! " + j), " R ");
 
                 for (k = i; k < 5; k++) {
 
@@ -239,7 +239,7 @@ public class RatingsFragment extends Fragment {
                     layout.addView(imageView);
                 }
 
-                Libs.log(String.valueOf(i + " ! " + k), " R ");
+                Utils.log(String.valueOf(i + " ! " + k), " R ");
 
                 ratingsAdapter = new RatingsAdapter(getContext(), activityFeedBackModels);
                 listratings.setAdapter(ratingsAdapter);
@@ -255,10 +255,10 @@ public class RatingsFragment extends Fragment {
         @Override
         public void run() {
             try {
-                File f = libs.getInternalFileImages(Config.providerModel.getProviderId());
+                File f = utils.getInternalFileImages(Config.providerModel.getStrProviderId());
 
                 if(f!=null&&f.exists())
-                    bitmap = libs.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth,
+                    bitmap = utils.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth,
                             Config.intHeight);
 
             } catch (Exception e) {
@@ -268,8 +268,8 @@ public class RatingsFragment extends Fragment {
             try {
                 if (activityFeedBackModels != null) {
                     for (int i = 0; i < activityFeedBackModels.size(); i++) {
-                        Libs.log(activityFeedBackModels.get(i).getStrFeedBackByUrl(), " URL ");
-                        libs.loadImageFromWeb(activityFeedBackModels.get(i).getStrFeedBackBy(),
+                        Utils.log(activityFeedBackModels.get(i).getStrFeedBackByUrl(), " URL ");
+                        utils.loadImageFromWeb(activityFeedBackModels.get(i).getStrFeedBackBy(),
                                 activityFeedBackModels.get(i).getStrFeedBackByUrl());
                     }
                 }

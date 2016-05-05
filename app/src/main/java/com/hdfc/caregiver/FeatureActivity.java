@@ -25,10 +25,8 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hdfc.adapters.ExpandableListAdapter;
 import com.hdfc.adapters.FeatureAdapter;
@@ -36,8 +34,8 @@ import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
-import com.hdfc.libs.Libs;
 import com.hdfc.libs.MultiBitmapLoader;
+import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.views.TouchImageView;
@@ -53,10 +51,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -81,23 +77,22 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     private static ActivityModel act;
     private static LinearLayout layout;
     private static String strName;
+    private static ArrayList<String> imagePaths = new ArrayList<>();
+    private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
     public JSONObject json;
-    private JSONObject responseJSONDoc,jsonNotification;
-    private JSONObject responseJSONDocCarla;
-    private Libs libs;
-    private ProgressDialog progressDialog;
-    private Point p;
-    private JSONArray jsonArrayImagesAdded;
-
-    //Expandable listview Adapter
-
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
- private static ArrayList<String> imagePaths = new ArrayList<>();
-    private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
+    //Expandable listview Adapter
+    private JSONObject responseJSONDoc,jsonNotification;
+    private JSONObject responseJSONDocCarla;
+    private Utils utils;
+    private ProgressDialog progressDialog;
+    private Point p;
+    private JSONArray jsonArrayImagesAdded;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,25 +126,25 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             act = (ActivityModel) b.getSerializable("ACTIVITY");
 
-            libs = new Libs(FeatureActivity.this);
+            utils = new Utils(FeatureActivity.this);
 
-            if (act.getFeatures() == null || act.getFeatures().length <= 0)
+           /* if (act.getFeatures() == null || act.getFeatures().length <= 0)
                 act.setFeatures(new String[]{"corn", "potato"});
             List<String> lstFeatures = new ArrayList<>(Arrays.asList(act.getFeatures()));
 
             dependentName.setText(act.getStrActivityDependentName());
 
-            featureAdapter = new FeatureAdapter(this, lstFeatures);
+            featureAdapter = new FeatureAdapter(this, lstFeatures);*/
 
-            textViewTime.setText(libs.formatDateTime(act.getStrActivityDate()));
+            textViewTime.setText(utils.formatDateTime(act.getStrActivityDate()));
 
-            //Libs.log(act.getStrActivityDate(), " Date ");
-            //Libs.log(act.getFeatures().toString(),"Features");
+            //Utils.log(act.getStrActivityDate(), " Date ");
+            //Utils.log(act.getFeatures().toString(),"Features");
 
 
             //
-            //Libs.log(libs.replaceSpace(act.getStrActivityDependentName()), " NAME ");
-            File fileImage = Libs.createFileInternal("images/" + libs.replaceSpace(act.getStrActivityDependentName()));
+            //Utils.log(utils.replaceSpace(act.getStrActivityDependentName()), " NAME ");
+            File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrDependentID()));
 
             if (fileImage.exists()) {
                 String filename = fileImage.getAbsolutePath();
@@ -162,7 +157,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             e.printStackTrace();
         }
 
-        //libs = new Libs(FeatureActivity.this);
+        //utils = new Utils(FeatureActivity.this);
 
         //String strCustomerImagePath = getFilesDir() + "/images/" + "feature_image";
 
@@ -177,9 +172,9 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                     if (FeatureAdapter.selectedStrings.size() > 0)
                         uploadImage();
                     else
-                        libs.toast(2, 2, "Select a feature");
+                        utils.toast(2, 2, "Select a feature");
                 else
-                    libs.toast(2, 2, "Select a Image");
+                    utils.toast(2, 2, "Select a Image");
                 //uploadCheckBox();
                 //backgroundThreadHandler = new BackgroundThreadHandler();
             }
@@ -245,7 +240,7 @@ if (attach != null) {
  if(IMAGE_COUNT<4)
                     showStatusPopup(FeatureActivity.this, p);
              else{
-                            libs.toast(2,2, "Maximum 4 Images only Allowed");
+     utils.toast(2, 2, "Maximum 4 Images only Allowed");
                         }
 			
 			}
@@ -364,7 +359,7 @@ if (attach != null) {
                     ActivityCompat.requestPermissions(FeatureActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 124);
                     return;
                 }
-                libs.selectImage(strImageName, null, FeatureActivity.this,false);
+                utils.selectImage(strImageName, null, FeatureActivity.this, false);
 
                 //  Intent intent = new Intent();
                 // intent.setType("image/*");
@@ -385,7 +380,7 @@ if (attach != null) {
                     ActivityCompat.requestPermissions(FeatureActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 124);
                     return;
                 }
-                libs.selectImage(strImageName, null, FeatureActivity.this,false);
+                utils.selectImage(strImageName, null, FeatureActivity.this, false);
 
             }
         });
@@ -416,7 +411,7 @@ if (attach != null) {
 
         if (resultCode == Activity.RESULT_OK) { //&& data != null
             try {
-                //Libs.toast(1, 1, "Getting Image...");
+                //Utils.toast(1, 1, "Getting Image...");
 
                 mProgress.setMessage(getString(R.string.loading));
 mProgress.setCancelable(false);
@@ -425,15 +420,15 @@ mProgress.setCancelable(false);
                     case Config.START_CAMERA_REQUEST_CODE:
 
                         backgroundThreadHandler = new BackgroundThreadHandler();
-                        strImageName = Libs.customerImageUri.getPath();
-                        Libs.log(strImageName, " IMSGR ");
+                        strImageName = Utils.customerImageUri.getPath();
+                        Utils.log(strImageName, " IMSGR ");
                         Thread backgroundThreadCamera = new BackgroundThreadCamera();
                         backgroundThreadCamera.start();
                         break;
 
                     case Config.START_GALLERY_REQUEST_CODE:
                         backgroundThreadHandler = new BackgroundThreadHandler();
-                        // strCustomerImgName = Libs.customerImageUri.getPath();
+                        // strCustomerImgName = Utils.customerImageUri.getPath();
                        // if (intent.getData() != null) {
                         //    uri = intent.getData();
 						
@@ -441,7 +436,7 @@ mProgress.setCancelable(false);
 
                         String[] all_path = intent.getStringArrayExtra("all_path");
 
-                        //Libs.log(String.valueOf(all_path.length), "size");
+                        //Utils.log(String.valueOf(all_path.length), "size");
 
                         if(all_path.length+IMAGE_COUNT>4){
 
@@ -461,7 +456,7 @@ mProgress.setCancelable(false);
                            break;
 
                         /*backgroundThreadHandler = new BackgroundThreadHandler();
-                        // strCustomerImgName = Libs.customerImageUri.getPath();
+                        // strCustomerImgName = Utils.customerImageUri.getPath();
                         if (intent.getData() != null) {
                             uri = intent.getData();
                             Thread backgroundThread = new BackgroundThread();
@@ -484,7 +479,7 @@ mProgress.setCancelable(false);
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            if (libs.isConnectingToInternet()) {
+            if (utils.isConnectingToInternet()) {
 
                 for (final ImageModel imageModel : arrayListImageModel) {
 
@@ -492,7 +487,7 @@ mProgress.setCancelable(false);
 
                     uploadService.uploadImageCommon(imageModel.getStrImageName(),
                             imageModel.getStrImageDesc(), imageModel.getStrImageDesc(),
-                            Config.providerModel.getEmail(), UploadFileType.IMAGE,
+                            Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
                             new App42CallBack() {
  public void onSuccess(Object response) {
 
@@ -531,12 +526,12 @@ mProgress.setCancelable(false);
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
                                     uploadImage();
-                                 //   libs.toast(2, 2, ((Upload) response).getStrResponse());
+                                    //   utils.toast(2, 2, ((Upload) response).getStrResponse());
                                 }
                             } else {
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                libs.toast(2, 2, getString(R.string.warning_internet));
+                                utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                         }
 
@@ -547,11 +542,11 @@ mProgress.setCancelable(false);
                                 progressDialog.dismiss();
 
                             if (e != null) {
-                                Libs.log(e.toString(), "response");
-                              //  libs.toast(2, 2, e.getMessage());
+                                Utils.log(e.toString(), "response");
+                                //  utils.toast(2, 2, e.getMessage());
                                 uploadImage();
                             } else {
-                                libs.toast(2, 2, getString(R.string.warning_internet));
+                                utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                         }
                     });
@@ -560,7 +555,7 @@ mProgress.setCancelable(false);
             } else {
                 if (progressDialog.isShowing())
                     progressDialog.dismiss();
-                libs.toast(2, 2, getString(R.string.warning_internet));
+                utils.toast(2, 2, getString(R.string.warning_internet));
             }
 
         }catch (Exception e){
@@ -569,13 +564,13 @@ mProgress.setCancelable(false);
                 progressDialog.dismiss();
 
           //  uploadImage();
-            libs.toast(2, 2, getString(R.string.error));
+            utils.toast(2, 2, getString(R.string.error));
         }
     }
 
     public void uploadCheckBox() {
 
-        if (libs.isConnectingToInternet()) {
+        if (utils.isConnectingToInternet()) {
             storageService = new StorageService(FeatureActivity.this);
 
 
@@ -588,13 +583,13 @@ mProgress.setCancelable(false);
 
                 Date doneDate = new Date();
 
-                strDoneDate = libs.convertDateToString(doneDate);
+                strDoneDate = utils.convertDateToString(doneDate);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            storageService.findDocsByIdApp42CallBack(Config.jsonDocId, Config.collectionProvider, new App42CallBack() {
+            storageService.findDocsByIdApp42CallBack(Config.providerModel.getStrProviderId(), Config.collectionProvider, new App42CallBack() {
                 @Override
                 public void onSuccess(Object o) {
 
@@ -604,8 +599,8 @@ mProgress.setCancelable(false);
 
                         try {
                             responseJSONDoc = new JSONObject(findObj.getJsonDocList().get(0).getJsonDoc());
- 
- Libs.log(responseJSONDoc.toString(), " Res");
+
+                            Utils.log(responseJSONDoc.toString(), " Res");
                             if (responseJSONDoc.has("activities")) {
                                 JSONArray dependantsA = responseJSONDoc.
                                         getJSONArray("activities");
@@ -643,12 +638,12 @@ mProgress.setCancelable(false);
                             progressDialog.dismiss();
                         }
 
-                        //Libs.log(responseJSONDoc.toString(), " onj 1 ");
+                        //Utils.log(responseJSONDoc.toString(), " onj 1 ");
 
-                        if (libs.isConnectingToInternet()) {//TODO check activity added
+                        if (utils.isConnectingToInternet()) {//TODO check activity added
 
-                            storageService.updateDocs(responseJSONDoc, Config.jsonDocId,
-							Config.collectionProvider, new App42CallBack() {
+                            storageService.updateDocs(responseJSONDoc, Config.providerModel.getStrProviderId(),
+                                    Config.collectionProvider, new App42CallBack() {
                                 @Override
                                 public void onSuccess(Object o) {
 
@@ -656,9 +651,9 @@ mProgress.setCancelable(false);
 
                                     if (o != null) {
 
-                                        storageService.findDocsByKeyValue(Config.collectionCustomer, 
-										"customer_email", act.getStrCustomerEmail(), 
-										new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                                        storageService.findDocsByKeyValue(Config.collectionCustomer,
+                                                "customer_id", act.getStrDependentID(),
+                                                new AsyncApp42ServiceApi.App42StorageServiceListener() {
                                             @Override
                                             public void onDocumentInserted(Storage response) {
                                             }
@@ -682,7 +677,7 @@ mProgress.setCancelable(false);
 
                                                         try {
                                                             responseJSONDocCarla = new JSONObject(strDocument);
-                              Libs.log(responseJSONDocCarla.toString(), " Res 1 ");
+                                                            Utils.log(responseJSONDocCarla.toString(), " Res 1 ");
 
                                                             if (responseJSONDocCarla.has("dependents")) {
 
@@ -694,7 +689,7 @@ mProgress.setCancelable(false);
                                                                     JSONObject jsonObjectActivities = dependantsA.
                                                                             getJSONObject(i);
 
-                                                                    if (jsonObjectActivities.getString("dependent_name").equalsIgnoreCase(act.getStrActivityDependentName())) {
+                                                                    if (jsonObjectActivities.getString("dependent_id").equalsIgnoreCase(act.getStrDependentID())) {
 
                                                                         if (jsonObjectActivities.has("activities")) {
 
@@ -733,7 +728,7 @@ mProgress.setCancelable(false);
                                                             }
 
 
-                                                            //Libs.log(responseJSONDocCarla.toString(), " onj 2 ");
+                                                            //Utils.log(responseJSONDocCarla.toString(), " onj 2 ");
 
                                                             storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionCustomer, new App42CallBack() {
                                                                 @Override
@@ -746,7 +741,7 @@ mProgress.setCancelable(false);
                                                                     } else {
                                                                         if (progressDialog.isShowing())
                                                                             progressDialog.dismiss();
-                                                                        libs.toast(2, 2, getString(R.string.warning_internet));
+                                                                        utils.toast(2, 2, getString(R.string.warning_internet));
                                                                     }
                                                                 }
 
@@ -755,9 +750,9 @@ mProgress.setCancelable(false);
                                                                     if (progressDialog.isShowing())
                                                                         progressDialog.dismiss();
                                                                     if (e != null) {
-                                                                        libs.toast(2, 2, e.getMessage());
+                                                                        utils.toast(2, 2, e.getMessage());
                                                                     } else {
-                                                                        libs.toast(2, 2, getString(R.string.warning_internet));
+                                                                        utils.toast(2, 2, getString(R.string.warning_internet));
                                                                     }
                                                                 }
                                                             });
@@ -770,7 +765,7 @@ mProgress.setCancelable(false);
                                                 } else {
                                                     if (progressDialog.isShowing())
                                                         progressDialog.dismiss();
-                                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                                 }
                                             }
 
@@ -785,9 +780,9 @@ mProgress.setCancelable(false);
                                                     progressDialog.dismiss();
 
                                                 if (ex != null) {
-                                                    libs.toast(2, 2, ex.getMessage());
+                                                    utils.toast(2, 2, ex.getMessage());
                                                 } else {
-                                                    libs.toast(2, 2, getString(R.string.warning_internet));
+                                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                                 }
                                             }
 
@@ -804,9 +799,9 @@ mProgress.setCancelable(false);
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
                                     if (e != null) {
-                                        libs.toast(2, 2, e.getMessage());
+                                        utils.toast(2, 2, e.getMessage());
                                     } else {
-                                        libs.toast(2, 2, getString(R.string.warning_internet));
+                                        utils.toast(2, 2, getString(R.string.warning_internet));
                                     }
                                 }
                             });
@@ -815,13 +810,13 @@ mProgress.setCancelable(false);
                         } else {
                             if (progressDialog.isShowing())
                                 progressDialog.dismiss();
-                            libs.toast(2, 2, getString(R.string.warning_internet));
+                            utils.toast(2, 2, getString(R.string.warning_internet));
                         }
 
                     } else {
                         if (progressDialog.isShowing())
                             progressDialog.dismiss();
-                        libs.toast(2, 2, getString(R.string.warning_internet));
+                        utils.toast(2, 2, getString(R.string.warning_internet));
                     }
                 }
 
@@ -830,9 +825,9 @@ mProgress.setCancelable(false);
                     if (progressDialog.isShowing())
                         progressDialog.dismiss();
                     if (e != null) {
-                        libs.toast(2, 2, e.getMessage());
+                        utils.toast(2, 2, e.getMessage());
                     } else {
-                        libs.toast(2, 2, getString(R.string.warning_internet));
+                        utils.toast(2, 2, getString(R.string.warning_internet));
                     }
                 }
             });
@@ -841,13 +836,13 @@ mProgress.setCancelable(false);
     public void uploadNotification(){
         //act.getStrCustomerEmail()      getCustomer Email
 
-      if (libs.isConnectingToInternet()) {
-        
-		Libs.log(act.getStrCustomerEmail(), " mail ");
-        storageService.findDocsByKeyValue(Config.collectionCustomer, 
-		"customer_email",
-		 act.getStrCustomerEmail(),
-		 new AsyncApp42ServiceApi.App42StorageServiceListener() {
+        if (utils.isConnectingToInternet()) {
+
+            //Utils.log(act.getStrCustomerEmail(), " mail ");
+        storageService.findDocsByKeyValue(Config.collectionCustomer,
+                "customer_id",
+                act.getStrDependentID(),
+                new AsyncApp42ServiceApi.App42StorageServiceListener() {
             @Override
             public void onDocumentInserted(Storage response) {
 
@@ -883,7 +878,7 @@ mProgress.setCancelable(false);
                                     JSONObject jsonObjectActivities = dependantsA.
                                             getJSONObject(i);
 
-                                    if (jsonObjectActivities.getString("dependent_name").equalsIgnoreCase(act.getStrActivityDependentName())) {
+                                    if (jsonObjectActivities.getString("dependent_id").equalsIgnoreCase(act.getStrDependentID())) {
 
                                         if (jsonObjectActivities.has("notifications")) {
 
@@ -910,7 +905,7 @@ mProgress.setCancelable(false);
 
                                 @Override
                                 public void onSuccess(Object o) {
-                                    libs.toast(2, 2, "Notification Added Successfully");
+                                    utils.toast(2, 2, "Notification Added Successfully");
 
                                               if (progressDialog.isShowing())
                                                 progressDialog.dismiss();
@@ -919,11 +914,11 @@ mProgress.setCancelable(false);
 
                                             IMAGE_COUNT = 0;
 
-                                            //libs.toast(2, 2, "Notification Added Successfully");
+                                    //utils.toast(2, 2, "Notification Added Successfully");
 
                                             Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
 
-                                            libs.toast(2, 2, getString(R.string.activity_closed));
+                                    utils.toast(2, 2, getString(R.string.activity_closed));
 
                                             Config.intSelectedMenu=Config.intDashboardScreen;
                                             startActivity(intent);
@@ -935,8 +930,8 @@ mProgress.setCancelable(false);
                                             if (progressDialog.isShowing())
                                                 progressDialog.dismiss();
                                             if(e==null) {
-                                                libs.toast(2, 2, getString(R.string.warning_internet));
-                                            }else  libs.toast(2, 2, getString(R.string.error));
+                                                utils.toast(2, 2, getString(R.string.warning_internet));
+                                            } else utils.toast(2, 2, getString(R.string.error));
                                         }
                             });
 						}
@@ -947,7 +942,7 @@ mProgress.setCancelable(false);
                     }else{
                         if (progressDialog.isShowing())
                             progressDialog.dismiss();
-                        libs.toast(2, 2, getString(R.string.warning_internet));
+                    utils.toast(2, 2, getString(R.string.warning_internet));
  }
                 }
             
@@ -970,25 +965,39 @@ mProgress.setCancelable(false);
  } else {
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
-            libs.toast(2, 2, getString(R.string.warning_internet));
+            utils.toast(2, 2, getString(R.string.warning_internet));
         }
  }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        bitmaps.clear();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        IMAGE_COUNT = 0;
+        arrayListImageModel.clear();
+        bitmaps.clear();
+    }
 
     public class BackgroundThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-          
+
              layout.removeAllViews();
 
             for(int i=0;i<bitmaps.size();i++) {
                 try {
-                    //Libs.log(" 2 " + String.valueOf(bitmap.getHeight()), " IN ");
+                    //Utils.log(" 2 " + String.valueOf(bitmap.getHeight()), " IN ");
                     ImageView imageView = new ImageView(FeatureActivity.this);
                     imageView.setPadding(0, 0, 3, 0);
                     imageView.setImageBitmap(bitmap);
                     imageView.setTag(bitmaps.get(i));
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                
+
                   imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -1012,7 +1021,7 @@ mProgress.setCancelable(false);
                         }
                     });
 
-           
+
                      layout.addView(imageView);
                   } catch (Exception | OutOfMemoryError e) {
                     //bitmap.recycle();
@@ -1024,11 +1033,6 @@ mProgress.setCancelable(false);
         }
     }
 
- @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        bitmaps.clear();
-    }
        public class BackgroundThread extends Thread {
         @Override
         public void run() {
@@ -1039,21 +1043,21 @@ mProgress.setCancelable(false);
                 for(int i=0;i<imagePaths.size();i++) {
                     Calendar calendar = new GregorianCalendar();
                     String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
-                    File galleryFile = libs.createFileInternalImage(strFileName);
+                    File galleryFile = utils.createFileInternalImage(strFileName);
                     strImageName = galleryFile.getAbsolutePath();
 
                     //System.out.println("YOUR GALLERY PATH IS : " + strImageName);
 
                     Date date = new Date();
 
-                    ImageModel imageModel = new ImageModel(strImageName, "", galleryFile.getName(), libs.convertDateToString(date));
+                    ImageModel imageModel = new ImageModel(strImageName, "", galleryFile.getName(), utils.convertDateToString(date));
                     arrayListImageModel.add(imageModel);
 
                   //  InputStream is = getContentResolver().openInputStream(uri);
-                  //  libs.copyInputStreamToFile(is, galleryFile);
+                    //  utils.copyInputStreamToFile(is, galleryFile);
 
-                 libs.copyFile(new File(imagePaths.get(i)), galleryFile);
-                    bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
+                    utils.copyFile(new File(imagePaths.get(i)), galleryFile);
+                    bitmap = utils.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
                  IMAGE_COUNT++;
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
@@ -1069,27 +1073,27 @@ mProgress.setCancelable(false);
         public void run() {
             try {
                 if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
-                   
+
                     Date date = new Date();
-                    ImageModel imageModel = new ImageModel(strImageName, "", strName, libs.convertDateToString(date));
+                    ImageModel imageModel = new ImageModel(strImageName, "", strName, utils.convertDateToString(date));
                     arrayListImageModel.add(imageModel);
-                    bitmaps.add(libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight));
+                    bitmaps.add(utils.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight));
                 }
                 /*if (uri != null) {
                     Calendar calendar = new GregorianCalendar();
                     String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
-                    File cameraFile = libs.createFileInternal(strFileName);
+                    File cameraFile = utils.createFileInternal(strFileName);
                     strImageName = cameraFile.getAbsolutePath();
                     System.out.println("Your CAMERA path is : " + strImageName);
 
                     Date date = new Date();
 
-                    ImageModel imageModel = new ImageModel(strImageName, "", cameraFile.getName(), libs.convertDateToString(date));
+                    ImageModel imageModel = new ImageModel(strImageName, "", cameraFile.getName(), utils.convertDateToString(date));
                     arrayListImageModel.add(imageModel);
 
                     InputStream is = getContentResolver().openInputStream(uri);
-                    libs.copyInputStreamToFile(is, cameraFile);
-                    bitmap = libs.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
+                    utils.copyInputStreamToFile(is, cameraFile);
+                    bitmap = utils.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
                 }*/
                  IMAGE_COUNT++;
                 backgroundThreadHandler.sendEmptyMessage(0);
@@ -1097,12 +1101,5 @@ mProgress.setCancelable(false);
                 e.printStackTrace();
             }
         }
-    }
- @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        IMAGE_COUNT=0;
-        arrayListImageModel.clear();
-        bitmaps.clear();
     }
 }

@@ -9,11 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hdfc.caregiver.R;
-import com.hdfc.libs.Libs;
 import com.hdfc.libs.MultiBitmapLoader;
+import com.hdfc.libs.Utils;
 import com.hdfc.models.ClientModel;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -22,14 +21,14 @@ import java.util.List;
 public class ClientsAdapter extends BaseAdapter {
 
     private static LayoutInflater inflater = null;
-    private Context _context;
     public List<ClientModel> data ;
-    private Libs libs;
+    private Context _context;
+    private Utils utils;
     private MultiBitmapLoader multiBitmapLoader;
 
     public ClientsAdapter(Context context, List<ClientModel> arrayModel){
         _context = context;
-        libs = new Libs(_context);
+        utils = new Utils(_context);
         multiBitmapLoader = new MultiBitmapLoader(_context);
         data = arrayModel;
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -77,13 +76,13 @@ public class ClientsAdapter extends BaseAdapter {
 
             ClientModel clientsModel = data.get(position);
 
-            viewHolder.name.setText(clientsModel.getName());
+           /* viewHolder.name.setText(clientsModel.getName());
             viewHolder.age.setText(clientsModel.getAge());
 
             viewHolder.problem.setText(clientsModel.getProblem().length()>8 ? clientsModel.getProblem().substring(0,5)+"..":clientsModel.getProblem());
             viewHolder.premium.setText(clientsModel.getPremium().length()>8 ? clientsModel.getPremium().substring(0,5)+"..":clientsModel.getPremium());
 
-            File fileImage = libs.createFileInternal("images/" + libs.replaceSpace(clientsModel.getName()));
+            File fileImage = utils.createFileInternal("images/" + utils.replaceSpace(clientsModel.getName()));
 
             if(fileImage.exists()) {
                 String filename = fileImage.getAbsolutePath();
@@ -92,7 +91,7 @@ public class ClientsAdapter extends BaseAdapter {
                 viewHolder.client.setImageDrawable(_context.getResources().getDrawable(R.drawable.hungal_circle));
             }
 
-            viewHolder.address.setText(clientsModel.getAddress());
+            viewHolder.address.setText(clientsModel.getAddress());*/
 
 
         }

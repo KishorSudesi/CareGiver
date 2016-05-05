@@ -10,18 +10,18 @@ public class UploadService {
 
     private AsyncApp42ServiceApi asyncService;
     /*private Context _ctxt;
-    private Libs libs;
+    private Utils utils;
     private View formView, progressView;
     private ImageView imgView;*/
 
     public UploadService(Context context) {
         //this._ctxt = context;
         asyncService = AsyncApp42ServiceApi.instance(context);
-        //libs = new Libs(context);
+        //utils = new Utils(context);
     }
 
    /* public void uploadImage(String imagePath, String fileName, String desc, String userName, UploadFileType fileType, AsyncApp42ServiceApi.App42UploadServiceListener callBack) {
-        //libs.showProgress(true, formView, progressView);
+        //utils.showProgress(true, formView, progressView);
 
         asyncService.uploadImageForUser(fileName, userName, imagePath, fileType, desc, callBack);
         //asyncService.uploadImage(fileName, imagePath, UploadFileType.IMAGE,
@@ -29,7 +29,7 @@ public class UploadService {
     }*/
 
     public void uploadImageCommon(String imagePath, String fileName, String desc, String userName, UploadFileType fileType, App42CallBack callBack) {
-        //libs.showProgress(true, formView, progressView);
+        //utils.showProgress(true, formView, progressView);
 
         asyncService.uploadImageForUser(fileName, userName, imagePath, fileType, desc, callBack);
         //asyncService.uploadImage(fileName, imagePath, UploadFileType.IMAGE,
@@ -37,14 +37,14 @@ public class UploadService {
     }
 
     /*public void uploadFile(String imagePath, String fileName, String desc, UploadFileType fileType, App42CallBack callBack) {
-        // libs.showProgress(true, formView, progressView);
+        // utils.showProgress(true, formView, progressView);
         asyncService.uploadFile(fileName, imagePath, fileType, desc, callBack);
         //asyncService.uploadImage(fileName, imagePath, UploadFileType.IMAGE,
         //desc, this);
     }
 
     public void getFile(String fileName) {
-        //libs.showProgress(true, formView, progressView);
+        //utils.showProgress(true, formView, progressView);
         asyncService.getFile(fileName, this);
         //asyncService.uploadImage(fileName, imagePath, UploadFileType.IMAGE,
         //desc, this);
@@ -65,7 +65,7 @@ public class UploadService {
     }
 
    /* public void getImageCount(String userName, App42CallBack app42CallBack) {
-        //libs.showProgress(true, formView, progressView);
+        //utils.showProgress(true, formView, progressView);
 
         asyncService.getImageCount(userName, app42CallBack);
         //asyncService.uploadImage(fileName, imagePath, UploadFileType.IMAGE,
@@ -124,56 +124,56 @@ public class UploadService {
     }*/
 
     /*public void getProfileImage(String fileName, String userName, App42CallBack app42CallBack) {
-        //libs.showProgress(true, formView, progressView);
+        //utils.showProgress(true, formView, progressView);
         //asyncService.getImage(fileName, this);
         asyncService.getImageByUser(fileName, userName, app42CallBack);
     }
 */
    /* @Override
     public void onUploadImageSuccess(Upload response, String fileName, String userName) {
-        //libs.showProgress(false, formView, progressView);
-        libs.createAlertDialog("SuccessFully Uploaded : " + response);
+        //utils.showProgress(false, formView, progressView);
+        utils.createAlertDialog("SuccessFully Uploaded : " + response);
         //getProfileImage(fileName, userName);
     }
 
     @Override
     public void onUploadImageFailed(App42Exception ex) {
-        // libs.showProgress(false, formView, progressView);
-        libs.createAlertDialog("Exception Occurred : " + ex.getMessage());
+        // utils.showProgress(false, formView, progressView);
+        utils.createAlertDialog("Exception Occurred : " + ex.getMessage());
     }
 
     @Override
     public void onGetImageSuccess(Upload response) {
-        // libs.showProgress(false, formView, progressView);
+        // utils.showProgress(false, formView, progressView);
         String imageUrl = response.getFileList().get(0).getUrl();
         loadImageFromUrl(imageUrl, imgView);
     }
 
     @Override
     public void onGetImageFailed(App42Exception ex) {
-        //libs.showProgress(false, formView, progressView);
-        libs.createAlertDialog("Exception Occurred : " + ex.getMessage());
+        //utils.showProgress(false, formView, progressView);
+        utils.createAlertDialog("Exception Occurred : " + ex.getMessage());
     }
 
     @Override
     public void onSuccess(Upload response) {
-        //libs.showProgress(false, formView, progressView);
-        libs.createAlertDialog(response.toString());
+        //utils.showProgress(false, formView, progressView);
+        utils.createAlertDialog(response.toString());
     }
 
     @Override
     public void onSuccess(Object o) {
-        //libs.showProgress(false, formView, progressView);
-        libs.createAlertDialog(o.toString());
+        //utils.showProgress(false, formView, progressView);
+        utils.createAlertDialog(o.toString());
     }
 
     @Override
     public void onException(Exception e) {
-        //libs.showProgress(false, formView, progressView);
+        //utils.showProgress(false, formView, progressView);
     }
 
     @Override
     public void onException(App42Exception e) {
-        //libs.showProgress(false, formView, progressView);
+        //utils.showProgress(false, formView, progressView);
     }*/
 }

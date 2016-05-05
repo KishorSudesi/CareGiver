@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "910502819263",
+    "project_id": "default-demo-app-d6547"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910502819263:android:22c9153c8c8bc795",
+        "android_client_info": {
+          "package_name": "com.hdfc.caretaker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRflsVGFnd3zN7ginUJQOQmIaSs_RpQWQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
