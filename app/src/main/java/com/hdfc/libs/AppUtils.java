@@ -104,7 +104,7 @@ public class AppUtils {
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
-
+                                    fetchActivities(progressDialog);
                                 } else {
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
@@ -117,6 +117,8 @@ public class AppUtils {
                             }
                         } catch (Exception e1) {
                             e1.printStackTrace();
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                         }
                     }
 
@@ -127,16 +129,18 @@ public class AppUtils {
 
                     @Override
                     public void onFindDocFailed(App42Exception ex) {
-                        if (progressDialog.isShowing())
-                            progressDialog.dismiss();
                         try {
                             if (ex != null) {
-                                utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                fetchActivities(progressDialog);
                             } else {
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
                                 utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                             }
                         } catch (Exception e1) {
                             e1.printStackTrace();
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                         }
                     }
 
@@ -163,7 +167,6 @@ public class AppUtils {
                         jsonObject.getString("provider_profile_url"), "IMAGE"));
 
             }
-            fetchActivities();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -171,152 +174,164 @@ public class AppUtils {
 
     public void fetchDependents(final ProgressDialog progressDialog) {
 
-        if (utils.isConnectingToInternet()) {
-            StorageService storageService = new StorageService(_ctxt);
+        if (Config.dependentIds.size() > 0) {
 
-            Query query = QueryBuilder.build("_id", Config.dependentIds,
-                    QueryBuilder.Operator.INLIST);
+            if (utils.isConnectingToInternet()) {
 
-            storageService.findDocsByQuery(Config.collectionDependent, query,
-                    new App42CallBack() {
+                Query query = QueryBuilder.build("_id", Config.dependentIds,
+                        QueryBuilder.Operator.INLIST);
 
-                        @Override
-                        public void onSuccess(Object o) {
-                            try {
+                storageService.findDocsByQuery(Config.collectionDependent, query,
+                        new App42CallBack() {
 
-                                if (o != null) {
+                            @Override
+                            public void onSuccess(Object o) {
+                                try {
+                                    if (o != null) {
 
-                                    Storage storage = (Storage) o;
+                                        Storage storage = (Storage) o;
 
-                                    if (storage.getJsonDocList().size() > 0) {
+                                        if (storage.getJsonDocList().size() > 0) {
 
-                                        for (int i = 0; i < storage.getJsonDocList().size(); i++) {
+                                            for (int i = 0; i < storage.getJsonDocList().size(); i++) {
 
-                                            Storage.JSONDocument jsonDocument = storage.
-                                                    getJsonDocList().get(i);
+                                                Storage.JSONDocument jsonDocument = storage.
+                                                        getJsonDocList().get(i);
 
-                                            String strDocument = jsonDocument.getJsonDoc();
-                                            String strDependentDocId = jsonDocument.
-                                                    getDocId();
-                                            createDependentModel(strDependentDocId, strDocument);
+                                                String strDocument = jsonDocument.getJsonDoc();
+                                                String strDependentDocId = jsonDocument.
+                                                        getDocId();
+                                                createDependentModel(strDependentDocId, strDocument);
+                                            }
                                         }
+
+                                        goToDashboard();
+                                    } else {
+                                        if (progressDialog.isShowing())
+                                            progressDialog.dismiss();
+                                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     }
-
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-
-                                    Intent intent = new Intent(_ctxt, DashboardActivity.class);
-                                    //intent.putExtra("WHICH_SCREEN", intWhichScreen);
-                                    Config.intSelectedMenu = Config.intDashboardScreen;
-                                    _ctxt.startActivity(intent);
-                                    ((Activity) _ctxt).finish();
-
-                                } else {
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
-                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
-                                utils.toast(2, 2, _ctxt.getString(R.string.error));
-                            }
-
-                        }
-
-                        @Override
-                        public void onException(Exception e) {
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
-                            try {
-                                if (e != null) {
                                     utils.toast(2, 2, _ctxt.getString(R.string.error));
-                                } else {
-                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                 }
-                            } catch (Exception e1) {
-                                e1.printStackTrace();
-                            }
-                        }
 
-                    });
-        } else {
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
-            utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-        }
+                            }
+
+                            @Override
+                            public void onException(Exception e) {
+                                try {
+                                    if (e != null) {
+                                        goToDashboard();
+                                    } else {
+                                        if (progressDialog.isShowing())
+                                            progressDialog.dismiss();
+                                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                    }
+                                } catch (Exception e1) {
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
+                                    e1.printStackTrace();
+                                }
+                            }
+
+                        });
+
+            } else {
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
+                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+            }
+
+        } else goToDashboard();
+    }
+
+    public void goToDashboard() {
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
+
+        Intent intent = new Intent(_ctxt, DashboardActivity.class);
+        //intent.putExtra("WHICH_SCREEN", intWhichScreen);
+        Config.intSelectedMenu = Config.intDashboardScreen;
+        _ctxt.startActivity(intent);
+        ((Activity) _ctxt).finish();
     }
 
     public void fetchCustomers(final ProgressDialog progressDialog) {
 
-        if (utils.isConnectingToInternet()) {
+        if (Config.customerIds.size() > 0) {
 
-            Query query = QueryBuilder.build("_id", Config.customerIds,
-                    QueryBuilder.Operator.INLIST);
+            if (utils.isConnectingToInternet()) {
 
-            storageService.findDocsByQuery(Config.collectionCustomer, query,
-                    new App42CallBack() {
+                Query query = QueryBuilder.build("_id", Config.customerIds,
+                        QueryBuilder.Operator.INLIST);
 
-                        @Override
-                        public void onSuccess(Object o) {
-                            try {
+                storageService.findDocsByQuery(Config.collectionCustomer, query,
+                        new App42CallBack() {
 
-                                if (o != null) {
+                            @Override
+                            public void onSuccess(Object o) {
+                                try {
 
-                                    Storage storage = (Storage) o;
+                                    if (o != null) {
 
-                                    if (storage.getJsonDocList().size() > 0) {
+                                        Storage storage = (Storage) o;
 
-                                        for (int i = 0; i < storage.getJsonDocList().size(); i++) {
+                                        if (storage.getJsonDocList().size() > 0) {
 
-                                            Storage.JSONDocument jsonDocument = storage.
-                                                    getJsonDocList().get(i);
+                                            for (int i = 0; i < storage.getJsonDocList().size(); i++) {
 
-                                            String strDocument = jsonDocument.getJsonDoc();
-                                            String strDependentDocId = jsonDocument.
-                                                    getDocId();
-                                            createCustomerModel(strDependentDocId, strDocument);
+                                                Storage.JSONDocument jsonDocument = storage.
+                                                        getJsonDocList().get(i);
+
+                                                String strDocument = jsonDocument.getJsonDoc();
+                                                String strDependentDocId = jsonDocument.
+                                                        getDocId();
+                                                createCustomerModel(strDependentDocId, strDocument);
+                                            }
                                         }
+                                        fetchDependents(progressDialog);
+                                    } else {
+                                        if (progressDialog.isShowing())
+                                            progressDialog.dismiss();
+                                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     }
-                                    fetchDependents(progressDialog);
-                                } else {
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
-                                utils.toast(2, 2, _ctxt.getString(R.string.error));
-                            }
-                        }
-
-                        @Override
-                        public void onException(Exception e) {
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
-                            try {
-                                //AppUtils.log(e.getMessage(), " Response Failure");
-
-                                if (e != null) {
                                     utils.toast(2, 2, _ctxt.getString(R.string.error));
-                                } else {
-                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                 }
-                            } catch (Exception e1) {
-                                e1.printStackTrace();
                             }
-                        }
 
-                    });
-        } else {
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
+                            @Override
+                            public void onException(Exception e) {
+                                try {
+                                    if (e != null) {
+                                        fetchDependents(progressDialog);
+                                    } else {
+                                        if (progressDialog.isShowing())
+                                            progressDialog.dismiss();
+                                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                    }
+                                } catch (Exception e1) {
+                                    e1.printStackTrace();
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
+                                }
+                            }
 
-            utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-        }
+                        });
+            } else {
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
+
+                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+            }
+
+        } else fetchDependents(progressDialog);
     }
 
     public void createDependentModel(String strDocumentId, String strDocument) {
@@ -403,7 +418,7 @@ public class AppUtils {
         }
     }
 
-    public void fetchActivities() {
+    public void fetchActivities(final ProgressDialog progressDialog) {
 
         storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id",
                 Config.providerModel.getStrProviderId(),
@@ -439,6 +454,8 @@ public class AppUtils {
                                 createActivityModel(strDocumentId, jsonObjectActivities);
 
                         } catch (JSONException e) {
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                             e.printStackTrace();
                         }
                     }
@@ -456,15 +473,17 @@ public class AppUtils {
 
             @Override
             public void onFindDocFailed(App42Exception ex) {
-                if (progressDialog.isShowing())
-                    progressDialog.dismiss();
                 try {
                     if (ex != null) {
-                        utils.toast(2, 2, _ctxt.getString(R.string.error));
+                        fetchCustomers(progressDialog);
                     } else {
+                        if (progressDialog.isShowing())
+                            progressDialog.dismiss();
                         utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                     }
                 } catch (Exception e1) {
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
                     e1.printStackTrace();
                 }
             }
@@ -491,23 +510,33 @@ public class AppUtils {
 
         try {
 
-            ArrayList<ImageModel> activityImageModels = new ArrayList<>();
-            ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
-            ArrayList<VideoModel> videoModels = new ArrayList<>();
+            if (!Config.strActivityIds.contains(strDocumentId)) {
 
-            ActivityModel activityModel = new ActivityModel();
-            activityModel.setStrServcieID(jsonObject.getString("service_id"));
-            activityModel.setStrServiceDesc(jsonObject.getString("service_desc"));
-            activityModel.setStrServiceName(jsonObject.getString("service_name"));
-            activityModel.setStrActivityID(strDocumentId);
-            activityModel.setStrActivityName(jsonObject.getString("activity_name"));
-            activityModel.setStrActivityMessage(jsonObject.getString("activity_message"));
-            activityModel.setStrActivityDesc(jsonObject.getString("activity_description"));
-            activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
-            activityModel.setStrActivityDoneDate(jsonObject.getString("activity_done_date"));
-            activityModel.setStrDependentID(jsonObject.getString("dependent_id"));
+                Config.strActivityIds.add(strDocumentId);
 
-            if (jsonObject.has("feedbacks")) {
+                if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
+                    Config.dependentIds.add(jsonObject.getString("dependent_id"));
+
+                if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
+                    Config.customerIds.add(jsonObject.getString("customer_id"));
+
+                ArrayList<ImageModel> activityImageModels = new ArrayList<>();
+                ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
+                ArrayList<VideoModel> videoModels = new ArrayList<>();
+
+                ActivityModel activityModel = new ActivityModel();
+                //activityModel.setStrServcieID(jsonObject.getString("service_id"));
+                //activityModel.setStrServiceDesc(jsonObject.getString("service_desc"));
+                activityModel.setStrServiceName(jsonObject.getString("service_name"));
+                activityModel.setStrActivityID(strDocumentId);
+                activityModel.setStrActivityName(jsonObject.getString("activity_name"));
+                //activityModel.setStrActivityMessage(jsonObject.getString("activity_message"));
+                //activityModel.setStrActivityDesc(jsonObject.getString("activity_description"));
+                activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
+                activityModel.setStrActivityDoneDate(jsonObject.getString("activity_done_date"));
+                activityModel.setStrDependentID(jsonObject.getString("dependent_id"));
+
+            /*if (jsonObject.has("feedbacks")) {
 
                 JSONArray jsonArrayFeedback = jsonObject.
                         getJSONArray("feedbacks");
@@ -528,63 +557,58 @@ public class AppUtils {
                     feedBackModels.add(feedBackModel);
                 }
                 activityModel.setFeedBackModels(feedBackModels);
-            }
+            }*/
 
-            if (jsonObject.has("videos")) {
+                if (jsonObject.has("videos")) {
 
-                JSONArray jsonArrayVideos = jsonObject.
-                        getJSONArray("videos");
+                    JSONArray jsonArrayVideos = jsonObject.
+                            getJSONArray("videos");
 
-                for (int k = 0; k < jsonArrayVideos.length(); k++) {
+                    for (int k = 0; k < jsonArrayVideos.length(); k++) {
 
-                    JSONObject jsonObjectVideo = jsonArrayVideos.
-                            getJSONObject(k);
+                        JSONObject jsonObjectVideo = jsonArrayVideos.
+                                getJSONObject(k);
 
-                    VideoModel videoModel = new VideoModel(
-                            jsonObjectVideo.getString("video_name"),
-                            jsonObjectVideo.getString("video_url"),
-                            jsonObjectVideo.getString("video_description"),
-                            jsonObjectVideo.getString("video_taken"));
+                        VideoModel videoModel = new VideoModel(
+                                jsonObjectVideo.getString("video_name"),
+                                jsonObjectVideo.getString("video_url"),
+                                jsonObjectVideo.getString("video_description"),
+                                jsonObjectVideo.getString("video_taken"));
 
-                    Config.fileModels.add(new FileModel(jsonObjectVideo.getString("video_name"),
-                            jsonObjectVideo.getString("video_url"), "VIDEO"));
+                        Config.fileModels.add(new FileModel(jsonObjectVideo.getString("video_name"),
+                                jsonObjectVideo.getString("video_url"), "VIDEO"));
 
-                    videoModels.add(videoModel);
+                        videoModels.add(videoModel);
+                    }
+                    activityModel.setVideoModels(videoModels);
                 }
-                activityModel.setVideoModels(videoModels);
-            }
 
-            if (jsonObject.has("images")) {
+                if (jsonObject.has("images")) {
 
-                JSONArray jsonArrayVideos = jsonObject.
-                        getJSONArray("images");
+                    JSONArray jsonArrayVideos = jsonObject.
+                            getJSONArray("images");
 
-                for (int k = 0; k < jsonArrayVideos.length(); k++) {
+                    for (int k = 0; k < jsonArrayVideos.length(); k++) {
 
-                    JSONObject jsonObjectImage = jsonArrayVideos.
-                            getJSONObject(k);
+                        JSONObject jsonObjectImage = jsonArrayVideos.
+                                getJSONObject(k);
 
-                    ImageModel imageModel = new ImageModel(
-                            jsonObjectImage.getString("image_name"),
-                            jsonObjectImage.getString("image_url"),
-                            jsonObjectImage.getString("image_description"),
-                            jsonObjectImage.getString("image_taken"));
+                        ImageModel imageModel = new ImageModel(
+                                jsonObjectImage.getString("image_name"),
+                                jsonObjectImage.getString("image_url"),
+                                jsonObjectImage.getString("image_description"),
+                                jsonObjectImage.getString("image_taken"));
 
-                    Config.fileModels.add(new FileModel(jsonObjectImage.getString("image_name"),
-                            jsonObjectImage.getString("image_url"), "IMAGE"));
+                        Config.fileModels.add(new FileModel(jsonObjectImage.getString("image_name"),
+                                jsonObjectImage.getString("image_url"), "IMAGE"));
 
-                    activityImageModels.add(imageModel);
+                        activityImageModels.add(imageModel);
+                    }
+                    activityModel.setImageModels(activityImageModels);
                 }
-                activityModel.setImageModels(activityImageModels);
+
+                Config.activityModels.add(activityModel);
             }
-
-            Config.activityModels.add(activityModel);
-
-            if(!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
-                Config.dependentIds.add(jsonObject.getString("dependent_id"));
-
-            if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
-                Config.customerIds.add(jsonObject.getString("customer_id"));
 
         }catch (JSONException e) {
             e.printStackTrace();

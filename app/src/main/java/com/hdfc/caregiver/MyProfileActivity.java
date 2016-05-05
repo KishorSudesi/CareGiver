@@ -50,7 +50,6 @@ public class MyProfileActivity extends AppCompatActivity {
     public static String strCustomerImgName = "";
     public static Bitmap bitmap = null;
     public static Uri uri;
-    public static String strCustomerImgNameCamera;
     static RoundedImageView profileImage;
     private static Handler backgroundThreadHandler;
     private static Utils utils;
@@ -81,12 +80,11 @@ public class MyProfileActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(MyProfileActivity.this);
         mProgress = new ProgressDialog(MyProfileActivity.this);
 
-        strCustomerImgNameCamera = String.valueOf(new Date().getDate() + "" + new Date().getTime()) + ".jpeg";
-
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                utils.selectImage(strCustomerImgNameCamera, null, MyProfileActivity.this, false);
+                utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
+                        + ".jpeg", null, MyProfileActivity.this, false);
             }
         });
 
@@ -573,7 +571,7 @@ public class MyProfileActivity extends AppCompatActivity {
         public void run() {
             try {
 
-                File f = utils.getInternalFileImages(Config.strCustomerImageName);
+                File f = utils.getInternalFileImages(Config.providerModel.getStrProviderId());
                 Utils.log(f.getAbsolutePath(), " FP ");
                 bitmap = utils.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
 

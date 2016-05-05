@@ -301,7 +301,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             if(progressDialog.isShowing())
                                 progressDialog.dismiss();
 
-                            utils.toast(2, 2, getString(R.string.warning_internet));
+                            //utils.toast(2, 2, getString(R.string.warning_internet));
                         }
 
                         @Override

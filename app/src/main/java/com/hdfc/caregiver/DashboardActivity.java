@@ -200,6 +200,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
             transaction.commit();
         }
     }
+
     public void gotoSimpleActivity() {
 
         if (Config.intSelectedMenu != Config.intSimpleActivityScreen) {
@@ -218,8 +219,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
     public class ThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            Thread backgroundThread = new BackgroundThread();
-            backgroundThread.start();
+
         }
     }
 

@@ -7,6 +7,7 @@ import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.DependentModel;
+import com.hdfc.models.FeedBackModel;
 import com.hdfc.models.FileModel;
 import com.hdfc.models.ProviderModel;
 
@@ -60,8 +61,11 @@ public class Config {
 
     public static ArrayList<String> dependentIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
+    public static ArrayList<String> strActivityIds = new ArrayList<>();
+    public static ArrayList<String> strFeedbackIds = new ArrayList<>();
 
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
+    public static ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
 
     public static ProviderModel providerModel = new ProviderModel();
 

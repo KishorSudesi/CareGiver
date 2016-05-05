@@ -19,6 +19,9 @@ import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class LoginActivity extends AppCompatActivity {
 
     public static Utils utils;
@@ -142,9 +145,11 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 if (utils.isConnectingToInternet()) {
 
-                    progressDialog.setMessage(_ctxt.getString(R.string.process_login));
-                    progressDialog.setCancelable(false);
-                    progressDialog.show();
+                    if (progressDialog != null) {
+                        progressDialog.setMessage(_ctxt.getString(R.string.process_login));
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+                    }
 
                     UserService userService = new UserService(_ctxt);
 
@@ -164,15 +169,24 @@ public class LoginActivity extends AppCompatActivity {
                         public void onException(Exception e) {
                             if (progressDialog.isShowing())
                                 progressDialog.dismiss();
-                            if (e != null) {
-                                utils.toast(2, 2, _ctxt.getString(R.string.invalid_login));
-                            } else utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                            try {
+                                if (e != null) {
+
+                                    JSONObject jsonObject = new JSONObject(e.getMessage());
+                                    JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
+                                    String strMess = jsonObjectError.getString("details");
+
+                                    utils.toast(2, 2, strMess);
+                                } else
+                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                            }
                         }
                     });
-                }
-
+                } else utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
             }
-        } else utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+        } //
     }
 
 
