@@ -13,6 +13,7 @@ import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ClientModel;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -60,12 +61,12 @@ public class ClientsAdapter extends BaseAdapter {
 
             viewHolder = new ViewHolder();
 
-            viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
+          /*  viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
             viewHolder.age = (TextView) convertView.findViewById(R.id.textViewClient_age);
             viewHolder.problem = (TextView) convertView.findViewById(R.id.textViewClient_problem);
             viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
-            viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);
+            viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);*/
 
             convertView.setTag(viewHolder);
         } else {

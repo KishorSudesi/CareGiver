@@ -23,17 +23,22 @@
             android:gravity="center"
             android:text="@string/noClients"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/listViewClients"
+            android:layout_alignTop="@+id/listExp"
             android:visibility="gone"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="81dp" />
 
-        <ListView
+        <ExpandableListView
+            android:id="@+id/listExp"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/include_header_clients"/>
+        <!--<ListView
             android:id="@+id/listViewClients"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/include_header_clients"/>
+            android:layout_below="@+id/include_header_clients"/>-->
 
     </RelativeLayout>
 

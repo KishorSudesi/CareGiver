@@ -10,11 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hdfc.adapters.ClientsAdapter;
+import com.hdfc.adapters.ExpandableListAdapter;
+import com.hdfc.adapters.ExpandableListCustomer;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
@@ -22,6 +25,8 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ClientModel;
+import com.hdfc.models.CustomerModel;
+import com.hdfc.models.DependentModel;
 import com.hdfc.models.FileModel;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
@@ -29,6 +34,7 @@ import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -39,6 +45,10 @@ public class ClientFragment extends Fragment {
     private static Handler threadHandler;
     private static Handler ThreadHandler;
     private static ProgressDialog mProgress = null;
+    ExpandableListCustomer listAdapter;
+    ExpandableListView expListView;
+    List<CustomerModel> listDataHeader;
+    HashMap<CustomerModel, List<DependentModel>> listDataChild;
 
     public TextView textViewEmpty;
     ImageView profileImg;
@@ -73,11 +83,9 @@ public class ClientFragment extends Fragment {
 
         mProgress = new ProgressDialog(getActivity());
 
-        listViewClients = (ListView)view.findViewById(R.id.listViewClients);
+//        listViewClients = (ListView)view.findViewById(R.id.listViewClients);
 
-
-
-         listViewClients.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+         /*listViewClients.setOnItemClickListener(new AdapterView.OnItemClickListener() {
              public void onItemClick(AdapterView<?> parent, View view, int position, long id)
              {
                  ClientModel obj = (ClientModel)parent.getAdapter().getItem(position);
@@ -87,8 +95,36 @@ public class ClientFragment extends Fragment {
                  intent.putExtras(bundle);
                  startActivity(intent);
              }
-         });
+         });*/
+        //expandable list
+        expListView = (ExpandableListView) view.findViewById(R.id.listExp);
+
+        // preparing list data
+        prepareListData();
+
+        listAdapter = new ExpandableListCustomer(getActivity(), listDataHeader, listDataChild);
+
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
         return view;
+    }
+
+    private void prepareListData() {
+        listDataHeader = new ArrayList<CustomerModel>();
+        listDataChild = new HashMap<CustomerModel, List<DependentModel>>();
+
+        if (expListView != null) {
+
+            listDataHeader.clear();
+            listDataChild.clear();
+
+            for (ClientModel clientModel : Config.clientModels) {
+                listDataHeader.add(clientModel.getCustomerModel());
+                listDataChild.put(clientModel.getCustomerModel(),clientModel.getDependentModels());
+            }
+
+            listAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -125,7 +161,7 @@ public class ClientFragment extends Fragment {
 
 
                                 ClientModel clientsModel = new ClientModel();
-                                /*clientsModel.setAge( Config.jsonObject.getString("dependent_age"));
+                              /*  clientsModel.setAge( Config.jsonObject.getString("dependent_age"));
                                 clientsModel.setAddress( Config.jsonObject.getString("dependent_address"));
                                 clientsModel.setName( Config.jsonObject.getString("dependent_name"));
                                 clientsModel.setPremium( Config.jsonObject.getString("dependent_notes"));
