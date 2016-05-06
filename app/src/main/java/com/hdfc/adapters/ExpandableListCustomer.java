@@ -1,11 +1,6 @@
 package com.hdfc.adapters;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +11,12 @@ import android.widget.TextView;
 import com.hdfc.caregiver.R;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.ClientModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
-import com.shephertz.app42.paas.sdk.android.util.Util;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
 
 public class ExpandableListCustomer extends BaseExpandableListAdapter  {
     private Context _context;
@@ -79,7 +76,7 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
         viewHolder.problem.setText(dependentModel.getStrIllness().length()>8 ? dependentModel.getStrIllness().substring(0,5)+"..":dependentModel.getStrIllness());
         viewHolder.premium.setText(dependentModel.getStrNotes().length()>8 ? dependentModel.getStrNotes().substring(0,5)+"..":dependentModel.getStrNotes());
 
-        File fileImage = utils.createFileInternal("images/" + utils.replaceSpace(dependentModel.getStrName()));
+        File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(dependentModel.getStrName()));
 
         if(fileImage.exists()) {
             String filename = fileImage.getAbsolutePath();
@@ -133,6 +130,7 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
             viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
             viewHolder.contact = (TextView)convertView.findViewById(R.id.textViewContact);
+            viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);
 
             convertView.setTag(viewHolder);
         }else {
@@ -143,7 +141,7 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
         viewHolder.contact.setText(customerModel.getStrContacts());
         viewHolder.address.setText(customerModel.getStrAddress());
 
-        File fileImage = utils.createFileInternal("images/" + utils.replaceSpace(customerModel.getStrName()));
+        File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(customerModel.getStrName()));
 
         if(fileImage.exists()) {
             String filename = fileImage.getAbsolutePath();

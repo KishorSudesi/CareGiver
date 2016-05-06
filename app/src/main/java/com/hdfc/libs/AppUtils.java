@@ -189,6 +189,8 @@ public class AppUtils {
                                 try {
                                     if (o != null) {
 
+                                        //Utils.log(o.toString(), " fetchDependents ");
+
                                         Storage storage = (Storage) o;
 
                                         if (storage.getJsonDocList().size() > 0) {
@@ -277,6 +279,8 @@ public class AppUtils {
 
                                     if (o != null) {
 
+                                        //Utils.log(o.toString(), " fetchCustomers ");
+
                                         Storage storage = (Storage) o;
 
                                         if (storage.getJsonDocList().size() > 0) {
@@ -361,9 +365,9 @@ public class AppUtils {
                 dependentModel.setStrDob(jsonObjectDependent.getString("dependent_dob"));
 
 
-                if (!Config.dependentIds.contains(strDocumentId)) {
+                if (!Config.dependentIdsAdded.contains(strDocumentId)) {
 
-                    Config.dependentIds.add(strDocumentId);
+                    Config.dependentIdsAdded.add(strDocumentId);
 
                     Config.dependentModels.add(dependentModel);
 
@@ -387,23 +391,25 @@ public class AppUtils {
 
             if (jsonObject.has("customer_name")) {
 
-                CustomerModel customerModel = new CustomerModel(jsonObject.getString("customer_name"),
-                        jsonObject.getString("paytm_account"),
-                        jsonObject.getString("customer_profile_url"), "",
-                        jsonObject.getString("customer_address"),
-                        jsonObject.getString("customer_city"),
-                        jsonObject.getString("customer_state"),
-                        jsonObject.getString("customer_contact_no"),
-                        jsonObject.getString("customer_email"),
-                        jsonObject.getString("customer_dob"),
-                        jsonObject.getString("customer_country"),
-                        jsonObject.getString("customer_country_code"),
-                        jsonObject.getString("customer_area_code"),
-                        jsonObject.getString("customer_contact_no"),
-                        strDocumentId);
+                //Utils.log(String.valueOf(Config.customerIds.contains(strDocumentId)), " 1 ");
 
-                if (!Config.customerIds.contains(strDocumentId)) {
-                    Config.customerIds.add(strDocumentId);
+                if (!Config.customerIdsAdded.contains(strDocumentId)) {
+                    Config.customerIdsAdded.add(strDocumentId);
+
+                    CustomerModel customerModel = new CustomerModel(jsonObject.getString("customer_name"),
+                            jsonObject.getString("paytm_account"),
+                            jsonObject.getString("customer_profile_url"), "",
+                            jsonObject.getString("customer_address"),
+                            jsonObject.getString("customer_city"),
+                            jsonObject.getString("customer_state"),
+                            jsonObject.getString("customer_contact_no"),
+                            jsonObject.getString("customer_email"),
+                            jsonObject.getString("customer_dob"),
+                            jsonObject.getString("customer_country"),
+                            jsonObject.getString("customer_country_code"),
+                            jsonObject.getString("customer_area_code"),
+                            jsonObject.getString("customer_contact_no"),
+                            strDocumentId);
 
                     ClientModel clientModel = new ClientModel();
                     clientModel.setCustomerModel(customerModel);
@@ -436,6 +442,8 @@ public class AppUtils {
 
                 if(response != null){
 
+                    //Utils.log(response.toString(), " Activity ");
+
                     ArrayList<Storage.JSONDocument> jsonDocList = response.getJsonDocList();
 
                     for(int i = 0 ; i < jsonDocList.size() ; i++ ){
@@ -444,20 +452,9 @@ public class AppUtils {
 
                         String strDocumentId = jsonDocument.getDocId();
 
-                        String strServices = jsonDocument.getJsonDoc();
+                        String strActivities = jsonDocument.getJsonDoc();
 
-                        try {
-
-                            JSONObject jsonObjectActivities = new JSONObject(strServices);
-
-                            if (jsonObjectActivities.has("dependent_id"))
-                                createActivityModel(strDocumentId, jsonObjectActivities);
-
-                        } catch (JSONException e) {
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
-                            e.printStackTrace();
-                        }
+                        createActivityModel(strDocumentId, strActivities);
                     }
                     fetchCustomers(progressDialog);
                 } else {
@@ -506,35 +503,39 @@ public class AppUtils {
         }
     }
 
-    public void createActivityModel(String strDocumentId, JSONObject jsonObject) {
+    public void createActivityModel(String strDocumentId, final String strDocument) {
 
         try {
 
-            if (!Config.strActivityIds.contains(strDocumentId)) {
+            JSONObject jsonObject = new JSONObject(strDocument);
 
-                Config.strActivityIds.add(strDocumentId);
+            if (jsonObject.has("dependent_id")) {
 
-                if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
-                    Config.dependentIds.add(jsonObject.getString("dependent_id"));
+                if (!Config.strActivityIds.contains(strDocumentId)) {
 
-                if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
-                    Config.customerIds.add(jsonObject.getString("customer_id"));
+                    Config.strActivityIds.add(strDocumentId);
 
-                ArrayList<ImageModel> activityImageModels = new ArrayList<>();
-                ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
-                ArrayList<VideoModel> videoModels = new ArrayList<>();
+                    if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
+                        Config.dependentIds.add(jsonObject.getString("dependent_id"));
 
-                ActivityModel activityModel = new ActivityModel();
-                //activityModel.setStrServcieID(jsonObject.getString("service_id"));
-                //activityModel.setStrServiceDesc(jsonObject.getString("service_desc"));
-                activityModel.setStrServiceName(jsonObject.getString("service_name"));
-                activityModel.setStrActivityID(strDocumentId);
-                activityModel.setStrActivityName(jsonObject.getString("activity_name"));
-                //activityModel.setStrActivityMessage(jsonObject.getString("activity_message"));
-                //activityModel.setStrActivityDesc(jsonObject.getString("activity_description"));
-                activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
-                activityModel.setStrActivityDoneDate(jsonObject.getString("activity_done_date"));
-                activityModel.setStrDependentID(jsonObject.getString("dependent_id"));
+                    if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
+                        Config.customerIds.add(jsonObject.getString("customer_id"));
+
+                    ArrayList<ImageModel> activityImageModels = new ArrayList<>();
+                    ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
+                    ArrayList<VideoModel> videoModels = new ArrayList<>();
+
+                    ActivityModel activityModel = new ActivityModel();
+                    //activityModel.setStrServcieID(jsonObject.getString("service_id"));
+                    //activityModel.setStrServiceDesc(jsonObject.getString("service_desc"));
+                    activityModel.setStrServiceName(jsonObject.getString("service_name"));
+                    activityModel.setStrActivityID(strDocumentId);
+                    activityModel.setStrActivityName(jsonObject.getString("activity_name"));
+                    //activityModel.setStrActivityMessage(jsonObject.getString("activity_message"));
+                    //activityModel.setStrActivityDesc(jsonObject.getString("activity_description"));
+                    activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
+                    activityModel.setStrActivityDoneDate(jsonObject.getString("activity_done_date"));
+                    activityModel.setStrDependentID(jsonObject.getString("dependent_id"));
 
             /*if (jsonObject.has("feedbacks")) {
 
@@ -559,55 +560,56 @@ public class AppUtils {
                 activityModel.setFeedBackModels(feedBackModels);
             }*/
 
-                if (jsonObject.has("videos")) {
+                    if (jsonObject.has("videos")) {
 
-                    JSONArray jsonArrayVideos = jsonObject.
-                            getJSONArray("videos");
+                        JSONArray jsonArrayVideos = jsonObject.
+                                getJSONArray("videos");
 
-                    for (int k = 0; k < jsonArrayVideos.length(); k++) {
+                        for (int k = 0; k < jsonArrayVideos.length(); k++) {
 
-                        JSONObject jsonObjectVideo = jsonArrayVideos.
-                                getJSONObject(k);
+                            JSONObject jsonObjectVideo = jsonArrayVideos.
+                                    getJSONObject(k);
 
-                        VideoModel videoModel = new VideoModel(
-                                jsonObjectVideo.getString("video_name"),
-                                jsonObjectVideo.getString("video_url"),
-                                jsonObjectVideo.getString("video_description"),
-                                jsonObjectVideo.getString("video_taken"));
+                            VideoModel videoModel = new VideoModel(
+                                    jsonObjectVideo.getString("video_name"),
+                                    jsonObjectVideo.getString("video_url"),
+                                    jsonObjectVideo.getString("video_description"),
+                                    jsonObjectVideo.getString("video_taken"));
 
-                        Config.fileModels.add(new FileModel(jsonObjectVideo.getString("video_name"),
-                                jsonObjectVideo.getString("video_url"), "VIDEO"));
+                            Config.fileModels.add(new FileModel(jsonObjectVideo.getString("video_name"),
+                                    jsonObjectVideo.getString("video_url"), "VIDEO"));
 
-                        videoModels.add(videoModel);
+                            videoModels.add(videoModel);
+                        }
+                        activityModel.setVideoModels(videoModels);
                     }
-                    activityModel.setVideoModels(videoModels);
-                }
 
-                if (jsonObject.has("images")) {
+                    if (jsonObject.has("images")) {
 
-                    JSONArray jsonArrayVideos = jsonObject.
-                            getJSONArray("images");
+                        JSONArray jsonArrayVideos = jsonObject.
+                                getJSONArray("images");
 
-                    for (int k = 0; k < jsonArrayVideos.length(); k++) {
+                        for (int k = 0; k < jsonArrayVideos.length(); k++) {
 
-                        JSONObject jsonObjectImage = jsonArrayVideos.
-                                getJSONObject(k);
+                            JSONObject jsonObjectImage = jsonArrayVideos.
+                                    getJSONObject(k);
 
-                        ImageModel imageModel = new ImageModel(
-                                jsonObjectImage.getString("image_name"),
-                                jsonObjectImage.getString("image_url"),
-                                jsonObjectImage.getString("image_description"),
-                                jsonObjectImage.getString("image_taken"));
+                            ImageModel imageModel = new ImageModel(
+                                    jsonObjectImage.getString("image_name"),
+                                    jsonObjectImage.getString("image_url"),
+                                    jsonObjectImage.getString("image_description"),
+                                    jsonObjectImage.getString("image_taken"));
 
-                        Config.fileModels.add(new FileModel(jsonObjectImage.getString("image_name"),
-                                jsonObjectImage.getString("image_url"), "IMAGE"));
+                            Config.fileModels.add(new FileModel(jsonObjectImage.getString("image_name"),
+                                    jsonObjectImage.getString("image_url"), "IMAGE"));
 
-                        activityImageModels.add(imageModel);
+                            activityImageModels.add(imageModel);
+                        }
+                        activityModel.setImageModels(activityImageModels);
                     }
-                    activityModel.setImageModels(activityImageModels);
-                }
 
-                Config.activityModels.add(activityModel);
+                    Config.activityModels.add(activityModel);
+                }
             }
 
         }catch (JSONException e) {

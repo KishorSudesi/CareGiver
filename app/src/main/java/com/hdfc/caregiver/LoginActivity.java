@@ -157,6 +157,9 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Object o) {
                             if(o != null){
+                                Config.dependentIds.clear();
+                                Config.strActivityIds.clear();
+                                Config.customerIds.clear();
                                 appUtils.fetchProviders(progressDialog, userName);
                             }else {
                                 if (progressDialog.isShowing())

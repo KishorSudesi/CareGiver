@@ -64,6 +64,9 @@ public class Config {
     public static ArrayList<String> strActivityIds = new ArrayList<>();
     public static ArrayList<String> strFeedbackIds = new ArrayList<>();
 
+    public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
+    public static ArrayList<String> customerIdsAdded = new ArrayList<>();
+
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
     public static ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
 

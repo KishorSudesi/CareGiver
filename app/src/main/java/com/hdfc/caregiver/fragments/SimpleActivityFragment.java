@@ -104,7 +104,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 System.out.println("Message value: "+activityModel.getStrActivityMessage());
                 String strMessage = activityModel.getStrActivityMessage();
 
-                if (strMessage.length() > 20)
+                if (strMessage != null && strMessage.length() > 20)
                     strMessage = activityModel.getStrActivityMessage().substring(0, 18) + "..";
 
                 cvh.textSubject.setText(strMessage);
@@ -118,8 +118,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                 cvh.textTime.setText(utils.formatDate(activityModel.getStrActivityDate()));
 
-                System.out.println("MIKI OUR YOUR");
-//                System.out.println("4 YEARS : "+activityModel.getStrActivityStatus().equalsIgnoreCase("upcoming"));
                 if (false) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(utils.formatDateTime(activityModel.getStrActivityDate()));

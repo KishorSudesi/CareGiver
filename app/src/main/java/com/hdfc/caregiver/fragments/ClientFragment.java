@@ -1,37 +1,25 @@
 package com.hdfc.caregiver.fragments;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hdfc.adapters.ClientsAdapter;
-import com.hdfc.adapters.ExpandableListAdapter;
 import com.hdfc.adapters.ExpandableListCustomer;
-import com.hdfc.app42service.StorageService;
-import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
-import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
-import com.hdfc.models.FileModel;
-import com.shephertz.app42.paas.sdk.android.App42Exception;
-import com.shephertz.app42.paas.sdk.android.storage.Storage;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,14 +33,13 @@ public class ClientFragment extends Fragment {
     private static Handler threadHandler;
     private static Handler ThreadHandler;
     private static ProgressDialog mProgress = null;
-    private ExpandableListCustomer listAdapter;
-    private ExpandableListView expListView;
     private static List<CustomerModel> listDataHeader = new ArrayList<>();
     private static HashMap<CustomerModel, List<DependentModel>> listDataChild = new HashMap<>();
-
     public TextView textViewEmpty;
     ImageView profileImg;
     ListView listViewClients;
+    private ExpandableListCustomer listAdapter;
+    private ExpandableListView expListView;
     private Utils utils;
 
     public ClientFragment() {
@@ -117,8 +104,10 @@ public class ClientFragment extends Fragment {
             listDataHeader.clear();
             listDataChild.clear();
 
+
             for (ClientModel clientModel : Config.clientModels) {
                 listDataHeader.add(clientModel.getCustomerModel());
+                Utils.log(String.valueOf(clientModel.getCustomerModel().getStrAddress()), " 1 ");
                 listDataChild.put(clientModel.getCustomerModel(),clientModel.getDependentModels());
             }
             //listAdapter = new ExpandableListCustomer(getActivity(), listDataHeader, listDataChild);
