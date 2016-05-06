@@ -171,7 +171,6 @@ public class LoginActivity extends AppCompatActivity {
                                 progressDialog.dismiss();
                             try {
                                 if (e != null) {
-
                                     JSONObject jsonObject = new JSONObject(e.getMessage());
                                     JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
                                     String strMess = jsonObjectError.getString("details");

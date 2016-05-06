@@ -1,5 +1,6 @@
 package com.hdfc.adapters;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,21 +10,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hdfc.caregiver.R;
+import com.hdfc.libs.MultiBitmapLoader;
+import com.hdfc.libs.Utils;
+import com.hdfc.models.ClientModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
+import com.shephertz.app42.paas.sdk.android.util.Util;
 
 public class ExpandableListCustomer extends BaseExpandableListAdapter  {
     private Context _context;
     private List<CustomerModel> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<CustomerModel, List<DependentModel>> _listDataChild;
+    private Utils utils;
+    private MultiBitmapLoader multiBitmapLoader;
 
     public ExpandableListCustomer(Context context, List<CustomerModel> listDataHeader,
                                  HashMap<CustomerModel, List<DependentModel>> listChildData) {
         this._context = context;
+        utils = new Utils(_context);
+        multiBitmapLoader = new MultiBitmapLoader(_context);
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
     }
@@ -43,18 +53,48 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String childText = (String) getChild(groupPosition, childPosition);
+        final DependentModel dependentModel = (DependentModel) getChild(groupPosition, childPosition);
+        ViewHolder viewHolder;
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_item_dependents, null);
+            viewHolder = new ViewHolder();
+            viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
+            viewHolder.age = (TextView) convertView.findViewById(R.id.textViewClient_age);
+            viewHolder.problem = (TextView) convertView.findViewById(R.id.textViewClient_problem);
+            viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
+            viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
+            viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);
+
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        TextView txtListChild = (TextView) convertView
-                .findViewById(R.id.lblListItem);
+        viewHolder.name.setText(dependentModel.getStrName());
+        viewHolder.age.setText(dependentModel.getIntAge());
 
-        txtListChild.setText(childText);
+        viewHolder.problem.setText(dependentModel.getStrIllness().length()>8 ? dependentModel.getStrIllness().substring(0,5)+"..":dependentModel.getStrIllness());
+        viewHolder.premium.setText(dependentModel.getStrNotes().length()>8 ? dependentModel.getStrNotes().substring(0,5)+"..":dependentModel.getStrNotes());
+
+        File fileImage = utils.createFileInternal("images/" + utils.replaceSpace(dependentModel.getStrName()));
+
+        if(fileImage.exists()) {
+            String filename = fileImage.getAbsolutePath();
+            multiBitmapLoader.loadBitmap(filename, viewHolder.client);
+        }else{
+            viewHolder.client.setImageDrawable(_context.getResources().getDrawable(R.drawable.hungal_circle));
+        }
+
+        viewHolder.address.setText(dependentModel.getStrAddress());
+
+
+//        TextView txtListChild = (TextView) convertView
+//                .findViewById(R.id.lblListItem);
+//
+//        txtListChild.setText(childText);
         return convertView;
     }
 
@@ -82,18 +122,35 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-        String headerTitle = (String) getGroup(groupPosition);
+        final CustomerModel customerModel = (CustomerModel)getGroup(groupPosition);
+        ViewHolder viewHolder;
+
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_group_customers, null);
+            viewHolder = new ViewHolder();
+            viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
+            viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
+            viewHolder.contact = (TextView)convertView.findViewById(R.id.textViewContact);
+
+            convertView.setTag(viewHolder);
+        }else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        TextView lblListHeader = (TextView) convertView
-                .findViewById(R.id.lblListHeader);
-        lblListHeader.setTypeface(null, Typeface.BOLD);
-        lblListHeader.setText(headerTitle);
+        viewHolder.name.setText(customerModel.getStrName());
+        viewHolder.contact.setText(customerModel.getStrContacts());
+        viewHolder.address.setText(customerModel.getStrAddress());
 
+        File fileImage = utils.createFileInternal("images/" + utils.replaceSpace(customerModel.getStrName()));
+
+        if(fileImage.exists()) {
+            String filename = fileImage.getAbsolutePath();
+            multiBitmapLoader.loadBitmap(filename, viewHolder.client);
+        }else{
+            viewHolder.client.setImageDrawable(_context.getResources().getDrawable(R.drawable.hungal_circle));
+        }
         return convertView;
     }
 
@@ -105,5 +162,11 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    public  class ViewHolder{
+        TextView name,age,problem,address,premium,contact;
+        ImageView client;
+
     }
 }

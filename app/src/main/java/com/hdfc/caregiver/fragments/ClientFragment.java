@@ -45,10 +45,10 @@ public class ClientFragment extends Fragment {
     private static Handler threadHandler;
     private static Handler ThreadHandler;
     private static ProgressDialog mProgress = null;
-    ExpandableListCustomer listAdapter;
-    ExpandableListView expListView;
-    List<CustomerModel> listDataHeader;
-    HashMap<CustomerModel, List<DependentModel>> listDataChild;
+    private ExpandableListCustomer listAdapter;
+    private ExpandableListView expListView;
+    private static List<CustomerModel> listDataHeader = new ArrayList<>();
+    private static HashMap<CustomerModel, List<DependentModel>> listDataChild = new HashMap<>();
 
     public TextView textViewEmpty;
     ImageView profileImg;
@@ -100,19 +100,18 @@ public class ClientFragment extends Fragment {
         expListView = (ExpandableListView) view.findViewById(R.id.listExp);
 
         // preparing list data
-        prepareListData();
-
         listAdapter = new ExpandableListCustomer(getActivity(), listDataHeader, listDataChild);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
+
+        prepareListData();
         return view;
     }
 
     private void prepareListData() {
-        listDataHeader = new ArrayList<CustomerModel>();
-        listDataChild = new HashMap<CustomerModel, List<DependentModel>>();
-
+        listDataHeader = new ArrayList<>();
+        listDataChild = new HashMap<>();
         if (expListView != null) {
 
             listDataHeader.clear();
@@ -122,7 +121,7 @@ public class ClientFragment extends Fragment {
                 listDataHeader.add(clientModel.getCustomerModel());
                 listDataChild.put(clientModel.getCustomerModel(),clientModel.getDependentModels());
             }
-
+            //listAdapter = new ExpandableListCustomer(getActivity(), listDataHeader, listDataChild);
             listAdapter.notifyDataSetChanged();
         }
     }
@@ -131,6 +130,7 @@ public class ClientFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+/*
         StorageService storageService = new StorageService(getActivity());
 
         storageService.findDocsByKeyValue(Config.collectionDependent, "dependent_name", "komu", new AsyncApp42ServiceApi.App42StorageServiceListener() {
@@ -161,13 +161,15 @@ public class ClientFragment extends Fragment {
 
 
                                 ClientModel clientsModel = new ClientModel();
-                              /*  clientsModel.setAge( Config.jsonObject.getString("dependent_age"));
+                              */
+/*  clientsModel.setAge( Config.jsonObject.getString("dependent_age"));
                                 clientsModel.setAddress( Config.jsonObject.getString("dependent_address"));
                                 clientsModel.setName( Config.jsonObject.getString("dependent_name"));
                                 clientsModel.setPremium( Config.jsonObject.getString("dependent_notes"));
                                 clientsModel.setProblem( Config.jsonObject.getString("dependent_illness"));
                                 clientsModel.setStrMobile( Config.jsonObject.getString("dependent_contact_no"));
-                                clientsModel.setStrClientImageUrl( Config.jsonObject.getString("dependent_profile_url"));*/
+                                clientsModel.setStrClientImageUrl( Config.jsonObject.getString("dependent_profile_url"));*//*
+
 
                                 activitiesModelArrayList.add(clientsModel);
 
@@ -178,11 +180,13 @@ public class ClientFragment extends Fragment {
                         for (int i = 0; i < activitiesModelArrayList.size(); i++) {
                             ClientModel clientModel = activitiesModelArrayList.get(i);
 
-                           /* if (clientModel.getStrClientImageUrl() != null && !clientModel.getStrClientImageUrl().equalsIgnoreCase("")) {
+                           */
+/* if (clientModel.getStrClientImageUrl() != null && !clientModel.getStrClientImageUrl().equalsIgnoreCase("")) {
 
                                 utils.loadImageFromWeb(clientModel.getName(), clientModel.getStrClientImageUrl());
 
-                            }*/
+                            }*//*
+
                         }
 
                         threadHandler = new ThreadHandler();
@@ -210,19 +214,20 @@ public class ClientFragment extends Fragment {
 
             }
         });
+*/
     }
 
 
-    public class ThreadHandler extends Handler {
+/*    public class ThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
 
             if(mProgress.isShowing())
                 mProgress.dismiss();
 
-            /*if (intWhichScreen == Config.intSimpleActivityScreen) {
+            *//*if (intWhichScreen == Config.intSimpleActivityScreen) {
                 gotoSimpleActivity();
-            }*/
+            }*//*
             clients_adapter = new ClientsAdapter(getContext(), activitiesModelArrayList);
             listViewClients.setAdapter(clients_adapter);
             listViewClients.setEmptyView(textViewEmpty);
@@ -242,7 +247,7 @@ public class ClientFragment extends Fragment {
 
                         utils.loadImageFromWeb(fileModel.getStrFileName(), fileModel.getStrFileUrl());
 
-                       /* String strUrl = utils.replaceSpace(fileModel.getStrFileUrl());
+                       *//* String strUrl = utils.replaceSpace(fileModel.getStrFileUrl());
 
                         String strFileName = utils.replaceSpace(fileModel.getStrFileName());
 
@@ -270,7 +275,7 @@ public class ClientFragment extends Fragment {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        }*/
+                        }*//*
                     }
                 }
 
@@ -279,5 +284,5 @@ public class ClientFragment extends Fragment {
             }
             threadHandler.sendEmptyMessage(0);
         }
-    }
+    }*/
 }
