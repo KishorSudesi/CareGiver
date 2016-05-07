@@ -89,7 +89,6 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
 
         viewHolder.address.setText(dependentModel.getStrAddress());
 
-
 //        TextView txtListChild = (TextView) convertView
 //                .findViewById(R.id.lblListItem);
 //
