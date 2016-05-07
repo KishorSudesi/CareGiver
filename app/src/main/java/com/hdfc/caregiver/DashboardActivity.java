@@ -1,5 +1,6 @@
 package com.hdfc.caregiver;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +26,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
 
     private static Handler threadHandler;
+    private static ProgressDialog progressDialog;
     private AppUtils appUtils;
     private ImageView mytask, clients, feedback;
     private TextView textViewTasks, textViewClients, textViewFeedback;
@@ -40,10 +42,19 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         clients = (ImageView)findViewById(R.id.buttonClients);
         feedback = (ImageView)findViewById(R.id.buttonFeedback);
 
+        progressDialog = new ProgressDialog(DashboardActivity.this);
+
         threadHandler = new ThreadHandler();
 
         Thread backgroundThread = new BackgroundThread();
         backgroundThread.start();
+
+        if (progressDialog != null) {
+            progressDialog.setMessage(getString(R.string.loading));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
 
         textViewTasks = (TextView) findViewById(R.id.textViewTasks);
         textViewClients = (TextView) findViewById(R.id.textViewClients);
@@ -95,13 +106,6 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
             gotoFeedback();
             feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
             textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        }
-
-        if (Config.intSelectedMenu == Config.intSimpleActivityScreen) {
-            Config.intSelectedMenu = 0;
-            gotoSimpleActivity();
-            mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
-            textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         }
         App42API.setLoggedInUser(Config.providerModel.getStrEmail());
     }
@@ -219,7 +223,17 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
     public class ThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
+            if (progressDialog.isShowing())
+                progressDialog.dismiss();
 
+            if (Config.intSelectedMenu == Config.intSimpleActivityScreen
+                    || Config.intSelectedMenu == Config.intDashboardScreen) {
+                Config.intSelectedMenu = 0;
+                mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+                textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                gotoSimpleActivity();
+
+            }
         }
     }
 

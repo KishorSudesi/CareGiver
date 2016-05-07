@@ -14,6 +14,7 @@ import com.hdfc.models.ProviderModel;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by balamurugan@adstringo.in on 23-12-2015.
@@ -62,13 +63,11 @@ public class Config {
     public static ArrayList<String> dependentIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
     public static ArrayList<String> strActivityIds = new ArrayList<>();
-    public static ArrayList<String> strFeedbackIds = new ArrayList<>();
 
     public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
     public static ArrayList<String> customerIdsAdded = new ArrayList<>();
 
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
-    public static ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
 
     public static ProviderModel providerModel = new ProviderModel();
 
@@ -78,4 +77,9 @@ public class Config {
     public static ArrayList<ClientModel> clientModels = new ArrayList<>();
 
     public static boolean boolIsLoggedIn = false;
+
+    public static double iRatings = 0;
+    public static int iRatingCount = 0;
+
+    public static List<FeedBackModel> feedBackModels = new ArrayList<>();
 }

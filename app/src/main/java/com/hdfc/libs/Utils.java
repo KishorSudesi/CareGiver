@@ -830,70 +830,78 @@ public class Utils {
 
     public void selectImage(final String strFileName, final Fragment fragment,
                             final Activity activity, final boolean isSingle) {
-        final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
-        // System.out.println("Pilu : " + FeatureActivity.IMAGE_COUNT);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
+        try {
+            final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
+            // System.out.println("Pilu : " + FeatureActivity.IMAGE_COUNT);
 
-        builder.setTitle("Select a Image");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
 
-                //System.out.println(items[item].equals("Take Photo"));
-                if (items[item].equals("Take Photo")) {
-                    openCamera(strFileName, fragment, activity);
-                    //System.out.println("DDDDDDDIC DIC DIC DIC ::: " + strFileName);
+            builder.setTitle("Select a Image");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
 
-                } else if (items[item].equals("Choose from Library")) {
+                    //System.out.println(items[item].equals("Take Photo"));
+                    if (items[item].equals("Take Photo")) {
+                        openCamera(strFileName, fragment, activity);
+                        //System.out.println("DDDDDDDIC DIC DIC DIC ::: " + strFileName);
 
-                    Intent intent;
+                    } else if (items[item].equals("Choose from Library")) {
 
-                    if(isSingle) {
-                        intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        Intent intent;
 
-                        if (fragment != null)
-                            fragment.startActivityForResult(Intent.createChooser(intent,
-                                    "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
-                        else
-                            activity.startActivityForResult(Intent.createChooser(intent,
-                                    "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
-                    }else {
-                        intent = new Intent(Action.ACTION_MULTIPLE_PICK);
+                        if (isSingle) {
+                            intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
 
-                        if (fragment != null)
-                            fragment.startActivityForResult(intent,
-                                    Config.START_GALLERY_REQUEST_CODE);
-                        else
-                            activity.startActivityForResult(intent,
-                                    Config.START_GALLERY_REQUEST_CODE);
+                            if (fragment != null)
+                                fragment.startActivityForResult(Intent.createChooser(intent,
+                                        "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
+                            else
+                                activity.startActivityForResult(Intent.createChooser(intent,
+                                        "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
+                        } else {
+                            intent = new Intent(Action.ACTION_MULTIPLE_PICK);
+
+                            if (fragment != null)
+                                fragment.startActivityForResult(intent,
+                                        Config.START_GALLERY_REQUEST_CODE);
+                            else
+                                activity.startActivityForResult(intent,
+                                        Config.START_GALLERY_REQUEST_CODE);
+                        }
+
+
+                    } else if (items[item].equals("Cancel")) {
+                        dialog.dismiss();
                     }
-
-
-
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
                 }
-            }
-        });
-        builder.show();
+            });
+            builder.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void openCamera(String strFileName, Fragment fragment, final Activity activity) {
 
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        FeatureActivity.IMAGE_COUNT = FeatureActivity.IMAGE_COUNT + 1;
-        File file = createFileInternalImage(strFileName);
-        customerImageUri = Uri.fromFile(file);
-        if (file != null) {
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, customerImageUri);
+        try {
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            FeatureActivity.IMAGE_COUNT = FeatureActivity.IMAGE_COUNT + 1;
+            File file = createFileInternalImage(strFileName);
+            customerImageUri = Uri.fromFile(file);
+            if (file != null) {
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, customerImageUri);
 
-            if (fragment != null)
-                fragment.startActivityForResult(cameraIntent, Config.START_CAMERA_REQUEST_CODE);
-            else
-                activity.startActivityForResult(cameraIntent, Config.START_CAMERA_REQUEST_CODE);
+                if (fragment != null)
+                    fragment.startActivityForResult(cameraIntent, Config.START_CAMERA_REQUEST_CODE);
+                else
+                    activity.startActivityForResult(cameraIntent, Config.START_CAMERA_REQUEST_CODE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

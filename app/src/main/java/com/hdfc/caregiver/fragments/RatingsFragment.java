@@ -18,36 +18,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hdfc.adapters.RatingsAdapter;
-import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.MyProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
-import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.FeedBackModel;
 import com.hdfc.views.RoundedImageView;
-import com.shephertz.app42.paas.sdk.android.App42Exception;
-import com.shephertz.app42.paas.sdk.android.storage.Storage;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class RatingsFragment extends Fragment {
 
     public static Bitmap bitmap = null;
     public static RatingsAdapter ratingsAdapter;
-    static List<FeedBackModel> activityFeedBackModels;
+
     private static int intWhichScreen;
     private static Handler backgroundThreadHandler;
     private static ProgressDialog mProgress = null;
     private static Utils utils;
-    private static double iRatings = 0;
     private static LinearLayout layout;
     public TextView textViewName, textViewEmpty;
     ImageView mytask, clients, feedback;
@@ -56,7 +44,6 @@ public class RatingsFragment extends Fragment {
     ListView listratings;
 
     public RatingsFragment(){
-        activityFeedBackModels = new ArrayList<>();
     }
 
     public static RatingsFragment newInstance() {
@@ -109,95 +96,52 @@ public class RatingsFragment extends Fragment {
             }
         });
 
+        int iRatings = 0;
+
+        if (Config.iRatingCount > 0)
+            iRatings = (int) Utils.round(Config.iRatings / Config.iRatingCount, 2);
+
+        int i = iRatings;
+        layout.removeAllViews();
+
+        int j, k;
+
+        for (j = 0; j < i; j++) {
+
+            ImageView imageView = new ImageView(getActivity());
+
+            imageView.setPadding(0, 0, 10, 0);
+            imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.star_gold));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            layout.addView(imageView);
+        }
+
+        Utils.log(String.valueOf(i + " ! " + j), " R ");
+
+        for (k = i; k < 5; k++) {
+
+            ImageView imageView = new ImageView(getActivity());
+
+            imageView.setPadding(0, 0, 10, 0);
+            imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+                    R.mipmap.stars_white));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            layout.addView(imageView);
+        }
+
+        Utils.log(String.valueOf(i + " ! " + k), " R ");
+
+        ratingsAdapter = new RatingsAdapter(getContext(), Config.feedBackModels);
+        listratings.setAdapter(ratingsAdapter);
+        listratings.setEmptyView(textViewEmpty);
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-
-        StorageService storageService = new StorageService(getActivity());
-
-        storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id",
-                Config.providerModel.getStrProviderId(),
-                new AsyncApp42ServiceApi.App42StorageServiceListener() {
-            @Override
-            public void onDocumentInserted(Storage response) {
-
-            }
-
-            @Override
-            public void onUpdateDocSuccess(Storage response) {
-
-            }
-
-            @Override
-            public void onFindDocSuccess(Storage response) {
-                Utils.log(String.valueOf(response.getJsonDocList().size()), " count ");
-                if (response.getJsonDocList().size() > 0) {
-
-                    Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
-
-                    String strDocument = jsonDocument.getJsonDoc();
-                    try {
-                        Config.jsonObject = new JSONObject(strDocument);
-                        iRatings = 0;
-
-                        activityFeedBackModels.clear();
-
-                        if (Config.jsonObject.has("feedbacks")) {
-
-                            JSONArray jsonArrayFeedback = Config.jsonObject.getJSONArray("feedbacks");
-
-                            for (int k = 0; k < jsonArrayFeedback.length(); k++) {
-                                JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
-                                System.out.println("Here is feedback array : "+jsonArrayFeedback.toString());
-                                FeedBackModel feedBackModel = new FeedBackModel(
-                                        jsonObjectFeedback.getString("feedback_message"),
-                                        jsonObjectFeedback.getString("feedback_by"),
-                                        jsonObjectFeedback.getInt("feedback_rating"),
-                                        jsonObjectFeedback.getBoolean("feedback_report"),
-                                        jsonObjectFeedback.getString("feedback_time"),
-                                        jsonObjectFeedback.getString("feedback_by_type"));
-
-                                iRatings += jsonObjectFeedback.getInt("feedback_rating");
-
-                                activityFeedBackModels.add(feedBackModel);
-                            }
-
-                            if (jsonArrayFeedback.length() > 0)
-                                iRatings = Utils.round(iRatings / jsonArrayFeedback.length(), 2);
-                        }
-
-                        //ratingsAdapter.notifyDataSetChanged();
-
-                        backgroundThreadHandler = new BackgroundThreadHandler();
-                        BackgroundThread backgroundThread = new BackgroundThread();
-                        backgroundThread.start();
-
-                        mProgress.setMessage(getString(R.string.loading));
-                        mProgress.show();
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-
-            @Override
-            public void onInsertionFailed(App42Exception ex) {
-            }
-
-            @Override
-            public void onFindDocFailed(App42Exception ex) {
-            }
-
-            @Override
-            public void onUpdateDocFailed(App42Exception ex) {
-            }
-        });
     }
 
 
@@ -206,44 +150,11 @@ public class RatingsFragment extends Fragment {
         public void handleMessage(Message msg) {
             mProgress.dismiss();
 
-            if (imageProfilePic != null && bitmap != null)
-                imageProfilePic.setImageBitmap(bitmap);
-
             try {
-                int i = (int) iRatings;
-                layout.removeAllViews();
 
-                int j, k;
+                if (imageProfilePic != null && bitmap != null)
+                    imageProfilePic.setImageBitmap(bitmap);
 
-                for (j = 0; j < i; j++) {
-
-                    ImageView imageView = new ImageView(getActivity());
-
-                    imageView.setPadding(0, 0, 10, 0);
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.stars_white));
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    layout.addView(imageView);
-                }
-
-                Utils.log(String.valueOf(i + " ! " + j), " R ");
-
-                for (k = i; k < 5; k++) {
-
-                    ImageView imageView = new ImageView(getActivity());
-
-                    imageView.setPadding(0, 0, 10, 0);
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-                            R.mipmap.star_grey));
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-                    layout.addView(imageView);
-                }
-
-                Utils.log(String.valueOf(i + " ! " + k), " R ");
-
-                ratingsAdapter = new RatingsAdapter(getContext(), activityFeedBackModels);
-                listratings.setAdapter(ratingsAdapter);
-                listratings.setEmptyView(textViewEmpty);
 
             } catch (Exception | OutOfMemoryError e) {
                 e.printStackTrace();
@@ -265,7 +176,7 @@ public class RatingsFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            try {
+            /*try {
                 if (activityFeedBackModels != null) {
                     for (int i = 0; i < activityFeedBackModels.size(); i++) {
                         Utils.log(activityFeedBackModels.get(i).getStrFeedBackByUrl(), " URL ");
@@ -275,7 +186,7 @@ public class RatingsFragment extends Fragment {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
             backgroundThreadHandler.sendEmptyMessage(0);
         }
     }

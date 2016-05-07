@@ -93,17 +93,13 @@ public class AppUtils {
 
                                 if (response.getJsonDocList().size() > 0) {
 
-                                    Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
+                                    Storage.JSONDocument jsonDocument = response.getJsonDocList().
+                                            get(0);
                                     String strDocument = jsonDocument.getJsonDoc();
                                     String strProviderId = jsonDocument.getDocId();
 
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(strDocument);
-                                        createProviderModel(jsonObject, strProviderId);
+                                    createProviderModel(strDocument, strProviderId);
 
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
                                     fetchActivities(progressDialog);
                                 } else {
                                     if (progressDialog.isShowing())
@@ -150,9 +146,10 @@ public class AppUtils {
                 });
     }
 
-    public void createProviderModel(JSONObject jsonObject, String strProviderId) {
+    public void createProviderModel(String strDocument, String strProviderId) {
 
         try {
+            JSONObject jsonObject = new JSONObject(strDocument);
             if (jsonObject.has("provider_email")) {
                 Config.providerModel = new ProviderModel(
                         jsonObject.getString("provider_name"),
@@ -174,11 +171,11 @@ public class AppUtils {
 
     public void fetchDependents(final ProgressDialog progressDialog) {
 
-        if (Config.dependentIds.size() > 0) {
+        if (Config.customerIds.size() > 0) {
 
             if (utils.isConnectingToInternet()) {
 
-                Query query = QueryBuilder.build("_id", Config.dependentIds,
+                Query query = QueryBuilder.build("customer_id", Config.customerIds,
                         QueryBuilder.Operator.INLIST);
 
                 storageService.findDocsByQuery(Config.collectionDependent, query,
@@ -279,7 +276,7 @@ public class AppUtils {
 
                                     if (o != null) {
 
-                                        //Utils.log(o.toString(), " fetchCustomers ");
+                                        Utils.log(o.toString(), " fetchCustomers ");
 
                                         Storage storage = (Storage) o;
 
@@ -314,6 +311,7 @@ public class AppUtils {
                             public void onException(Exception e) {
                                 try {
                                     if (e != null) {
+                                        Utils.log(e.getMessage().toString(), " fetchCustomers ");
                                         fetchDependents(progressDialog);
                                     } else {
                                         if (progressDialog.isShowing())
@@ -371,8 +369,10 @@ public class AppUtils {
 
                     Config.dependentModels.add(dependentModel);
 
-                    int iPosition = Config.customerIds.indexOf(jsonObjectDependent.getString("customer_id"));
-                    Config.clientModels.get(iPosition).setDependentModel(dependentModel);
+                    if (Config.clientModels.size() > 0) {
+                        int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
+                        Config.clientModels.get(iPosition).setDependentModel(dependentModel);
+                    }
 
                     Config.fileModels.add(new FileModel(strDocumentId,
                             jsonObjectDependent.getString("dependent_profile_url"), "IMAGE"));
@@ -391,7 +391,7 @@ public class AppUtils {
 
             if (jsonObject.has("customer_name")) {
 
-                //Utils.log(String.valueOf(Config.customerIds.contains(strDocumentId)), " 1 ");
+                Utils.log(String.valueOf(Config.customerIds.contains(strDocumentId)), " 1 ");
 
                 if (!Config.customerIdsAdded.contains(strDocumentId)) {
                     Config.customerIdsAdded.add(strDocumentId);
@@ -442,7 +442,7 @@ public class AppUtils {
 
                 if(response != null){
 
-                    //Utils.log(response.toString(), " Activity ");
+                    Utils.log(response.toString(), " Activity ");
 
                     ArrayList<Storage.JSONDocument> jsonDocList = response.getJsonDocList();
 
@@ -537,15 +537,13 @@ public class AppUtils {
                     activityModel.setStrActivityDoneDate(jsonObject.getString("activity_done_date"));
                     activityModel.setStrDependentID(jsonObject.getString("dependent_id"));
 
-            /*if (jsonObject.has("feedbacks")) {
+                    if (jsonObject.has("feedbacks")) {
 
-                JSONArray jsonArrayFeedback = jsonObject.
-                        getJSONArray("feedbacks");
+                        JSONArray jsonArrayFeedback = jsonObject.getJSONArray("feedbacks");
 
                 for (int k = 0; k < jsonArrayFeedback.length(); k++) {
 
-                    JSONObject jsonObjectFeedback =
-                            jsonArrayFeedback.getJSONObject(k);
+                    JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
 
                     FeedBackModel feedBackModel = new FeedBackModel(
                             jsonObjectFeedback.getString("feedback_message"),
@@ -555,10 +553,27 @@ public class AppUtils {
                             jsonObjectFeedback.getString("feedback_time"),
                             jsonObjectFeedback.getString("feedback_by_type"));
 
+                    if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("customer")) {
+                        if (!Config.customerIds.contains(jsonObjectFeedback.getString("feedback_by")))
+                            Config.customerIds.add(jsonObjectFeedback.getString("feedback_by"));
+                    }
+
+                    if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("dependent")) {
+                        if (!Config.dependentIds.contains(jsonObjectFeedback.getString("feedback_by")))
+                            Config.dependentIds.add(jsonObjectFeedback.getString("feedback_by"));
+                    }
+
+
                     feedBackModels.add(feedBackModel);
+
+                    Config.iRatings += jsonObjectFeedback.getInt("feedback_rating");
+
+                    Config.iRatingCount += 1;
+
+                    Config.feedBackModels.add(feedBackModel);
                 }
                 activityModel.setFeedBackModels(feedBackModels);
-            }*/
+                    }
 
                     if (jsonObject.has("videos")) {
 

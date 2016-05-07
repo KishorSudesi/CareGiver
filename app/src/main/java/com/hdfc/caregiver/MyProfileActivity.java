@@ -84,7 +84,7 @@ public class MyProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, MyProfileActivity.this, false);
+                        + ".jpeg", null, MyProfileActivity.this, true);
             }
         });
 
@@ -446,13 +446,13 @@ public class MyProfileActivity extends AppCompatActivity {
 
                                                     if (o != null) {
 
-                                                        File f = utils.getInternalFileImages(Config.strCustomerImageName);
+                                                        File f = utils.getInternalFileImages(Config.providerModel.getStrProviderId());
 
                                                         if (f.exists())
                                                             f.delete();
 
                                                         File newFile = new File(strCustomerImgName);
-                                                        File renameFile = utils.getInternalFileImages(Config.strCustomerImageName);
+                                                        File renameFile = utils.getInternalFileImages(Config.providerModel.getStrProviderId());
 
                                                         try {
                                                             utils.moveFile(newFile, renameFile);
@@ -465,13 +465,13 @@ public class MyProfileActivity extends AppCompatActivity {
                                                         if (progressDialog.isShowing())
                                                             progressDialog.dismiss();
 
-                                                        if (Config.jsonObject.has("provider_profile_url")) {
+                                                        /*if (Config.jsonObject.has("provider_profile_url")) {
                                                             try {
                                                                 Config.jsonObject.put("provider_profile_url", url);
                                                             } catch (JSONException e) {
                                                                 e.printStackTrace();
                                                             }
-                                                        }
+                                                        }*/
 
                                                         utils.toast(2, 2, getString(R.string.update_profile_image));
                                                         isImageChanged = false;

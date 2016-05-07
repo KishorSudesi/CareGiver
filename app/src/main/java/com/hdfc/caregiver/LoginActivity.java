@@ -160,7 +160,30 @@ public class LoginActivity extends AppCompatActivity {
                                 Config.dependentIds.clear();
                                 Config.strActivityIds.clear();
                                 Config.customerIds.clear();
-                                appUtils.fetchProviders(progressDialog, userName);
+                                Config.feedBackModels.clear();
+
+                                Config.dependentIdsAdded.clear();
+                                Config.customerIdsAdded.clear();
+
+                                Config.fileModels.clear();
+
+                                Config.activityModels.clear();
+                                Config.dependentModels.clear();
+
+                                /*User user = (User)o;
+
+                                ArrayList<String> roleList = user.getRoleList();*/
+
+                                //todo check rolelist
+                                //roleList.size()>0 && roleList.get(0).equalsIgnoreCase("provider")
+                                if (true)
+                                    appUtils.fetchProviders(progressDialog, userName);
+                                else {
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
+                                    utils.toast(2, 2, getString(R.string.invalid_credentials));
+                                }
+
                             }else {
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
@@ -183,6 +206,7 @@ public class LoginActivity extends AppCompatActivity {
                                     utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
+                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                             }
                         }
                     });
