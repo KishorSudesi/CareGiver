@@ -71,7 +71,9 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
         }
 
         viewHolder.name.setText(dependentModel.getStrName());
-        viewHolder.age.setText(dependentModel.getIntAge());
+   //     viewHolder.age.setText(dependentModel.getIntAge());
+        System.out.println("LOL : "+dependentModel.getIntAge());
+        viewHolder.age.setText("13");
 
         viewHolder.problem.setText(dependentModel.getStrIllness().length()>8 ? dependentModel.getStrIllness().substring(0,5)+"..":dependentModel.getStrIllness());
         viewHolder.premium.setText(dependentModel.getStrNotes().length()>8 ? dependentModel.getStrNotes().substring(0,5)+"..":dependentModel.getStrNotes());
