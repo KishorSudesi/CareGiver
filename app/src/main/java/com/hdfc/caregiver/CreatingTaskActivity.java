@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -15,12 +17,14 @@ import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+import com.hdfc.adapters.ServiceAdapter;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.DependentModel;
+import com.hdfc.models.ServiceModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
@@ -53,13 +57,16 @@ public class CreatingTaskActivity extends AppCompatActivity {
     boolean cancel = false;
     View focusView = null;
     ImageView backImage;
-    AutoCompleteTextView inputSearch;
+    AutoCompleteTextView inputSearch,inputSearchServices;
     private AsyncApp42ServiceApi asyncService;
     private ProgressDialog progressDialog;
     private JSONObject responseJSONDoc, responseJSONDocCarla, jsonObjectCarla,jsonObjectAct;
     private JSONArray jsonArrayVideos,jsonArrayFeedbacks,jsonArrayImages;
     private Utils utils;
     private EditText dateTime, editTextTitle;
+    public static ServiceAdapter serviceAdapter;
+    public  ArrayList<String>  service = new ArrayList<String>();
+
         private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
             @Override
@@ -86,11 +93,40 @@ public class CreatingTaskActivity extends AppCompatActivity {
         dateTime = (EditText)findViewById(R.id.editTextDate);
         editTextTitle = (EditText)findViewById(R.id.editTextTitle);
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
+        inputSearchServices = (AutoCompleteTextView)findViewById(R.id.inputSearchServices);
 
         utils = new Utils(CreatingTaskActivity.this);
         progressDialog = new ProgressDialog(CreatingTaskActivity.this);
 
-        setItems();
+       service.add("Medical");
+       service.add("Hospital");
+
+        /*
+       serviceAdapter = new ServiceAdapter(this,Config.serviceModels);
+        inputSearchServices.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(serviceAdapter!=null)
+                    serviceAdapter.getFilter().filter(s.toString());
+
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+*/
+
+        ArrayAdapter<String> adapter;
+        adapter = new ArrayAdapter<String>(CreatingTaskActivity.this,android.R.layout.select_dialog_item, service);
+        //Getting the instance of AutoCompleteTextView
+        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
+       inputSearchServices.setThreshold(1);//will start working from first character
+        inputSearchServices.setAdapter(adapter);
+
+        //setItems();
         backImage = (ImageView)findViewById(R.id.imgBackCreatingTaskDetail);
         backImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,9 +191,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-    }
 
-       public void setItems(){
+
+     //  public void setItems(){
 
         storageService = new StorageService(CreatingTaskActivity.this);
            storageService.findDocsByKeyValue(Config.collectionServices, "service_name", "Medical Checkup", new AsyncApp42ServiceApi.App42StorageServiceListener() {
@@ -209,6 +245,69 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                }
            });
+
+           storageService.findAllDocs(Config.collectionService,
+                   new App42CallBack() {
+
+
+
+                       @Override
+                       public void onSuccess(Object o) {
+
+                           if (o != null) {
+
+                               Storage storage = (Storage) o;
+
+                               ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
+
+                               for (int i = 0; i < jsonDocList.size(); i++) {
+
+                                   Storage.JSONDocument jsonDocument = jsonDocList.get(i);
+
+                                   String strDocumentId = jsonDocument.getDocId();
+
+                                   String strServices = jsonDocument.getJsonDoc();
+
+                                   try {
+
+                                       JSONObject jsonObjectServcies = new JSONObject(strServices);
+
+                                       if (jsonObjectServcies.has("unit"))
+
+                                           utils.createServiceModel(strDocumentId, jsonObjectServcies);
+
+                                   } catch (JSONException e) {
+                                       e.printStackTrace();
+                                   }
+                               }
+
+                           } else {
+                               utils.toast(2, 2, getString(R.string.warning_internet));
+                           }
+
+                           //refreshAdapter();
+                       }
+
+                       @Override
+                       public void onException(Exception e) {
+
+                           try {
+                              // refreshAdapter();
+                               if (e != null) {
+                                   JSONObject jsonObject = new JSONObject(e.getMessage());
+                                   JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
+                                   String strMess = jsonObjectError.getString("details");
+
+                                   utils.toast(2, 2, strMess);
+                               } else {
+                                   utils.toast(2, 2, getString(R.string.warning_internet));
+                               }
+
+                           } catch (JSONException e1) {
+                               e1.printStackTrace();
+                           }
+                       }
+                   });
     }
 
     public void parseData() {

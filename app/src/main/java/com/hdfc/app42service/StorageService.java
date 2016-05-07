@@ -49,4 +49,8 @@ public class StorageService {
     public void updateDocs(JSONObject jsonToUpdate, String strDocId, String strCollectionName, App42CallBack app42CallBack) {
         asyncService.updateDocPartByKeyValue(Config.dbName, strCollectionName, strDocId, jsonToUpdate, app42CallBack);
     }
+
+    public void findAllDocs(String strCollectionName, App42CallBack app42CallBack) {
+        asyncService.findAllDocuments(Config.dbName, strCollectionName, app42CallBack);
+    }
 }

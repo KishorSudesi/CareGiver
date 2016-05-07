@@ -100,6 +100,33 @@ public class AsyncApp42ServiceApi {
         }.start();
     }
 
+    public void findAllDocuments(final String dbName, final String collectionName,
+                                 final App42CallBack callBack) {
+        final Handler callerThreadHandler = new Handler();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final Storage response = storageService.findAllDocuments(dbName, collectionName);
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSuccess(response);
+                        }
+                    });
+                } catch (final App42Exception ex) {
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callBack != null) {
+                                callBack.onException(ex);
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
 
     public User createUser(final String name, final String pswd,
                            final String email, final ArrayList<String> roleList, final App42CallBack callBack) {

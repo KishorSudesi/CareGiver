@@ -1,15 +1,18 @@
 package com.hdfc.config;
 
 import android.os.Build;
+import android.util.Log;
 
 import com.hdfc.caregiver.BuildConfig;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
+import com.hdfc.models.CategoryServiceModel;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
 import com.hdfc.models.FileModel;
 import com.hdfc.models.ProviderModel;
+import com.hdfc.models.ServiceModel;
 
 import org.json.JSONObject;
 
@@ -22,6 +25,9 @@ import java.util.List;
 public class Config {
 
     public static final String dbName = "newzeal";
+    public static final String collectionService = "service";
+    public static final String collectionServiceHistory = "servicehistory";
+    public static final String collectionServiceCustomer = "servicecustomer";
     public static final String collectionServices = "service";
     public static final String collectionProvider = "provider";
     public static final String collectionCustomer = "customer";
@@ -82,4 +88,19 @@ public class Config {
     public static int iRatingCount = 0;
 
     public static List<FeedBackModel> feedBackModels = new ArrayList<>();
+
+    //public static ServiceModel serviceModel = new ServiceModel();
+
+    public static ArrayList<CategoryServiceModel> categoryServiceModels = new ArrayList<>();
+    public static ArrayList<String> dependentNames = new ArrayList<>();
+    public static ArrayList<String> strDependentIds = new ArrayList<>();
+    public static ArrayList<String> strNotificationIds = new ArrayList<>();
+    public static ArrayList<String> strServcieIds = new ArrayList<>();
+    public static ArrayList<ServiceModel> serviceModels = new ArrayList<>();
+    public static ArrayList<String> strProviderIds = new ArrayList<>();
+    public static ArrayList<String> strProviderIdsAdded = new ArrayList<>();
+    public static ArrayList<String> strServiceCategoryNames = new ArrayList<>();
+
+    public static String aniket = null;
+
 }

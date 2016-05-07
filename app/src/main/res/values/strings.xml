@@ -64,6 +64,7 @@
 
     <string name="clientName">Client Name</string>
     <string name="title">Title</string>
+    <string name="services">Services</string>
     <string name="dateAndTime">Date and Time</string>
 
     <string name="hintPwd">*****</string>

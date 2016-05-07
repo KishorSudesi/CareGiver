@@ -38,6 +38,14 @@ import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.Action;
+import com.hdfc.models.CategoryServiceModel;
+import com.hdfc.models.FieldModel;
+import com.hdfc.models.MilestoneModel;
+import com.hdfc.models.ServiceModel;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,6 +78,8 @@ public class Utils {
 
     public static Uri customerImageUri;
     private static Context _ctxt;
+
+    public static String aniket;
 
     static {
         System.loadLibrary("stringGen");
@@ -1084,5 +1094,163 @@ public class Utils {
 
         return strDisplayDate;
     }
+
+    public void createServiceModel(String strDocumentId, JSONObject jsonObject) {
+
+        try {
+            ServiceModel serviceModel = new ServiceModel();
+
+            serviceModel.setDoubleCost(jsonObject.getDouble("cost"));
+            serviceModel.setStrServiceName(jsonObject.getString("service_name"));
+            serviceModel.setiServiceNo(jsonObject.getInt("service_no"));
+            serviceModel.setStrCategoryName(jsonObject.getString("category_name"));
+            serviceModel.setiUnit(jsonObject.getInt("unit"));
+            serviceModel.setStrServiceType(jsonObject.getString("service_type"));
+
+
+
+            if (jsonObject.has("milestones")) {
+
+
+                JSONArray jsonArrayMilestones = jsonObject.
+                        getJSONArray("milestones");
+
+                for (int k = 0; k < jsonArrayMilestones.length(); k++) {
+
+                    JSONObject jsonObjectMilestone =
+                            jsonArrayMilestones.getJSONObject(k);
+
+                    MilestoneModel milestoneModel = new MilestoneModel();
+
+                    milestoneModel.setiMilestoneId(jsonObjectMilestone.getInt("id"));
+                    milestoneModel.setStrMilestoneStatus(jsonObjectMilestone.getString("status"));
+                    milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
+                    milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
+
+                    //
+                    if (jsonObjectMilestone.has("fields")) {
+
+                        JSONArray jsonArrayFields = jsonObjectMilestone.
+                                getJSONArray("fields");
+
+                        for (int l = 0; l < jsonArrayFields.length(); l++) {
+
+                            JSONObject jsonObjectField =
+                                    jsonArrayFields.getJSONObject(l);
+
+                            FieldModel fieldModel = new FieldModel();
+
+                            fieldModel.setiFieldID(jsonObjectField.getInt("id"));
+
+                            if (jsonObjectField.has("hide"))
+                                fieldModel.setFieldView(jsonObjectField.getBoolean("hide"));
+
+                            fieldModel.setFieldRequired(jsonObjectField.getBoolean("required"));
+                            fieldModel.setStrFieldData(jsonObjectField.getString("data"));
+                            fieldModel.setStrFieldLabel(jsonObjectField.getString("label"));
+                            fieldModel.setStrFieldType(jsonObjectField.getString("type"));
+
+                            if (jsonObjectField.has("values")) {
+
+                                fieldModel.setStrFieldValues(jsonToStringArray(jsonObjectField.
+                                        getJSONArray("values")));
+                            }
+
+                            if (jsonObjectField.has("child")) {
+
+                                fieldModel.setChild(jsonObjectField.getBoolean("child"));
+
+                                if (jsonObjectField.has("child_type"))
+                                    fieldModel.setStrChildType(jsonToStringArray(jsonObjectField.
+                                            getJSONArray("child_type")));
+
+                                if (jsonObjectField.has("child_value"))
+                                    fieldModel.setStrChildValue(jsonToStringArray(jsonObjectField.
+                                            getJSONArray("child_value")));
+
+                                if (jsonObjectField.has("child_condition"))
+                                    fieldModel.setStrChildCondition(jsonToStringArray(jsonObjectField.
+                                            getJSONArray("child_condition")));
+
+                                if (jsonObjectField.has("child_field"))
+                                    fieldModel.setiChildfieldID(jsonToIntArray(jsonObjectField.
+                                            getJSONArray("child_field")));
+                            }
+
+                            milestoneModel.setFieldModel(fieldModel);
+                        }
+                    }
+
+                    serviceModel.setMilestoneModels(milestoneModel);
+                }
+            }
+
+            serviceModel.setStrServiceId(strDocumentId);
+
+            if (!Config.strServcieIds.contains(strDocumentId)) {
+                //Config.serviceModels.add(serviceModel);
+                Config.strServcieIds.add(strDocumentId);
+
+                Config.serviceModels.add(serviceModel);
+
+                //
+               /* if (!Config.strServiceCategoryNames.contains(jsonObject.getString("category_name"))) {
+                    Config.strServiceCategoryNames.add(jsonObject.getString("category_name"));
+
+                    CategoryServiceModel categoryServiceModel = new CategoryServiceModel();
+                    categoryServiceModel.setStrCategoryName(jsonObject.getString("category_name"));
+                    categoryServiceModel.setServiceModels(serviceModel);
+
+                    Config.categoryServiceModels.add(categoryServiceModel);
+                } else {
+                    int iPosition = Config.strServiceCategoryNames.indexOf(jsonObject.getString("category_name"));
+                    Config.categoryServiceModels.get(iPosition).setServiceModels(serviceModel);
+                }*/
+                //
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String[] jsonToStringArray(JSONArray jsonArray) {
+
+        String strings[] = new String[0];
+
+        try {
+            int iLength = jsonArray.length();
+
+            strings = new String[iLength];
+
+            for (int i = 0; i < iLength; i++) {
+                strings[i] = jsonArray.getString(i);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return strings;
+    }
+
+    public int[] jsonToIntArray(JSONArray jsonArray) {
+
+        int ints[] = new int[0];
+
+        try {
+            int iLength = jsonArray.length();
+
+            ints = new int[iLength];
+
+            for (int i = 0; i < iLength; i++) {
+                ints[i] = jsonArray.getInt(i);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return ints;
+    }
+
 
 }
