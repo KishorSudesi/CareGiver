@@ -10,6 +10,7 @@ import com.shephertz.app42.paas.sdk.android.App42CacheManager;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.App42Response;
+import com.shephertz.app42.paas.sdk.android.push.PushNotificationService;
 import com.shephertz.app42.paas.sdk.android.storage.OrderByType;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
@@ -34,6 +35,7 @@ public class AsyncApp42ServiceApi {
     private UserService userService;
     private StorageService storageService;
     private UploadService uploadService;
+    private PushNotificationService pushNotificationService;
 
 
     public AsyncApp42ServiceApi(Context context) {
@@ -57,6 +59,7 @@ public class AsyncApp42ServiceApi {
         this.userService = App42API.buildUserService();
         this.storageService = App42API.buildStorageService();
         this.uploadService = App42API.buildUploadService();
+        this.pushNotificationService = App42API.buildPushNotificationService();
     }
 
     public static AsyncApp42ServiceApi instance(Context context) {
@@ -427,15 +430,22 @@ public class AsyncApp42ServiceApi {
         }.start();
     }*/
 
-    public void findDocumentByQuery(final String dbName, final String collectionName,
-                                    final Query query, final App42CallBack callBack) {
+    public void findDocumentByQueryPagingOrderBy(final String dbName, final String collectionName,
+                                                 final Query query, final int max, final int offset,
+                                                 final String strKey, final int iOrderFlag,
+                                                 final App42CallBack callBack) {
         final Handler callerThreadHandler = new Handler();
         new Thread() {
             @Override
             public void run() {
                 try {
-                    final Storage response = storageService.findDocumentsByQuery(dbName,
-                            collectionName, query);
+                    OrderByType orderByType = OrderByType.DESCENDING;
+
+                    if (iOrderFlag == 0)
+                        orderByType = OrderByType.ASCENDING;
+
+                    final Storage response = storageService.findDocsWithQueryPagingOrderBy(dbName,
+                            collectionName, query, max, offset, strKey, orderByType);
                     callerThreadHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -455,22 +465,16 @@ public class AsyncApp42ServiceApi {
             }
         }.start();
     }
-    public void findDocumentByQueryPagingOrderBy(final String dbName, final String collectionName,
-                                                 final Query query, final int max, final int offset,
-                                                 final String strKey, final int iOrderFlag,
-                                                 final App42CallBack callBack) {
+
+    public void findDocumentByQuery(final String dbName, final String collectionName,
+                                    final Query query, final App42CallBack callBack) {
         final Handler callerThreadHandler = new Handler();
         new Thread() {
             @Override
             public void run() {
                 try {
-                    OrderByType orderByType = OrderByType.DESCENDING;
-
-                    if (iOrderFlag == 0)
-                        orderByType = OrderByType.ASCENDING;
-
-                    final Storage response = storageService.findDocsWithQueryPagingOrderBy(dbName,
-                            collectionName, query, max, offset, strKey, orderByType);
+                    final Storage response = storageService.findDocumentsByQuery(dbName,
+                            collectionName, query);
                     callerThreadHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -766,6 +770,37 @@ public class AsyncApp42ServiceApi {
             public void run() {
                 try {
                     final App42Response response = uploadService.getAllFilesCountByUser(userName);
+
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSuccess(response);
+                        }
+                    });
+                } catch (final App42Exception ex) {
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callBack != null) {
+                                callBack.onException(ex);
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
+    public void sendPushToUser(final String userName, final String strMessage,
+                               final App42CallBack callBack) {
+
+        final Handler callerThreadHandler = new Handler();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final App42Response response = pushNotificationService.sendPushMessageToUser(
+                            userName, strMessage);
 
                     callerThreadHandler.post(new Runnable() {
                         @Override

@@ -1,10 +1,12 @@
 package com.hdfc.caregiver;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -138,6 +140,38 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         } else {
             /*Log.i("App42PushNotification",
                     "No valid Google Play Services APK found.");*/
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        try {
+            boolean isPushReceived = getIntent().getBooleanExtra("message_delivered", false);
+            String strPushMess = getIntent().getStringExtra("message");
+
+            if (isPushReceived && strPushMess != null && !strPushMess.equalsIgnoreCase("")) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+                builder.setTitle(getString(R.string.app_name));
+                builder.setMessage(strPushMess);
+                builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
