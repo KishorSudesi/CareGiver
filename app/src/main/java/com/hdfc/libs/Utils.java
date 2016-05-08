@@ -1108,6 +1108,7 @@ public class Utils {
             serviceModel.setStrServiceType(jsonObject.getString("service_type"));
 
 
+            Config.serviceModels.add(serviceModel);
 
             if (jsonObject.has("milestones")) {
 
@@ -1191,7 +1192,7 @@ public class Utils {
                 //Config.serviceModels.add(serviceModel);
                 Config.strServcieIds.add(strDocumentId);
 
-                Config.serviceModels.add(serviceModel);
+
 
                 //
                /* if (!Config.strServiceCategoryNames.contains(jsonObject.getString("category_name"))) {

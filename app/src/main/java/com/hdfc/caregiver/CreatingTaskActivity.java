@@ -65,7 +65,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private Utils utils;
     private EditText dateTime, editTextTitle;
     public static ServiceAdapter serviceAdapter;
-    public  ArrayList<String>  service = new ArrayList<String>();
+    public  ArrayList<String>  servicelist = new ArrayList<String>();
 
         private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -98,8 +98,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
         utils = new Utils(CreatingTaskActivity.this);
         progressDialog = new ProgressDialog(CreatingTaskActivity.this);
 
-       service.add("Medical");
-       service.add("Hospital");
+      // service.add("Medical");
+      // service.add("Hospital");
 
         /*
        serviceAdapter = new ServiceAdapter(this,Config.serviceModels);
@@ -119,8 +119,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
         });
 */
 
+
         ArrayAdapter<String> adapter;
-        adapter = new ArrayAdapter<String>(CreatingTaskActivity.this,android.R.layout.select_dialog_item, service);
+        adapter = new ArrayAdapter<String>(CreatingTaskActivity.this,android.R.layout.select_dialog_item, servicelist);
         //Getting the instance of AutoCompleteTextView
         //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
        inputSearchServices.setThreshold(1);//will start working from first character
@@ -196,7 +197,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
      //  public void setItems(){
 
         storageService = new StorageService(CreatingTaskActivity.this);
-           storageService.findDocsByKeyValue(Config.collectionServices, "service_name", "Medical Checkup", new AsyncApp42ServiceApi.App42StorageServiceListener() {
+           /*storageService.findDocsByKeyValue(Config.collectionServices, "service_name", "Medical Checkup", new AsyncApp42ServiceApi.App42StorageServiceListener() {
                @Override
                public void onDocumentInserted(Storage response) {
 
@@ -244,7 +245,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                public void onUpdateDocFailed(App42Exception ex) {
 
                }
-           });
+           });*/
 
            storageService.findAllDocs(Config.collectionService,
                    new App42CallBack() {
@@ -276,9 +277,17 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                            utils.createServiceModel(strDocumentId, jsonObjectServcies);
 
+
+
+
                                    } catch (JSONException e) {
                                        e.printStackTrace();
                                    }
+                               }
+                               for( ServiceModel serviceModel : Config.serviceModels){
+
+                                   servicelist.add(serviceModel.getStrServiceName());
+
                                }
 
                            } else {
