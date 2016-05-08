@@ -1,12 +1,14 @@
 package com.hdfc.caregiver.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import com.hdfc.adapters.ClientsAdapter;
 import com.hdfc.adapters.ExpandableListCustomer;
+import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
@@ -92,7 +95,20 @@ public class ClientFragment extends Fragment {
         // setting list adapter
         expListView.setAdapter(listAdapter);
 
+        expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ClientModel obj = (ClientModel) parent.getAdapter().getItem(position);
+                Intent intent = new Intent(getActivity(), ClientProfileActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("Client", obj);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
         prepareListData();
+
         return view;
     }
 
@@ -103,8 +119,6 @@ public class ClientFragment extends Fragment {
 
             listDataHeader.clear();
             listDataChild.clear();
-
-
             for (ClientModel clientModel : Config.clientModels) {
                 listDataHeader.add(clientModel.getCustomerModel());
                 Utils.log(String.valueOf(clientModel.getCustomerModel().getStrAddress()), " 1 ");

@@ -440,9 +440,11 @@ public class AppUtils {
             @Override
             public void onFindDocSuccess(Storage response) throws JSONException {
 
+                System.out.println("Pethech Raja PTM : " + (response != null));
                 if(response != null){
 
-                    Utils.log(response.toString(), " Activity ");
+                    System.out.println("Pethech Raja Khandoba : " + response.toString());
+                    Utils.log(response.toString(), " Activity kung foo panda ");
 
                     ArrayList<Storage.JSONDocument> jsonDocList = response.getJsonDocList();
 

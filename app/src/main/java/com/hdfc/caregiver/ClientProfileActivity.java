@@ -41,7 +41,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
     private LocationListener locationListener = null;
     private ImageView btnGetLocation = null;
     private TextView editLocation = null;
-    private String strClientName;
+    private String strClientName, strClientAddress;
     private Boolean flag = false;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +65,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
         ClientModel client_model = (ClientModel) bundle.getSerializable("Client");
 
         strClientName = client_model.getCustomerModel().getStrName();
+        client_model.getCustomerModel().getStrAddress();
 
         utils = new Utils(ClientProfileActivity.this);
 
