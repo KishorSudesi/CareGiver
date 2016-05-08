@@ -104,12 +104,12 @@ public class AppUtils {
                                 } else {
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                    Utils.toast(2, 2, _ctxt.getString(R.string.error));
                                 }
                             } else {
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                Utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                             }
                         } catch (Exception e1) {
                             e1.printStackTrace();
@@ -131,7 +131,7 @@ public class AppUtils {
                             } else {
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                Utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                             }
                         } catch (Exception e1) {
                             e1.printStackTrace();
@@ -186,7 +186,7 @@ public class AppUtils {
                                 try {
                                     if (o != null) {
 
-                                        //Utils.log(o.toString(), " fetchDependents ");
+                                        Utils.log(o.toString(), " fetchDependents ");
 
                                         Storage storage = (Storage) o;
 
@@ -208,13 +208,13 @@ public class AppUtils {
                                     } else {
                                         if (progressDialog.isShowing())
                                             progressDialog.dismiss();
-                                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                        Utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                    Utils.toast(2, 2, _ctxt.getString(R.string.error));
                                 }
 
                             }
@@ -227,7 +227,7 @@ public class AppUtils {
                                     } else {
                                         if (progressDialog.isShowing())
                                             progressDialog.dismiss();
-                                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                        Utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     }
                                 } catch (Exception e1) {
                                     if (progressDialog.isShowing())
@@ -241,7 +241,7 @@ public class AppUtils {
             } else {
                 if (progressDialog.isShowing())
                     progressDialog.dismiss();
-                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                Utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
             }
 
         } else goToDashboard();
@@ -297,13 +297,13 @@ public class AppUtils {
                                     } else {
                                         if (progressDialog.isShowing())
                                             progressDialog.dismiss();
-                                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                        Utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                    Utils.toast(2, 2, _ctxt.getString(R.string.error));
                                 }
                             }
 
@@ -316,7 +316,7 @@ public class AppUtils {
                                     } else {
                                         if (progressDialog.isShowing())
                                             progressDialog.dismiss();
-                                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                        Utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     }
                                 } catch (Exception e1) {
                                     e1.printStackTrace();
@@ -330,7 +330,7 @@ public class AppUtils {
                 if (progressDialog.isShowing())
                     progressDialog.dismiss();
 
-                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                Utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
             }
 
         } else fetchDependents(progressDialog);
@@ -442,29 +442,24 @@ public class AppUtils {
             @Override
             public void onFindDocSuccess(Storage response) throws JSONException {
 
-                System.out.println("Pethech Raja PTM : " + (response != null));
                 if(response != null){
 
-                    System.out.println("Pethech Raja Khandoba : " + response.toString());
-                    Utils.log(response.toString(), " Activity kung foo panda ");
+                    Utils.log(response.toString(), " Activity ");
 
                     ArrayList<Storage.JSONDocument> jsonDocList = response.getJsonDocList();
 
                     for(int i = 0 ; i < jsonDocList.size() ; i++ ){
 
                         Storage.JSONDocument jsonDocument = jsonDocList.get(i);
-
                         String strDocumentId = jsonDocument.getDocId();
-
                         String strActivities = jsonDocument.getJsonDoc();
-
                         createActivityModel(strDocumentId, strActivities);
                     }
                     fetchCustomers(progressDialog);
                 } else {
                     if (progressDialog.isShowing())
                         progressDialog.dismiss();
-                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                    Utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                 }
             }
 
@@ -480,7 +475,7 @@ public class AppUtils {
                     } else {
                         if (progressDialog.isShowing())
                             progressDialog.dismiss();
-                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                        Utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                     }
                 } catch (Exception e1) {
                     if (progressDialog.isShowing())
@@ -545,38 +540,38 @@ public class AppUtils {
 
                         JSONArray jsonArrayFeedback = jsonObject.getJSONArray("feedbacks");
 
-                for (int k = 0; k < jsonArrayFeedback.length(); k++) {
+                        for (int k = 0; k < jsonArrayFeedback.length(); k++) {
 
-                    JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
+                            JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
 
-                    FeedBackModel feedBackModel = new FeedBackModel(
-                            jsonObjectFeedback.getString("feedback_message"),
-                            jsonObjectFeedback.getString("feedback_by"),
-                            jsonObjectFeedback.getInt("feedback_rating"),
-                            jsonObjectFeedback.getBoolean("feedback_report"),
-                            jsonObjectFeedback.getString("feedback_time"),
-                            jsonObjectFeedback.getString("feedback_by_type"));
+                            FeedBackModel feedBackModel = new FeedBackModel(
+                                    jsonObjectFeedback.getString("feedback_message"),
+                                    jsonObjectFeedback.getString("feedback_by"),
+                                    jsonObjectFeedback.getInt("feedback_rating"),
+                                    jsonObjectFeedback.getBoolean("feedback_report"),
+                                    jsonObjectFeedback.getString("feedback_time"),
+                                    jsonObjectFeedback.getString("feedback_by_type"));
 
-                    if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("customer")) {
-                        if (!Config.customerIds.contains(jsonObjectFeedback.getString("feedback_by")))
-                            Config.customerIds.add(jsonObjectFeedback.getString("feedback_by"));
-                    }
+                            if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("customer")) {
+                                if (!Config.customerIds.contains(jsonObjectFeedback.getString("feedback_by")))
+                                    Config.customerIds.add(jsonObjectFeedback.getString("feedback_by"));
+                            }
 
-                    if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("dependent")) {
-                        if (!Config.dependentIds.contains(jsonObjectFeedback.getString("feedback_by")))
-                            Config.dependentIds.add(jsonObjectFeedback.getString("feedback_by"));
-                    }
+                            if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("dependent")) {
+                                if (!Config.dependentIds.contains(jsonObjectFeedback.getString("feedback_by")))
+                                    Config.dependentIds.add(jsonObjectFeedback.getString("feedback_by"));
+                            }
 
 
-                    feedBackModels.add(feedBackModel);
+                            feedBackModels.add(feedBackModel);
 
-                    Config.iRatings += jsonObjectFeedback.getInt("feedback_rating");
+                            Config.iRatings += jsonObjectFeedback.getInt("feedback_rating");
 
-                    Config.iRatingCount += 1;
+                            Config.iRatingCount += 1;
 
-                    Config.feedBackModels.add(feedBackModel);
-                }
-                activityModel.setFeedBackModels(feedBackModels);
+                            Config.feedBackModels.add(feedBackModel);
+                        }
+                        activityModel.setFeedBackModels(feedBackModels);
                     }
 
                     if (jsonObject.has("videos")) {

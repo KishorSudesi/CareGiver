@@ -280,7 +280,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             jsonObjectServices.put("service_name", serviceModel.getStrServiceName());
             jsonObjectServices.put("service_no", serviceModel.getiServiceNo());
             jsonObjectServices.put("service_type", serviceModel.getStrServiceType());
-            jsonObjectServices.put("category_name", serviceModel.getStrCategoryName());
+            jsonObjectServices.put("unit_", serviceModel.getStrServiceType());
 
             jsonObjectServices.put("customer_id", Config.customerModel.getStrCustomerID());
             jsonObjectServices.put("dependent_id", Config.dependentModels.get(Config.intSelectedDependent).getStrDependentID());

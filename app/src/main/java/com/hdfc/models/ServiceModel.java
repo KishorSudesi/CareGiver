@@ -16,6 +16,7 @@ public class ServiceModel {
     private double doubleCost;
 
     private int iUnit;
+    private int iUnitValue;
     private int iUnitUsed;
     private int iServiceNo;
 
@@ -26,6 +27,18 @@ public class ServiceModel {
     private ArrayList<MilestoneModel> milestoneModels = new ArrayList<>();
 
     public ServiceModel() {
+    }
+
+    public int getiUnitValue() {
+        return iUnitValue;
+    }
+
+    public void setiUnitValue(int iUnitValue) {
+        this.iUnitValue = iUnitValue;
+    }
+
+    public void setMilestoneModels(ArrayList<MilestoneModel> milestoneModels) {
+        this.milestoneModels = milestoneModels;
     }
 
     public String getStrServiceType() {

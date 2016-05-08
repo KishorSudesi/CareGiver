@@ -38,7 +38,6 @@ import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.Action;
-import com.hdfc.models.CategoryServiceModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.FieldModel;
 import com.hdfc.models.FileModel;
@@ -71,17 +70,20 @@ import java.util.TimeZone;
  */
 public class Utils {
 
-    public final static SimpleDateFormat readFormat = new
-            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+    /*public final static SimpleDateFormat readFormat = new
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());*/
+
+    public final static SimpleDateFormat readFormat =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+
     public final static SimpleDateFormat writeFormat = new
             SimpleDateFormat("kk:mm aa dd MMM yyyy", Locale.getDefault());
     public final static SimpleDateFormat writeFormatMonth = new
             SimpleDateFormat("kk:mm aa", Locale.getDefault());
 
     public static Uri customerImageUri;
-    private static Context _ctxt;
-
     public static String aniket;
+    private static Context _ctxt;
 
     static {
         System.loadLibrary("stringGen");
@@ -555,6 +557,38 @@ public class Utils {
         return file;
     }
 
+    public static void toast(int type, int duration, String message) {
+
+        String strColor = "#ffffff";
+
+        if (type == 2)
+            strColor = "#fcc485";
+
+        try {
+            LayoutInflater inflater = ((Activity) _ctxt).getLayoutInflater();
+            View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) ((Activity) _ctxt).
+                    findViewById(R.id.toast_layout_root));
+
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            text.setText(message);
+            text.setTextColor(Color.parseColor(strColor));
+
+            Toast toast = new Toast(_ctxt);
+            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+
+            if (duration == 2)
+                toast.setDuration(Toast.LENGTH_LONG);
+            else
+                toast.setDuration(Toast.LENGTH_SHORT);
+
+            toast.setView(layout);
+            toast.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(_ctxt, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public File getInternalFileImages(String strFileName) {
 
         File file = null;
@@ -617,22 +651,6 @@ public class Utils {
         }
     }
 
-    public void copyFile(File file, File newFile) throws IOException {
-        //File newFile = new File(dir, file.getName());
-        FileChannel outputChannel = null;
-        FileChannel inputChannel = null;
-        try {
-            outputChannel = new FileOutputStream(newFile).getChannel();
-            inputChannel = new FileInputStream(file).getChannel();
-            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
-            inputChannel.close();
-            //file.delete();
-        } finally {
-            if (inputChannel != null) inputChannel.close();
-            if (outputChannel != null) outputChannel.close();
-        }
-    }
-
   /*  public void moveFileDir(File file, File dir) throws IOException {
         File newFile = new File(dir, file.getName());
         FileChannel outputChannel = null;
@@ -649,35 +667,19 @@ public class Utils {
         }
     }*/
 
-    public static void toast(int type, int duration, String message) {
-
-        String strColor = "#ffffff";
-
-        if (type == 2)
-            strColor = "#fcc485";
-
+    public void copyFile(File file, File newFile) throws IOException {
+        //File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
         try {
-            LayoutInflater inflater = ((Activity) _ctxt).getLayoutInflater();
-            View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) ((Activity) _ctxt).
-                    findViewById(R.id.toast_layout_root));
-
-            TextView text = (TextView) layout.findViewById(R.id.text);
-            text.setText(message);
-            text.setTextColor(Color.parseColor(strColor));
-
-            Toast toast = new Toast(_ctxt);
-            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-
-            if (duration == 2)
-                toast.setDuration(Toast.LENGTH_LONG);
-            else
-                toast.setDuration(Toast.LENGTH_SHORT);
-
-            toast.setView(layout);
-            toast.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(_ctxt, message, Toast.LENGTH_SHORT).show();
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            //file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
         }
     }
 
@@ -1106,6 +1108,7 @@ public class Utils {
             serviceModel.setiServiceNo(jsonObject.getInt("service_no"));
             serviceModel.setStrCategoryName(jsonObject.getString("category_name"));
             serviceModel.setiUnit(jsonObject.getInt("unit"));
+            serviceModel.setiUnitValue(jsonObject.getInt("unit_value"));
             serviceModel.setStrServiceType(jsonObject.getString("service_type"));
 
 
