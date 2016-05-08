@@ -38,16 +38,10 @@
             android:inputType="textVisiblePassword"/>
         <requestFocus/>
 
-        <ListView
+       <!-- <ListView
             android:id="@+id/list_view_search"
             android:layout_width="fill_parent"
-            android:layout_height="80dp" />
-
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:spinnerMode="dropdown" />
+            android:layout_height="80dp" />-->
 
         <TextView
             android:id="@+id/textViewTitle"

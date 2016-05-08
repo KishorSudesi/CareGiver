@@ -8,6 +8,7 @@ import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.CategoryServiceModel;
 import com.hdfc.models.ClientModel;
+import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
 import com.hdfc.models.FileModel;
@@ -91,16 +92,22 @@ public class Config {
 
     //public static ServiceModel serviceModel = new ServiceModel();
 
-    public static ArrayList<CategoryServiceModel> categoryServiceModels = new ArrayList<>();
-    public static ArrayList<String> dependentNames = new ArrayList<>();
-    public static ArrayList<String> strDependentIds = new ArrayList<>();
-    public static ArrayList<String> strNotificationIds = new ArrayList<>();
+    //public static ArrayList<CategoryServiceModel> categoryServiceModels = new ArrayList<>();
+
+
+
+
     public static ArrayList<String> strServcieIds = new ArrayList<>();
     public static ArrayList<ServiceModel> serviceModels = new ArrayList<>();
-    public static ArrayList<String> strProviderIds = new ArrayList<>();
-    public static ArrayList<String> strProviderIdsAdded = new ArrayList<>();
-    public static ArrayList<String> strServiceCategoryNames = new ArrayList<>();
+    public static ArrayList<String> servicelist = new ArrayList<>();
 
-    public static String aniket = null;
+
+    public static ArrayList<String> strDependentNames = new ArrayList<>();
+    //public static ArrayList<DependentModel> strDependentIds = new ArrayList<>();
+
+    //public static ArrayList<String> strServiceCategoryNames = new ArrayList<>();
+
+    public static CustomerModel customerModel = null;
+    public static int intSelectedDependent = 0;
 
 }
