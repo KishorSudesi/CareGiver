@@ -38,6 +38,11 @@ public class StorageService {
         asyncService.findDocumentByQuery(Config.dbName, strCollectionName, query, app42CallBack);
     }
 
+    public void findDocsByQueryOrderBy(String strCollectionName, Query query, int max, int offset,
+                                       String strKey, int iOrderFlag, App42CallBack app42CallBack) {
+        asyncService.findDocumentByQueryPagingOrderBy(Config.dbName, strCollectionName, query, max,
+                offset, strKey, iOrderFlag, app42CallBack);
+    }
     public void findDocsByKeyValue(String strCollectionName, String strKey, String strValue, AsyncApp42ServiceApi.App42StorageServiceListener app42CallBack) {
         asyncService.findDocumentByKeyValue(Config.dbName, strCollectionName, strKey, strValue, app42CallBack);
     }

@@ -369,6 +369,8 @@ public class AppUtils {
 
                     Config.dependentModels.add(dependentModel);
 
+                    Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
+
                     if (Config.clientModels.size() > 0) {
                         int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
                         Config.clientModels.get(iPosition).setDependentModel(dependentModel);

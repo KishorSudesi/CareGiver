@@ -39,7 +39,9 @@ import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.Action;
 import com.hdfc.models.CategoryServiceModel;
+import com.hdfc.models.CustomerModel;
 import com.hdfc.models.FieldModel;
+import com.hdfc.models.FileModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.models.ServiceModel;
 
@@ -647,7 +649,7 @@ public class Utils {
         }
     }*/
 
-    public void toast(int type, int duration, String message) {
+    public static void toast(int type, int duration, String message) {
 
         String strColor = "#ffffff";
 
@@ -666,11 +668,10 @@ public class Utils {
             Toast toast = new Toast(_ctxt);
             toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
 
-            //if (duration == 1)
-            toast.setDuration(Toast.LENGTH_LONG);
-
-            /*if (duration == 2)
-                toast.setDuration(Toast.LENGTH_LONG);*/
+            if (duration == 2)
+                toast.setDuration(Toast.LENGTH_LONG);
+            else
+                toast.setDuration(Toast.LENGTH_SHORT);
 
             toast.setView(layout);
             toast.show();
@@ -1189,8 +1190,10 @@ public class Utils {
             serviceModel.setStrServiceId(strDocumentId);
 
             if (!Config.strServcieIds.contains(strDocumentId)) {
-                //Config.serviceModels.add(serviceModel);
+                Config.serviceModels.add(serviceModel);
                 Config.strServcieIds.add(strDocumentId);
+
+                Config.servicelist.add(jsonObject.getString("service_name"));
 
 
 
@@ -1214,6 +1217,36 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
+    public void createCustomerModel(String strDocumentId, String strDocument) {
+        try {
+            JSONObject jsonObject = new JSONObject(strDocument);
+            if (jsonObject.has("customer_name")) {
+
+                Config.customerModel = new CustomerModel(
+                        jsonObject.getString("customer_name"),
+                        jsonObject.getString("paytm_account"),
+                        jsonObject.getString("customer_profile_url"),
+                        jsonObject.getString("customer_address"),
+                        jsonObject.getString("customer_contact_no"),
+                        jsonObject.getString("customer_email"),
+                        strDocumentId, "");
+
+                Config.customerModel.setStrDob(jsonObject.getString("customer_dob"));
+                Config.customerModel.setStrCountryCode(jsonObject.getString("customer_country"));
+                Config.customerModel.setStrCountryIsdCode(jsonObject.getString("customer_country_code"));
+                Config.customerModel.setStrCountryAreaCode(jsonObject.getString("customer_area_code"));
+                Config.customerModel.setStrCity(jsonObject.getString("customer_city"));
+                Config.customerModel.setStrState(jsonObject.getString("customer_state"));
+
+                Config.fileModels.add(new FileModel(Config.customerModel.getStrCustomerID(),
+                        jsonObject.getString("customer_profile_url"), "IMAGE"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public String[] jsonToStringArray(JSONArray jsonArray) {
 
@@ -1251,6 +1284,40 @@ public class Utils {
         }
 
         return ints;
+    }
+
+    public JSONArray intToJsonArray(int ints[]) {
+
+        JSONArray jsonArray = new JSONArray();
+
+        try {
+            int iLength = ints.length;
+
+            for (int i = 0; i < iLength; i++) {
+                jsonArray.put(ints[i]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return jsonArray;
+    }
+
+    public JSONArray stringToJsonArray(String string[]) {
+
+        JSONArray jsonArray = new JSONArray();
+
+        try {
+            int iLength = string.length;
+
+            for (int i = 0; i < iLength; i++) {
+                jsonArray.put(string[i]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return jsonArray;
     }
 
 
