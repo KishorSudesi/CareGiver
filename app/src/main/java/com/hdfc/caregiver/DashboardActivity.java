@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hdfc.app42service.App42GCMController;
-import com.hdfc.app42service.App42GCMService;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
 import com.hdfc.caregiver.fragments.SimpleActivityFragment;
@@ -85,7 +84,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                 mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
                 textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                 Config.intSelectedMenu = 0;
-                gotoSimpleActivity();
+                refreshData();
             }
         });
 
@@ -113,16 +112,16 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
         if (Config.intSelectedMenu == Config.intClientScreen) {
             //Config.intSelectedMenu = 0;
-            gotoClient();
             clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
             textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+            gotoClient();
         }
 
         if (Config.intSelectedMenu == Config.intRatingsScreen) {
             Config.intSelectedMenu = 0;
-            gotoFeedback();
             feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
             textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+            gotoFeedback();
         }
         App42API.setLoggedInUser(Config.providerModel.getStrEmail());
 
@@ -188,36 +187,27 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                 builder.show();
             } else {
 
-                progressDialog.setMessage(getString(R.string.loading));
-                progressDialog.setCancelable(false);
-                progressDialog.show();
+                mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+                textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
-                appUtils.fetchActivities(progressDialog);
+                refreshData();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public void refreshData() {
+        progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        appUtils.fetchActivities(progressDialog);
+    }
+
     @Override
     public void onRegisterApp42(String var1) {
         App42GCMController.storeApp42Success(DashboardActivity.this);
-    }
-
-    public void unregisterGcm() {
-
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    App42GCMService.unRegisterGcm();
-                } catch (Exception bug) {
-                    bug.printStackTrace();
-                }
-            }
-        });
-        thread.start();
     }
 
     public void setMenu(){

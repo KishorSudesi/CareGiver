@@ -611,7 +611,7 @@ mProgress.setCancelable(false);
 
                                     if (jsonObjectActivity.getString("activity_date").equalsIgnoreCase(act.getStrActivityDate()) &&
                                             jsonObjectActivity.getString("activity_name").equalsIgnoreCase(act.getStrActivityName()) &&
-                                            jsonObjectActivity.getString("activity_message").equalsIgnoreCase(act.getStrActivityMessage())) {
+                                            jsonObjectActivity.getString("activity_message").equalsIgnoreCase(act.getStrActivityDesc())) {
 
 
                                         jsonObjectActivity.put("activity_done_date", strDoneDate);
@@ -702,7 +702,7 @@ mProgress.setCancelable(false);
 
                                                                                 if (jsonObjectActivity.getString("activity_date").equalsIgnoreCase(act.getStrActivityDate()) &&
                                                                                         jsonObjectActivity.getString("activity_name").equalsIgnoreCase(act.getStrActivityName()) &&
-                                                                                        jsonObjectActivity.getString("activity_message").equalsIgnoreCase(act.getStrActivityMessage())) {
+                                                                                        jsonObjectActivity.getString("activity_message").equalsIgnoreCase(act.getStrActivityDesc())) {
 
                                                                                     jsonObjectActivity.put("activity_done_date", strDoneDate);
                                                                                     jsonObjectActivity.put("status", "completed");

@@ -1,19 +1,14 @@
 package com.hdfc.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
-import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.CustomerModel;
@@ -23,7 +18,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
-public class ExpandableListCustomer extends BaseExpandableListAdapter  {
+public class ClientAdapter extends BaseExpandableListAdapter {
     private Context _context;
     private List<CustomerModel> _listDataHeader; // header titles
     // child data in format of header title, child title
@@ -32,8 +27,8 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
     private MultiBitmapLoader multiBitmapLoader;
 //    private ExpandableListView expListView;
 
-    public ExpandableListCustomer(Context context, List<CustomerModel> listDataHeader,
-                                 HashMap<CustomerModel, List<DependentModel>> listChildData) {
+    public ClientAdapter(Context context, List<CustomerModel> listDataHeader,
+                         HashMap<CustomerModel, List<DependentModel>> listChildData) {
         this._context = context;
         utils = new Utils(_context);
         multiBitmapLoader = new MultiBitmapLoader(_context);
@@ -87,9 +82,10 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
                     return true;
                 }
             });*/
-            ClientFragment.expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            /*ClientFragment.expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
                 @Override
                 public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+
                     CustomerModel obj = (CustomerModel) parent.getAdapter().getItem(groupPosition);
                     Intent intent = new Intent(_context, ClientProfileActivity.class);
                     Bundle bundle = new Bundle();
@@ -97,9 +93,10 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
                     bundle.putBoolean("Client1", true);
                     intent.putExtras(bundle);
                     _context.startActivity(intent);
+
                     return true;
                 }
-            });
+            });*/
             /*ClientFragment.expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

@@ -147,18 +147,16 @@ public class AppUtils {
 
                     @Override
                     public void onFindDocFailed(App42Exception ex) {
+                        if (progressDialog.isShowing())
+                            progressDialog.dismiss();
                         try {
                             if (ex != null) {
-                                utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
                             } else {
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
                                 utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                             }
                         } catch (Exception e1) {
                             e1.printStackTrace();
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
                         }
                     }
 

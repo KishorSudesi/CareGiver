@@ -13,6 +13,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,22 +45,6 @@
             android:layout_height="80dp" />-->
 
         <TextView
-            android:id="@+id/textViewTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:text="@string/title"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="@dimen/activity_horizontal_margin"
-            />
-
-        <EditText
-            android:id="@+id/editTextTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
             android:id="@+id/textViewServices"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,21 +58,39 @@
             android:id="@+id/inputSearchServices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textVisiblePassword"/>
-        <requestFocus/>
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:inputType="textVisiblePassword" />
+        <!--  <requestFocus/>-->
+
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:text="@string/title"
+            android:textColor="@android:color/secondary_text_dark"
+            android:textSize="@dimen/activity_horizontal_margin"
+            />
+
+        <EditText
+            android:id="@+id/editTextTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <EditText
             android:id="@+id/editTextDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:paddingEnd="20dp"
-            android:drawableRight="@drawable/activity_icon_32"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:drawableEnd="@drawable/activity_icon_32"
+            android:drawableRight="@drawable/activity_icon_32"
             android:hint="@string/dateAndTime"
+            android:inputType="datetime"
+            android:paddingEnd="20dp"
             android:paddingLeft="20dp"
-            android:paddingStart="20dp"
-            android:inputType="datetime" />
+            android:paddingStart="20dp" />
 
 
     </LinearLayout>

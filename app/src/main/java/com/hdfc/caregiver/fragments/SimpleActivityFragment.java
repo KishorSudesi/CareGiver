@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 
 import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.CreatingTaskActivity;
-import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
@@ -53,7 +51,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     private static final String TAG = "";
     private static final int PICK_CONTACT = 979;
-    public static Handler threadHandler;
     private static StorageService storageService;
     public ArrayList<ActivityModel> activityModels = Config.activityModels;
     private MultiBitmapLoader multiBitmapLoader;
@@ -98,27 +95,26 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
             if (Config.activityModels.size() > 0) {
 
-                ActivityModel activityModel = new ActivityModel();
-                        activityModel = Config.activityModels.get(position);
+                ActivityModel activityModel = Config.activityModels.get(position);
 
-                System.out.println("Message value: "+activityModel.getStrActivityMessage());
-                String strMessage = activityModel.getStrActivityMessage();
+                //System.out.println("Message value: "+activityModel.getStrActivityMessage());
+                String strMessage = activityModel.getStrActivityDesc();
 
                 if (strMessage != null && strMessage.length() > 20)
-                    strMessage = activityModel.getStrActivityMessage().substring(0, 18) + "..";
-
-                cvh.textSubject.setText(strMessage);
+                    strMessage = activityModel.getStrActivityDesc().substring(0, 18) + "..";
 
                 String strName = activityModel.getStrActivityName();
 
                 if (strName.length() > 20)
                     strName = activityModel.getStrActivityName().substring(0, 18) + "..";
 
-                cvh.textMessage.setText(strName);
+                cvh.textSubject.setText(strName);
+
+                cvh.textMessage.setText(strMessage);
 
                 cvh.textTime.setText(utils.formatDate(activityModel.getStrActivityDate()));
 
-                if (false) {
+                if (!activityModel.getStrActivityStatus().equalsIgnoreCase("completed")) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(utils.formatDateTime(activityModel.getStrActivityDate()));
                     cvh.imageTiming.setTextColor(getResources().getColor(R.color.gray_holo_dark));
@@ -235,7 +231,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
     @Override
     public void onResume(){
         super.onResume();
-        refreshData();
+        //refreshData();
     }
 
     private void refreshData() {
@@ -774,12 +770,12 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 .setTextSize((int) getResources().getDimension(R.dimen.txt_size))
                 .build());
 
-        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
+       /* mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setText("Undo")
                 .setTextColor(Color.WHITE)
                 .setTextSize((int) getResources().getDimension(R.dimen.txt_size))
-                .build());
+                .build());*/
 
         /*mMenu.addItem(new MenuItem.Builder()
                 .setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)+50 )
@@ -807,11 +803,11 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 .setIcon(getResources().getDrawable(R.mipmap.call1))
                 .build());
 
-        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
+       /* mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
                 .setIcon(getResources().getDrawable(R.drawable.person_icon))
-                .build());
+                .build());*/
     }
 
     @Override
@@ -851,7 +847,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             case MenuItem.DIRECTION_LEFT:
                 switch (buttonPosition) {
                     case 0:
-                        if (activityModels.size() > 0) {
+                        /*if (activityModels.size() > 0) {
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
 
@@ -864,11 +860,11 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             } else {
                                 utils.toast(2, 2, "Activity already Closed");
                             }
-                        }
+                        }*/
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
-                        if (activityModels.size() > 0) {
-                            Bundle args = new Bundle();
+                        //if (activityModels.size() > 0) {
+                           /* Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
 
                             if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("upcoming")) {
@@ -880,11 +876,11 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             } else {
                                 utils.toast(2, 2, "Activity already Closed");
                             }
-                        }
+                        }*/
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
 
-                        if (activityModels.size() > 0) {
+                       /* if (activityModels.size() > 0) {
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
                             if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("completed")) {
@@ -892,7 +888,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             } else {
                                 utils.toast(2, 2, "Error. Try Again!!!");
                             }
-                        }
+                        }*/
 
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:
@@ -919,8 +915,8 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                         startActivity(callIntent);*/
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:
-                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                        startActivityForResult(intent, PICK_CONTACT);
+                       /* Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, PICK_CONTACT);*/
 
                         return Menu.ITEM_SCROLL_BACK;
                 }

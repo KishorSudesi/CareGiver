@@ -87,12 +87,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
         utils = new Utils(CreatingTaskActivity.this);
         progressDialog = new ProgressDialog(CreatingTaskActivity.this);
 
-        ArrayAdapter<String> adapter;
+       /* ArrayAdapter<String> adapter;
         adapter = new ArrayAdapter<String>(CreatingTaskActivity.this,android.R.layout.select_dialog_item, Config.servicelist);
         //Getting the instance of AutoCompleteTextView
         //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
         inputSearchServices.setThreshold(1);//will start working from first character
-        inputSearchServices.setAdapter(adapter);
+        inputSearchServices.setAdapter(adapter);*/
 
         //setItems();
         backImage = (ImageView)findViewById(R.id.imgBackCreatingTaskDetail);
@@ -124,7 +124,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 valTitle = editTextTitle.getText().toString().trim();
-                valDateTime = dateTime.getText().toString();
+                valDateTime = dateTime.getText().toString().trim();
                 valSearch = inputSearch.getText().toString().trim();
                 strServiceName = inputSearchServices.getText().toString().trim();
 
@@ -133,27 +133,35 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     focusView = dateTime;
                     cancel = true;
                 }
+
                 if (TextUtils.isEmpty(valTitle)) {
                     editTextTitle.setError(getString(R.string.error_field_required));
                     focusView = editTextTitle;
                     cancel = true;
                 }
-                if (TextUtils.isEmpty(valSearch)) {
-                    inputSearch.setError(getString(R.string.error_field_required));
-                    focusView = inputSearch;
-                    cancel = true;
-                }
+
                 if (TextUtils.isEmpty(strServiceName)) {
                     inputSearchServices.setError(getString(R.string.error_field_required));
                     focusView = inputSearchServices;
                     cancel = true;
                 }
+
+                if (TextUtils.isEmpty(valSearch)) {
+                    inputSearch.setError(getString(R.string.error_field_required));
+                    focusView = inputSearch;
+                    cancel = true;
+                }
+
+
                 if (cancel) {
                     focusView.requestFocus();
                 } else {
-                    //// TODO: 3/13/2016
 
                     if (utils.isConnectingToInternet()) {
+
+                        progressDialog.setMessage(getString(R.string.loading));
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
 
                         int iServicePosition = Config.servicelist.indexOf(strServiceName);
                         ServiceModel serviceModel = Config.serviceModels.get(iServicePosition);
@@ -174,6 +182,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
+
         refreshClients();
 
         storageService = new StorageService(CreatingTaskActivity.this);
@@ -212,14 +221,14 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                utils.toast(2, 2, getString(R.string.warning_internet));
                            }
 
-                           //refreshAdapter();
+                           refreshServices();
                        }
 
                        @Override
                        public void onException(Exception e) {
 
                            try {
-                              // refreshAdapter();
+                               refreshServices();
                                if (e != null) {
                                    JSONObject jsonObject = new JSONObject(e.getMessage());
                                    JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
@@ -245,13 +254,22 @@ public class CreatingTaskActivity extends AppCompatActivity {
         inputSearch.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView*/
     }
 
+    public void refreshServices() {
+        ArrayAdapter<String> adapter;
+        adapter = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.servicelist);
+        //Getting the instance of AutoCompleteTextView
+        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
+        inputSearchServices.setThreshold(1);//will start working from first character
+        inputSearchServices.setAdapter(adapter);
+    }
+
     public void uploadData(ServiceModel serviceModel, DependentModel dependentModel) {
 
         addActivity(serviceModel, dependentModel);
 
     }
 
-    public void addActivity(final ServiceModel serviceModel, DependentModel dependentModel) {
+    public void addActivity(final ServiceModel serviceModel, final DependentModel dependentModel) {
 
         JSONObject jsonObjectServices = null;
 
@@ -368,7 +386,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 if (response.getJsonDocList().size() > 0) {
                                     //   strInsertedDocumentId = response.getJsonDocList().get(0).getDocId();
                                     //   iUpdateFlag = iActivityCreated;
-                                    fetchService(serviceModel);
+                                    fetchService(serviceModel, dependentModel);
                                 } else {
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
@@ -428,7 +446,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         //      Config.collectionActivity);
     }
 
-    public void fetchService(final ServiceModel serviceModel) {
+    public void fetchService(final ServiceModel serviceModel, final DependentModel dependentModel) {
 
         if (utils.isConnectingToInternet()) {
 
@@ -436,7 +454,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             String value1 = serviceModel.getStrServiceId();
 
             String key2 = "customer_id";
-            String value2 = Config.customerModel.getStrCustomerID();
+            String value2 = dependentModel.getStrCustomerID();
 
             Query q1 = QueryBuilder.build(key1, value1, QueryBuilder.Operator.EQUALS);
             Query q2 = QueryBuilder.build(key2, value2, QueryBuilder.Operator.EQUALS);

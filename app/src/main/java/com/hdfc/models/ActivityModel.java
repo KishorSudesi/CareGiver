@@ -16,7 +16,7 @@ public class ActivityModel implements Serializable {
 
     private String strActivityName;
     private String strActivityDesc;
-    private String strActivityMessage;
+    //private String strActivityMessage;
     private String strActivityStatus;
 
     private String strActivityProviderMessage;
@@ -56,7 +56,7 @@ public class ActivityModel implements Serializable {
         this.strServcieID = strServcieID;
         this.strActivityName = strActivityName;
         this.strActivityDesc = strActivityDesc;
-        this.strActivityMessage = strActivityMessage;
+        //this.strActivityMessage = strActivityMessage;
         this.strActivityStatus = strActivityStatus;
         this.strServiceName = strServiceName;
         this.strActivityDate = strActivityDate;
@@ -161,14 +161,14 @@ public class ActivityModel implements Serializable {
         this.strActivityDesc = strActivityDesc;
     }
 
-    public String getStrActivityMessage() {
-        return strActivityMessage;
-    }
+    /* public String getStrActivityMessage() {
+         return strActivityMessage;
+     }
 
-    public void setStrActivityMessage(String strActivityMessage) {
-        this.strActivityMessage = strActivityMessage;
-    }
-
+     public void setStrActivityMessage(String strActivityMessage) {
+         this.strActivityMessage = strActivityMessage;
+     }
+ */
     public String getStrActivityStatus() {
         return strActivityStatus;
     }
