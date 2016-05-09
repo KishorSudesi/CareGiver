@@ -264,8 +264,10 @@ public class AppUtils {
 
             if (utils.isConnectingToInternet()) {
 
-                Query query = QueryBuilder.build("_id", Config.customerIds,
+                final Query query = QueryBuilder.build("_id", Config.customerIds,
                         QueryBuilder.Operator.INLIST);
+
+                System.out.println("Sudesi : " + query.get());
 
                 storageService.findDocsByQuery(Config.collectionCustomer, query,
                         new App42CallBack() {
@@ -277,7 +279,6 @@ public class AppUtils {
                                     if (o != null) {
 
                                         Utils.log(o.toString(), " fetchCustomers ");
-
                                         Storage storage = (Storage) o;
 
                                         if (storage.getJsonDocList().size() > 0) {
