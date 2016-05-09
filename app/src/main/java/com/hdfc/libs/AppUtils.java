@@ -267,8 +267,12 @@ public class AppUtils {
                 final Query query = QueryBuilder.build("_id", Config.customerIds,
                         QueryBuilder.Operator.INLIST);
 
-                System.out.println("Sudesi : " + query.get());
-
+                try {
+                    System.out.println("Sudesi : " + query.get());
+                } catch (Exception e) {
+                    System.out.println("ddd");
+                    e.printStackTrace();
+                }
                 storageService.findDocsByQuery(Config.collectionCustomer, query,
                         new App42CallBack() {
 
