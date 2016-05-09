@@ -54,12 +54,14 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private static ArrayList<DependentModel> dependentModels = new ArrayList<>();
     private static ArrayList<ActivityModel> activityModels = new ArrayList<>();
     private static String products="";
+    private static String jsonDocId;
     String _strDate;
     TextView createtaskDone;
     boolean cancel = false;
     View focusView = null;
     ImageView backImage;
     AutoCompleteTextView inputSearch,inputSearchServices;
+    private int iDependentCount = 0;
     private AsyncApp42ServiceApi asyncService;
     private ProgressDialog progressDialog;
     private JSONObject responseJSONDoc, responseJSONDocCarla, jsonObjectCarla,jsonObjectAct;
@@ -170,6 +172,10 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     DependentModel dependentModel = Config.dependentModels.get(iDependentPosition);
 
                     uploadData(serviceModel, dependentModel);
+
+                    //createDependent();
+                    //addActivity(serviceModel);
+
                 }
             }
 
@@ -266,9 +272,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
     public void uploadData(ServiceModel serviceModel, DependentModel dependentModel) {
 
+        addActivity(serviceModel, dependentModel);
+
     }
 
-    public void addActivity(final ServiceModel serviceModel) {
+    public void addActivity(final ServiceModel serviceModel, DependentModel dependentModel) {
 
         JSONObject jsonObjectServices = null;
 
@@ -282,9 +290,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
             jsonObjectServices.put("service_type", serviceModel.getStrServiceType());
             jsonObjectServices.put("unit_", serviceModel.getStrServiceType());
 
-            jsonObjectServices.put("customer_id", Config.customerModel.getStrCustomerID());
-            jsonObjectServices.put("dependent_id", Config.dependentModels.get(Config.intSelectedDependent).getStrDependentID());
-            //jsonObjectServices.put("provider_id", strProviderId);
+            jsonObjectServices.put("customer_id", dependentModel.getStrCustomerID());
+            jsonObjectServices.put("dependent_id", dependentModel.getStrDependentID());
+            // jsonObjectServices.put("provider_id", strProviderId);
 
             jsonObjectServices.put("status", "new");
             jsonObjectServices.put("provider_status", "new");
@@ -293,7 +301,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             jsonObjectServices.put("activity_date", _strDate);
             jsonObjectServices.put("activity_done_date", "");
             jsonObjectServices.put("activity_name", serviceModel.getStrServiceName());
-            //jsonObjectServices.put("activity_desc", message);
+            // jsonObjectServices.put("activity_desc", message);
             jsonObjectServices.put("overdue", "false");
 
             JSONArray jsonArray = new JSONArray();
@@ -374,8 +382,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             if (response != null) {
 
                                 if (response.getJsonDocList().size() > 0) {
-                                    //strInsertedDocumentId = response.getJsonDocList().get(0).getDocId();
-                                    //iUpdateFlag = iActivityCreated;
+                                    //   strInsertedDocumentId = response.getJsonDocList().get(0).getDocId();
+                                    //   iUpdateFlag = iActivityCreated;
                                     fetchService(serviceModel);
                                 } else {
                                     if (progressDialog.isShowing())
@@ -526,8 +534,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                 //todo check single item units
                 jsonObjectServices.put("updated_date", strDate);
-                /*jsonObjectServices.put("unit", jsonObject.getInt("unit") -
-                        serviceModel.getiUnitValue());*/
+                jsonObjectServices.put("unit", jsonObject.getInt("unit") -
+                        serviceModel.getiUnitValue());
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -587,5 +595,160 @@ public class CreatingTaskActivity extends AppCompatActivity {
         }
     }
 
+   /* public void createDependent() {
+
+        int intCount = CreatingTaskActivity.dependentModels.size();
+
+        Config.customerModel.setStrCustomerID(jsonDocId);
+
+        if (iDependentCount < intCount) {
+
+            try {
+
+                DependentModel dependentModel = CreatingTaskActivity.dependentModels.get(iDependentCount);
+
+                if (!dependentModel.getStrName().
+                        equalsIgnoreCase(getResources().
+                                getString(R.string.add_dependent))) {
+
+                    final int iSelectedDependent = iDependentCount;
+
+                    JSONObject jsonDependant = new JSONObject();
+                    jsonDependant.put("dependent_name", dependentModel.getStrName());
+
+                    if (dependentModel.getStrIllness() == null || dependentModel.getStrIllness().equalsIgnoreCase(""))
+                        dependentModel.setStrIllness("NA");
+
+                    if (dependentModel.getStrNotes() == null || dependentModel.getStrNotes().equalsIgnoreCase(""))
+                        dependentModel.setStrNotes("NA");
+
+                    jsonDependant.put("dependent_illness", dependentModel.getStrIllness());
+
+                    jsonDependant.put("dependent_address", dependentModel.getStrAddress());
+                    jsonDependant.put("dependent_email", dependentModel.getStrEmail());
+
+                    jsonDependant.put("dependent_notes", dependentModel.getStrNotes());
+                    jsonDependant.put("dependent_age", dependentModel.getIntAge());
+                    jsonDependant.put("dependent_dob", dependentModel.getStrDob());
+                    jsonDependant.put("dependent_contact_no", dependentModel.getStrContacts());
+
+                    jsonDependant.put("dependent_profile_url", dependentModel.getStrImageUrl());
+                    jsonDependant.put("dependent_relation", dependentModel.getStrRelation());
+                    jsonDependant.put("customer_id", jsonDocId);
+
+                    jsonDependant.put("health_bp", 70 + iDependentCount);
+
+                    Config.strDependentNames.add(dependentModel.getStrName());
+
+                    jsonDependant.put("health_heart_rate", 80 + iDependentCount);
+
+                    CreatingTaskActivity.dependentModels.get(iDependentCount).setIntHealthBp(70 +
+                            iDependentCount);
+                    CreatingTaskActivity.dependentModels.get(iDependentCount).
+                            setIntHealthHeartRate(80 + iDependentCount);
+                    CreatingTaskActivity.dependentModels.get(iDependentCount).setStrCustomerID(jsonDocId);
+
+                    //jsonDependant.put("services", new JSONArray());
+
+                    if (utils.isConnectingToInternet()) {
+
+                        StorageService storageService = new StorageService(this);
+
+                        final String strDependentEmail = dependentModel.getStrEmail();
+                        final JSONObject object = jsonDependant;
+
+                        storageService.findDocsByKeyValue(Config.collectionDependent,
+                                "dependent_email",
+                                strDependentEmail,
+                                new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                                    @Override
+                                    public void onDocumentInserted(Storage response) {
+                                    }
+
+                                    @Override
+                                    public void onUpdateDocSuccess(Storage response) {
+                                    }
+
+                                    @Override
+                                    public void onFindDocSuccess(Storage response) {
+
+                                        if (response != null) {
+
+                                            if (response.getJsonDocList().size() <= 0) {
+
+                                               // insertDependent(strDependentEmail, object, iSelectedDependent);
+                                            } else {
+
+                                                //
+                                                Storage.JSONDocument jsonDocument = response.
+                                                        getJsonDocList().
+                                                        get(0);
+
+                                                String strDependentDocId = jsonDocument.getDocId();
+
+                                                CreatingTaskActivity.dependentModels.
+                                                        get(iSelectedDependent).
+                                                        setStrDependentID(strDependentDocId);
+
+                                               *//* if (!Config.strDependentIds.contains(strDependentDocId))
+                                                    Config.strDependentIds.add(strDependentDocId);*//*
+                                                //
+
+                                               // createDependentUser(strDependentEmail);
+                                            }
+                                        } else {
+                                            if (progressDialog.isShowing())
+                                                progressDialog.dismiss();
+                                            utils.toast(2, 2, getString(R.string.warning_internet));
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onInsertionFailed(App42Exception ex) {
+                                    }
+
+                                    @Override
+                                    public void onFindDocFailed(App42Exception ex) {
+
+                                        if (ex != null) {
+                                            int appErrorCode = ex.getAppErrorCode();
+
+                                            if (appErrorCode == 2601) {
+                                              //  insertDependent(strDependentEmail, object,
+                                                 //       iSelectedDependent);
+                                            } else {
+                                                //createDependentUser(strDependentEmail);
+                                            }
+                                        } else {
+                                            if (progressDialog.isShowing())
+                                                progressDialog.dismiss();
+                                            utils.toast(2, 2, getString(R.string.warning_internet));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onUpdateDocFailed(App42Exception ex) {
+                                    }
+                                });
+
+                    } else {
+                        if (progressDialog.isShowing())
+                            progressDialog.dismiss();
+                        utils.toast(2, 2, getString(R.string.warning_internet));
+                    }
+                } else {
+                    iDependentCount++;
+                    createDependent();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
+                utils.toast(2, 2, getString(R.string.error));
+            }
+        }
+    }*/
 
 }
