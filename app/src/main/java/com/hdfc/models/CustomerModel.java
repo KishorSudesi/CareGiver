@@ -1,9 +1,11 @@
 package com.hdfc.models;
 
+import java.io.Serializable;
+
 /**
  * Created by balamurugan@adstringo.in on 01-01-2016.
  */
-public class CustomerModel {
+public class CustomerModel implements Serializable {
 
     private String strName = "";
     private String strPaytm = "";

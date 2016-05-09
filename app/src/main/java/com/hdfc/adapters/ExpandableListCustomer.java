@@ -1,14 +1,19 @@
 package com.hdfc.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.CustomerModel;
@@ -25,6 +30,7 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
     private HashMap<CustomerModel, List<DependentModel>> _listDataChild;
     private Utils utils;
     private MultiBitmapLoader multiBitmapLoader;
+//    private ExpandableListView expListView;
 
     public ExpandableListCustomer(Context context, List<CustomerModel> listDataHeader,
                                  HashMap<CustomerModel, List<DependentModel>> listChildData) {
@@ -33,6 +39,8 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
         multiBitmapLoader = new MultiBitmapLoader(_context);
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
+
+
     }
 
     @Override
@@ -64,6 +72,45 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
             viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
             viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);
+
+            //expListView = (ExpandableListView) convertView.findViewById(R.id.listExp);
+
+            /*ClientFragment.expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+                @Override
+                public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                    ClientModel obj = (ClientModel) parent.getAdapter().getItem(groupPosition);
+                    Intent intent = new Intent(_context, ClientProfileActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("Client", obj);
+                    intent.putExtras(bundle);
+                    _context.startActivity(intent);
+                    return true;
+                }
+            });*/
+            ClientFragment.expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+                @Override
+                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                    CustomerModel obj = (CustomerModel) parent.getAdapter().getItem(groupPosition);
+                    Intent intent = new Intent(_context, ClientProfileActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("Client", obj);
+                    bundle.putBoolean("Client1", true);
+                    intent.putExtras(bundle);
+                    _context.startActivity(intent);
+                    return true;
+                }
+            });
+            /*ClientFragment.expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    ClientModel obj = (ClientModel) parent.getAdapter().getItem(position);
+                    Intent intent = new Intent(_context, ClientProfileActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("Client", obj);
+                    intent.putExtras(bundle);
+                    _context.startActivity(intent);
+                }
+            });*/
 
             convertView.setTag(viewHolder);
         } else {

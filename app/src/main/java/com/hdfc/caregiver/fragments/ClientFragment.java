@@ -1,14 +1,12 @@
 package com.hdfc.caregiver.fragments;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 
 import com.hdfc.adapters.ClientsAdapter;
 import com.hdfc.adapters.ExpandableListCustomer;
-import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
@@ -33,6 +30,7 @@ public class ClientFragment extends Fragment {
 
     public static List<ClientModel> activitiesModelArrayList;
     public static ClientsAdapter clients_adapter;
+    public static ExpandableListView expListView;
     private static Handler threadHandler;
     private static Handler ThreadHandler;
     private static ProgressDialog mProgress = null;
@@ -42,7 +40,6 @@ public class ClientFragment extends Fragment {
     ImageView profileImg;
     ListView listViewClients;
     private ExpandableListCustomer listAdapter;
-    private ExpandableListView expListView;
     private Utils utils;
 
     public ClientFragment() {
@@ -95,7 +92,7 @@ public class ClientFragment extends Fragment {
         // setting list adapter
         expListView.setAdapter(listAdapter);
 
-        expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       /* expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ClientModel obj = (ClientModel) parent.getAdapter().getItem(position);
@@ -106,7 +103,7 @@ public class ClientFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
+*/
         prepareListData();
 
         return view;

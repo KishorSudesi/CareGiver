@@ -61,8 +61,17 @@ public class ClientProfileActivity extends AppCompatActivity  {
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
+        Boolean bundle1 = intent.getBooleanExtra("Client1", true);
 
         ClientModel client_model = (ClientModel) bundle.getSerializable("Client");
+
+        if (bundle1 == true) {
+            System.out.println("Success");
+        } else {
+            System.out.println("Failure");
+        }
+
+
 
         strClientName = client_model.getCustomerModel().getStrName();
         client_model.getCustomerModel().getStrAddress();
