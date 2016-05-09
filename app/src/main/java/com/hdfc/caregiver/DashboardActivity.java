@@ -29,9 +29,35 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
     private static Handler threadHandler;
     private static ProgressDialog progressDialog;
-    private AppUtils appUtils;
+    private static AppUtils appUtils;
+    private static AppCompatActivity appCompatActivity;
     private ImageView mytask, clients, feedback;
     private TextView textViewTasks, textViewClients, textViewFeedback;
+
+    public static void gotoSimpleActivity() {
+
+        // if (Config.intSelectedMenu != Config.intSimpleActivityScreen) {
+        Config.intSelectedMenu = Config.intSimpleActivityScreen;
+
+        SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        FragmentTransaction transaction = appCompatActivity.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frameLayout, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+        // }
+    }
+
+    public static void gotoSimpleActivityMenu() {
+
+        progressDialog.setMessage(appCompatActivity.getString(R.string.loading));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        Thread backgroundThread = new BackgroundThread();
+        backgroundThread.start();
+    }
 
     @Override
     protected void onCreate( Bundle savedInstanceState) {
@@ -45,18 +71,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         feedback = (ImageView)findViewById(R.id.buttonFeedback);
 
         progressDialog = new ProgressDialog(DashboardActivity.this);
-
         threadHandler = new ThreadHandler();
-
-        Thread backgroundThread = new BackgroundThread();
-        backgroundThread.start();
-
-        if (progressDialog != null) {
-            progressDialog.setMessage(getString(R.string.loading));
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
 
         textViewTasks = (TextView) findViewById(R.id.textViewTasks);
         textViewClients = (TextView) findViewById(R.id.textViewClients);
@@ -80,7 +95,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                 setMenu();
                 clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
                 textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                Config.intSelectedMenu = 0;
+                //Config.intSelectedMenu = 0;
                 gotoClient();
             }
         });
@@ -97,7 +112,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         });
 
         if (Config.intSelectedMenu == Config.intClientScreen) {
-            Config.intSelectedMenu = 0;
+            //Config.intSelectedMenu = 0;
             gotoClient();
             clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
             textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -110,6 +125,8 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
             textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         }
         App42API.setLoggedInUser(Config.providerModel.getStrEmail());
+
+        appCompatActivity = DashboardActivity.this;
     }
 
     @Override
@@ -169,6 +186,13 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                     }
                 });
                 builder.show();
+            } else {
+
+                progressDialog.setMessage(getString(R.string.loading));
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+
+                appUtils.fetchActivities(progressDialog);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -196,7 +220,6 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         thread.start();
     }
 
-
     public void setMenu(){
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks));
         clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients));
@@ -213,7 +236,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
     }
 
     public void gotoClient() {
-        if (Config.intSelectedMenu != Config.intClientScreen) {
+        // if (Config.intSelectedMenu != Config.intClientScreen) {
             Config.intSelectedMenu = Config.intClientScreen;
             ClientFragment fragment = ClientFragment.newInstance();
             Bundle args = new Bundle();
@@ -222,39 +245,25 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
             transaction.replace(R.id.frameLayout, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
-        }
+        //}
     }
+
     public void gotoFeedback() {
 
-        if (Config.intSelectedMenu != Config.intRatingsScreen) {
-            Config.intSelectedMenu = Config.intRatingsScreen;
+        //if (Config.intSelectedMenu != Config.intRatingsScreen) {
+        Config.intSelectedMenu = Config.intRatingsScreen;
 
-            RatingsFragment fragment = RatingsFragment.newInstance();
+        RatingsFragment fragment = RatingsFragment.newInstance();
             Bundle args = new Bundle();
             fragment.setArguments(args);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.frameLayout, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
-        }
+        // }
     }
 
-    public void gotoSimpleActivity() {
-
-        if (Config.intSelectedMenu != Config.intSimpleActivityScreen) {
-            Config.intSelectedMenu = Config.intSimpleActivityScreen;
-
-            SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
-            Bundle args = new Bundle();
-            fragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.frameLayout, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
-    }
-
-    public class ThreadHandler extends Handler {
+    public static class ThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             if (progressDialog.isShowing())
@@ -262,16 +271,13 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
             if (Config.intSelectedMenu == Config.intSimpleActivityScreen
                     || Config.intSelectedMenu == Config.intDashboardScreen) {
-                Config.intSelectedMenu = 0;
-                mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
-                textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                 gotoSimpleActivity();
 
             }
         }
     }
 
-    public class BackgroundThread extends Thread {
+    public static class BackgroundThread extends Thread {
         @Override
         public void run() {
             try {

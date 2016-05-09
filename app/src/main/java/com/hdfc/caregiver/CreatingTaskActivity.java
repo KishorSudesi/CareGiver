@@ -10,17 +10,16 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.adapters.ServiceAdapter;
+import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.ActivityModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FieldModel;
 import com.hdfc.models.MilestoneModel;
@@ -44,30 +43,18 @@ import java.util.Date;
 public class CreatingTaskActivity extends AppCompatActivity {
 
     public static String valDateTime, valTitle, valSearch,strServiceName;
-    public static String serviceName;
-    public static DependentModel sDependentModel = new DependentModel();
-    public static JSONArray jsonArrayFeatures;
-    public static JSONObject jsonObjectActCarla;
     public static ServiceAdapter serviceAdapter;
-    static Spinner spinner;
     private static StorageService storageService;
-    private static ArrayList<DependentModel> dependentModels = new ArrayList<>();
-    private static ArrayList<ActivityModel> activityModels = new ArrayList<>();
-    private static String products="";
-    private static String jsonDocId;
-    String _strDate;
     TextView createtaskDone;
     boolean cancel = false;
     View focusView = null;
     ImageView backImage;
     AutoCompleteTextView inputSearch,inputSearchServices;
-    private int iDependentCount = 0;
-    private AsyncApp42ServiceApi asyncService;
+    private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate;
     private ProgressDialog progressDialog;
-    private JSONObject responseJSONDoc, responseJSONDocCarla, jsonObjectCarla,jsonObjectAct;
-    private JSONArray jsonArrayVideos,jsonArrayFeedbacks,jsonArrayImages;
     private Utils utils;
     private EditText dateTime, editTextTitle;
+
         private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
             @Override
@@ -77,7 +64,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 // Do something with the date. This Date object contains
                 // the date and time that the user has selected.
 
-                String strDate = Utils.writeFormat.format(date);
+                strDate = Utils.writeFormat.format(date);
                 _strDate = Utils.readFormat.format(date);
                 dateTime.setText(strDate);
             }
@@ -88,6 +75,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             }
 
     };
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creating_task);
@@ -165,16 +153,17 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 } else {
                     //// TODO: 3/13/2016
 
-                    int iServicePosition = Config.servicelist.indexOf(strServiceName);
-                    ServiceModel serviceModel = Config.serviceModels.get(iServicePosition);
+                    if (utils.isConnectingToInternet()) {
 
-                    int iDependentPosition = Config.strDependentNames.indexOf(valSearch);
-                    DependentModel dependentModel = Config.dependentModels.get(iDependentPosition);
+                        int iServicePosition = Config.servicelist.indexOf(strServiceName);
+                        ServiceModel serviceModel = Config.serviceModels.get(iServicePosition);
 
-                    uploadData(serviceModel, dependentModel);
+                        int iDependentPosition = Config.strDependentNames.indexOf(valSearch);
+                        DependentModel dependentModel = Config.dependentModels.get(iDependentPosition);
 
-                    //createDependent();
-                    //addActivity(serviceModel);
+                        uploadData(serviceModel, dependentModel);
+
+                    } else utils.toast(2, 2, getString(R.string.warning_internet));
 
                 }
             }
@@ -187,14 +176,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
         super.onResume();
         refreshClients();
 
-     //  public void setItems(){
-
         storageService = new StorageService(CreatingTaskActivity.this);
            storageService.findAllDocs(Config.collectionService,
                    new App42CallBack() {
-
-
-
                        @Override
                        public void onSuccess(Object o) {
 
@@ -217,24 +201,15 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                        JSONObject jsonObjectServcies = new JSONObject(strServices);
 
                                        if (jsonObjectServcies.has("unit"))
-
                                            utils.createServiceModel(strDocumentId, jsonObjectServcies);
-
-
-
 
                                    } catch (JSONException e) {
                                        e.printStackTrace();
                                    }
                                }
-                              /* for( ServiceModel serviceModel : Config.serviceModels){
-
-                                   servicelist.add(serviceModel.getStrServiceName());
-
-                               }*/
 
                            } else {
-                               Utils.toast(2, 2, getString(R.string.warning_internet));
+                               utils.toast(2, 2, getString(R.string.warning_internet));
                            }
 
                            //refreshAdapter();
@@ -250,9 +225,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                    JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
                                    String strMess = jsonObjectError.getString("details");
 
-                                   Utils.toast(2, 2, strMess);
+                                   utils.toast(2, 2, strMess);
                                } else {
-                                   Utils.toast(2, 2, getString(R.string.warning_internet));
+                                   utils.toast(2, 2, getString(R.string.warning_internet));
                                }
 
                            } catch (JSONException e1) {
@@ -288,11 +263,15 @@ public class CreatingTaskActivity extends AppCompatActivity {
             jsonObjectServices.put("service_name", serviceModel.getStrServiceName());
             jsonObjectServices.put("service_no", serviceModel.getiServiceNo());
             jsonObjectServices.put("service_type", serviceModel.getStrServiceType());
-            jsonObjectServices.put("unit_", serviceModel.getStrServiceType());
+            jsonObjectServices.put("category_name", serviceModel.getStrCategoryName());
 
             jsonObjectServices.put("customer_id", dependentModel.getStrCustomerID());
             jsonObjectServices.put("dependent_id", dependentModel.getStrDependentID());
-            // jsonObjectServices.put("provider_id", strProviderId);
+            jsonObjectServices.put("provider_id", Config.providerModel.getStrProviderId());
+
+            int iPosition = Config.customerIdsAdded.indexOf(dependentModel.getStrCustomerID());
+
+            strSelectedCustomer = Config.clientModels.get(iPosition).getCustomerModel().getStrEmail();
 
             jsonObjectServices.put("status", "new");
             jsonObjectServices.put("provider_status", "new");
@@ -301,12 +280,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
             jsonObjectServices.put("activity_date", _strDate);
             jsonObjectServices.put("activity_done_date", "");
             jsonObjectServices.put("activity_name", serviceModel.getStrServiceName());
-            // jsonObjectServices.put("activity_desc", message);
+            jsonObjectServices.put("activity_desc", valTitle);
             jsonObjectServices.put("overdue", "false");
 
             JSONArray jsonArray = new JSONArray();
 
-            jsonArray.put("empty");
+            jsonArray.put("{\"0\":\"empty\"}");
 
             jsonObjectServices.put("feedbacks", jsonArray);
             jsonObjectServices.put("videos", jsonArray);
@@ -325,6 +304,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 jsonObjectMilestone.put("date", milestoneModel.getStrMilestoneDate());
 
                 JSONArray jsonArrayFields = new JSONArray();
+
+                strPushMessage = Config.providerModel.getStrName() + getString(R.string.has_created) +
+                        serviceModel.getStrServiceName() + getString(R.string.to) +
+                        dependentModel.getStrName() +
+                        getString(R.string.on) + strDate;
 
                 for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
 
@@ -373,7 +357,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             e1.printStackTrace();
         }
 
-        storageService.insertDocs(jsonObjectServices,
+        storageService.insertDocs(Config.collectionActivity, jsonObjectServices,
                 new AsyncApp42ServiceApi.App42StorageServiceListener() {
 
                     @Override
@@ -388,18 +372,18 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 } else {
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    Utils.toast(2, 2, getString(R.string.error));
+                                    utils.toast(2, 2, getString(R.string.error));
                                 }
                             } else {
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                Utils.toast(2, 2, getString(R.string.warning_internet));
+                                utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                             if (progressDialog.isShowing())
                                 progressDialog.dismiss();
-                            Utils.toast(2, 2, getString(R.string.error));
+                            utils.toast(2, 2, getString(R.string.error));
                         }
                     }
 
@@ -421,14 +405,14 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 JSONObject jsonObjectError = jsonObject.
                                         getJSONObject("app42Fault");
                                 String strMess = jsonObjectError.getString("details");
-                                Utils.toast(2, 2, strMess);
+                                utils.toast(2, 2, strMess);
                             } else {
-                                Utils.toast(2, 2, getString(R.string.warning_internet));
+                                utils.toast(2, 2, getString(R.string.warning_internet));
                             }
 
                         } catch (JSONException e1) {
                             e1.printStackTrace();
-                            Utils.toast(2, 2, getString(R.string.error));
+                            utils.toast(2, 2, getString(R.string.error));
                         }
                     }
 
@@ -486,13 +470,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 } else {
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    Utils.toast(2, 2, getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
 
                             } catch (Exception e1) {
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                Utils.toast(2, 2, getString(R.string.error));
+                                utils.toast(2, 2, getString(R.string.error));
                                 e1.printStackTrace();
                             }
                         }
@@ -503,9 +487,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 progressDialog.dismiss();
                             try {
                                 if (e != null) {
-                                    Utils.toast(2, 2, getString(R.string.error));
+                                    utils.toast(2, 2, getString(R.string.error));
                                 } else {
-                                    Utils.toast(2, 2, getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
                             } catch (Exception e1) {
                                 e1.printStackTrace();
@@ -516,7 +500,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         } else {
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
-            Utils.toast(2, 2, getString(R.string.warning_internet));
+            utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }
 
@@ -551,19 +535,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 progressDialog.dismiss();
                             try {
                                 if (o != null) {
-                                    Intent newIntent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
-                                  /*  Config.intSelectedMenu = Config.intListActivityScreen;
-                                    Utils.toast(2, 2, getString(R.string.activity_added));*/
-                                    startActivity(newIntent);
-                                    finish();
-
+                                    sendPushToProvider(strSelectedCustomer, strPushMessage);
                                 } else {
-                                    Utils.toast(2, 2, getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
                             } catch (Exception e1) {
-                                Utils.toast(2, 2, getString(R.string.error));
+                                utils.toast(2, 2, getString(R.string.error));
                                 e1.printStackTrace();
                             }
                         }
@@ -578,176 +555,111 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     JSONObject jsonObjectError = jsonObject.
                                             getJSONObject("app42Fault");
                                     String strMess = jsonObjectError.getString("details");
-                                    Utils.toast(2, 2, strMess);
+                                    utils.toast(2, 2, strMess);
                                 } else {
-                                    Utils.toast(2, 2, getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
-                                Utils.toast(2, 2, getString(R.string.error));
+                                utils.toast(2, 2, getString(R.string.error));
                             }
                         }
                     });
         } else {
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
-            Utils.toast(2, 2, getString(R.string.warning_internet));
+            utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }
 
-   /* public void createDependent() {
+    public void sendPushToProvider(String strUserName, String strMessage) {
 
-        int intCount = CreatingTaskActivity.dependentModels.size();
+        if (utils.isConnectingToInternet()) {
 
-        Config.customerModel.setStrCustomerID(jsonDocId);
+            PushNotificationService pushNotificationService = new PushNotificationService(CreatingTaskActivity.this);
 
-        if (iDependentCount < intCount) {
+            pushNotificationService.sendPushToUser(strUserName, strMessage,
+                    new App42CallBack() {
 
-            try {
+                        @Override
+                        public void onSuccess(Object o) {
 
-                DependentModel dependentModel = CreatingTaskActivity.dependentModels.get(iDependentCount);
+                            strAlert = getString(R.string.activity_added);
 
-                if (!dependentModel.getStrName().
-                        equalsIgnoreCase(getResources().
-                                getString(R.string.add_dependent))) {
+                            if (o == null)
+                                strAlert = getString(R.string.no_push_actiity_added);
 
-                    final int iSelectedDependent = iDependentCount;
+                            goToActivityList(strAlert);
+                        }
 
-                    JSONObject jsonDependant = new JSONObject();
-                    jsonDependant.put("dependent_name", dependentModel.getStrName());
+                        @Override
+                        public void onException(Exception ex) {
+                            strAlert = getString(R.string.no_push_actiity_added);
 
-                    if (dependentModel.getStrIllness() == null || dependentModel.getStrIllness().equalsIgnoreCase(""))
-                        dependentModel.setStrIllness("NA");
+                            if (ex == null)
+                                strAlert = getString(R.string.activity_added);
 
-                    if (dependentModel.getStrNotes() == null || dependentModel.getStrNotes().equalsIgnoreCase(""))
-                        dependentModel.setStrNotes("NA");
+                            goToActivityList(strAlert);
+                        }
+                    });
+        } else {
+            strAlert = getString(R.string.no_push_actiity_added);
 
-                    jsonDependant.put("dependent_illness", dependentModel.getStrIllness());
+            goToActivityList(strAlert);
+        }
+    }
 
-                    jsonDependant.put("dependent_address", dependentModel.getStrAddress());
-                    jsonDependant.put("dependent_email", dependentModel.getStrEmail());
+    public void goToActivityList(String strAlert) {
 
-                    jsonDependant.put("dependent_notes", dependentModel.getStrNotes());
-                    jsonDependant.put("dependent_age", dependentModel.getIntAge());
-                    jsonDependant.put("dependent_dob", dependentModel.getStrDob());
-                    jsonDependant.put("dependent_contact_no", dependentModel.getStrContacts());
+        Intent newIntent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
 
-                    jsonDependant.put("dependent_profile_url", dependentModel.getStrImageUrl());
-                    jsonDependant.put("dependent_relation", dependentModel.getStrRelation());
-                    jsonDependant.put("customer_id", jsonDocId);
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
 
-                    jsonDependant.put("health_bp", 70 + iDependentCount);
+        Config.intSelectedMenu = Config.intDashboardScreen;
+        utils.toast(2, 2, strAlert);
 
-                    Config.strDependentNames.add(dependentModel.getStrName());
+        startActivity(newIntent);
+        finish();
 
-                    jsonDependant.put("health_heart_rate", 80 + iDependentCount);
+    }
 
-                    CreatingTaskActivity.dependentModels.get(iDependentCount).setIntHealthBp(70 +
-                            iDependentCount);
-                    CreatingTaskActivity.dependentModels.get(iDependentCount).
-                            setIntHealthHeartRate(80 + iDependentCount);
-                    CreatingTaskActivity.dependentModels.get(iDependentCount).setStrCustomerID(jsonDocId);
+   /* public void deleteCreatedActivity(){
 
-                    //jsonDependant.put("services", new JSONArray());
+        if (utils.isConnectingToInternet()) {
 
-                    if (utils.isConnectingToInternet()) {
+            storageService.deleteDocById(Config.collectionActivity, strInsertedDocumentId,
+                    new App42CallBack() {
 
-                        StorageService storageService = new StorageService(this);
+                        @Override
+                        public void onSuccess(Object o) {
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
 
-                        final String strDependentEmail = dependentModel.getStrEmail();
-                        final JSONObject object = jsonDependant;
+                            if (o != null) {
+                                utils.toast(2, 2, getString(R.string.activity_deleted));
+                            } else {
+                                utils.toast(2, 2, getString(R.string.warning_internet));
+                            }
+                        }
 
-                        storageService.findDocsByKeyValue(Config.collectionDependent,
-                                "dependent_email",
-                                strDependentEmail,
-                                new AsyncApp42ServiceApi.App42StorageServiceListener() {
-                                    @Override
-                                    public void onDocumentInserted(Storage response) {
-                                    }
+                        @Override
+                        public void onException(Exception e) {
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
 
-                                    @Override
-                                    public void onUpdateDocSuccess(Storage response) {
-                                    }
+                            if (e != null) {
+                                utils.toast(2, 2, getString(R.string.error));
+                            } else {
+                                utils.toast(2, 2, getString(R.string.warning_internet));
+                            }
+                        }
+                    });
 
-                                    @Override
-                                    public void onFindDocSuccess(Storage response) {
-
-                                        if (response != null) {
-
-                                            if (response.getJsonDocList().size() <= 0) {
-
-                                               // insertDependent(strDependentEmail, object, iSelectedDependent);
-                                            } else {
-
-                                                //
-                                                Storage.JSONDocument jsonDocument = response.
-                                                        getJsonDocList().
-                                                        get(0);
-
-                                                String strDependentDocId = jsonDocument.getDocId();
-
-                                                CreatingTaskActivity.dependentModels.
-                                                        get(iSelectedDependent).
-                                                        setStrDependentID(strDependentDocId);
-
-                                               *//* if (!Config.strDependentIds.contains(strDependentDocId))
-                                                    Config.strDependentIds.add(strDependentDocId);*//*
-                                                //
-
-                                               // createDependentUser(strDependentEmail);
-                                            }
-                                        } else {
-                                            if (progressDialog.isShowing())
-                                                progressDialog.dismiss();
-                                            utils.toast(2, 2, getString(R.string.warning_internet));
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onInsertionFailed(App42Exception ex) {
-                                    }
-
-                                    @Override
-                                    public void onFindDocFailed(App42Exception ex) {
-
-                                        if (ex != null) {
-                                            int appErrorCode = ex.getAppErrorCode();
-
-                                            if (appErrorCode == 2601) {
-                                              //  insertDependent(strDependentEmail, object,
-                                                 //       iSelectedDependent);
-                                            } else {
-                                                //createDependentUser(strDependentEmail);
-                                            }
-                                        } else {
-                                            if (progressDialog.isShowing())
-                                                progressDialog.dismiss();
-                                            utils.toast(2, 2, getString(R.string.warning_internet));
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onUpdateDocFailed(App42Exception ex) {
-                                    }
-                                });
-
-                    } else {
-                        if (progressDialog.isShowing())
-                            progressDialog.dismiss();
-                        utils.toast(2, 2, getString(R.string.warning_internet));
-                    }
-                } else {
-                    iDependentCount++;
-                    createDependent();
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-                if (progressDialog.isShowing())
-                    progressDialog.dismiss();
-                utils.toast(2, 2, getString(R.string.error));
-            }
+        } else {
+            if (progressDialog.isShowing())
+                progressDialog.dismiss();
+            utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }*/
 

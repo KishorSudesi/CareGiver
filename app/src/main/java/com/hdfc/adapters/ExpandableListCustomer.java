@@ -78,7 +78,7 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
         viewHolder.problem.setText(dependentModel.getStrIllness().length()>8 ? dependentModel.getStrIllness().substring(0,5)+"..":dependentModel.getStrIllness());
         viewHolder.premium.setText(dependentModel.getStrNotes().length()>8 ? dependentModel.getStrNotes().substring(0,5)+"..":dependentModel.getStrNotes());
 
-        File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(dependentModel.getStrName()));
+        File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(dependentModel.getStrDependentID()));
 
         if(fileImage.exists()) {
             String filename = fileImage.getAbsolutePath();
@@ -141,7 +141,7 @@ public class ExpandableListCustomer extends BaseExpandableListAdapter  {
         viewHolder.contact.setText(customerModel.getStrContacts());
         viewHolder.address.setText(customerModel.getStrAddress());
 
-        File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(customerModel.getStrName()));
+        File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(customerModel.getStrCustomerID()));
 
         if(fileImage.exists()) {
             String filename = fileImage.getAbsolutePath();

@@ -17,8 +17,8 @@ public class StorageService {
         asyncService = AsyncApp42ServiceApi.instance(context);
     }
 
-    public void insertDocs(JSONObject jsonToSave, AsyncApp42ServiceApi.App42StorageServiceListener app42CallBack) {
-        asyncService.insertJSONDoc(Config.dbName, Config.collectionProvider, jsonToSave, app42CallBack);
+    public void insertDocs(String strCollectionName, JSONObject jsonToSave, AsyncApp42ServiceApi.App42StorageServiceListener app42CallBack) {
+        asyncService.insertJSONDoc(Config.dbName, strCollectionName, jsonToSave, app42CallBack);
     }
 
     /*public void findDocsByName(String checkValue) {

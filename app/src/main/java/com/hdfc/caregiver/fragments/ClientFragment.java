@@ -115,10 +115,12 @@ public class ClientFragment extends Fragment {
     private void prepareListData() {
         listDataHeader = new ArrayList<>();
         listDataChild = new HashMap<>();
+
         if (expListView != null) {
 
             listDataHeader.clear();
             listDataChild.clear();
+
             for (ClientModel clientModel : Config.clientModels) {
                 listDataHeader.add(clientModel.getCustomerModel());
                 Utils.log(String.valueOf(clientModel.getCustomerModel().getStrAddress()), " 1 ");

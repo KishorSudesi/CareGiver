@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.Utils;
 import com.hdfc.services.GPSTracker;
 import com.hdfc.views.RoundedImageView;
@@ -53,6 +54,7 @@ public class MyProfileActivity extends AppCompatActivity {
     static RoundedImageView profileImage;
     private static Handler backgroundThreadHandler;
     private static Utils utils;
+    private static AppUtils appUtils;
     private static ProgressDialog mProgress = null;
     private static boolean isImageChanged=false;
     public TextView email;
@@ -79,6 +81,7 @@ public class MyProfileActivity extends AppCompatActivity {
         utils = new Utils(MyProfileActivity.this);
         progressDialog = new ProgressDialog(MyProfileActivity.this);
         mProgress = new ProgressDialog(MyProfileActivity.this);
+        appUtils = new AppUtils(MyProfileActivity.this);
 
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,11 +111,11 @@ public class MyProfileActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(MyProfileActivity.this);
-                    builder.setTitle("Logout");
+                    builder.setTitle(getString(R.string.confirm_logout));
                     builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            logout();
+                            AppUtils.logout();
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -284,21 +287,6 @@ public class MyProfileActivity extends AppCompatActivity {
         }
     }
 
-    public void logout() {
-        try {
-            Config.jsonObject = null;
-            //Config.jsonServer = null;
-            //Config.jsonDocId = "";
-
-            Config.intSelectedMenu = 0;
-
-            Intent newIntent = new Intent(MyProfileActivity.this, LoginActivity.class);
-            startActivity(newIntent);
-            finish();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

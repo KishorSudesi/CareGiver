@@ -130,7 +130,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                // cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
 
                 //System.out.println("Rahul : "+activityModel.getStrActivityDependentName());
-                File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(activityModel.getStrDependentID()));
+                File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(activityModel.getStrDependentID().trim()));
 
                 if (fileImage.exists()) {
                     String filename = fileImage.getAbsolutePath();
@@ -906,17 +906,17 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                         Toast.makeText(getContext(), "Contact", Toast.LENGTH_LONG).show();
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
-                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                        /*Intent sendIntent = new Intent(Intent.ACTION_VIEW);
                         sendIntent.putExtra("sms_body", activityModel != null ? activityModel.getStrActivityName() : "Activity Name");
                         sendIntent.putExtra("address", activityModel != null ? activityModel.getStrustomerID() : "0000000000");
                         sendIntent.setType("vnd.android-dir/mms-sms");
-                        startActivity(sendIntent);
+                        startActivity(sendIntent);*/
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
-                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        /*Intent callIntent = new Intent(Intent.ACTION_DIAL);
                         String strNo = "tel:" + String.valueOf(activityModel != null ? activityModel.getStrustomerID() : "0000000000");
                         callIntent.setData(Uri.parse(strNo));
-                        startActivity(callIntent);
+                        startActivity(callIntent);*/
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:
                         Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);

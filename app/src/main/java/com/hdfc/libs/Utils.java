@@ -557,7 +557,7 @@ public class Utils {
         return file;
     }
 
-    public static void toast(int type, int duration, String message) {
+    public void toast(int type, int duration, String message) {
 
         String strColor = "#ffffff";
 
