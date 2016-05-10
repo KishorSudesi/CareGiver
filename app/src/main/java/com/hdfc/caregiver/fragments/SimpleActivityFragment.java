@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.CreatingTaskActivity;
+import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
@@ -847,7 +848,23 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             case MenuItem.DIRECTION_LEFT:
                 switch (buttonPosition) {
                     case 0:
-                        /*if (activityModels.size() > 0) {
+                        if (activityModels.size() > 0) {
+                            Bundle args = new Bundle();
+                            args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
+
+                            if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("new")) {
+                                ActivityModel obj = activityModels.get(itemPosition);
+                                Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                                args.putSerializable("ACTIVITY", obj);
+                                intent.putExtras(args);
+                                startActivity(intent);
+                            } else {
+                                utils.toast(2, 2, "Activity already Closed");
+                            }
+                        }
+                        return Menu.ITEM_SCROLL_BACK;
+                    case 1:
+                        if (activityModels.size() > 0) {
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
 
@@ -860,27 +877,11 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             } else {
                                 utils.toast(2, 2, "Activity already Closed");
                             }
-                        }*/
-                        return Menu.ITEM_SCROLL_BACK;
-                    case 1:
-                        //if (activityModels.size() > 0) {
-                           /* Bundle args = new Bundle();
-                            args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
-
-                            if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("upcoming")) {
-                                ActivityModel obj = activityModels.get(itemPosition);
-                                Intent intent = new Intent(getActivity(), FeatureActivity.class);
-                                args.putSerializable("ACTIVITY", obj);
-                                intent.putExtras(args);
-                                startActivity(intent);
-                            } else {
-                                utils.toast(2, 2, "Activity already Closed");
-                            }
-                        }*/
+                        }
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
 
-                       /* if (activityModels.size() > 0) {
+                        if (activityModels.size() > 0) {
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
                             if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("completed")) {
@@ -888,7 +889,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             } else {
                                 utils.toast(2, 2, "Error. Try Again!!!");
                             }
-                        }*/
+                        }
 
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:
@@ -902,21 +903,21 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                         Toast.makeText(getContext(), "Contact", Toast.LENGTH_LONG).show();
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
-                        /*Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
                         sendIntent.putExtra("sms_body", activityModel != null ? activityModel.getStrActivityName() : "Activity Name");
-                        sendIntent.putExtra("address", activityModel != null ? activityModel.getStrustomerID() : "0000000000");
+                        sendIntent.putExtra("address", activityModel != null ? activityModel.getStrCustomerID() : "0000000000");
                         sendIntent.setType("vnd.android-dir/mms-sms");
-                        startActivity(sendIntent);*/
+                        startActivity(sendIntent);
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
-                        /*Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                        String strNo = "tel:" + String.valueOf(activityModel != null ? activityModel.getStrustomerID() : "0000000000");
+                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        String strNo = "tel:" + String.valueOf(activityModel != null ? activityModel.getStrCustomerID() : "0000000000");
                         callIntent.setData(Uri.parse(strNo));
-                        startActivity(callIntent);*/
+                        startActivity(callIntent);
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:
-                       /* Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                        startActivityForResult(intent, PICK_CONTACT);*/
+                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, PICK_CONTACT);
 
                         return Menu.ITEM_SCROLL_BACK;
                 }

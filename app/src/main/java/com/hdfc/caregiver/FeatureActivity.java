@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ExpandableListView;
@@ -38,6 +39,7 @@ import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ImageModel;
+import com.hdfc.models.MilestoneModel;
 import com.hdfc.views.TouchImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
@@ -60,6 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class FeatureActivity extends AppCompatActivity implements Serializable{
+
 
     public static Uri uri;
     public static List<String> listFeatures;
@@ -136,7 +139,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             featureAdapter = new FeatureAdapter(this, lstFeatures);*/
 
-            textViewTime.setText(utils.formatDateTime(act.getStrActivityDate()));
+            //  textViewTime.setText(utils.formatDateTime(act.getStrActivityDate()));
 
             //Utils.log(act.getStrActivityDate(), " Date ");
             //Utils.log(act.getFeatures().toString(),"Features");
@@ -231,41 +234,73 @@ if (featuresList != null) {
         });
 }
 
-if (attach != null) {
+        if (attach != null) {
         attach.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Open popup window
                 if (p != null)
- if(IMAGE_COUNT<4)
+                    if (IMAGE_COUNT < 4)
                     showStatusPopup(FeatureActivity.this, p);
              else{
-     utils.toast(2, 2, "Maximum 4 Images only Allowed");
+                        utils.toast(2, 2, "Maximum 4 Images only Allowed");
                         }
 			
 			}
         });
      }
+        TextView textViewLabel = (TextView) findViewById(R.id.textViewLabel);
+
+        ActivityModel activityModel = act;
+
+        try {
+
+            if (textViewLabel != null)
+                textViewLabel.append(activityModel.getStrServiceName());
+
+            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.milestoneLayout);
+
+            for (MilestoneModel milestoneModel : activityModel.getMilestoneModels()) {
+
+                TextView textViewName = new TextView(FeatureActivity.this);
+                textViewName.setTextAppearance(this, R.style.MilestoneStyle);
+                textViewName.setText(milestoneModel.getStrMilestoneName());
+                textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
+                textViewName.setPadding(10, 10, 10, 10);
+                textViewName.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_success));
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+                params.setMargins(10, 10, 10, 10);
+
+                textViewName.setLayoutParams(params);
 
 
+                Utils.log(milestoneModel.getStrMilestoneName(), " MS ");
+
+                if (linearLayout != null) {
+                    linearLayout.addView(textViewName);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //Expandable Listview
 
         // get the listview
-        expListView = (ExpandableListView) findViewById(R.id.lvExp);
+        /// expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
         // preparing list data
-        prepareListData();
+        // prepareListData();
 
-        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+        // listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
 
         // setting list adapter
-        expListView.setAdapter(listAdapter);
+        // expListView.setAdapter(listAdapter);
     }
 
     /*
      * Preparing the list data
      */
-    private void prepareListData() {
+    /*private void prepareListData() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
@@ -294,7 +329,7 @@ if (attach != null) {
         listDataChild.put(listDataHeader.get(0), appointment); // Header, Child data
         listDataChild.put(listDataHeader.get(1), travel);
         listDataChild.put(listDataHeader.get(2), activity);
-}
+    }*/
 
 
 

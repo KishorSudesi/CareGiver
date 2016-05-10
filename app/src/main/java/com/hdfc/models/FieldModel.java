@@ -1,9 +1,11 @@
 package com.hdfc.models;
 
+import java.io.Serializable;
+
 /**
  * Created by balamurugan@adstringo.in on 2/19/2016.
  */
-public class FieldModel {
+public class FieldModel implements Serializable {
 
     private int iFieldID;
     private boolean isFieldRequired = true;
