@@ -1,7 +1,6 @@
 package com.hdfc.caregiver.fragments;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hdfc.adapters.ClientAdapter;
-import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
@@ -92,21 +90,13 @@ public class ClientFragment extends Fragment {
         // setting list adapter
         expListView.setAdapter(listAdapter);
 
-        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+        /*expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                CustomerModel obj = (CustomerModel) parent.getAdapter().getItem(groupPosition);
-                Config.customerModel = obj;
-                ClientFragment fragment = new ClientFragment();
-                Intent intent = new Intent(getActivity(), ClientProfileActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("Client1", true);
-                bundle.putSerializable("Client", Config.customerModel);
-                fragment.setArguments(bundle);
-                startActivity(intent);
+
                 return true;
             }
-        });
+        });*/
 
        /* expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

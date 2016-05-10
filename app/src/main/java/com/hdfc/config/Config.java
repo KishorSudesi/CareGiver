@@ -56,12 +56,14 @@ public class Config {
     public static final boolean release = false;
     //Login specific //User Specific clear at logout or whenever needed
     public final static String strCustomerImageName = "provider_image";
+
     public static int intClientScreen = 2;
     public static int intRatingsScreen = 3;
-    public static int intSimpleActivityScreen = 1;
+    public static int intDashboardScreen = 1;
+
     public static int intScreenWidth = 0;
     public static int intScreenHeight = 0;
-    public static int intDashboardScreen = 1;
+
     public static ArrayList<FileModel> fileModels = new ArrayList<>();
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
 
@@ -74,8 +76,9 @@ public class Config {
 
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
 
-    public static ProviderModel providerModel = new ProviderModel();
-    public static CustomerModel customerModel = new CustomerModel();
+    public static ProviderModel providerModel = null;
+    public static CustomerModel customerModel = null;
+    public static DependentModel dependentModel = null;
 
     public static JSONObject jsonObject = null;
     public static int intSelectedMenu = 0;
@@ -89,23 +92,9 @@ public class Config {
 
     public static List<FeedBackModel> feedBackModels = new ArrayList<>();
 
-    //public static ServiceModel serviceModel = new ServiceModel();
-
-    //public static ArrayList<CategoryServiceModel> categoryServiceModels = new ArrayList<>();
-
-
-
-
     public static ArrayList<String> strServcieIds = new ArrayList<>();
     public static ArrayList<ServiceModel> serviceModels = new ArrayList<>();
     public static ArrayList<String> servicelist = new ArrayList<>();
 
-
     public static ArrayList<String> strDependentNames = new ArrayList<>();
-    //public static ArrayList<DependentModel> strDependentIds = new ArrayList<>();
-
-    //public static ArrayList<String> strServiceCategoryNames = new ArrayList<>();
-
-    public static int intSelectedDependent = 0;
-
 }

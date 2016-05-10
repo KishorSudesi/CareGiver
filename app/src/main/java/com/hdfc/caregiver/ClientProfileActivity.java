@@ -11,14 +11,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.CustomerModel;
 import com.hdfc.services.GPSTracker;
 
 import java.io.File;
@@ -28,7 +26,6 @@ import java.io.File;
  */
 public class ClientProfileActivity extends AppCompatActivity  {
 
-    private static final String TAG = "Debug";
     public static Bitmap bitmap = null;
     private static Handler backgroundThreadHandler;
     private static ProgressDialog mProgress = null;
@@ -37,13 +34,12 @@ public class ClientProfileActivity extends AppCompatActivity  {
     TextView clientName;
     Utils utils;
     ImageView clientProfile, location;
-    CustomerModel customerModel = null;
     private LocationManager locationMangaer = null;
     private LocationListener locationListener = null;
     private ImageView btnGetLocation = null;
     private TextView editLocation = null;
-    private String strClientName, strClientAddress;
-    private Boolean flag = false;
+    private String strClientName, strClientAddress, strImageName;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,34 +56,31 @@ public class ClientProfileActivity extends AppCompatActivity  {
         //location = (ImageView) findViewById(R.id.imageLocation);
         mProgress = new ProgressDialog(this);
 
-        Intent intent = this.getIntent();
-        Bundle bundle = intent.getExtras();
-        Boolean bundle1 = intent.getBooleanExtra("Client1", true);
-
-        System.out.println("Value of bundle 1 is : " + bundle1);
-
-        customerModel = new CustomerModel();
-        if (bundle1) {
-            System.out.println("Here is new o/p: " + Config.customerModel.toString());
-
-            //customerModel = (CustomerModel)bundle.getSerializable("Client");
+        if (Config.customerModel != null) {
             strClientName = Config.customerModel.getStrName();
-            strClientAddress = Config.customerModel.getStrAddress();
-        } else {
-
+            strClientAddress = Config.customerModel.getStrCountryCode();
+            strImageName = Config.customerModel.getStrCustomerID();
         }
 
+        if (Config.dependentModel != null) {
+            strClientName = Config.dependentModel.getStrName();
+            strClientAddress = Config.dependentModel.getStrAddress();
+
+            age.setText(String.valueOf(Config.dependentModel.getIntAge()));
+            health.setText(Config.dependentModel.getStrIllness());
+            account.setText(Config.dependentModel.getStrNotes());
+            mobile.setText(Config.dependentModel.getStrEmail());
+            strImageName = Config.dependentModel.getStrDependentID();
+
+        }
 
         utils = new Utils(ClientProfileActivity.this);
 
         clientProfile.setImageResource(R.drawable.carla2);
         clientName.setText(strClientName);
-      /*  age.setText(client_model.getAge());
-        health.setText(client_model.getProblem());
-        account.setText(client_model.getPremium());
-        address.setText(client_model.getAddress());
-        mobile.setText(client_model.getStrMobile());
-*/
+        address.setText(strClientAddress);
+
+/*
 
         edit = (ImageView) findViewById(R.id.imgPen);
 
@@ -141,6 +134,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
                 mobile.requestFocus();
             }
         });
+*/
 
 
         backbutton = (ImageView) findViewById(R.id.imgBackArrow);
@@ -150,22 +144,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
 
                 Intent intent = new Intent(ClientProfileActivity.this,DashboardActivity.class);
                 Config.intSelectedMenu=Config.intClientScreen;
-                //intent.putExtra("WHICH_SCREEN", intWhichScreen);
                 startActivity(intent);
-
-                /*Fragment anotherFragment = Fragment.instantiate(ClientProfileActivity.this, ClientFragment.class.getName());
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.add(R.id.frameLayout,anotherFragment);
-                ft.addToBackStack(null);
-                ft.commit();*/
-
-                /*ClientFragment fragment = ClientFragment.newInstance();
-                Bundle args = new Bundle();
-                fragment.setArguments(args);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frameLayout, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();*/
             }
         });
 
@@ -215,7 +194,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
         public void run() {
             try {
 
-                File f = utils.getInternalFileImages(utils.replaceSpace(strClientName));
+                File f = utils.getInternalFileImages(utils.replaceSpace(strImageName));
 
                 Utils.log(strClientName, "FP ");
 
@@ -240,7 +219,5 @@ public class ClientProfileActivity extends AppCompatActivity  {
                 clientProfile.setImageBitmap(bitmap);
         }
     }
-
-
 }
 

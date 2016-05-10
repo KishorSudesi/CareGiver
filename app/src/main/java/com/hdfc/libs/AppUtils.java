@@ -551,7 +551,9 @@ public class AppUtils {
                     activityModel.setStrServcieID(jsonObject.getString("service_id"));
                     activityModel.setStrServiceName(jsonObject.getString("service_name"));
 
-                    activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
+                    if (jsonObject.has("activity_date"))
+                        activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
+
                     activityModel.setStrActivityDoneDate(jsonObject.
                             getString("activity_done_date"));
 

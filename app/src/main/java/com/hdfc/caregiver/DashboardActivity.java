@@ -36,7 +36,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
     public static void gotoSimpleActivity() {
 
         // if (Config.intSelectedMenu != Config.intSimpleActivityScreen) {
-        Config.intSelectedMenu = Config.intSimpleActivityScreen;
+        Config.intSelectedMenu = Config.intDashboardScreen;
 
         SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
         Bundle args = new Bundle();
@@ -83,7 +83,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                 setMenu();
                 mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
                 textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                Config.intSelectedMenu = 0;
+                //Config.intSelectedMenu = 0;
                 refreshData();
             }
         });
@@ -94,7 +94,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                 setMenu();
                 clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
                 textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                Config.intSelectedMenu = 0;
+                //Config.intSelectedMenu = 0;
                 gotoClient();
             }
         });
@@ -105,7 +105,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                 setMenu();
                 feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
                 textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                Config.intSelectedMenu = 0;
+                //Config.intSelectedMenu = 0;
                 gotoFeedback();
             }
         });
@@ -187,10 +187,13 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                 builder.show();
             } else {
 
-                mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
-                textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
-                refreshData();
+                    mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+                    textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                    refreshData();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -260,10 +263,8 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
 
-            //if (Config.intSelectedMenu == Config.intSimpleActivityScreen
-            //      || Config.intSelectedMenu == Config.intDashboardScreen) {
+            if (Config.intSelectedMenu == Config.intDashboardScreen)
                 gotoSimpleActivity();
-            //}
         }
     }
 

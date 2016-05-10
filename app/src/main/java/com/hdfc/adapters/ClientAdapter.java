@@ -1,6 +1,7 @@
 package com.hdfc.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,9 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.config.Config;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.CustomerModel;
@@ -66,53 +69,14 @@ public class ClientAdapter extends BaseExpandableListAdapter {
             viewHolder.problem = (TextView) convertView.findViewById(R.id.textViewClient_problem);
             viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
-            viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);
-
-            //expListView = (ExpandableListView) convertView.findViewById(R.id.listExp);
-
-            /*ClientFragment.expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-                @Override
-                public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                    ClientModel obj = (ClientModel) parent.getAdapter().getItem(groupPosition);
-                    Intent intent = new Intent(_context, ClientProfileActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("Client", obj);
-                    intent.putExtras(bundle);
-                    _context.startActivity(intent);
-                    return true;
-                }
-            });*/
-            /*ClientFragment.expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-                @Override
-                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-
-                    CustomerModel obj = (CustomerModel) parent.getAdapter().getItem(groupPosition);
-                    Intent intent = new Intent(_context, ClientProfileActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("Client", obj);
-                    bundle.putBoolean("Client1", true);
-                    intent.putExtras(bundle);
-                    _context.startActivity(intent);
-
-                    return true;
-                }
-            });*/
-            /*ClientFragment.expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    ClientModel obj = (ClientModel) parent.getAdapter().getItem(position);
-                    Intent intent = new Intent(_context, ClientProfileActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("Client", obj);
-                    intent.putExtras(bundle);
-                    _context.startActivity(intent);
-                }
-            });*/
+            viewHolder.customer = (ImageView) convertView.findViewById(R.id.imageClients);
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+
+        viewHolder.customer.setTag(dependentModel);
 
         viewHolder.name.setText(dependentModel.getStrName());
         //viewHolder.age.setText(dependentModel.getIntAge());
@@ -126,12 +90,25 @@ public class ClientAdapter extends BaseExpandableListAdapter {
 
         if(fileImage.exists()) {
             String filename = fileImage.getAbsolutePath();
-            multiBitmapLoader.loadBitmap(filename, viewHolder.client);
+            multiBitmapLoader.loadBitmap(filename, viewHolder.customer);
         }else{
-            viewHolder.client.setImageDrawable(_context.getResources().getDrawable(R.drawable.hungal_circle));
+            viewHolder.customer.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
         }
 
         viewHolder.address.setText(dependentModel.getStrAddress());
+
+        viewHolder.customer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //
+                Config.dependentModel = (DependentModel) v.getTag();
+                Config.customerModel = null;
+
+                Intent intent = new Intent(_context, ClientProfileActivity.class);
+                _context.startActivity(intent);
+            }
+        });
 
 //        TextView txtListChild = (TextView) convertView
 //                .findViewById(R.id.lblListItem);
@@ -185,6 +162,8 @@ public class ClientAdapter extends BaseExpandableListAdapter {
         viewHolder.contact.setText(customerModel.getStrContacts());
         viewHolder.address.setText(customerModel.getStrAddress());
 
+        viewHolder.client.setTag(customerModel);
+
         File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(customerModel.getStrCustomerID()));
 
         if(fileImage.exists()) {
@@ -193,6 +172,19 @@ public class ClientAdapter extends BaseExpandableListAdapter {
         }else{
             viewHolder.client.setImageDrawable(_context.getResources().getDrawable(R.drawable.hungal_circle));
         }
+
+        viewHolder.client.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //
+                Config.customerModel = (CustomerModel) v.getTag();
+                Config.dependentModel = null;
+                Intent intent = new Intent(_context, ClientProfileActivity.class);
+                _context.startActivity(intent);
+            }
+        });
+
         return convertView;
     }
 
@@ -208,7 +200,7 @@ public class ClientAdapter extends BaseExpandableListAdapter {
 
     public  class ViewHolder{
         TextView name,age,problem,address,premium,contact;
-        ImageView client;
+        ImageView client, customer;
 
     }
 }
