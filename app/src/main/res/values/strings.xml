@@ -118,6 +118,7 @@
 
     <!--Common Strings-->
 
+    <string name="milestones">Services Involved in &#160;</string>
     <string name="edit">Edit</string>
     <string name="string_continue">Continue</string>
     <string name="create_password">Create a Password</string>

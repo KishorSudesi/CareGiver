@@ -1,11 +1,12 @@
 package com.hdfc.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by balamurugan@adstringo.in on 2/19/2016.
  */
-public class MilestoneModel {
+public class MilestoneModel implements Serializable {
 
     private int iMilestoneId;
     private String strMilestoneStatus;
