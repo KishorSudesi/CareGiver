@@ -1,12 +1,10 @@
 package com.hdfc.config;
 
 import android.os.Build;
-import android.util.Log;
 
 import com.hdfc.caregiver.BuildConfig;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
-import com.hdfc.models.CategoryServiceModel;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
@@ -77,6 +75,7 @@ public class Config {
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
 
     public static ProviderModel providerModel = new ProviderModel();
+    public static CustomerModel customerModel = new CustomerModel();
 
     public static JSONObject jsonObject = null;
     public static int intSelectedMenu = 0;
@@ -107,7 +106,6 @@ public class Config {
 
     //public static ArrayList<String> strServiceCategoryNames = new ArrayList<>();
 
-    public static CustomerModel customerModel = null;
     public static int intSelectedDependent = 0;
 
 }

@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.ClientModel;
+import com.hdfc.models.CustomerModel;
 import com.hdfc.services.GPSTracker;
 
 import java.io.File;
@@ -37,6 +37,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
     TextView clientName;
     Utils utils;
     ImageView clientProfile, location;
+    CustomerModel customerModel = null;
     private LocationManager locationMangaer = null;
     private LocationListener locationListener = null;
     private ImageView btnGetLocation = null;
@@ -63,18 +64,19 @@ public class ClientProfileActivity extends AppCompatActivity  {
         Bundle bundle = intent.getExtras();
         Boolean bundle1 = intent.getBooleanExtra("Client1", true);
 
-        ClientModel client_model = (ClientModel) bundle.getSerializable("Client");
+        System.out.println("Value of bundle 1 is : " + bundle1);
 
-        if (bundle1 == true) {
-            System.out.println("Success");
+        customerModel = new CustomerModel();
+        if (bundle1) {
+            System.out.println("Here is new o/p: " + Config.customerModel.toString());
+
+            //customerModel = (CustomerModel)bundle.getSerializable("Client");
+            strClientName = Config.customerModel.getStrName();
+            strClientAddress = Config.customerModel.getStrAddress();
         } else {
-            System.out.println("Failure");
+
         }
 
-
-
-        strClientName = client_model.getCustomerModel().getStrName();
-        client_model.getCustomerModel().getStrAddress();
 
         utils = new Utils(ClientProfileActivity.this);
 

@@ -94,7 +94,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                 setMenu();
                 clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
                 textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                //Config.intSelectedMenu = 0;
+                Config.intSelectedMenu = 0;
                 gotoClient();
             }
         });
@@ -228,6 +228,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
     public void gotoClient() {
         // if (Config.intSelectedMenu != Config.intClientScreen) {
             Config.intSelectedMenu = Config.intClientScreen;
+
             ClientFragment fragment = ClientFragment.newInstance();
             Bundle args = new Bundle();
             fragment.setArguments(args);
@@ -259,11 +260,10 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
 
-            if (Config.intSelectedMenu == Config.intSimpleActivityScreen
-                    || Config.intSelectedMenu == Config.intDashboardScreen) {
+            //if (Config.intSelectedMenu == Config.intSimpleActivityScreen
+            //      || Config.intSelectedMenu == Config.intDashboardScreen) {
                 gotoSimpleActivity();
-
-            }
+            //}
         }
     }
 
