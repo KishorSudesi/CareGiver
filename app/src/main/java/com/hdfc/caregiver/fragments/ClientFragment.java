@@ -34,10 +34,6 @@ public class ClientFragment extends Fragment {
     private Utils utils;
 
     private ProgressDialog progressDialog;
-/*
-    public ClientFragment() {
-        // Required empty public constructor
-    }*/
 
     public static ClientFragment newInstance() {
         ClientFragment fragment = new ClientFragment();
@@ -64,55 +60,15 @@ public class ClientFragment extends Fragment {
 
         progressDialog = new ProgressDialog(getActivity());
 
-        listAdapter = new ClientAdapter();
-        prepareListData();
-
         listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
-//        listViewClients = (ListView)view.findViewById(R.id.listViewClients);
 
-         /*listViewClients.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-             {
-                 ClientModel obj = (ClientModel)parent.getAdapter().getItem(position);
-                 Intent intent  = new Intent(getActivity(),ClientProfileActivity.class);
-                 Bundle bundle = new Bundle();
-                 bundle.putSerializable("Client", obj);
-                 intent.putExtras(bundle);
-                 startActivity(intent);
-             }
-         });*/
-        //expandable list
+        expListView.setAdapter(listAdapter);
 
         progressDialog.setMessage(getString(R.string.loading));
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-
-        // preparing list data
-
-        // setting list adapter
-
-        /*expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-
-                return true;
-            }
-        });*/
-        expListView.setAdapter(listAdapter);
-       /* expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ClientModel obj = (ClientModel) parent.getAdapter().getItem(position);
-                Intent intent = new Intent(getActivity(), ClientProfileActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("Client", obj);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-*/
-
+        prepareListData();
 
         return view;
     }
@@ -132,8 +88,7 @@ public class ClientFragment extends Fragment {
                 Utils.log(String.valueOf(clientModel.getCustomerModel().getStrAddress()), " 1 ");
                 listDataChild.put(clientModel.getCustomerModel(),clientModel.getDependentModels());
             }
-            //listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
-      //      listAdapter.notifyDataSetChanged();
+            listAdapter.notifyDataSetChanged();
         }
 
         if (progressDialog.isShowing())
@@ -143,6 +98,5 @@ public class ClientFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        
     }
 }
