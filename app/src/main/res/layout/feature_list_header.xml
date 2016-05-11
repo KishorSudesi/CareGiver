@@ -20,10 +20,10 @@
         android:id="@+id/imgLogoHeaderTaskDetail"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/mrs_hungal_circle2"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/imgBackHeaderTaskDetail"
+        android:src="@drawable/person_icon"
         />
 
     <TextView
@@ -52,11 +52,11 @@
         android:id="@+id/textViewAttach"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Click to Attach"
-        android:textColor="@color/colorWhite"
-        android:layout_below="@+id/imgAttachHeaderTaskDetail"
         android:layout_alignParentRight="true"
-        android:padding="3dp"/>
+        android:layout_below="@+id/imgAttachHeaderTaskDetail"
+        android:padding="3dp"
+        android:text="Click to Attach"
+        android:textColor="@color/colorWhite" />
 
 
 </RelativeLayout>

@@ -900,19 +900,30 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 ActivityModel activityModel = activityModels.get(itemPosition);
                 switch (buttonPosition) {
                     case 0:
-                        Toast.makeText(getContext(), "Contact", Toast.LENGTH_LONG).show();
+
+                        int iPosition3 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
+                        String strNo4 = Config.dependentModels.get(iPosition3).getStrAddress();
+                        Toast.makeText(getContext(), strNo4, Toast.LENGTH_LONG).show();
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
                         Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+
+                        int iPosition = Config.dependentIds.indexOf(activityModel.getStrDependentID());
+                        String strNo2 = Config.dependentModels.get(iPosition).getStrContacts();
+
                         sendIntent.putExtra("sms_body", activityModel != null ? activityModel.getStrActivityName() : "Activity Name");
-                        sendIntent.putExtra("address", activityModel != null ? activityModel.getStrCustomerID() : "0000000000");
+                        sendIntent.putExtra("address", activityModel != null ? strNo2 : "0000000000");
                         sendIntent.setType("vnd.android-dir/mms-sms");
                         startActivity(sendIntent);
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
+
+                        int iPosition2 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
+                        String strNo3 = Config.dependentModels.get(iPosition2).getStrContacts();
+
                         Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                        String strNo = "tel:" + String.valueOf(activityModel != null ? activityModel.getStrCustomerID() : "0000000000");
-                        callIntent.setData(Uri.parse(strNo));
+                        String strNo1 = "tel:" + String.valueOf(activityModel != null ? strNo3 : "0000000000");
+                        callIntent.setData(Uri.parse(strNo1));
                         startActivity(callIntent);
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:

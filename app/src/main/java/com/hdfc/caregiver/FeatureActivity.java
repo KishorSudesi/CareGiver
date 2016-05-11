@@ -38,6 +38,7 @@ import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
+import com.hdfc.models.FieldModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.views.TouchImageView;
@@ -63,7 +64,6 @@ import java.util.List;
 
 public class FeatureActivity extends AppCompatActivity implements Serializable{
 
-
     public static Uri uri;
     public static List<String> listFeatures;
     public static String strImageName = "";
@@ -82,6 +82,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     private static String strName;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
+    final Context context = this;
     public JSONObject json;
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
@@ -135,7 +136,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 act.setFeatures(new String[]{"corn", "potato"});
             List<String> lstFeatures = new ArrayList<>(Arrays.asList(act.getFeatures()));
 
-            dependentName.setText(act.getStrActivityDependentName());
+
 
             featureAdapter = new FeatureAdapter(this, lstFeatures);*/
 
@@ -147,13 +148,17 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             //
             //Utils.log(utils.replaceSpace(act.getStrActivityDependentName()), " NAME ");
+
+            int iPosition = Config.dependentIds.indexOf(act.getStrDependentID());
+            String name = Config.dependentModels.get(iPosition).getStrName();
+            dependentName.setText(name);
             File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrDependentID()));
 
             if (fileImage.exists()) {
                 String filename = fileImage.getAbsolutePath();
                 multiBitmapLoader.loadBitmap(filename, imgLogoHeaderTaskDetail);
             } else {
-                imgLogoHeaderTaskDetail.setImageDrawable(getResources().getDrawable(R.drawable.mrs_hungal_circle2));
+                imgLogoHeaderTaskDetail.setImageDrawable(getResources().getDrawable(R.drawable.person_icon));
             }
 
         }catch (Exception e){
@@ -249,18 +254,18 @@ if (featuresList != null) {
 			}
         });
      }
-        TextView textViewLabel = (TextView) findViewById(R.id.textViewLabel);
+        //TextView textViewLabel = (TextView) findViewById(R.id.textViewLabel);
 
-        ActivityModel activityModel = act;
+        final ActivityModel activityModel = act;
 
         try {
 
-            if (textViewLabel != null)
-                textViewLabel.append(activityModel.getStrServiceName());
+            // if (textViewLabel != null)
+            //    textViewLabel.append(activityModel.getStrServiceName());
 
             LinearLayout linearLayout = (LinearLayout) findViewById(R.id.milestoneLayout);
 
-            for (MilestoneModel milestoneModel : activityModel.getMilestoneModels()) {
+            for (final MilestoneModel milestoneModel : activityModel.getMilestoneModels()) {
 
                 TextView textViewName = new TextView(FeatureActivity.this);
                 textViewName.setTextAppearance(this, R.style.MilestoneStyle);
@@ -279,10 +284,33 @@ if (featuresList != null) {
                 if (linearLayout != null) {
                     linearLayout.addView(textViewName);
                 }
+                textViewName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // custom dialog
+                        final Dialog dialog = new Dialog(context);
+                        dialog.setContentView(R.layout.dialog_view);
+                        dialog.setTitle(milestoneModel.getStrMilestoneName());
+
+                        for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
+                            // set the custom dialog components - text, image and button
+                            TextView text1 = (TextView) dialog.findViewById(R.id.text1);
+                            TextView text2 = (TextView) dialog.findViewById(R.id.text2);
+                            TextView text3 = (TextView) dialog.findViewById(R.id.text3);
+                            text1.setText(fieldModel.getStrFieldLabel());
+                        }
+
+                        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+                        // if button is clicked, close the custom dialog
+
+                        dialog.show();
+                    }
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         //Expandable Listview
 
         // get the listview
