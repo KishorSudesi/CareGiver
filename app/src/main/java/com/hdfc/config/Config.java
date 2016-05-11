@@ -75,6 +75,7 @@ public class Config {
     public static ArrayList<String> customerIdsAdded = new ArrayList<>();
 
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
+    public static ArrayList<CustomerModel> customerModels = new ArrayList<>();
 
     public static ProviderModel providerModel = null;
     public static CustomerModel customerModel = null;

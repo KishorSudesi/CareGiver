@@ -31,14 +31,15 @@ public class ClientProfileActivity extends AppCompatActivity  {
     private static ProgressDialog mProgress = null;
     ImageView backbutton, edit;
     TextView age, health, account, address, mobile, direction;
+    TextView txtAge, txtHealth, txtNotes, txtMap;
     TextView clientName;
     Utils utils;
     ImageView clientProfile, location;
     private LocationManager locationMangaer = null;
     private LocationListener locationListener = null;
     private ImageView btnGetLocation = null;
-    private TextView editLocation = null;
-    private String strClientName, strClientAddress, strImageName;
+    TextView editLocation = null;
+    private String strClientName, strClientAddress, strImageName, strMobileNo;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,14 @@ public class ClientProfileActivity extends AppCompatActivity  {
         account = (TextView) findViewById(R.id.editTextAccountType);
         address = (TextView) findViewById(R.id.editTextAddress);
         mobile = (TextView) findViewById(R.id.editTextMobileNumber);
-        //  direction = (EditText) findViewById(R.id.editTextGetDirection);;
+        editLocation = (TextView) findViewById(R.id.editTextGetDirection);
+        btnGetLocation = (ImageView) findViewById(R.id.imageLocation);
+
+        txtAge = (TextView)findViewById(R.id.txtAge);
+        txtHealth = (TextView)findViewById(R.id.txtHealth);
+        txtNotes = (TextView)findViewById(R.id.txtNotes);
+        txtMap = (TextView)findViewById(R.id.txtMap);
+
         clientName = (TextView) findViewById(R.id.textViewClientProfileName);
         clientProfile = (ImageView) findViewById(R.id.imageClientProfile);
         //location = (ImageView) findViewById(R.id.imageLocation);
@@ -60,6 +68,16 @@ public class ClientProfileActivity extends AppCompatActivity  {
             strClientName = Config.customerModel.getStrName();
             strClientAddress = Config.customerModel.getStrCountryCode();
             strImageName = Config.customerModel.getStrCustomerID();
+            strMobileNo = Config.customerModel.getStrContacts();
+            age.setVisibility(View.GONE);
+            health.setVisibility(View.GONE);
+            account.setVisibility(View.GONE);
+            editLocation.setVisibility(View.GONE);
+            txtAge.setVisibility(View.GONE);
+            txtHealth.setVisibility(View.GONE);
+            txtMap.setVisibility(View.GONE);
+            txtNotes.setVisibility(View.GONE);
+            btnGetLocation.setVisibility(View.GONE);
         }
 
         if (Config.dependentModel != null) {
@@ -69,17 +87,19 @@ public class ClientProfileActivity extends AppCompatActivity  {
             age.setText(String.valueOf(Config.dependentModel.getIntAge()));
             health.setText(Config.dependentModel.getStrIllness());
             account.setText(Config.dependentModel.getStrNotes());
-            mobile.setText(Config.dependentModel.getStrEmail());
+            strMobileNo = Config.dependentModel.getStrContacts();
             strImageName = Config.dependentModel.getStrDependentID();
-
+            txtMap.setVisibility(View.GONE);
+            editLocation.setVisibility(View.GONE);
+            btnGetLocation.setVisibility(View.GONE);
         }
 
         utils = new Utils(ClientProfileActivity.this);
 
-        clientProfile.setImageResource(R.drawable.carla2);
+        clientProfile.setImageResource(R.drawable.person_icon);
         clientName.setText(strClientName);
         address.setText(strClientAddress);
-
+        mobile.setText(strMobileNo);
 /*
 
         edit = (ImageView) findViewById(R.id.imgPen);
@@ -155,9 +175,9 @@ public class ClientProfileActivity extends AppCompatActivity  {
        /* pb = (ProgressBar) findViewById(R.id.progressBar1);
         pb.setVisibility(View.INVISIBLE);
 */
-        editLocation = (TextView) findViewById(R.id.editTextGetDirection);
 
-        btnGetLocation = (ImageView) findViewById(R.id.imageLocation);
+
+
         btnGetLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,6 +208,8 @@ public class ClientProfileActivity extends AppCompatActivity  {
         mProgress.setMessage(getResources().getString(R.string.loading));
         mProgress.show();
     }
+
+
 
     public class BackgroundThread extends Thread {
         @Override

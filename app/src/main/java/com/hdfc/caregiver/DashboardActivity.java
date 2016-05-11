@@ -111,7 +111,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         });
 
         if (Config.intSelectedMenu == Config.intClientScreen) {
-            //Config.intSelectedMenu = 0;
+            Config.intSelectedMenu = 0;
             clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
             textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
             gotoClient();
@@ -200,13 +200,6 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         }
     }
 
-    public void refreshData() {
-        progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
-        appUtils.fetchActivities(progressDialog);
-    }
 
     @Override
     public void onRegisterApp42(String var1) {
@@ -226,6 +219,27 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
+    }
+
+    public void refreshData() {
+
+        progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        appUtils.fetchActivities(progressDialog);
+
+        Config.intSelectedMenu = Config.intDashboardScreen;
+
+        SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frameLayout, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+     //   progressDialog.dismiss();
     }
 
     public void gotoClient() {

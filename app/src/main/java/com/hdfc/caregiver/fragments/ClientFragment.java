@@ -60,9 +60,14 @@ public class ClientFragment extends Fragment {
 
         utils = new Utils(getActivity());
         profileImg = (ImageView)view.findViewById(R.id.imageClients);
+        expListView = (ExpandableListView) view.findViewById(R.id.listExp);
 
         progressDialog = new ProgressDialog(getActivity());
 
+        listAdapter = new ClientAdapter();
+        prepareListData();
+
+        listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
 //        listViewClients = (ListView)view.findViewById(R.id.listViewClients);
 
          /*listViewClients.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,13 +87,10 @@ public class ClientFragment extends Fragment {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        expListView = (ExpandableListView) view.findViewById(R.id.listExp);
 
         // preparing list data
-        listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
 
         // setting list adapter
-        expListView.setAdapter(listAdapter);
 
         /*expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
@@ -97,7 +99,7 @@ public class ClientFragment extends Fragment {
                 return true;
             }
         });*/
-
+        expListView.setAdapter(listAdapter);
        /* expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -110,10 +112,11 @@ public class ClientFragment extends Fragment {
             }
         });
 */
-        prepareListData();
+
 
         return view;
     }
+
 
     private void prepareListData() {
         listDataHeader = new ArrayList<>();
@@ -130,7 +133,7 @@ public class ClientFragment extends Fragment {
                 listDataChild.put(clientModel.getCustomerModel(),clientModel.getDependentModels());
             }
             //listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
-            listAdapter.notifyDataSetChanged();
+      //      listAdapter.notifyDataSetChanged();
         }
 
         if (progressDialog.isShowing())
@@ -140,5 +143,6 @@ public class ClientFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        
     }
 }

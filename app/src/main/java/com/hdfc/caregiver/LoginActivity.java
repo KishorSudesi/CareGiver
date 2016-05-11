@@ -17,10 +17,15 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.Utils;
+import com.hdfc.models.ClientModel;
+import com.hdfc.models.CustomerModel;
+import com.hdfc.models.DependentModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -32,6 +37,9 @@ public class LoginActivity extends AppCompatActivity {
     private RelativeLayout relLayout;
     private EditText editEmail, editPassword;
     private RelativeLayout layoutLogin;
+    ArrayList<DependentModel> dependentModels = Config.dependentModels;
+    ArrayList<CustomerModel> customerModels = Config.customerModels;
+    ArrayList<ClientModel> clientModels = Config.clientModels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +164,10 @@ public class LoginActivity extends AppCompatActivity {
                     userService.authenticate(userName, password, new App42CallBack() {
                         @Override
                         public void onSuccess(Object o) {
+                            dependentModels.clear();
+                            customerModels.clear();
+                            clientModels.clear();
+
                             if(o != null){
                                 Config.dependentIds.clear();
                                 Config.strActivityIds.clear();
