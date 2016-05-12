@@ -103,7 +103,6 @@ public class ClientAdapter extends BaseExpandableListAdapter {
         viewHolder.customer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //
                 Config.dependentModel = (DependentModel) v.getTag();
                 Config.customerModel = null;
@@ -179,7 +178,6 @@ public class ClientAdapter extends BaseExpandableListAdapter {
         viewHolder.client.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //
                 Config.customerModel = (CustomerModel) v.getTag();
                 Config.dependentModel = null;

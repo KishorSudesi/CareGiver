@@ -60,15 +60,18 @@ public class ClientFragment extends Fragment {
 
         progressDialog = new ProgressDialog(getActivity());
 
-        listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
-
-        expListView.setAdapter(listAdapter);
+        listAdapter = new ClientAdapter();
 
         progressDialog.setMessage(getString(R.string.loading));
         progressDialog.setCancelable(false);
         progressDialog.show();
 
         prepareListData();
+
+        listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
+
+        expListView.setAdapter(listAdapter);
+
 
         return view;
     }

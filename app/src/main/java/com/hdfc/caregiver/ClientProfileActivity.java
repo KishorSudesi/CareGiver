@@ -7,12 +7,14 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hdfc.config.Config;
@@ -37,6 +39,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
     ImageView clientProfile, location;
     private LocationManager locationMangaer = null;
     private LocationListener locationListener = null;
+    LinearLayout dialNubmer;
     private ImageView btnGetLocation = null;
     TextView editLocation = null;
     private String strClientName, strClientAddress, strImageName, strMobileNo;
@@ -53,6 +56,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
         mobile = (TextView) findViewById(R.id.editTextMobileNumber);
         editLocation = (TextView) findViewById(R.id.editTextGetDirection);
         btnGetLocation = (ImageView) findViewById(R.id.imageLocation);
+        dialNubmer = (LinearLayout)findViewById(R.id.dialNumber);
 
         txtAge = (TextView)findViewById(R.id.txtAge);
         txtHealth = (TextView)findViewById(R.id.txtHealth);
@@ -161,7 +165,6 @@ public class ClientProfileActivity extends AppCompatActivity  {
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(ClientProfileActivity.this,DashboardActivity.class);
                 Config.intSelectedMenu=Config.intClientScreen;
                 startActivity(intent);
@@ -169,6 +172,15 @@ public class ClientProfileActivity extends AppCompatActivity  {
         });
 
 
+        dialNubmer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                String strNo1 = "tel:" + strMobileNo;
+                callIntent.setData(Uri.parse(strNo1));
+                startActivity(callIntent);
+            }
+        });
         //if you want to lock screen for always Portrait mode
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
