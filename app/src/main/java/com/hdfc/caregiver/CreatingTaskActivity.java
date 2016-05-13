@@ -54,6 +54,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private Utils utils;
     private EditText dateTime, editTextTitle;
+    private JSONObject jsonObject;
 
         private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -86,6 +87,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         utils = new Utils(CreatingTaskActivity.this);
         progressDialog = new ProgressDialog(CreatingTaskActivity.this);
+
+        storageService = new StorageService(CreatingTaskActivity.this);
 
        /* ArrayAdapter<String> adapter;
         adapter = new ArrayAdapter<String>(CreatingTaskActivity.this,android.R.layout.select_dialog_item, Config.servicelist);
@@ -185,65 +188,64 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         refreshClients();
 
-        storageService = new StorageService(CreatingTaskActivity.this);
-           storageService.findAllDocs(Config.collectionService,
-                   new App42CallBack() {
-                       @Override
-                       public void onSuccess(Object o) {
+        storageService.findAllDocs(Config.collectionService,
+                new App42CallBack() {
+                    @Override
+                    public void onSuccess(Object o) {
 
-                           if (o != null) {
+                        if (o != null) {
 
-                               Storage storage = (Storage) o;
+                            Storage storage = (Storage) o;
 
-                               ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
+                            ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
 
-                               for (int i = 0; i < jsonDocList.size(); i++) {
+                            for (int i = 0; i < jsonDocList.size(); i++) {
 
-                                   Storage.JSONDocument jsonDocument = jsonDocList.get(i);
+                                Storage.JSONDocument jsonDocument = jsonDocList.get(i);
 
-                                   String strDocumentId = jsonDocument.getDocId();
+                                String strDocumentId = jsonDocument.getDocId();
 
-                                   String strServices = jsonDocument.getJsonDoc();
+                                String strServices = jsonDocument.getJsonDoc();
 
-                                   try {
+                                try {
 
-                                       JSONObject jsonObjectServcies = new JSONObject(strServices);
+                                    JSONObject jsonObjectServcies = new JSONObject(strServices);
 
-                                       if (jsonObjectServcies.has("unit"))
-                                           utils.createServiceModel(strDocumentId, jsonObjectServcies);
+                                    if (jsonObjectServcies.has("unit"))
+                                        utils.createServiceModel(strDocumentId, jsonObjectServcies);
 
-                                   } catch (JSONException e) {
-                                       e.printStackTrace();
-                                   }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                }
-
-                           } else {
-                               utils.toast(2, 2, getString(R.string.warning_internet));
                            }
 
-                           refreshServices();
+                        } else {
+                            utils.toast(2, 2, getString(R.string.warning_internet));
                        }
 
-                       @Override
-                       public void onException(Exception e) {
+                        refreshServices();
+                    }
 
-                           try {
-                               refreshServices();
-                               if (e != null) {
-                                   JSONObject jsonObject = new JSONObject(e.getMessage());
-                                   JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
-                                   String strMess = jsonObjectError.getString("details");
+                    @Override
+                    public void onException(Exception e) {
 
-                                   utils.toast(2, 2, strMess);
-                               } else {
-                                   utils.toast(2, 2, getString(R.string.warning_internet));
-                               }
+                        try {
+                            refreshServices();
+                            if (e != null) {
+                                JSONObject jsonObject = new JSONObject(e.getMessage());
+                                JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
+                                String strMess = jsonObjectError.getString("details");
 
-                           } catch (JSONException e1) {
-                               e1.printStackTrace();
+                                utils.toast(2, 2, strMess);
+                            } else {
+                                utils.toast(2, 2, getString(R.string.warning_internet));
                            }
+
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
                        }
-                   });
+                    }
+                });
     }
 
     public void refreshClients(){
@@ -299,7 +301,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             jsonObjectServices.put("activity_done_date", "");
             jsonObjectServices.put("activity_name", serviceModel.getStrServiceName());
             jsonObjectServices.put("activity_desc", valTitle);
-            jsonObjectServices.put("overdue", "false");
+            jsonObjectServices.put("overdue", false);
 
             JSONArray jsonArray = new JSONArray();
 
@@ -320,6 +322,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 jsonObjectMilestone.put("status", milestoneModel.getStrMilestoneStatus());
                 jsonObjectMilestone.put("name", milestoneModel.getStrMilestoneName());
                 jsonObjectMilestone.put("date", milestoneModel.getStrMilestoneDate());
+                jsonObjectMilestone.put("show", milestoneModel.isVisible());
 
                 JSONArray jsonArrayFields = new JSONArray();
 
@@ -327,6 +330,22 @@ public class CreatingTaskActivity extends AppCompatActivity {
                         serviceModel.getStrServiceName() + getString(R.string.to) +
                         dependentModel.getStrName() +
                         getString(R.string.on) + strDate;
+
+                jsonObject = new JSONObject();
+
+                try {
+                    Date date = new Date();
+                    String strDate = utils.convertDateToString(date);
+
+                    jsonObject.put("created_by", Config.providerModel.getStrProviderId());
+                    jsonObject.put("time", strDate);
+                    jsonObject.put("user_type", "dependent");
+                    jsonObject.put("user_id", dependentModel.getStrDependentID());
+                    jsonObject.put("created_by_type", "provider");
+                    jsonObject.put("notification_message", strPushMessage);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
 
@@ -368,6 +387,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 }
                 jsonArrayMilestones.put(jsonObjectMilestone);
             }
+            ////////////////////
 
             jsonObjectServices.put("milestones", jsonArrayMilestones);
 
@@ -468,6 +488,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                         public void onSuccess(Object o) {
                             try {
                                 if (o != null) {
+                                    Utils.log(o.toString(), " 1 ");
                                     //57221947e4b0fa5b108f35dc
                                     //572b4f14e4b0492b68fbc9b1
 
@@ -505,7 +526,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 progressDialog.dismiss();
                             try {
                                 if (e != null) {
-                                    utils.toast(2, 2, getString(R.string.error));
+                                    Utils.log(e.getMessage(), " 2 ");
+                                    insertNotification();
+                                    //utils.toast(2, 2, getString(R.string.error));
                                 } else {
                                     utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
@@ -549,15 +572,18 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                         @Override
                         public void onSuccess(Object o) {
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
                             try {
                                 if (o != null) {
-                                    sendPushToProvider(strSelectedCustomer, strPushMessage);
+                                    Utils.log(o.toString(), " 3 ");
+                                    insertNotification();
                                 } else {
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
                                     utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
                             } catch (Exception e1) {
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
                                 utils.toast(2, 2, getString(R.string.error));
                                 e1.printStackTrace();
                             }
@@ -569,6 +595,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 progressDialog.dismiss();
                             try {
                                 if (ex != null) {
+                                    Utils.log(ex.getMessage(), " 4 ");
                                     JSONObject jsonObject = new JSONObject(ex.getMessage());
                                     JSONObject jsonObjectError = jsonObject.
                                             getJSONObject("app42Fault");
@@ -590,13 +617,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
         }
     }
 
-    public void sendPushToProvider(String strUserName, String strMessage) {
+    public void sendPushToProvider() {
 
         if (utils.isConnectingToInternet()) {
 
             PushNotificationService pushNotificationService = new PushNotificationService(CreatingTaskActivity.this);
 
-            pushNotificationService.sendPushToUser(strUserName, strMessage,
+            pushNotificationService.sendPushToUser(strSelectedCustomer, strPushMessage,
                     new App42CallBack() {
 
                         @Override
@@ -613,10 +640,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
                         @Override
                         public void onException(Exception ex) {
                             strAlert = getString(R.string.no_push_actiity_added);
-
-                            if (ex == null)
-                                strAlert = getString(R.string.activity_added);
-
                             goToActivityList(strAlert);
                         }
                     });
@@ -680,5 +703,57 @@ public class CreatingTaskActivity extends AppCompatActivity {
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }*/
+
+    public void insertNotification() {
+
+        if (utils.isConnectingToInternet()) {
+
+            storageService.insertDocs(Config.collectionNotification, jsonObject,
+                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+
+                        @Override
+                        public void onDocumentInserted(Storage response) {
+                            try {
+                                if (response.isResponseSuccess()) {
+                                    sendPushToProvider();
+                                } else {
+                                    strAlert = getString(R.string.no_push_actiity_added);
+                                    goToActivityList(strAlert);
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                goToActivityList(strAlert);
+                            }
+                        }
+
+                        @Override
+                        public void onUpdateDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onFindDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onInsertionFailed(App42Exception ex) {
+                            strAlert = getString(R.string.no_push_actiity_added);
+                            goToActivityList(strAlert);
+                        }
+
+                        @Override
+                        public void onFindDocFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onUpdateDocFailed(App42Exception ex) {
+                        }
+                    });
+        } else {
+            strAlert = getString(R.string.no_push_actiity_added);
+
+            goToActivityList(strAlert);
+        }
+    }
 
 }

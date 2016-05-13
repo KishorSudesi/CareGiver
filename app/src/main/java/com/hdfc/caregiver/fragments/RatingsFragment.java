@@ -81,9 +81,10 @@ public class RatingsFragment extends Fragment {
         //if(Config.myProfileModel.getStrName()!=null)
             textViewName.setText(Config.providerModel.getStrName());
 
+        backgroundThreadHandler = new BackgroundThreadHandler();
         BackgroundThread backgroundThread = new BackgroundThread();
         backgroundThread.start();
-        backgroundThreadHandler = new BackgroundThreadHandler();
+
 
         myprofile = (RelativeLayout) view.findViewById(R.id.relativelayoutRatings);
 

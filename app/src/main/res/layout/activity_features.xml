@@ -73,7 +73,7 @@
             android:layout_margin="@dimen/margin_general"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:padding="@dimen/padding_general"></LinearLayout>
+            android:padding="@dimen/padding_general" />
 
     </LinearLayout>
 

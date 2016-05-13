@@ -1,134 +1,63 @@
 {
-  "dependent_id": "572b4f17e4b049ca81c3e9e9",
-  "provider_status": "scheduled",
-  "provider_id": "5715c39ee4b0d2aca6fe5d17",
-  "status": "completed",
-  "provider_message": "message",
-  "videos": [
-    {
-      "video_taken": "2016-03-23T17:16:39.665Z",
-      "video_description": "1458733599660.jpeg",
-      "video_name": "1458733599660.jpeg",
-      "video_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg"
-    },
-    {
-      "video_taken": "2016-03-23T17:16:39.665Z",
-      "video_description": "1458733599660.jpeg",
-      "video_name": "1458733599660.jpeg",
-      "video_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg"
-    },
-    {
-      "video_taken": "2016-03-23T17:16:39.665Z",
-      "video_description": "1458733599660.jpeg",
-      "video_name": "1458733599660.jpeg",
-      "video_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg"
-    },
-    {
-      "video_taken": "2016-03-23T17:16:39.665Z",
-      "video_description": "1458733599660.jpeg",
-      "video_name": "1458733599660.jpeg",
-      "video_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg"
-    },
-    {
-      "video_taken": "2016-03-23T17:16:39.665Z",
-      "video_description": "1458733599660.jpeg",
-      "video_name": "1458733599660.jpeg",
-      "video_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg"
-    }
-  ],
-  "feedbacks": [
-    {
-      "feedback_message": "Testing",
-      "feedback_by": "572b4f14e4b0492b68fbc9b1",
-      "feedback_report": "false",
-      "feedback_time": "2016-03-23T12:41:52.195Z",
-      "feedback_by_type": "customer",
-      "feedback_rating": 4
-    },
-    {
-      "feedback_message": "Testing",
-      "feedback_by": "234324234324",
-      "feedback_report": "false",
-      "feedback_time": "2016-03-23T12:41:52.195Z",
-      "feedback_by_type": "customer",
-      "feedback_rating": 4
-    },
-    {
-      "feedback_message": "Testing",
-      "feedback_by": "234324234324",
-      "feedback_report": "false",
-      "feedback_time": "2016-03-23T12:41:52.195Z",
-      "feedback_by_type": "customer",
-      "feedback_rating": 4
-    },
-    {
-      "feedback_message": "Testing",
-      "feedback_by": "234324234324",
-      "feedback_report": "false",
-      "feedback_time": "2016-03-23T12:41:52.195Z",
-      "feedback_by_type": "customer",
-      "feedback_rating": 4
-    }
-  ],
-  "activity_name": "activity name",
-  "service_name": "Medical Test",
   "milestones": [
     {
       "id": 1,
-      "status": "closed",
+      "status": "inactive",
       "name": "Appointment Confirmation",
-      "date": "2016-12-22T23:08:11.343Z",
+      "show": true,
+      "date": "",
       "fields": [
         {
           "id": 11,
-          "data": "Medical Lab Test",
+          "data": "",
           "label": "Lab Name",
-          "type": "text",
-          "required": true
+          "required": true,
+          "type": "text"
         },
         {
           "id": 12,
-          "data": "BP",
+          "data": "",
           "label": "Test Performed",
-          "type": "text",
-          "required": true
+          "required": true,
+          "type": "text"
         },
         {
           "id": 13,
-          "data": "2016-12-22T23:08:11.343Z",
+          "data": "",
           "label": "Date and Time",
-          "type": "datetime",
-          "required": true
+          "required": true,
+          "type": "datetime"
         }
       ]
     },
     {
       "id": 2,
-      "status": "closed",
+      "status": "inactive",
       "name": "Travel Update",
-      "date": "2016-12-22T23:08:11.343Z",
+      "show": true,
+      "date": "",
       "fields": [
         {
-          "id": 21,
           "child": true,
+          "id": 21,
           "values": [
             "Self",
             "Accompany",
             "Car Booking"
           ],
-          "data": "Accompany",
           "child_type": [
             "text"
           ],
-          "label": "Mode of Travel",
+          "data": "",
           "child_value": [
             "Car Booking"
           ],
-          "type": "radio",
-          "required": true,
+          "label": "Mode of Travel",
           "child_condition": [
             "equals"
           ],
+          "required": true,
+          "type": "radio",
           "child_field": [
             22
           ]
@@ -136,87 +65,35 @@
         {
           "id": 22,
           "hide": true,
-          "data": "Ola service",
+          "data": "",
           "label": "Service Name",
-          "type": "text",
-          "required": true
+          "required": true,
+          "type": "text"
         }
       ]
     },
     {
       "id": 3,
-      "status": "closed",
+      "status": "inactive",
       "name": "Activity closure",
-      "date": "2016-12-22T23:08:11.343Z",
+      "show": true,
+      "date": "",
       "fields": [
         {
           "id": 31,
-          "data": "Complete reports",
+          "data": "",
           "label": "Delivery of Reports",
-          "type": "text",
-          "required": true
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "status": "active",
-      "name": "Feedback Rating",
-      "date": "2016-12-22T23:08:11.343Z",
-      "fields": [
-        {
-          "id": 41,
-          "data": "Good service",
-          "label": "Feedback",
-          "type": "text",
-          "required": true
+          "required": true,
+          "type": "text"
         }
       ]
     }
   ],
-  "activity_date": "2014-12-22T23:08:11.343Z",
+  "unit": 50,
   "category_name": "Health Care",
-  "overdue": false,
-  "images": [
-    {
-      "image_name": "1458733599660.jpeg",
-      "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg",
-      "image_description": "1458733599660.jpeg",
-      "image_taken": "2016-03-23T17:16:39.665Z"
-    },
-    {
-      "image_name": "1458733599660.jpeg",
-      "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg",
-      "image_description": "1458733599660.jpeg",
-      "image_taken": "2016-03-23T17:16:39.665Z"
-    },
-    {
-      "image_name": "1458733599660.jpeg",
-      "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg",
-      "image_description": "1458733599660.jpeg",
-      "image_taken": "2016-03-23T17:16:39.665Z"
-    },
-    {
-      "image_name": "1458733599660.jpeg",
-      "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg",
-      "image_description": "1458733599660.jpeg",
-      "image_taken": "2016-03-23T17:16:39.665Z"
-    },
-    {
-      "image_name": "1458733599660.jpeg",
-      "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg",
-      "image_description": "1458733599660.jpeg",
-      "image_taken": "2016-03-23T17:16:39.665Z"
-    },
-    {
-      "image_name": "1458733599660.jpeg",
-      "image_url": "http://cdn.shephertz.com/repository/files/458f7884154a3afc67bd5c5f24df3d1e6c0852e01e4e272ea3ed79a8d8ac6439/d7a52ac9c15c52737969410cf0d1c7b0ade68f78/1458733599660.jpeg",
-      "image_description": "1458733599660.jpeg",
-      "image_taken": "2016-03-23T17:16:39.665Z"
-    }
-  ],
-  "activity_desc": "desc",
+  "unit_value": 1,
+  "service_type": "adhoc",
   "service_no": 101,
-  "activity_done_date": "2016-12-22T23:08:11.343Z",
-  "customer_id": "572b4f14e4b0492b68fbc9b1"
+  "service_name": "Medical Test",
+  "cost": 0
 }

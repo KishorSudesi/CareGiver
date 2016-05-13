@@ -90,7 +90,7 @@ public class RatingsAdapter extends BaseAdapter {
                 String strFilePath = fileImage.getAbsolutePath();
                 multiBitmapLoader.loadBitmap(strFilePath, viewHolder.image);
             }else{
-                viewHolder.image.setImageDrawable(_context.getResources().getDrawable(R.drawable.hungal_circle));
+                viewHolder.image.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
             }
 
         }

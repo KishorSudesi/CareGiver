@@ -18,7 +18,6 @@ import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ClientModel;
-import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 
@@ -34,12 +33,12 @@ public class LoginActivity extends AppCompatActivity {
     public static AppUtils appUtils;
     private static Context _ctxt;
     private static ProgressDialog progressDialog;
+    ArrayList<DependentModel> dependentModels = Config.dependentModels;
+    // ArrayList<CustomerModel> customerModels = Config.customerModels;
+    ArrayList<ClientModel> clientModels = Config.clientModels;
     private RelativeLayout relLayout;
     private EditText editEmail, editPassword;
     private RelativeLayout layoutLogin;
-    ArrayList<DependentModel> dependentModels = Config.dependentModels;
-    ArrayList<CustomerModel> customerModels = Config.customerModels;
-    ArrayList<ClientModel> clientModels = Config.clientModels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,10 +164,11 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Object o) {
                             dependentModels.clear();
-                            customerModels.clear();
+                            // customerModels.clear();
                             clientModels.clear();
 
                             if(o != null){
+
                                 Config.dependentIds.clear();
                                 Config.strActivityIds.clear();
                                 Config.customerIds.clear();
@@ -181,6 +181,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 Config.activityModels.clear();
                                 Config.dependentModels.clear();
+                                Config.customerModels.clear();
 
                                 /*User user = (User)o;
 

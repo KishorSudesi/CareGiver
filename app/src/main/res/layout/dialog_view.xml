@@ -3,51 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text1"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="15dp"
-        android:paddingRight="10dp"
-        android:paddingStart="15dp"
-        android:paddingTop="10dp"
-        android:textColor="#BABABA" />
-
-    <TextView
-        android:id="@+id/text2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/text1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingStart="10dp"
-        android:paddingTop="10dp"
-        android:textColor="#BABABA" />
-
-    <TextView
-        android:id="@+id/text3"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/text2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingStart="10dp"
-        android:paddingTop="10dp"
-        android:textColor="#BABABA" />
-
+        android:layout_margin="@dimen/margin_general"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_general" />
 
     <Button
         android:id="@+id/dialogButtonOK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text3"
-        android:layout_centerInParent="true"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:text=" Ok " />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="51dp"
+        android:background="@drawable/button_success"
+        android:text="@string/submit" />
 
 </RelativeLayout>

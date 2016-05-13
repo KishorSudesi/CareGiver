@@ -13,10 +13,23 @@ public class MilestoneModel implements Serializable {
     private String strMilestoneName;
     private String strMilestoneDate;
 
+    private boolean isVisible;
     private ArrayList<FieldModel> fieldModels = new ArrayList<>();
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        isVisible = visible;
+    }
 
     public ArrayList<FieldModel> getFieldModels() {
         return fieldModels;
+    }
+
+    public void setFieldModels(ArrayList<FieldModel> fieldModels) {
+        this.fieldModels = fieldModels;
     }
 
     public void setFieldModel(FieldModel fieldModel) {

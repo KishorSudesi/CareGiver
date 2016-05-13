@@ -1,7 +1,11 @@
 package com.hdfc.caregiver;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hdfc.app42service.App42GCMController;
+import com.hdfc.app42service.App42GCMService;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
 import com.hdfc.caregiver.fragments.SimpleActivityFragment;
@@ -30,6 +35,36 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
     private static ProgressDialog progressDialog;
     private static AppUtils appUtils;
     private static AppCompatActivity appCompatActivity;
+    final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent
+                    .getStringExtra(App42GCMService.ExtraMessage);
+            /*Log.i("mBroadcastReceiver", "" + " : "
+                    + message);*/
+
+            if (message != null && !message.equalsIgnoreCase("")) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+                builder.setTitle(getString(R.string.app_name));
+                builder.setMessage(message);
+                builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+            }
+
+        }
+    };
     private ImageView mytask, clients, feedback;
     private TextView textViewTasks, textViewClients, textViewFeedback;
 
@@ -53,6 +88,8 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         progressDialog.setMessage(appCompatActivity.getString(R.string.loading));
         progressDialog.setCancelable(false);
         progressDialog.show();
+
+        Config.intSelectedMenu = Config.intDashboardScreen;
 
         Thread backgroundThread = new BackgroundThread();
         backgroundThread.start();
@@ -111,7 +148,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         });
 
         if (Config.intSelectedMenu == Config.intClientScreen) {
-            Config.intSelectedMenu = 0;
+            //Config.intSelectedMenu = 0;
             clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
             textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
             gotoClient();
@@ -160,8 +197,27 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(mBroadcastReceiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+
+        try {
+            IntentFilter filter = new IntentFilter(
+                    App42GCMService.DisplayMessageAction);
+            filter.setPriority(2);
+            registerReceiver(mBroadcastReceiver, filter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             boolean isPushReceived = getIntent().getBooleanExtra("message_delivered", false);
@@ -219,17 +275,8 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-    }
 
-    public void refreshData() {
-
-        progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
-        appUtils.fetchActivities(progressDialog);
-
-        Config.intSelectedMenu = Config.intDashboardScreen;
+       /* Config.intSelectedMenu = Config.intDashboardScreen;
 
         SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
         Bundle args = new Bundle();
@@ -237,9 +284,37 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frameLayout, fragment);
         transaction.addToBackStack(null);
-        transaction.commit();
+        transaction.commit();*/
+    }
 
-     //   progressDialog.dismiss();
+    public void refreshData() {
+
+        Config.dependentIds.clear();
+        Config.strActivityIds.clear();
+        Config.customerIds.clear();
+
+        Config.dependentIdsAdded.clear();
+        Config.customerIdsAdded.clear();
+
+        //Config.fileModels.clear();
+
+        Config.activityModels.clear();
+        Config.dependentModels.clear();
+        Config.customerModels.clear();
+
+        Config.clientModels.clear();
+        Config.feedBackModels.clear();
+
+       /* Config.strServcieIds.clear();
+        Config.serviceModels.clear();*/
+        //Config.servicelist.clear();
+        Config.strDependentNames.clear();
+
+        progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        appUtils.fetchActivities(progressDialog);
     }
 
     public void gotoClient() {

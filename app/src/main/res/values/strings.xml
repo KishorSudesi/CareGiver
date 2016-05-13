@@ -172,6 +172,7 @@
     <string name="add_message">Add a Message</string>
     <string name="on">\nOn: &#160;</string>
     <string name="has_created">&#160;has created&#160;</string>
+    <string name="has_updated">&#160;has Updated&#160;</string>
     <string name="to">&#160;for&#160;</string>
 
     <!--Success Strings-->
@@ -180,6 +181,9 @@
     <string name="register_success">Account Registered Successfully</string>
     <string name="activity_closed">Activity Closed Successfully</string>
     <string name="activity_added">Activity Created Successfully</string>
+    <string name="activity_updated">Activity Updated Successfully</string>
+    <string name="milestone_updated">Milestone Saved</string>
+    <string name="image_upload">Images Uploaded</string>
 
     <!--Process Strings-->
     <string name="uploading">Uploading…</string>
@@ -196,7 +200,8 @@
     <string name="no_memory_camera">No storage mounted to save camera image</string>
     <string name="image_write_failed">Sorry!!! we may have lost your Profile Image</string>
     <string name="invalid_login">Invalid Credentials</string>
-    <string name="no_push_actiity_added">Activity Added. Not able to Notify the Carla</string>
+    <string name="no_push_actiity_added">Activity Added. Not able to Notify the Customer</string>
+    <string name="no_push_actiity_updated">Activity Updated. Not able to Notify the Customer</string>
 
 
     <!--Dashboard Menu Strings-->

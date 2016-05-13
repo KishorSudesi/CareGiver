@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,14 +24,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ExpandableListView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.hdfc.adapters.ExpandableListAdapter;
-import com.hdfc.adapters.FeatureAdapter;
+import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
@@ -59,7 +59,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 
 public class FeatureActivity extends AppCompatActivity implements Serializable{
@@ -72,26 +71,19 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     static Bitmap bitmap = null;
     private static StorageService storageService;
     private static ArrayList<ImageModel> arrayListImageModel = new ArrayList<>();
-    private static JSONArray jsonArrayFeaturesDone;
-    private static FeatureAdapter featureAdapter;
     private static Handler backgroundThreadHandler;
     private static ProgressDialog mProgress = null;
-    private static String strDoneDate;
+    private static String strDoneDate, strAlert;
+    private static JSONObject jsonObject;
     private static ActivityModel act;
     private static LinearLayout layout;
-    private static String strName;
+    private static String strName, strPushMessage, strDependentMail;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
+    private static Dialog dialog;
     final Context context = this;
     public JSONObject json;
-    ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
-
     //Expandable listview Adapter
-    private JSONObject responseJSONDoc,jsonNotification;
-    private JSONObject responseJSONDocCarla;
     private Utils utils;
     private ProgressDialog progressDialog;
     private Point p;
@@ -106,52 +98,36 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         ImageView imgLogoHeaderTaskDetail = (ImageView) findViewById(R.id.imgLogoHeaderTaskDetail);
         Button done = (Button) findViewById(R.id.buttonVegetibleDone);
         ImageView back = (ImageView) findViewById(R.id.imgBackHeaderTaskDetail);
-        //ListView featuresList = (ListView) findViewById(R.id.list_view);
-        //surfaceView = (SurfaceView)findViewById(R.id.camerapreview);
-        TextView textViewEmpty = (TextView) findViewById(android.R.id.empty);
-        TextView textViewTime = (TextView) findViewById(R.id.textViewTime);
-        // featureAdapter = new FeatureAdapter(this, listFeatures);
 
         layout = (LinearLayout) findViewById(R.id.linear);
 
- IMAGE_COUNT=0;
+        IMAGE_COUNT = 0;
         MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(FeatureActivity.this);
 
         TextView dependentName = (TextView) findViewById(R.id.textViewHeaderTaskDetail);
 
         jsonArrayImagesAdded = new JSONArray();
 
-  arrayListImageModel.clear();
+        arrayListImageModel.clear();
         bitmaps.clear();
+
         try {
 
             Bundle b = getIntent().getExtras();
-            /*intWhichScreen = b.getInt("WHICH_SCREEN", Config.intSimpleActivityScreen);*/
 
             act = (ActivityModel) b.getSerializable("ACTIVITY");
 
             utils = new Utils(FeatureActivity.this);
 
-           /* if (act.getFeatures() == null || act.getFeatures().length <= 0)
-                act.setFeatures(new String[]{"corn", "potato"});
-            List<String> lstFeatures = new ArrayList<>(Arrays.asList(act.getFeatures()));
-
-
-
-            featureAdapter = new FeatureAdapter(this, lstFeatures);*/
-
-            //  textViewTime.setText(utils.formatDateTime(act.getStrActivityDate()));
-
-            //Utils.log(act.getStrActivityDate(), " Date ");
-            //Utils.log(act.getFeatures().toString(),"Features");
-
-
-            //
-            //Utils.log(utils.replaceSpace(act.getStrActivityDependentName()), " NAME ");
-
             int iPosition = Config.dependentIds.indexOf(act.getStrDependentID());
             String name = Config.dependentModels.get(iPosition).getStrName();
+
+            int iPositionCustomer = Config.customerIdsAdded.indexOf(act.getStrCustomerID());
+
+            strDependentMail = Config.customerModels.get(iPositionCustomer).getStrEmail();
+
             dependentName.setText(name);
+
             File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrDependentID()));
 
             if (fileImage.exists()) {
@@ -161,99 +137,54 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 imgLogoHeaderTaskDetail.setImageDrawable(getResources().getDrawable(R.drawable.person_icon));
             }
 
-        }catch (Exception e){
+        } catch (Exception | OutOfMemoryError e) {
             e.printStackTrace();
         }
 
-        //utils = new Utils(FeatureActivity.this);
-
-        //String strCustomerImagePath = getFilesDir() + "/images/" + "feature_image";
-
         mProgress = new ProgressDialog(FeatureActivity.this);
         progressDialog = new ProgressDialog(FeatureActivity.this);
+        storageService = new StorageService(FeatureActivity.this);
 
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FeatureActivity.IMAGE_COUNT = 0;
+                IMAGE_COUNT = 0;
+
                 if (arrayListImageModel.size() > 0)
-                    if (FeatureAdapter.selectedStrings.size() > 0)
                         uploadImage();
-                    else
-                        utils.toast(2, 2, "Select a feature");
                 else
                     utils.toast(2, 2, "Select a Image");
-                //uploadCheckBox();
-                //backgroundThreadHandler = new BackgroundThreadHandler();
             }
         });
 
 
-      /*  try {
-            if (Config.jsonObject.has("activities")) {
-                JSONArray jsonArrayServices = Config.jsonObject.getJSONArray("activities");
-                for (int i=0;i<jsonArrayServices.length();i++){
-                    json = jsonArrayServices.getJSONObject(i);
+        if (back != null) {
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    IMAGE_COUNT = 0;
+                    Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
+                    Config.intSelectedMenu = Config.intDashboardScreen;
+                    startActivity(intent);
                 }
-                     jsonArray = json.getJSONArray("features");
-
-                for(int j = 0 ; j < jsonArray.length(); j++) {
-
-                    veg = jsonArray.getString(j);
-                    listFeatures.add(veg);
-
-                }
-
-                for(int k = 0 ; k < json.length() ; k++){
-                    System.out.println("VALUES OF DEPENDENT_NAME ARE : "+json.getString("dependent_name"));
-                    FeatureModel featureModel = new FeatureModel();
-                    featureModel.setDependentName(json.getString("dependent_name"));
-                    viewHolder.dependentName.setText(featureModel.getDependentName());
-                    featureModelList.add(featureModel);
-                }
-                System.out.println(jsonArray);
-                featureAdapter.notifyDataSetChanged();
-            }
-        } catch(JSONException e){
-            e.printStackTrace();
-        }*/
-
-
-/* if (featuresList != null) {
-        featuresList.setAdapter(featureAdapter);
- }
-if (featuresList != null) {
-        featuresList.setEmptyView(textViewEmpty);
- }*/
-
-  if (back != null) {
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               IMAGE_COUNT = 0;
-                Intent intent = new Intent(FeatureActivity.this,DashboardActivity.class);
-                //intent.putExtra("WHICH_SCREEN", intWhichScreen);
-                Config.intSelectedMenu=Config.intDashboardScreen;
-                startActivity(intent);
-            }
-        });
-}
+            });
+        }
 
         if (attach != null) {
-        attach.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Open popup window
-                if (p != null)
-                    if (IMAGE_COUNT < 4)
-                    showStatusPopup(FeatureActivity.this, p);
-             else{
+            attach.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Open popup window
+                    if (p != null)
+                        if (IMAGE_COUNT < 4)
+                            showStatusPopup(FeatureActivity.this, p);
+                        else {
                         utils.toast(2, 2, "Maximum 4 Images only Allowed");
                         }
-			
-			}
-        });
-     }
+
+                }
+            });
+        }
         //TextView textViewLabel = (TextView) findViewById(R.id.textViewLabel);
 
         final ActivityModel activityModel = act;
@@ -263,7 +194,7 @@ if (featuresList != null) {
             // if (textViewLabel != null)
             //    textViewLabel.append(activityModel.getStrServiceName());
 
-            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.milestoneLayout);
+            final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.milestoneLayout);
 
             for (final MilestoneModel milestoneModel : activityModel.getMilestoneModels()) {
 
@@ -273,95 +204,180 @@ if (featuresList != null) {
                 textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
                 textViewName.setPadding(10, 10, 10, 10);
                 textViewName.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_success));
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 30, 1);
                 params.setMargins(10, 10, 10, 10);
+                textViewName.setTag(milestoneModel);
 
                 textViewName.setLayoutParams(params);
-
-
-                Utils.log(milestoneModel.getStrMilestoneName(), " MS ");
 
                 if (linearLayout != null) {
                     linearLayout.addView(textViewName);
                 }
+
                 textViewName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // custom dialog
-                        final Dialog dialog = new Dialog(context);
-                        dialog.setContentView(R.layout.dialog_view);
-                        dialog.setTitle(milestoneModel.getStrMilestoneName());
+
+                        MilestoneModel milestoneModel = (MilestoneModel) v.getTag();
+
+                        int i = 0;
+
+                        View view = getLayoutInflater().inflate(R.layout.dialog_view, null, false);
+
+                        final LinearLayout layout = (LinearLayout) view.findViewById(R.id.linearLayout);
+
+                        Button button = (Button) view.findViewById(R.id.dialogButtonOK);
+                        button.setTag(milestoneModel.getiMilestoneId());
 
                         for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
-                            // set the custom dialog components - text, image and button
-                            TextView text1 = (TextView) dialog.findViewById(R.id.text1);
-                            TextView text2 = (TextView) dialog.findViewById(R.id.text2);
-                            TextView text3 = (TextView) dialog.findViewById(R.id.text3);
-                            text1.setText(fieldModel.getStrFieldLabel());
+
+                            // if(fieldModel.isFieldView()) {
+
+                            i++;
+
+                            LinearLayout linearLayout1 = new LinearLayout(context);
+                            linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
+
+                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            layoutParams.setMargins(10, 10, 10, 10);
+                            linearLayout1.setLayoutParams(layoutParams);
+
+                            TextView textView = new TextView(context);
+                            textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                            textView.setText(fieldModel.getStrFieldLabel());
+
+                            linearLayout1.addView(textView);
+
+                            EditText editText = new EditText(context);
+
+                            //if(fieldModel.getStrFieldType().equalsIgnoreCase("text")) {
+
+                            editText.setId(fieldModel.getiFieldID());
+                            editText.setTag(fieldModel.isFieldRequired());
+                            editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                            editText.setText(fieldModel.getStrFieldData());
+
+                            // }
+
+                                /*if(fieldModel.getStrFieldType().equalsIgnoreCase("date")) {
+                                    editText.setOnClickListener(new View.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(View v) {
+                                            new DatePickerDialog(context, date, myCalendar
+                                                    .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                                                    myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                                            dateTextViewDynamicID = tvDate.getId();
+                                        }
+                                    });
+                                }*/
+
+                            linearLayout1.addView(editText);
+
+                            layout.addView(linearLayout1);
+                            //}
+
                         }
 
-                        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
-                        // if button is clicked, close the custom dialog
+                        //view
+
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                int id = (int) v.getTag();
+                                traverseEditTexts(layout, id);
+                            }
+                        });
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle(milestoneModel.getStrMilestoneName());
+                        builder.setView(view);
+                        dialog = builder.create();
 
                         dialog.show();
+
                     }
                 });
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //Expandable Listview
-
-        // get the listview
-        /// expListView = (ExpandableListView) findViewById(R.id.lvExp);
-
-        // preparing list data
-        // prepareListData();
-
-        // listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
-
-        // setting list adapter
-        // expListView.setAdapter(listAdapter);
     }
 
-    /*
-     * Preparing the list data
-     */
-    /*private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
+    public void traverseEditTexts(ViewGroup v, int iMileStoneId) {
 
-        // Adding child data
-        listDataHeader.add("Appointment Confirmation");
-        listDataHeader.add("Travel Update");
-        listDataHeader.add("Activity closure");
+        boolean b = true;
 
+        for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
 
-        // Adding child data
-        List<String> appointment = new ArrayList<String>();
-        appointment.add("Lab Name");
-        appointment.add("Test Performed");
-        appointment.add("Date and Time");
+            if (milestoneModel.getiMilestoneId() == iMileStoneId) {
 
-        List<String> travel = new ArrayList<String>();
-        travel.add("Self");
-        travel.add("Accompany");
-        travel.add("Car Booking");
+                for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
 
+                    EditText editText = (EditText) v.findViewById(fieldModel.getiFieldID());
 
-        List<String> activity = new ArrayList<String>();
-        activity.add("Comments");
+                    boolean b1 = (Boolean) editText.getTag();
+                    String data = editText.getText().toString().trim();
 
+                    if (b1 && !data.equalsIgnoreCase("")) {
+                        fieldModel.setStrFieldData(data);
+                    } else {
+                        editText.setError(context.getString(R.string.error_field_required));
+                        b = false;
+                    }
+                }
+            }
+        }
 
-        listDataChild.put(listDataHeader.get(0), appointment); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), travel);
-        listDataChild.put(listDataHeader.get(2), activity);
-    }*/
+        if (b) {
 
+            utils.toast(1, 1, getString(R.string.milestone_updated));
 
+            dialog.dismiss();
 
+            uploadJson();
 
+           /* for(MilestoneModel milestoneModel : act.getMilestoneModels()) {
+
+                for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
+
+                    Utils.log(fieldModel.getStrFieldLabel() + " ~ " + fieldModel.getStrFieldData(), " DATA ");
+
+                }
+            }*/
+        }
+
+    }
+
+    public void updateMileStones(JSONObject jsonToUpdate) {
+
+        progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        if (utils.isConnectingToInternet()) {
+
+            storageService.updateDocs(jsonToUpdate,
+                    act.getStrActivityID(),
+                    Config.collectionActivity, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            insertNotification();
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
+                            utils.toast(2, 2, getString(R.string.warning_internet));
+                        }
+                    });
+        } else {
+            if (progressDialog.isShowing())
+                progressDialog.dismiss();
+            utils.toast(2, 2, getString(R.string.warning_internet));
+        }
+    }
 
 
     // The method that displays the popup.
@@ -430,6 +446,7 @@ if (featuresList != null) {
                 //  startActivityForResult(Intent.createChooser(intent, "Select Picture"),0);
             }
         });
+
         imageGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -459,13 +476,10 @@ if (featuresList != null) {
         // location[0] = x, location[1] = y.
         attach.getLocationOnScreen(location);
 
-
         //Initialize the Point with x, and y positions
         p = new Point();
         p.x = location[0];
         p.y = location[1];
-
-
     }
 
     @Override
@@ -477,7 +491,7 @@ if (featuresList != null) {
                 //Utils.toast(1, 1, "Getting Image...");
 
                 mProgress.setMessage(getString(R.string.loading));
-mProgress.setCancelable(false);
+                mProgress.setCancelable(false);
                 mProgress.show();
                 switch (requestCode) {
                     case Config.START_CAMERA_REQUEST_CODE:
@@ -494,8 +508,8 @@ mProgress.setCancelable(false);
                         // strCustomerImgName = Utils.customerImageUri.getPath();
                        // if (intent.getData() != null) {
                         //    uri = intent.getData();
-						
-						  imagePaths.clear();
+
+                        imagePaths.clear();
 
                         String[] all_path = intent.getStringArrayExtra("all_path");
 
@@ -552,7 +566,7 @@ mProgress.setCancelable(false);
                             imageModel.getStrImageDesc(), imageModel.getStrImageDesc(),
                             Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
                             new App42CallBack() {
- public void onSuccess(Object response) {
+                                public void onSuccess(Object response) {
 
                             if (response != null) {
 
@@ -566,6 +580,7 @@ mProgress.setCancelable(false);
                                     JSONObject jsonObjectImages = new JSONObject();
 
                                     try {
+
                                         jsonObjectImages.put("image_name", imageModel.getStrImageDesc());
                                         //Log.e("Image URL : ", file.getUrl());
                                         jsonObjectImages.put("image_url", file.getUrl());
@@ -577,9 +592,12 @@ mProgress.setCancelable(false);
 
                                         arrayListImageModel.remove(imageModel);
 
-                                        if (arrayListImageModel.size() <= 0)
-                                            uploadCheckBox();
-                                     //   uploadNotification();
+                                        if (arrayListImageModel.size() <= 0) {
+                                            goToActivityList(getString(R.string.image_upload));
+                                        } else {
+                                            uploadImage();
+                                        }
+                                        //
 
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -605,9 +623,9 @@ mProgress.setCancelable(false);
                                 progressDialog.dismiss();
 
                             if (e != null) {
-                                Utils.log(e.toString(), "response");
-                                //  utils.toast(2, 2, e.getMessage());
-                                uploadImage();
+                                //Utils.log(e.toString(), "response");
+                                utils.toast(2, 2, getString(R.string.error));
+                                //uploadImage();
                             } else {
                                 utils.toast(2, 2, getString(R.string.warning_internet));
                             }
@@ -631,410 +649,103 @@ mProgress.setCancelable(false);
         }
     }
 
-    public void uploadCheckBox() {
+    public void uploadJson() {
+        ///////////////////////
+        JSONObject jsonObjectMileStone = new JSONObject();
 
-        if (utils.isConnectingToInternet()) {
-            storageService = new StorageService(FeatureActivity.this);
+        try {
+            JSONArray jsonArrayMilestones = new JSONArray();
 
+            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
+
+                JSONObject jsonObjectMilestone = new JSONObject();
+
+                jsonObjectMilestone.put("id", milestoneModel.getiMilestoneId());
+                jsonObjectMilestone.put("status", milestoneModel.getStrMilestoneStatus());
+                jsonObjectMilestone.put("name", milestoneModel.getStrMilestoneName());
+                jsonObjectMilestone.put("date", milestoneModel.getStrMilestoneDate());
+                jsonObjectMilestone.put("show", milestoneModel.isVisible());
+
+                JSONArray jsonArrayFields = new JSONArray();
+
+                for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
+
+                    JSONObject jsonObjectField = new JSONObject();
+
+                    jsonObjectField.put("id", fieldModel.getiFieldID());
+
+                    if (fieldModel.isFieldView())
+                        jsonObjectField.put("hide", fieldModel.isFieldView());
+
+                    jsonObjectField.put("required", fieldModel.isFieldRequired());
+                    jsonObjectField.put("data", fieldModel.getStrFieldData());
+                    jsonObjectField.put("label", fieldModel.getStrFieldLabel());
+                    jsonObjectField.put("type", fieldModel.getStrFieldType());
+
+                    if (fieldModel.getStrFieldValues() != null && fieldModel.getStrFieldValues().length > 0)
+                        jsonObjectField.put("values", utils.stringToJsonArray(fieldModel.getStrFieldValues()));
+
+                    if (fieldModel.isChild()) {
+
+                        jsonObjectField.put("child", fieldModel.isChild());
+
+                        if (fieldModel.getStrChildType() != null && fieldModel.getStrChildType().length > 0)
+                            jsonObjectField.put("child_type", utils.stringToJsonArray(fieldModel.getStrChildType()));
+
+                        if (fieldModel.getStrChildValue() != null && fieldModel.getStrChildValue().length > 0)
+                            jsonObjectField.put("child_value", utils.stringToJsonArray(fieldModel.getStrChildValue()));
+
+                        if (fieldModel.getStrChildCondition() != null && fieldModel.getStrChildCondition().length > 0)
+                            jsonObjectField.put("child_condition", utils.stringToJsonArray(fieldModel.getStrChildCondition()));
+
+                        if (fieldModel.getiChildfieldID() != null && fieldModel.getiChildfieldID().length > 0)
+                            jsonObjectField.put("values", utils.intToJsonArray(fieldModel.getiChildfieldID()));
+                    }
+
+                    jsonArrayFields.put(jsonObjectField);
+
+                    jsonObjectMilestone.put("fields", jsonArrayFields);
+                }
+                jsonArrayMilestones.put(jsonObjectMilestone);
+            }
+            ////////////////////
+
+            jsonObjectMileStone.put("milestones", jsonArrayMilestones);
+            jsonObjectMileStone.put("status", "inprocess");
+
+            Date date = new Date();
+            String strDate = utils.convertDateToString(date);
+
+            strPushMessage = Config.providerModel.getStrName() + getString(R.string.has_updated) +
+                    act.getStrActivityName() + getString(R.string.on) + strDate;
+
+            jsonObject = new JSONObject();
 
             try {
-                jsonArrayFeaturesDone = new JSONArray();
 
-                for (String strings : FeatureAdapter.selectedStrings) {
-                    jsonArrayFeaturesDone.put(strings);
-                }
-
-                Date doneDate = new Date();
-
-                strDoneDate = utils.convertDateToString(doneDate);
-
-            } catch (Exception e) {
+                jsonObject.put("created_by", Config.providerModel.getStrProviderId());
+                jsonObject.put("time", strDate);
+                jsonObject.put("user_type", "dependent");
+                jsonObject.put("user_id", act.getStrDependentID());
+                jsonObject.put("created_by_type", "provider");
+                jsonObject.put("notification_message", strPushMessage);
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            storageService.findDocsByIdApp42CallBack(Config.providerModel.getStrProviderId(), Config.collectionProvider, new App42CallBack() {
-                @Override
-                public void onSuccess(Object o) {
+            updateMileStones(jsonObjectMileStone);
 
-                    if (o != null) {
-
-                        final Storage findObj = (Storage) o;
-
-                        try {
-                            responseJSONDoc = new JSONObject(findObj.getJsonDocList().get(0).getJsonDoc());
-
-                            Utils.log(responseJSONDoc.toString(), " Res");
-                            if (responseJSONDoc.has("activities")) {
-                                JSONArray dependantsA = responseJSONDoc.
-                                        getJSONArray("activities");
-
-                                for (int i = 0; i < dependantsA.length(); i++) {
-
-                                    JSONObject jsonObjectActivity = dependantsA.getJSONObject(i);
-
-                                    if (jsonObjectActivity.getString("activity_date").equalsIgnoreCase(act.getStrActivityDate()) &&
-                                            jsonObjectActivity.getString("activity_name").equalsIgnoreCase(act.getStrActivityName()) &&
-                                            jsonObjectActivity.getString("activity_message").equalsIgnoreCase(act.getStrActivityDesc())) {
-
-
-                                        jsonObjectActivity.put("activity_done_date", strDoneDate);
-                                        jsonObjectActivity.put("status", "completed");
-
-                                        jsonObjectActivity.put("features_done", jsonArrayFeaturesDone);
-                                        jsonObjectActivity.put("images", jsonArrayImagesAdded);
-
-                                        /*JSONArray jsonArrayFeatures = jsonObjectActivity.getJSONArray("features_done");
-
-                                        jsonArrayFeatures.put(jsonArrayFeaturesDone);
-
-                                        JSONArray jsonArrayImages = jsonObjectActivity.getJSONArray("images");
-
-                                        jsonArrayImages.put(jsonArrayImagesAdded);*/
-                                    }
-                                }
-
-                                //dependantsA.put(jsonObjectActCarla);
-
-                            }
-                        } catch (JSONException jSe) {
-                            jSe.printStackTrace();
-                            progressDialog.dismiss();
-                        }
-
-                        //Utils.log(responseJSONDoc.toString(), " onj 1 ");
-
-                        if (utils.isConnectingToInternet()) {//TODO check activity added
-
-                            storageService.updateDocs(responseJSONDoc, Config.providerModel.getStrProviderId(),
-                                    Config.collectionProvider, new App42CallBack() {
-                                @Override
-                                public void onSuccess(Object o) {
-
-                                    Config.jsonObject = responseJSONDoc;
-
-                                    if (o != null) {
-
-                                        storageService.findDocsByKeyValue(Config.collectionCustomer,
-                                                "customer_id", act.getStrDependentID(),
-                                                new AsyncApp42ServiceApi.App42StorageServiceListener() {
-                                            @Override
-                                            public void onDocumentInserted(Storage response) {
-                                            }
-
-                                            @Override
-                                            public void onUpdateDocSuccess(Storage response) {
-                                            }
-
-                                            @Override
-                                            public void onFindDocSuccess(Storage response) {
-
-                                                if (response != null) {
-
-                                                    if (response.getJsonDocList().size() > 0) {
-
-                                                        Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
-
-                                                        final String strCarlaJsonId = response.getJsonDocList().get(0).getDocId();
-
-                                                        String strDocument = jsonDocument.getJsonDoc();
-
-                                                        try {
-                                                            responseJSONDocCarla = new JSONObject(strDocument);
-                                                            Utils.log(responseJSONDocCarla.toString(), " Res 1 ");
-
-                                                            if (responseJSONDocCarla.has("dependents")) {
-
-                                                                JSONArray dependantsA = responseJSONDocCarla.
-                                                                        getJSONArray("dependents");
-
-                                                                for (int i = 0; i < dependantsA.length(); i++) {
-
-                                                                    JSONObject jsonObjectActivities = dependantsA.
-                                                                            getJSONObject(i);
-
-                                                                    if (jsonObjectActivities.getString("dependent_id").equalsIgnoreCase(act.getStrDependentID())) {
-
-                                                                        if (jsonObjectActivities.has("activities")) {
-
-                                                                            JSONArray dependantsActivities = jsonObjectActivities.
-                                                                                    getJSONArray("activities");
-
-                                                                            for (int j = 0; j < dependantsActivities.length(); j++) {
-
-                                                                                JSONObject jsonObjectActivity = dependantsActivities.getJSONObject(j);
-
-                                                                                if (jsonObjectActivity.getString("activity_date").equalsIgnoreCase(act.getStrActivityDate()) &&
-                                                                                        jsonObjectActivity.getString("activity_name").equalsIgnoreCase(act.getStrActivityName()) &&
-                                                                                        jsonObjectActivity.getString("activity_message").equalsIgnoreCase(act.getStrActivityDesc())) {
-
-                                                                                    jsonObjectActivity.put("activity_done_date", strDoneDate);
-                                                                                    jsonObjectActivity.put("status", "completed");
-
-                                                                                    jsonObjectActivity.put("features_done", jsonArrayFeaturesDone);
-                                                                                    jsonObjectActivity.put("images", jsonArrayImagesAdded);
-
-                                                                                    /*JSONArray jsonArrayFeatures = jsonObjectActivity.getJSONArray("features_done");
-
-                                                                                    jsonArrayFeatures.put(jsonArrayFeaturesDone);
-
-                                                                                    JSONArray jsonArrayImages = jsonObjectActivity.getJSONArray("images");
-
-                                                                                    jsonArrayImages.put(jsonArrayImagesAdded);*/
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-
-                                                                //dependantsA.put(jsonObjectActCarla);
-
-                                                            }
-
-
-                                                            //Utils.log(responseJSONDocCarla.toString(), " onj 2 ");
-
-                                                            storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionCustomer, new App42CallBack() {
-                                                                @Override
-                                                                public void onSuccess(Object o) {
-
-                                                                    if (o != null) {
-                                                                      
-                                                                   uploadNotification();
-
-                                                                    } else {
-                                                                        if (progressDialog.isShowing())
-                                                                            progressDialog.dismiss();
-                                                                        utils.toast(2, 2, getString(R.string.warning_internet));
-                                                                    }
-                                                                }
-
-                                                                @Override
-                                                                public void onException(Exception e) {
-                                                                    if (progressDialog.isShowing())
-                                                                        progressDialog.dismiss();
-                                                                    if (e != null) {
-                                                                        utils.toast(2, 2, e.getMessage());
-                                                                    } else {
-                                                                        utils.toast(2, 2, getString(R.string.warning_internet));
-                                                                    }
-                                                                }
-                                                            });
-
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-
-                                                } else {
-                                                    if (progressDialog.isShowing())
-                                                        progressDialog.dismiss();
-                                                    utils.toast(2, 2, getString(R.string.warning_internet));
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onInsertionFailed(App42Exception ex) {
-
-                                            }
-
-                                            @Override
-                                            public void onFindDocFailed(App42Exception ex) {
-                                                if (progressDialog.isShowing())
-                                                    progressDialog.dismiss();
-
-                                                if (ex != null) {
-                                                    utils.toast(2, 2, ex.getMessage());
-                                                } else {
-                                                    utils.toast(2, 2, getString(R.string.warning_internet));
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onUpdateDocFailed(App42Exception ex) {
-
-                                            }
-                                        });
-                                    }
-                                }
-
-                                @Override
-                                public void onException(Exception e) {
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
-                                    if (e != null) {
-                                        utils.toast(2, 2, e.getMessage());
-                                    } else {
-                                        utils.toast(2, 2, getString(R.string.warning_internet));
-                                    }
-                                }
-                            });
-
-
-                        } else {
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
-                            utils.toast(2, 2, getString(R.string.warning_internet));
-                        }
-
-                    } else {
-                        if (progressDialog.isShowing())
-                            progressDialog.dismiss();
-                        utils.toast(2, 2, getString(R.string.warning_internet));
-                    }
-                }
-
-                @Override
-                public void onException(Exception e) {
-                    if (progressDialog.isShowing())
-                        progressDialog.dismiss();
-                    if (e != null) {
-                        utils.toast(2, 2, e.getMessage());
-                    } else {
-                        utils.toast(2, 2, getString(R.string.warning_internet));
-                    }
-                }
-            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    public void uploadNotification(){
-        //act.getStrCustomerEmail()      getCustomer Email
 
-        if (utils.isConnectingToInternet()) {
-
-            //Utils.log(act.getStrCustomerEmail(), " mail ");
-        storageService.findDocsByKeyValue(Config.collectionCustomer,
-                "customer_id",
-                act.getStrDependentID(),
-                new AsyncApp42ServiceApi.App42StorageServiceListener() {
-            @Override
-            public void onDocumentInserted(Storage response) {
-
-            }
-             @Override
-            public void onUpdateDocSuccess(Storage response) {
-
-            }
-
-            @Override
-            public void onFindDocSuccess(Storage response) {
-
-                if (response != null) {
-
-                    if (response.getJsonDocList().size() > 0) {
-
-                        Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
-
-                        final String strCarlaJsonId = response.getJsonDocList().get(0).getDocId();
-
-                        String strDocument = jsonDocument.getJsonDoc();
-
-                        try {
-                            responseJSONDocCarla = new JSONObject(strDocument);
-
-                            if (responseJSONDocCarla.has("dependents")) {
-
-                                JSONArray dependantsA = responseJSONDocCarla.
-                                        getJSONArray("dependents");
-
-                                for (int i = 0; i < dependantsA.length(); i++) {
-
-                                    JSONObject jsonObjectActivities = dependantsA.
-                                            getJSONObject(i);
-
-                                    if (jsonObjectActivities.getString("dependent_id").equalsIgnoreCase(act.getStrDependentID())) {
-
-                                        if (jsonObjectActivities.has("notifications")) {
-
-                                            JSONArray dependantsNotification = jsonObjectActivities.
-                                                    getJSONArray("notifications");
-
-                                           // for (int j = 0; j < dependantsNotification.length(); j++) {
-
-                                            //    jsonNotification = dependantsNotification.getJSONObject(j);
-                                           // }
-
-                                          
-                                            jsonNotification.put("author", Config.providerModel.getStrName());
-                                            jsonNotification.put("time", strDoneDate);
-                                            jsonNotification.put("author_profile_url", "");
-                                            jsonNotification.put("notification_message", "Service  Successfully");
-
-                                            dependantsNotification.put(jsonNotification);
-                                   }
-                                }
-                            }
-
-                            storageService.updateDocs(responseJSONDocCarla, strCarlaJsonId, Config.collectionCustomer, new App42CallBack() {
-
-                                @Override
-                                public void onSuccess(Object o) {
-                                    utils.toast(2, 2, "Notification Added Successfully");
-
-                                              if (progressDialog.isShowing())
-                                                progressDialog.dismiss();
-
-
-
-                                            IMAGE_COUNT = 0;
-
-                                    //utils.toast(2, 2, "Notification Added Successfully");
-
-                                            Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
-
-                                    utils.toast(2, 2, getString(R.string.activity_closed));
-
-                                            Config.intSelectedMenu=Config.intDashboardScreen;
-                                            startActivity(intent);
-                                            finish();
-                                        }
-
-                                        @Override
-                                        public void onException(Exception e) {
-                                            if (progressDialog.isShowing())
-                                                progressDialog.dismiss();
-                                            if(e==null) {
-                                                utils.toast(2, 2, getString(R.string.warning_internet));
-                                            } else utils.toast(2, 2, getString(R.string.error));
-                                        }
-                            });
-						}
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-}
-                    }else{
-                        if (progressDialog.isShowing())
-                            progressDialog.dismiss();
-                    utils.toast(2, 2, getString(R.string.warning_internet));
- }
-                }
-            
-
-            @Override
-            public void onInsertionFailed(App42Exception ex) {
-
-            }
-
-            @Override
-            public void onFindDocFailed(App42Exception ex) {
-
-            }
-
-            @Override
-            public void onUpdateDocFailed(App42Exception ex) {
-
-            }
-        });
- } else {
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
-            utils.toast(2, 2, getString(R.string.warning_internet));
-        }
- }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        IMAGE_COUNT = 0;
+        arrayListImageModel.clear();
         bitmaps.clear();
     }
 
@@ -1046,53 +757,166 @@ mProgress.setCancelable(false);
         bitmaps.clear();
     }
 
+    public void addImages() {
+
+        layout.removeAllViews();
+
+        for (int i = 0; i < bitmaps.size(); i++) {
+            try {
+                //
+                ImageView imageView = new ImageView(FeatureActivity.this);
+                imageView.setPadding(0, 0, 3, 0);
+
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                layoutParams.setMargins(10, 10, 10, 10);
+                // linearLayout1.setLayoutParams(layoutParams);
+
+                imageView.setLayoutParams(layoutParams);
+                imageView.setImageBitmap(bitmap);
+                imageView.setTag(bitmaps.get(i));
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+                Utils.log(" 2 " + String.valueOf(i), " IN ");
+
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Dialog dialog = new Dialog(FeatureActivity.this);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                        dialog.setContentView(R.layout.image_dialog_layout);
+
+                        TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
+                        try {
+                            mOriginal.setImageBitmap((Bitmap) v.getTag());
+                        } catch (OutOfMemoryError oOm) {
+                            oOm.printStackTrace();
+                        }
+                        dialog.setCancelable(true);
+
+                        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                        dialog.show();
+
+                    }
+                });
+
+
+                layout.addView(imageView);
+            } catch (Exception | OutOfMemoryError e) {
+                //bitmap.recycle();
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void insertNotification() {
+
+        if (utils.isConnectingToInternet()) {
+
+            storageService.insertDocs(Config.collectionNotification, jsonObject,
+                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+
+                        @Override
+                        public void onDocumentInserted(Storage response) {
+                            try {
+                                if (response.isResponseSuccess()) {
+                                    sendPushToProvider();
+                                } else {
+                                    strAlert = getString(R.string.no_push_actiity_updated);
+                                    goToActivityList(strAlert);
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                goToActivityList(strAlert);
+                            }
+                        }
+
+                        @Override
+                        public void onUpdateDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onFindDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onInsertionFailed(App42Exception ex) {
+                            strAlert = getString(R.string.no_push_actiity_updated);
+                            goToActivityList(strAlert);
+                        }
+
+                        @Override
+                        public void onFindDocFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onUpdateDocFailed(App42Exception ex) {
+                        }
+                    });
+        } else {
+            strAlert = getString(R.string.no_push_actiity_updated);
+
+            goToActivityList(strAlert);
+        }
+    }
+
+    public void sendPushToProvider() {
+
+        if (utils.isConnectingToInternet()) {
+
+            PushNotificationService pushNotificationService = new PushNotificationService(FeatureActivity.this);
+
+            pushNotificationService.sendPushToUser(strDependentMail, strPushMessage,
+                    new App42CallBack() {
+
+                        @Override
+                        public void onSuccess(Object o) {
+
+                            strAlert = getString(R.string.activity_updated);
+
+                            if (o == null)
+                                strAlert = getString(R.string.no_push_actiity_updated);
+
+                            goToActivityList(strAlert);
+                        }
+
+                        @Override
+                        public void onException(Exception ex) {
+                            strAlert = getString(R.string.no_push_actiity_updated);
+                            goToActivityList(strAlert);
+                        }
+                    });
+        } else {
+            strAlert = getString(R.string.no_push_actiity_updated);
+
+            goToActivityList(strAlert);
+        }
+    }
+
+    public void goToActivityList(String strAlert) {
+
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
+
+        //utils.toast(2, 2, getString(R.string.milestone_updated));
+
+        utils.toast(2, 2, strAlert);
+
+        Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
+        Config.intSelectedMenu = Config.intDashboardScreen;
+        startActivity(intent);
+    }
+
     public class BackgroundThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
 
-             layout.removeAllViews();
+            addImages();
 
-            for(int i=0;i<bitmaps.size();i++) {
-                try {
-                    //Utils.log(" 2 " + String.valueOf(bitmap.getHeight()), " IN ");
-                    ImageView imageView = new ImageView(FeatureActivity.this);
-                    imageView.setPadding(0, 0, 3, 0);
-                    imageView.setImageBitmap(bitmap);
-                    imageView.setTag(bitmaps.get(i));
-                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
-                  imageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            Dialog dialog = new Dialog(FeatureActivity.this);
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-                            dialog.setContentView(R.layout.image_dialog_layout);
-
-                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
-                            try {
-                                mOriginal.setImageBitmap((Bitmap) v.getTag());
-                            } catch (OutOfMemoryError oOm) {
-                                oOm.printStackTrace();
-                            }
-                            dialog.setCancelable(true);
-
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
-                            dialog.show();
-
-                        }
-                    });
-
-
-                     layout.addView(imageView);
-                  } catch (Exception | OutOfMemoryError e) {
-                    //bitmap.recycle();
-                    e.printStackTrace();
-                }
-            }
-
-               mProgress.dismiss();
+            mProgress.dismiss();
         }
     }
 
@@ -1108,16 +932,10 @@ mProgress.setCancelable(false);
                     String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
                     File galleryFile = utils.createFileInternalImage(strFileName);
                     strImageName = galleryFile.getAbsolutePath();
-
-                    //System.out.println("YOUR GALLERY PATH IS : " + strImageName);
-
                     Date date = new Date();
 
                     ImageModel imageModel = new ImageModel(strImageName, "", galleryFile.getName(), utils.convertDateToString(date));
                     arrayListImageModel.add(imageModel);
-
-                  //  InputStream is = getContentResolver().openInputStream(uri);
-                    //  utils.copyInputStreamToFile(is, galleryFile);
 
                     utils.copyFile(new File(imagePaths.get(i)), galleryFile);
                     bitmap = utils.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
@@ -1159,10 +977,11 @@ mProgress.setCancelable(false);
                     bitmap = utils.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
                 }*/
                  IMAGE_COUNT++;
-                backgroundThreadHandler.sendEmptyMessage(0);
+
             } catch (Exception | OutOfMemoryError e) {
                 e.printStackTrace();
             }
+            backgroundThreadHandler.sendEmptyMessage(0);
         }
     }
 }

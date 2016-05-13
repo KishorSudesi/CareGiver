@@ -60,18 +60,13 @@ public class ClientFragment extends Fragment {
 
         progressDialog = new ProgressDialog(getActivity());
 
-        listAdapter = new ClientAdapter();
-
-        progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        //listAdapter = new ClientAdapter();
 
         prepareListData();
 
         listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
 
         expListView.setAdapter(listAdapter);
-
 
         return view;
     }
@@ -91,15 +86,22 @@ public class ClientFragment extends Fragment {
                 Utils.log(String.valueOf(clientModel.getCustomerModel().getStrAddress()), " 1 ");
                 listDataChild.put(clientModel.getCustomerModel(),clientModel.getDependentModels());
             }
-            listAdapter.notifyDataSetChanged();
+            //listAdapter.notifyDataSetChanged();
         }
 
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
+      /*  if (progressDialog.isShowing())
+            progressDialog.dismiss();*/
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+       /* progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        prepareListData();*/
+
     }
 }

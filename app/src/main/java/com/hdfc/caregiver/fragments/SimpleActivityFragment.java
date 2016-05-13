@@ -844,6 +844,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     @Override
     public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
+        //todo add string
         switch (direction) {
             case MenuItem.DIRECTION_LEFT:
                 switch (buttonPosition) {
@@ -852,14 +853,14 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
 
-                            if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("new")) {
+                            if (!activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("completed")) {
                                 ActivityModel obj = activityModels.get(itemPosition);
                                 Intent intent = new Intent(getActivity(), FeatureActivity.class);
                                 args.putSerializable("ACTIVITY", obj);
                                 intent.putExtras(args);
                                 startActivity(intent);
                             } else {
-                                utils.toast(2, 2, "Activity already Closed");
+                                utils.toast(2, 2, "Activity is Closed");
                             }
                         }
                         return Menu.ITEM_SCROLL_BACK;
@@ -868,20 +869,20 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
 
-                            if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("upcoming")) {
-                                ActivityModel obj = activityModels.get(itemPosition);
+                            if (!activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("completed")) {
+                                /*ActivityModel obj = activityModels.get(itemPosition);
                                 Intent intent = new Intent(getActivity(), FeatureActivity.class);
                                 args.putSerializable("ACTIVITY", obj);
                                 intent.putExtras(args);
-                                startActivity(intent);
+                                startActivity(intent);*/
                             } else {
-                                utils.toast(2, 2, "Activity already Closed");
+                                utils.toast(2, 2, "Activity is Closed");
                             }
                         }
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
 
-                        if (activityModels.size() > 0) {
+                       /* if (activityModels.size() > 0) {
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
                             if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("completed")) {
@@ -889,7 +890,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             } else {
                                 utils.toast(2, 2, "Error. Try Again!!!");
                             }
-                        }
+                        }*/
 
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:

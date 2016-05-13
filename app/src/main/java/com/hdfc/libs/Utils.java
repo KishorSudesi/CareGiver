@@ -1131,6 +1131,7 @@ public class Utils {
                     milestoneModel.setStrMilestoneStatus(jsonObjectMilestone.getString("status"));
                     milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
                     milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
+                    milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
 
                     //
                     if (jsonObjectMilestone.has("fields")) {

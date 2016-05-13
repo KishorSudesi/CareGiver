@@ -435,6 +435,8 @@ public class AppUtils {
                     clientModel.setCustomerModel(customerModel);
                     Config.clientModels.add(clientModel);
 
+                    Config.customerModels.add(customerModel);
+
                     Config.fileModels.add(new FileModel(strDocumentId,
                             jsonObject.getString("customer_profile_url"), "IMAGE"));
                 }
@@ -557,7 +559,7 @@ public class AppUtils {
                     activityModel.setStrActivityDoneDate(jsonObject.
                             getString("activity_done_date"));
 
-                    activityModel.setbActivityOverdue(jsonObject.getBoolean("overdue"));
+                    //activityModel.setbActivityOverdue(jsonObject.getBoolean("overdue"));
 
                     activityModel.setStrActivityProviderStatus(jsonObject.
                             getString("provider_status"));
@@ -681,6 +683,9 @@ public class AppUtils {
                             milestoneModel.setStrMilestoneStatus(jsonObjectMilestone.getString("status"));
                             milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
                             milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
+
+                            if (jsonObjectMilestone.has("show"))
+                                milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
 
                             if (jsonObjectMilestone.has("fields")) {
 

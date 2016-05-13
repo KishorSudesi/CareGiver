@@ -32,6 +32,7 @@ public class Config {
     public static final String collectionCustomer = "customer";
     public static final String collectionActivity = "activity";
     public static final String collectionDependent = "dependent";
+    public static final String collectionNotification = "notification";
 
 
     public static final String string = Utils.getStringJni();

@@ -30,9 +30,9 @@ public class ClientAdapter extends BaseExpandableListAdapter {
     private MultiBitmapLoader multiBitmapLoader;
 //    private ExpandableListView expListView;
 
-    public ClientAdapter(){
+   /* public ClientAdapter(){
+    }*/
 
-    }
     public ClientAdapter(Context context, List<CustomerModel> listDataHeader,
                          HashMap<CustomerModel, List<DependentModel>> listChildData) {
         this._context = context;
@@ -40,8 +40,6 @@ public class ClientAdapter extends BaseExpandableListAdapter {
         multiBitmapLoader = new MultiBitmapLoader(_context);
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
-
-
     }
 
     @Override
