@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.StorageService;
@@ -34,6 +36,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Admin on 4/25/2016.
@@ -189,7 +192,7 @@ public class AppUtils {
         }
     }
 
-    public void fetchDependents(final ProgressDialog progressDialog) {
+    public void fetchDependents(final RelativeLayout relativeLayout) {
 
         if (Config.customerIds.size() > 0) {
 
@@ -226,14 +229,16 @@ public class AppUtils {
 
                                         DashboardActivity.gotoSimpleActivityMenu();
                                     } else {
-                                        if (progressDialog.isShowing())
-                                            progressDialog.dismiss();
+                                       /* if (progressDialog.isShowing())
+                                            progressDialog.dismiss();*/
+                                        relativeLayout.setVisibility(View.GONE);
                                         utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
+                                  /*  if (progressDialog.isShowing())
+                                        progressDialog.dismiss();*/
+                                    relativeLayout.setVisibility(View.GONE);
                                     utils.toast(2, 2, _ctxt.getString(R.string.error));
                                 }
 
@@ -245,13 +250,15 @@ public class AppUtils {
                                     if (e != null) {
                                         DashboardActivity.gotoSimpleActivityMenu();
                                     } else {
-                                        if (progressDialog.isShowing())
-                                            progressDialog.dismiss();
+                                       /* if (progressDialog.isShowing())
+                                            progressDialog.dismiss();*/
+                                        relativeLayout.setVisibility(View.GONE);
                                         utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     }
                                 } catch (Exception e1) {
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
+                                   /* if (progressDialog.isShowing())
+                                        progressDialog.dismiss();*/
+                                    relativeLayout.setVisibility(View.GONE);
                                     e1.printStackTrace();
                                 }
                             }
@@ -259,8 +266,9 @@ public class AppUtils {
                         });
 
             } else {
-                if (progressDialog.isShowing())
-                    progressDialog.dismiss();
+               /* if (progressDialog.isShowing())
+                    progressDialog.dismiss();*/
+                relativeLayout.setVisibility(View.GONE);
                 utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
             }
 
@@ -278,7 +286,7 @@ public class AppUtils {
         ((Activity) _ctxt).finish();
     }
 
-    public void fetchCustomers(final ProgressDialog progressDialog) {
+    public void fetchCustomers(final RelativeLayout relativeLayout) {
 
         if (Config.customerIds.size() > 0) {
 
@@ -312,16 +320,18 @@ public class AppUtils {
                                                 createCustomerModel(strDependentDocId, strDocument);
                                             }
                                         }
-                                        fetchDependents(progressDialog);
+                                        fetchDependents(relativeLayout);
                                     } else {
-                                        if (progressDialog.isShowing())
-                                            progressDialog.dismiss();
+                                       /* if (progressDialog.isShowing())
+                                            progressDialog.dismiss();*/
+                                        relativeLayout.setVisibility(View.GONE);
                                         utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
+                                   /* if (progressDialog.isShowing())
+                                        progressDialog.dismiss();*/
+                                    relativeLayout.setVisibility(View.GONE);
                                     utils.toast(2, 2, _ctxt.getString(R.string.error));
                                 }
                             }
@@ -330,28 +340,31 @@ public class AppUtils {
                             public void onException(Exception e) {
                                 try {
                                     if (e != null) {
-                                        fetchDependents(progressDialog);
+                                        fetchDependents(relativeLayout);
                                     } else {
-                                        if (progressDialog.isShowing())
-                                            progressDialog.dismiss();
+                                        /*if (progressDialog.isShowing())
+                                            progressDialog.dismiss();*/
+                                        relativeLayout.setVisibility(View.GONE);
                                         utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     }
                                 } catch (Exception e1) {
                                     e1.printStackTrace();
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
+                                    /*if (progressDialog.isShowing())
+                                        progressDialog.dismiss();*/
+                                    relativeLayout.setVisibility(View.GONE);
                                 }
                             }
 
                         });
             } else {
-                if (progressDialog.isShowing())
-                    progressDialog.dismiss();
+               /* if (progressDialog.isShowing())
+                    progressDialog.dismiss();*/
+                relativeLayout.setVisibility(View.GONE);
 
                 utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
             }
 
-        } else fetchDependents(progressDialog);
+        } else fetchDependents(relativeLayout);
     }
 
     public void createDependentModel(String strDocumentId, String strDocument) {
@@ -371,7 +384,7 @@ public class AppUtils {
                         jsonObjectDependent.getString("dependent_illness"),
                         "",
                         jsonObjectDependent.getString("dependent_profile_url"),
-                        jsonObjectDependent.getInt("dependent_age"),
+                        jsonObjectDependent.getInt("dependent_age"), //todo check values
                         jsonObjectDependent.getInt("health_bp"),
                         jsonObjectDependent.getInt("health_heart_rate"),
 
@@ -446,67 +459,98 @@ public class AppUtils {
         }
     }
 
-    public void fetchActivities(final ProgressDialog progressDialog) {
+    public void fetchActivities(final RelativeLayout relativeLayout) {//final ProgressDialog progressDialog
 
-        storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id",
-                Config.providerModel.getStrProviderId(),
-                new AsyncApp42ServiceApi.App42StorageServiceListener() {
-            @Override
-            public void onDocumentInserted(Storage response) {
-            }
+        //////////////////////////
+        ///
+        Calendar calendar = Calendar.getInstance();
 
-            @Override
-            public void onUpdateDocSuccess(Storage response) {
-            }
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1; // Note: zero based!
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+      /*  int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        int second = calendar.get(Calendar.SECOND);
+        int millis = calendar.get(Calendar.MILLISECOND);*/
+        ///
 
-            @Override
-            public void onFindDocSuccess(Storage response) throws JSONException {
+        String strDay = String.valueOf(day);
+        String strMonth = String.valueOf(month);
 
-                if(response != null){
+        if (day <= 9)
+            strDay = String.valueOf("0" + day);
 
-                    Utils.log(response.toString(), " Activity ");
+        if (month <= 9)
+            strMonth = String.valueOf("0" + month);
 
-                    ArrayList<Storage.JSONDocument> jsonDocList = response.getJsonDocList();
+        String strDate = String.valueOf(year + "-" + strMonth + "-" + strDay) + "T23:59:59.999+0000";
 
-                    for(int i = 0 ; i < jsonDocList.size() ; i++ ){
+        Utils.log(strDate, " FDATE ");
 
-                        Storage.JSONDocument jsonDocument = jsonDocList.get(i);
-                        String strDocumentId = jsonDocument.getDocId();
-                        String strActivities = jsonDocument.getJsonDoc();
-                        createActivityModel(strDocumentId, strActivities);
+        Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(), QueryBuilder.Operator.EQUALS);
+
+        Query q2 = QueryBuilder.build("activity_date", strDate, QueryBuilder.
+                Operator.LESS_THAN_EQUALTO);
+
+        Query q3 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
+
+           /* int max = 1;
+            int offset = 0;
+*/
+        ///////////////////////////
+
+        storageService.findDocsByQueryOrderBy(Config.collectionActivity, q3, 100, 0,
+                "activity_date", 1,
+                new App42CallBack() {
+
+                    @Override
+                    public void onSuccess(Object o) {
+                        if (o != null) {
+
+                            Storage storage = (Storage) o;
+
+                            Utils.log(storage.toString(), " Activity ");
+
+                            ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
+
+                            for (int i = 0; i < jsonDocList.size(); i++) {
+
+                                Storage.JSONDocument jsonDocument = jsonDocList.get(i);
+                                String strDocumentId = jsonDocument.getDocId();
+                                String strActivities = jsonDocument.getJsonDoc();
+                                createActivityModel(strDocumentId, strActivities);
+                            }
+                            fetchCustomers(relativeLayout); //progressDialog
+                        } else {
+                   /* if (progressDialog.isShowing())
+                        progressDialog.dismiss();*/
+                            relativeLayout.setVisibility(View.GONE);
+                            utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                        }
                     }
-                    fetchCustomers(progressDialog);
-                } else {
-                    if (progressDialog.isShowing())
-                        progressDialog.dismiss();
-                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                }
-            }
 
-            @Override
-            public void onInsertionFailed(App42Exception ex) {
-            }
-
-            @Override
-            public void onFindDocFailed(App42Exception ex) {
-                try {
-                    if (ex != null) {
-                        fetchCustomers(progressDialog);
-                    } else {
-                        if (progressDialog.isShowing())
-                            progressDialog.dismiss();
-                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                    @Override
+                    public void onException(Exception ex) {
+                        try {
+                            if (ex != null) {
+                                fetchCustomers(relativeLayout);
+                            } else {
+                        /*if (progressDialog.isShowing())
+                            progressDialog.dismiss();*/
+                                relativeLayout.setVisibility(View.GONE);
+                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                            }
+                        } catch (Exception e1) {
+                   /* if (progressDialog.isShowing())
+                        progressDialog.dismiss();*/
+                            relativeLayout.setVisibility(View.GONE);
+                            e1.printStackTrace();
+                        }
                     }
-                } catch (Exception e1) {
-                    if (progressDialog.isShowing())
-                        progressDialog.dismiss();
-                    e1.printStackTrace();
-                }
-            }
 
-            @Override
-            public void onUpdateDocFailed(App42Exception ex) {
-            }
+                    /* storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id",
+                                    Config.providerModel.getStrProviderId(),
+                                    new AsyncApp42ServiceApi.App42StorageServiceListener() {*/
         });
     }
 
@@ -684,6 +728,7 @@ public class AppUtils {
                             milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
                             milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
 
+                            //todo check values
                             if (jsonObjectMilestone.has("show"))
                                 milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
 

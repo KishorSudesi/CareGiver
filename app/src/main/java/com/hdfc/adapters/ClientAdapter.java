@@ -66,9 +66,11 @@ public class ClientAdapter extends BaseExpandableListAdapter {
             convertView = infalInflater.inflate(R.layout.list_item_dependents, null);
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
+
             viewHolder.age = (TextView) convertView.findViewById(R.id.textViewClient_age);
-            viewHolder.problem = (TextView) convertView.findViewById(R.id.textViewClient_problem);
-            viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
+
+            //viewHolder.problem = (TextView) convertView.findViewById(R.id.textViewClient_problem);
+            //viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
             viewHolder.customer = (ImageView) convertView.findViewById(R.id.imageClients);
 
@@ -84,8 +86,8 @@ public class ClientAdapter extends BaseExpandableListAdapter {
         //System.out.println("LOL : "+dependentModel.getIntAge());
         viewHolder.age.setText(String.valueOf(dependentModel.getIntAge()));
 
-        viewHolder.problem.setText(dependentModel.getStrIllness().length()>8 ? dependentModel.getStrIllness().substring(0,5)+"..":dependentModel.getStrIllness());
-        viewHolder.premium.setText(dependentModel.getStrNotes().length()>8 ? dependentModel.getStrNotes().substring(0,5)+"..":dependentModel.getStrNotes());
+        // viewHolder.problem.setText(dependentModel.getStrIllness().length()>8 ? dependentModel.getStrIllness().substring(0,5)+"..":dependentModel.getStrIllness());
+        //viewHolder.premium.setText(dependentModel.getStrNotes().length()>8 ? dependentModel.getStrNotes().substring(0,5)+"..":dependentModel.getStrNotes());
 
         File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(dependentModel.getStrDependentID()));
 
@@ -170,7 +172,7 @@ public class ClientAdapter extends BaseExpandableListAdapter {
             String filename = fileImage.getAbsolutePath();
             multiBitmapLoader.loadBitmap(filename, viewHolder.client);
         }else{
-            viewHolder.client.setImageDrawable(_context.getResources().getDrawable(R.drawable.hungal_circle));
+            viewHolder.client.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
         }
 
         viewHolder.client.setOnClickListener(new View.OnClickListener() {
@@ -198,7 +200,7 @@ public class ClientAdapter extends BaseExpandableListAdapter {
     }
 
     public  class ViewHolder{
-        TextView name,age,problem,address,premium,contact;
+        TextView name, age, address, contact;
         ImageView client, customer;
     }
 }

@@ -41,18 +41,20 @@
                 android:layout_marginTop="7dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
+
                 <TextView
                     android:id="@+id/textViewClient_age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/age_val"
                     android:textSize="15sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/yrs"
                     android:textSize="15sp" />
-                <TextView
+
+                <!-- <TextView
                     android:id="@+id/textViewClient_problem"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -68,7 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/premium"
-                    android:textSize="15sp" />
+                    android:textSize="15sp" />-->
             </LinearLayout>
 
             <TextView
@@ -76,7 +78,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
-                android:text="@string/lisbon"
                 android:textSize="15sp" />
         </LinearLayout>
 

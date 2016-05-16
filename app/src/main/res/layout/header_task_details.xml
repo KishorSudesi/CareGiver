@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:background="@drawable/header_gradient"
+    android:orientation="horizontal"
     android:weightSum="1">
 
 
@@ -12,17 +12,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/button_back_trans"
-        android:src="@mipmap/back"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_weight="0.1"/>
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_weight="0.1"
+        android:background="@drawable/button_back_trans"
+        android:src="@mipmap/back" />
 
     <ImageView
         android:id="@+id/imgLogoHeaderTaskDetail"
         android:layout_width="0dp"
         android:layout_height="32dp"
-        android:src="@drawable/carla2"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_weight="0.2"/>
@@ -31,22 +30,22 @@
         android:id="@+id/textViewHeaderTaskDetail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/header_task_details"
-        android:textSize="24sp"
-        android:textColor="@color/colorWhite"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_weight="0.6"/>
+        android:layout_weight="0.6"
+        android:text="@string/header_task_details"
+        android:textColor="@color/colorWhite"
+        android:textSize="24sp" />
 
     <ImageView
         android:id="@+id/imgAttachHeaderTaskDetail"
         android:layout_width="0dp"
         android:layout_height="32dp"
-        android:background="@mipmap/attach_file_not_active"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_weight="0.1"/>
+        android:layout_weight="0.1"
+        android:background="@mipmap/attach_file_not_active" />
 
 
 </LinearLayout>

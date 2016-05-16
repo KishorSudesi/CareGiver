@@ -58,7 +58,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
     private Menu mMenu;
     private SlideAndDragListView<ApplicationInfo> mListView;
     private Utils utils;
-    BaseAdapter mAdapter = new BaseAdapter() {
+    public BaseAdapter mAdapter = new BaseAdapter() {
 
         @Override
         public int getCount() {

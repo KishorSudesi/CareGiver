@@ -441,7 +441,7 @@ public class AsyncApp42ServiceApi {
                 try {
                     OrderByType orderByType = OrderByType.DESCENDING;
 
-                    if (iOrderFlag == 0)
+                    if (iOrderFlag == 0)//o for ascending
                         orderByType = OrderByType.ASCENDING;
 
                     final Storage response = storageService.findDocsWithQueryPagingOrderBy(dbName,

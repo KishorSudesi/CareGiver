@@ -1,18 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#EEEEEE"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:weightSum="2">
+
+    <LinearLayout
+        android:id="@+id/pnd_net_error"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/wifi_signal" />
+
+        <TextView
+            style="@style/QABlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Can&apos;t Connect"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/FormLabelBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/warning_internet" />
+
+        <Button
+            android:id="@+id/tryAgain"
+            android:layout_width="150dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="30dp"
+            android:background="#DF8507"
+            android:text="Try Again"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.97"/>
+
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        style="@style/GenericProgressBackground"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:padding="5dp"
+        android:visibility="visible">
+
+        <ProgressBar style="@style/GenericProgressIndicator" />
+    </RelativeLayout>
 
     <include
         android:id="@+id/include_dashboard_footer"

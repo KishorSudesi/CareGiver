@@ -60,8 +60,8 @@ import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 
 
@@ -70,19 +70,22 @@ import java.util.TimeZone;
  */
 public class Utils {
 
-    /*public final static SimpleDateFormat readFormat = new
-            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());*/
-
     public final static SimpleDateFormat readFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Config.locale);
 
     public final static SimpleDateFormat writeFormat = new
-            SimpleDateFormat("kk:mm aa dd MMM yyyy", Locale.getDefault());
+            SimpleDateFormat("kk:mm aa dd MMM yyyy", Config.locale);
     public final static SimpleDateFormat writeFormatMonth = new
-            SimpleDateFormat("kk:mm aa", Locale.getDefault());
+            SimpleDateFormat("kk:mm", Config.locale); // aa
+
+    public final static SimpleDateFormat dateFormat =
+            new SimpleDateFormat("yyyy-MM-dd", Config.locale);
+
+    public final static SimpleDateFormat readFormatDate =
+            new SimpleDateFormat("yyyy-MM-dd", Config.locale);
+
 
     public static Uri customerImageUri;
-    public static String aniket;
     private static Context _ctxt;
 
     static {
@@ -115,6 +118,31 @@ public class Utils {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    //creating scaled bitmap with required width and height
+    public static Bitmap createScaledBitmap(Bitmap unscaledBitmap, int dstWidth, int dstHeight) {
+
+        Rect srcRect = calculateSrcRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
+                dstWidth, dstHeight);
+        Rect dstRect = calculateDstRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
+                dstWidth, dstHeight);
+
+        Bitmap scaledBitmap = null;
+
+        try {
+            scaledBitmap = Bitmap.createBitmap(dstRect.width(), dstRect.height(),
+                    Bitmap.Config.ARGB_8888);
+        } catch (OutOfMemoryError oom) {
+            oom.printStackTrace();
+        }
+
+        if (scaledBitmap != null) {
+            Canvas canvas = new Canvas(scaledBitmap);
+            canvas.drawBitmap(unscaledBitmap, srcRect, dstRect, new Paint(Paint.FILTER_BITMAP_FLAG));
+        }
+
+        return scaledBitmap;
     }
 
     /*public static boolean isImageFile(String path) {
@@ -162,31 +190,6 @@ public class Utils {
         return true;
 
     }*/
-
-    //creating scaled bitmap with required width and height
-    public static Bitmap createScaledBitmap(Bitmap unscaledBitmap, int dstWidth, int dstHeight) {
-
-        Rect srcRect = calculateSrcRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
-                dstWidth, dstHeight);
-        Rect dstRect = calculateDstRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
-                dstWidth, dstHeight);
-
-        Bitmap scaledBitmap = null;
-
-        try {
-            scaledBitmap = Bitmap.createBitmap(dstRect.width(), dstRect.height(),
-                    Bitmap.Config.ARGB_8888);
-        } catch (OutOfMemoryError oom) {
-            oom.printStackTrace();
-        }
-
-        if (scaledBitmap != null) {
-            Canvas canvas = new Canvas(scaledBitmap);
-            canvas.drawBitmap(unscaledBitmap, srcRect, dstRect, new Paint(Paint.FILTER_BITMAP_FLAG));
-        }
-
-        return scaledBitmap;
-    }
 
     //
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
@@ -299,6 +302,16 @@ public class Utils {
     public static boolean externalMemoryAvailable() {
         return Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED);
+    }
+
+    public static void log(String message, String tag) {
+
+        if ((tag == null || tag.equalsIgnoreCase("")) && _ctxt != null)
+            tag = _ctxt.getClass().getName();
+
+        if (Config.isDebuggable)
+            Log.e(tag, message);
+
     }
 
     /*public static long getAvailableExternalMemorySize() {
@@ -445,14 +458,31 @@ public class Utils {
             btn.setBackground(drw);
     }*/
 
-    public static void log(String message, String tag) {
+    public static boolean deleteAllFiles(File directory) {
 
-        if ((tag == null || tag.equalsIgnoreCase("")) && _ctxt != null)
-            tag = _ctxt.getClass().getName();
+        final File[] files = directory.listFiles();
 
-        if (Config.isDebuggable)
-            Log.e(tag, message);
+        try {
 
+            if (files != null) {
+                for (File file : files) {
+                    if (file != null) {
+                        if (file.isDirectory()) {  // it is a folder.
+                            deleteAllFiles(file);
+                        } else {
+                            if (file.exists() && file.canRead() && file.canWrite()) {
+                                file.delete();
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
     /*public static String encrypt(String Data) {
@@ -516,34 +546,6 @@ public class Utils {
         return key;
     }*/
 
-    public static boolean deleteAllFiles(File directory) {
-
-        final File[] files = directory.listFiles();
-
-        try {
-
-            if (files != null) {
-                for (File file : files) {
-                    if (file != null) {
-                        if (file.isDirectory()) {  // it is a folder.
-                            deleteAllFiles(file);
-                        } else {
-                            if (file.exists() && file.canRead() && file.canWrite()) {
-                                file.delete();
-                            }
-                        }
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return true;
-    }
-
-
     public static File createFileInternal(String strFileName) {
 
         File file = null;
@@ -555,6 +557,32 @@ public class Utils {
         }
 
         return file;
+    }
+
+    public String getMonthLastDate(String strFromDate) {
+
+        String strLastDateMonth = "";
+
+        Date today = null;
+        try {
+            today = readFormatDate.parse(strFromDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(today);
+
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.DATE, -1);
+
+        Date lastDayOfMonth = calendar.getTime();
+
+        strLastDateMonth = dateFormat.format(lastDayOfMonth) + "T23:59:59.999+0000";
+        log(strLastDateMonth, "LAST DATE ");
+
+        return strLastDateMonth;
     }
 
     public void toast(int type, int duration, String message) {

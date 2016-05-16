@@ -120,6 +120,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void validateLogin(View v) {
 
+        showPasswordfield();
+
         utils.setEditTextDrawable(editEmail, getResources().getDrawable(R.drawable.edit_text));
         utils.setEditTextDrawable(editPassword, getResources().getDrawable(R.drawable.edit_text));
 
