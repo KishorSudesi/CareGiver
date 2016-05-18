@@ -34,6 +34,9 @@ public class Config {
     public static final String collectionActivity = "activity";
     public static final String collectionDependent = "dependent";
     public static final String collectionNotification = "notification";
+
+    public static final Locale locale = Locale.ENGLISH;
+
     public static final String string = Utils.getStringJni();
     public static final int iSdkVersion = Build.VERSION.SDK_INT;
     public static final int iAppVersion = BuildConfig.VERSION_CODE;
@@ -51,7 +54,7 @@ public class Config {
     public static final boolean release = false;
     //Login specific //User Specific clear at logout or whenever needed
     public final static String strCustomerImageName = "provider_image";
-    public static Locale locale = Locale.ENGLISH;
+
     public static int intClientScreen = 2;
     public static int intRatingsScreen = 3;
     public static int intDashboardScreen = 1;
