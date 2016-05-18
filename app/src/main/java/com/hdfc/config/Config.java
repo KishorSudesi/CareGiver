@@ -96,4 +96,5 @@ public class Config {
     public static ArrayList<String> servicelist = new ArrayList<>();
 
     public static ArrayList<String> strDependentNames = new ArrayList<>();
+    public static ArrayList<String> strCustomerNames = new ArrayList<>();
 }

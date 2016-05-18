@@ -63,6 +63,7 @@
     <string name="getDirection">Get Direction</string>
 
     <string name="clientName">Client Name</string>
+    <string name="dependentName">Dependent Name</string>
     <string name="title">Activity Description</string>
     <string name="services">Service</string>
     <string name="dateAndTime">Date and Time</string>

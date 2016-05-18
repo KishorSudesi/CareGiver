@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
@@ -84,6 +85,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
         editTextTitle = (EditText)findViewById(R.id.editTextTitle);
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
         inputSearchServices = (AutoCompleteTextView)findViewById(R.id.inputSearchServices);
+        Spinner dependentlist = (Spinner) findViewById(R.id.spindependentList);
+
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.strDependentNames);
+        //Getting the instance of AutoCompleteTextView
+        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
+        // dependentlist.setThreshold(1);//will start working from first character
+        dependentlist.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
 
         utils = new Utils(CreatingTaskActivity.this);
         progressDialog = new ProgressDialog(CreatingTaskActivity.this);
@@ -249,7 +257,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     }
 
     public void refreshClients(){
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CreatingTaskActivity.this,android.R.layout.select_dialog_item, Config.strDependentNames);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.strCustomerNames);
         //Getting the instance of AutoCompleteTextView
         //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
         inputSearch.setThreshold(1);//will start working from first character

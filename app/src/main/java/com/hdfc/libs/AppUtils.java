@@ -365,6 +365,8 @@ public class AppUtils {
 
                     Config.customerModels.add(customerModel);
 
+                    Config.strCustomerNames.add(jsonObject.getString("customer_name"));
+
                     Config.fileModels.add(new FileModel(strDocumentId,
                             jsonObject.getString("customer_profile_url"), "IMAGE"));
                 }
