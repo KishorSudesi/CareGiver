@@ -1,7 +1,6 @@
 package com.hdfc.libs;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -25,7 +24,6 @@ import com.hdfc.models.MilestoneModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.VideoModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
-import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
@@ -44,14 +42,14 @@ import java.util.Calendar;
 public class AppUtils {
     private static Context _ctxt;
     private static StorageService storageService;
-    private static ProgressDialog progressDialog;
+    //private static ProgressDialog progressDialog;
     private static Utils utils;
 
 
     public AppUtils(Context context) {
         _ctxt = context;
         utils = new Utils(_ctxt);
-        progressDialog = new ProgressDialog(_ctxt);
+        //progressDialog = new ProgressDialog(_ctxt);
         storageService = new StorageService(_ctxt);
     }
 
@@ -95,78 +93,6 @@ public class AppUtils {
             }
         });
         thread.start();
-    }
-
-
-    public void fetchProviders(final ProgressDialog progressDialog, final String strUserName) {
-
-        storageService.findDocsByKeyValue(Config.collectionProvider, "provider_email", strUserName,
-                new AsyncApp42ServiceApi.App42StorageServiceListener() {
-                    @Override
-                    public void onDocumentInserted(Storage response) {
-                    }
-
-                    @Override
-                    public void onUpdateDocSuccess(Storage response) {
-                    }
-
-                    @Override
-                    public void onFindDocSuccess(Storage response) {
-                        try {
-                            if (response != null) {
-
-                                if (response.getJsonDocList().size() > 0) {
-
-                                    Storage.JSONDocument jsonDocument = response.getJsonDocList().
-                                            get(0);
-                                    String strDocument = jsonDocument.getJsonDoc();
-                                    String strProviderId = jsonDocument.getDocId();
-
-                                    createProviderModel(strDocument, strProviderId);
-
-                                    goToDashboard();
-
-                                } else {
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
-                                    utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
-                                }
-                            } else {
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
-                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                            }
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
-                        }
-                    }
-
-                    @Override
-                    public void onInsertionFailed(App42Exception ex) {
-
-                    }
-
-                    @Override
-                    public void onFindDocFailed(App42Exception ex) {
-                        if (progressDialog.isShowing())
-                            progressDialog.dismiss();
-                        try {
-                            if (ex != null) {
-                                utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
-                            } else {
-                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                            }
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onUpdateDocFailed(App42Exception ex) {
-                    }
-                });
     }
 
     public void createProviderModel(String strDocument, String strProviderId) {
@@ -273,17 +199,6 @@ public class AppUtils {
             }
 
         } else DashboardActivity.gotoSimpleActivityMenu();
-    }
-
-    public void goToDashboard() {
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
-
-        Intent intent = new Intent(_ctxt, DashboardActivity.class);
-        //intent.putExtra("WHICH_SCREEN", intWhichScreen);
-        Config.intSelectedMenu = Config.intDashboardScreen;
-        _ctxt.startActivity(intent);
-        ((Activity) _ctxt).finish();
     }
 
     public void fetchCustomers(final RelativeLayout relativeLayout) {

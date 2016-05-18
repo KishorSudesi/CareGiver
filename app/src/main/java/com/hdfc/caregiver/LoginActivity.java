@@ -1,7 +1,9 @@
 package com.hdfc.caregiver;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -12,14 +14,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UserService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
+import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.DependentModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
+import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -192,7 +198,7 @@ public class LoginActivity extends AppCompatActivity {
                                 //todo check rolelist
                                 //roleList.size()>0 && roleList.get(0).equalsIgnoreCase("provider")
                                 if (true)
-                                    appUtils.fetchProviders(progressDialog, userName);
+                                    fetchProviders(progressDialog, userName);
                                 else {
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
@@ -228,6 +234,90 @@ public class LoginActivity extends AppCompatActivity {
                 } else utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
             }
         } //
+    }
+
+    public void fetchProviders(final ProgressDialog progressDialog, final String strUserName) {
+
+        StorageService storageService = new StorageService(LoginActivity.this);
+
+        storageService.findDocsByKeyValue(Config.collectionProvider, "provider_email", strUserName,
+                new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                    @Override
+                    public void onDocumentInserted(Storage response) {
+                    }
+
+                    @Override
+                    public void onUpdateDocSuccess(Storage response) {
+                    }
+
+                    @Override
+                    public void onFindDocSuccess(Storage response) {
+                        try {
+                            if (response != null) {
+
+                                if (response.getJsonDocList().size() > 0) {
+
+                                    Storage.JSONDocument jsonDocument = response.getJsonDocList().
+                                            get(0);
+                                    String strDocument = jsonDocument.getJsonDoc();
+                                    String strProviderId = jsonDocument.getDocId();
+
+                                    appUtils.createProviderModel(strDocument, strProviderId);
+
+                                    goToDashboard();
+
+                                } else {
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
+                                    utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
+                                }
+                            } else {
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
+                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                            }
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onInsertionFailed(App42Exception ex) {
+
+                    }
+
+                    @Override
+                    public void onFindDocFailed(App42Exception ex) {
+                        if (progressDialog.isShowing())
+                            progressDialog.dismiss();
+                        try {
+                            if (ex != null) {
+                                utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
+                            } else {
+                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                            }
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onUpdateDocFailed(App42Exception ex) {
+                    }
+                });
+    }
+
+    public void goToDashboard() {
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
+
+        Intent intent = new Intent(_ctxt, DashboardActivity.class);
+        //intent.putExtra("WHICH_SCREEN", intWhichScreen);
+        Config.intSelectedMenu = Config.intDashboardScreen;
+        _ctxt.startActivity(intent);
+        ((Activity) _ctxt).finish();
     }
 
 
