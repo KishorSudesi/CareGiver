@@ -72,7 +72,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
         }
     };
-    private NetworkStateReceiver networkStateReceiver;
+    private NetworkStateReceiver networkStateReceiver = new NetworkStateReceiver();
     private ImageView mytask, clients, feedback;
     private TextView textViewTasks, textViewClients, textViewFeedback;
 
@@ -130,9 +130,9 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
             setMenu();
 
             try {
-                networkStateReceiver = new NetworkStateReceiver();
+                //networkStateReceiver = new NetworkStateReceiver();
                 networkStateReceiver.addListener(this);
-                this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+                //this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -282,6 +282,9 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                     App42GCMService.DisplayMessageAction);
             filter.setPriority(2);
             registerReceiver(mBroadcastReceiver, filter);
+
+            registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
