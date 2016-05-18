@@ -2,99 +2,28 @@
   "milestones": [
     {
       "id": 1,
-      "status": "inactive",
-      "name": "Grocery Purchase Request",
-      "show": true,
       "reschedule": false,
+      "status": "inactive",
+      "name": "Non-Medical Emergency Details",
+      "show": true,
       "date": "",
       "fields": [
         {
           "id": 11,
           "data": "",
-          "label": "Mode of Purchase",
+          "label": "Date and Time",
           "required": true,
-          "values": [
-            "Online",
-            "Offline",
-            "Accompany"
-          ],
-          "type": "dropdown"
+          "type": "datetime"
         },
         {
           "id": 12,
           "data": "",
-          "label": "Date and Time",
+          "label": "Details",
           "required": true,
-          "type": "datetime"
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "status": "inactive",
-      "name": "Travel Update",
-      "reschedule": false,
-      "show": true,
-      "date": "",
-      "fields": [
-        {
-          "id": 21,
-          "child": true,
-          "values": [
-            "Self",
-            "Accompany",
-            "Car Booking"
-          ],
-          "data": "",
-          "child_type": [
-            "text"
-          ],
-          "label": "Mode of Travel",
-          "child_value": [
-            "Car Booking"
-          ],
-          "type": "radio",
-          "required": true,
-          "child_condition": [
-            "equals"
-          ],
-          "child_field": [
-            22
-          ]
+          "type": "text"
         },
         {
-          "id": 22,
-          "hide": true,
-          "data": "",
-          "label": "Service Name",
-          "type": "text",
-          "required": true
-        },
-        {
-          "id": 23,
-          "data": "",
-          "label": "Date and Time",
-          "type": "datetime",
-          "required": true
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "status": "inactive",
-      "name": "Delivery closure",
-      "show": true,
-      "date": "",
-      "fields": [
-        {
-          "id": 31,
-          "data": "",
-          "label": "Date and Time",
-          "required": true,
-          "type": "datetime"
-        },
-        {
-          "id": 32,
+          "id": 13,
           "data": "",
           "label": "Comments",
           "required": true,
@@ -104,9 +33,9 @@
     }
   ],
   "unit": 50,
-  "category_name": "Home Care",
+  "category_name": "Emergency Care",
   "unit_value": 1,
-  "service_no": 202,
-  "service_name": "Grocery Purchase",
+  "service_no": 502,
+  "service_name": "Non-Medical Emergency Care",
   "cost": 0
 }
