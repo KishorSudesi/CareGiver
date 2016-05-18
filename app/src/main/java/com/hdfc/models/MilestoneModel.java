@@ -14,7 +14,16 @@ public class MilestoneModel implements Serializable {
     private String strMilestoneDate;
 
     private boolean isVisible;
+    private boolean isReschedule;
     private ArrayList<FieldModel> fieldModels = new ArrayList<>();
+
+    public boolean isReschedule() {
+        return isReschedule;
+    }
+
+    public void setReschedule(boolean reschedule) {
+        isReschedule = reschedule;
+    }
 
     public boolean isVisible() {
         return isVisible;

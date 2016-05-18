@@ -102,7 +102,7 @@ public class Utils {
         Config.intScreenWidth = metrics.widthPixels;
         Config.intScreenHeight = metrics.heightPixels;
 
-        readFormat.setTimeZone(TimeZone.getDefault());
+        readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     public static native String getString();
@@ -1159,7 +1159,13 @@ public class Utils {
                     milestoneModel.setStrMilestoneStatus(jsonObjectMilestone.getString("status"));
                     milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
                     milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
-                    milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
+                    //milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
+
+                    if (jsonObjectMilestone.has("show"))
+                        milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
+
+                    if (jsonObjectMilestone.has("reschedule"))
+                        milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
 
                     //
                     if (jsonObjectMilestone.has("fields")) {

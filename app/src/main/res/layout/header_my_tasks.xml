@@ -15,25 +15,25 @@
         android:textColor="@color/colorWhite"
         android:textSize="23sp" />
 
-    <!-- <ImageView
+    <ImageView
          android:id="@+id/imgNext"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
+        android:layout_marginRight="30dp"
          android:layout_marginTop="20dp"
          android:layout_toLeftOf="@+id/calendar"
-         android:layout_marginRight="30dp"
          android:src="@mipmap/arrow_right"/>
 
-     <ImageView
+    <ImageView
          android:id="@+id/imgBack"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_toLeftOf="@+id/imgNext"
-         android:layout_marginTop="20dp"
          android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_toLeftOf="@+id/imgNext"
          android:src="@mipmap/arrow_left"/>
 
-     <ImageView
+    <ImageView
          android:id="@+id/calendar"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
@@ -41,5 +41,5 @@
          android:layout_marginRight="20dp"
          android:layout_marginTop="20dp"
          android:src="@mipmap/calendar"/>
- -->
+
 </RelativeLayout>

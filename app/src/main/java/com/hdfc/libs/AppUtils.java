@@ -649,6 +649,9 @@ public class AppUtils {
                             if (jsonObjectMilestone.has("show"))
                                 milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
 
+                            if (jsonObjectMilestone.has("reschedule"))
+                                milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
+
                             if (jsonObjectMilestone.has("fields")) {
 
                                 JSONArray jsonArrayFields = jsonObjectMilestone.

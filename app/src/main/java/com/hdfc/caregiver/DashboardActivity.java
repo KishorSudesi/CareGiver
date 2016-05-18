@@ -23,7 +23,9 @@ import com.hdfc.app42service.App42GCMService;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbCon;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
 import com.shephertz.app42.paas.sdk.android.App42API;
@@ -59,12 +61,12 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                         dialog.dismiss();
                     }
                 });
-                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+              /*  builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
-                });
+                });*/
                 builder.show();
             }
 
@@ -106,95 +108,102 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_tasks);
 
-        appUtils = new AppUtils(DashboardActivity.this);
-
-        mytask = (ImageView)findViewById(R.id.buttonMyTasks);
-        clients = (ImageView)findViewById(R.id.buttonClients);
-        feedback = (ImageView)findViewById(R.id.buttonFeedback);
-
-        loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
-
-        progressDialog = new ProgressDialog(DashboardActivity.this);
-        threadHandler = new ThreadHandler();
-
-        textViewTasks = (TextView) findViewById(R.id.textViewTasks);
-        textViewClients = (TextView) findViewById(R.id.textViewClients);
-        textViewFeedback = (TextView) findViewById(R.id.textViewFeedback);
-
-        net_error_layout = (LinearLayout) findViewById(R.id.pnd_net_error);
-
-        setMenu();
-
         try {
-            networkStateReceiver = new NetworkStateReceiver();
-            networkStateReceiver.addListener(this);
-            this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        mytask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuDashboard();
+            appUtils = new AppUtils(DashboardActivity.this);
+
+            mytask = (ImageView) findViewById(R.id.buttonMyTasks);
+            clients = (ImageView) findViewById(R.id.buttonClients);
+            feedback = (ImageView) findViewById(R.id.buttonFeedback);
+
+            loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
+
+            progressDialog = new ProgressDialog(DashboardActivity.this);
+            threadHandler = new ThreadHandler();
+
+            textViewTasks = (TextView) findViewById(R.id.textViewTasks);
+            textViewClients = (TextView) findViewById(R.id.textViewClients);
+            textViewFeedback = (TextView) findViewById(R.id.textViewFeedback);
+
+            net_error_layout = (LinearLayout) findViewById(R.id.pnd_net_error);
+
+            setMenu();
+
+            try {
+                networkStateReceiver = new NetworkStateReceiver();
+                networkStateReceiver.addListener(this);
+                this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
 
-        textViewTasks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuDashboard();
-            }
-        });
+            mytask.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    menuDashboard();
+                }
+            });
 
-        clients.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuClients();
-            }
-        });
+            textViewTasks.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    menuDashboard();
+                }
+            });
 
-        textViewClients.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuClients();
-            }
-        });
+            clients.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    menuClients();
+                }
+            });
 
-        feedback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            textViewClients.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    menuClients();
+                }
+            });
 
-            }
-        });
+            feedback.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-        textViewFeedback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuFeedback();
-            }
-        });
+                }
+            });
 
-        if (Config.intSelectedMenu == Config.intClientScreen) {
-            //Config.intSelectedMenu = 0;
+            textViewFeedback.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    menuFeedback();
+                }
+            });
+
+            if (Config.intSelectedMenu == Config.intClientScreen) {
+                //Config.intSelectedMenu = 0;
             /*clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
             textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
             gotoClient();*/
-            menuClients();
-        }
+                menuClients();
+            }
 
-        if (Config.intSelectedMenu == Config.intRatingsScreen) {
+            if (Config.intSelectedMenu == Config.intRatingsScreen) {
             /*Config.intSelectedMenu = 0;
             feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
             textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
             gotoFeedback();*/
-            menuFeedback();
+                menuFeedback();
+            }
+            App42API.setLoggedInUser(Config.providerModel.getStrEmail());
+
+            appCompatActivity = DashboardActivity.this;
+
+            loadingPanel.setVisibility(View.VISIBLE);
+
+            CareGiver.dbCon = DbCon.getInstance(DashboardActivity.this);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        App42API.setLoggedInUser(Config.providerModel.getStrEmail());
-
-        appCompatActivity = DashboardActivity.this;
-
-        loadingPanel.setVisibility(View.VISIBLE);
     }
 
     public void menuDashboard() {
@@ -257,6 +266,8 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         super.onPause();
         try {
             unregisterReceiver(mBroadcastReceiver);
+            if (networkStateReceiver != null)
+                unregisterReceiver(networkStateReceiver);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -275,8 +286,13 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
             e.printStackTrace();
         }
 
-        try {
-            boolean isPushReceived = getIntent().getBooleanExtra("message_delivered", false);
+
+        if (Config.providerModel == null || Config.providerModel.getStrName() == null) {
+            AppUtils.logout();
+        } else {
+
+            try {
+            /*boolean isPushReceived = getIntent().getBooleanExtra("message_delivered", false);
             String strPushMess = getIntent().getStringExtra("message");
 
             if (isPushReceived && strPushMess != null && !strPushMess.equalsIgnoreCase("")) {
@@ -297,7 +313,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                     }
                 });
                 builder.show();
-            } else {
+            } else {*/
 
                 if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
@@ -306,9 +322,10 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
                     refreshData();
                 }
+                //}
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

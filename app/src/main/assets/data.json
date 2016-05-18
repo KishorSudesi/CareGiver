@@ -3,26 +3,25 @@
     {
       "id": 1,
       "status": "inactive",
-      "name": "Appointment Confirmation",
+      "name": "Grocery Purchase Request",
       "show": true,
+      "reschedule": false,
       "date": "",
       "fields": [
         {
           "id": 11,
           "data": "",
-          "label": "Lab Name",
+          "label": "Mode of Purchase",
           "required": true,
-          "type": "text"
+          "values": [
+            "Online",
+            "Offline",
+            "Accompany"
+          ],
+          "type": "dropdown"
         },
         {
           "id": 12,
-          "data": "",
-          "label": "Test Performed",
-          "required": true,
-          "type": "text"
-        },
-        {
-          "id": 13,
           "data": "",
           "label": "Date and Time",
           "required": true,
@@ -34,30 +33,31 @@
       "id": 2,
       "status": "inactive",
       "name": "Travel Update",
+      "reschedule": false,
       "show": true,
       "date": "",
       "fields": [
         {
-          "child": true,
           "id": 21,
+          "child": true,
           "values": [
             "Self",
             "Accompany",
             "Car Booking"
           ],
+          "data": "",
           "child_type": [
             "text"
           ],
-          "data": "",
+          "label": "Mode of Travel",
           "child_value": [
             "Car Booking"
           ],
-          "label": "Mode of Travel",
+          "type": "radio",
+          "required": true,
           "child_condition": [
             "equals"
           ],
-          "required": true,
-          "type": "radio",
           "child_field": [
             22
           ]
@@ -67,22 +67,36 @@
           "hide": true,
           "data": "",
           "label": "Service Name",
-          "required": true,
-          "type": "text"
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": 23,
+          "data": "",
+          "label": "Date and Time",
+          "type": "datetime",
+          "required": true
         }
       ]
     },
     {
       "id": 3,
       "status": "inactive",
-      "name": "Activity closure",
+      "name": "Delivery closure",
       "show": true,
       "date": "",
       "fields": [
         {
           "id": 31,
           "data": "",
-          "label": "Delivery of Reports",
+          "label": "Date and Time",
+          "required": true,
+          "type": "datetime"
+        },
+        {
+          "id": 32,
+          "data": "",
+          "label": "Comments",
           "required": true,
           "type": "text"
         }
@@ -90,10 +104,9 @@
     }
   ],
   "unit": 50,
-  "category_name": "Health Care",
+  "category_name": "Home Care",
   "unit_value": 1,
-  "service_type": "adhoc",
-  "service_no": 101,
-  "service_name": "Medical Test",
+  "service_no": 202,
+  "service_name": "Grocery Purchase",
   "cost": 0
 }

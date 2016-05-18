@@ -1,110 +1,125 @@
 {
-  "service_no": 101,
   "unit": 50,
-  "service_name": "Medical Test",
-  "cost": 0.0,
-  "category_name": "Health Care",
-  "service_type": "adhoc",
   "milestones": [
     {
-      "name": "Appointment Confirmation",
-      "date": "2016-12-22T23:08:11.343Z",
-      "status": "closed",
       "id": 1,
+      "status": "inactive",
+      "name": "Appointment Confirmation",
+      "show": true,
+      "date": "",
+      "reschedule": false,
       "fields": [
         {
+          "id": 11,
+          "data": "",
           "label": "Lab Name",
           "type": "text",
-          "required": true,
-          "id": 11,
-          "data": "Medical Lab Test"
+          "required": true
         },
         {
-          "label": "Test Performed",
-          "type": "text",
-          "required": true,
           "id": 12,
-          "data": "BP"
+          "data": "",
+          "label": "Test Name",
+          "type": "text",
+          "required": true
         },
         {
+          "id": 13,
+          "data": "",
+          "label": "prerequisite",
+          "type": "dropdown",
+          "values": [
+            "Fasting",
+            "Non Fasting"
+          ],
+          "required": true
+        },
+        {
+          "id": 14,
+          "data": "",
           "label": "Date and Time",
           "type": "datetime",
-          "required": true,
-          "id": 13,
-          "data": "2016-12-22T23:08:11.343Z"
+          "required": true
         }
       ]
     },
     {
-      "name": "Travel Update",
-      "date": "2016-12-22T23:08:11.343Z",
       "id": 2,
-      "status": "closed",
+      "status": "inactive",
+      "name": "Travel Update",
+      "show": true,
+      "date": "",
+      "reschedule": false,
       "fields": [
         {
-          "label": "Mode of Travel",
-          "type": "radio",
-          "required": true,
           "id": 21,
-          "data": "Accompany",
+          "child": true,
           "values": [
             "Self",
             "Accompany",
             "Car Booking"
           ],
-          "child": true,
-          "child_field": [
-            22
+          "data": "",
+          "child_type": [
+            "text"
           ],
-          "child_condition": [
-            "equals"
-          ],
+          "label": "Mode of Travel",
           "child_value": [
             "Car Booking"
           ],
-          "child_type": [
-            "text"
+          "type": "radio",
+          "required": true,
+          "child_condition": [
+            "equals"
+          ],
+          "child_field": [
+            22
           ]
         },
         {
+          "id": 22,
+          "hide": true,
+          "data": "",
           "label": "Service Name",
           "type": "text",
-          "id": 22,
-          "required": true,
-          "hide": true,
-          "data": "Ola service"
+          "required": true
+        },
+        {
+          "id": 23,
+          "data": "",
+          "label": "Date and Time",
+          "type": "datetime",
+          "required": true
         }
       ]
     },
     {
-      "name": "Activity closure",
-      "date": "2016-12-22T23:08:11.343Z",
       "id": 3,
-      "status": "closed",
+      "status": "inactive",
+      "name": "Activity closure",
+      "show": true,
+      "date": "",
       "fields": [
         {
-          "label": "Delivery of Reports",
-          "type": "text",
           "id": 31,
-          "required": true,
-          "data": "Complete reports"
-        }
-      ]
-    },
-    {
-      "name": "Feedback Rating",
-      "date": "2016-12-22T23:08:11.343Z",
-      "id": 4,
-      "status": "active",
-      "fields": [
+          "data": "",
+          "label": "Date and Time",
+          "type": "datetime",
+          "required": true
+        },
         {
-          "label": "Feedback",
+          "id": 32,
+          "data": "",
+          "label": "Comments",
           "type": "text",
-          "id": 41,
-          "required": true,
-          "data": "Good service"
+          "required": true
         }
       ]
     }
-  ]
+  ],
+  "unit_value": 1,
+  "category_name": "Health Care",
+  "service_no": 101,
+  "service_name": "Medical Test",
+  "cost": 0
 }
