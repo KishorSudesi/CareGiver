@@ -23,17 +23,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "caregiver";
+    private static final String strTableNameCollection = "collections";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
     private static SQLiteDatabase db;
-    /*public String Create_User_Tbl = "CREATE TABLE user ( user_id integer primary key autoincrement," +
-            " name VARCHAR(100), email VARCHAR(100) UNIQUE, password VARCHAR(100),  contact_no VARCHAR(15), address VARCHAR(300)" +
-            ", image_path varchar(100), status integer)";*/
-   /* public String Create_Dependant_Tbl = "CREATE TABLE dependant ( dependant_id integer primary key autoincrement," +
-            " name VARCHAR(100) unique, contact_no VARCHAR(15), address VARCHAR(300), " +
-            "relationship VARCHAR(20), age integer, diseases VARCHAR(200)," +
-            " notes VARCHAR(500), image_path varchar(100), image_path_server varchar(200)," +
-            " customer_email VARCHAR(100), email VARCHAR(100), status integer)";*/
+    public String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection + " ( id integer primary key autoincrement," +
+            " object_id VARCHAR(50), updated_date VARCHAR(20), document text,  collection_name VARCHAR(50))";
 
     private Context _ctxt;
 
@@ -87,7 +82,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //db.execSQL(Create_User_Tbl);
+        db.execSQL(strCollectionsQuery);
         //db.execSQL(Create_Dependant_Tbl);
         Log.i("DB", "onCreate");
     }
@@ -103,7 +98,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public void dropDb(SQLiteDatabase db) {
-        //db.execSQL("DROP TABLE IF EXISTS user");
+        db.execSQL("DROP TABLE IF EXISTS " + strTableNameCollection);
         //db.execSQL("DROP TABLE IF EXISTS dependant");
     }
 
