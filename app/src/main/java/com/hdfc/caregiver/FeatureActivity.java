@@ -421,8 +421,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             }
         });*/
 
-        strName = String.valueOf(new Date().getDate() + "" + new Date().getTime());
-        strImageName = strName + ".jpeg";
+
 
 
         imageCamera.setOnClickListener(new View.OnClickListener() {
@@ -438,6 +437,10 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                     ActivityCompat.requestPermissions(FeatureActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 124);
                     return;
                 }
+
+                strName = String.valueOf(new Date().getDate() + "" + new Date().getTime());
+                strImageName = strName + ".jpeg";
+
                 utils.selectImage(strImageName, null, FeatureActivity.this, false);
 
                 //  Intent intent = new Intent();
@@ -460,6 +463,10 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                     ActivityCompat.requestPermissions(FeatureActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 124);
                     return;
                 }
+
+                strName = String.valueOf(new Date().getDate() + "" + new Date().getTime());
+                strImageName = strName + ".jpeg";
+
                 utils.selectImage(strImageName, null, FeatureActivity.this, false);
 
             }
@@ -777,6 +784,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 imageView.setTag(bitmaps.get(i));
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
+
                 Utils.log(" 2 " + String.valueOf(i), " IN ");
 
                 imageView.setOnClickListener(new View.OnClickListener() {
@@ -921,7 +929,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         }
     }
 
-       public class BackgroundThread extends Thread {
+    public class BackgroundThread extends Thread {
         @Override
         public void run() {
 

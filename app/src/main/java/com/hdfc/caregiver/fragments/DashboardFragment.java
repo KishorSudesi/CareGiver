@@ -40,7 +40,7 @@ public class DashboardFragment extends Fragment {
         buttonActivity = (Button) view.findViewById(R.id.buttonActivity);
         buttonTask = (Button) view.findViewById(R.id.buttonTask);
 
-        final LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.linearLayout);
+        final LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.dashboardlinearLayout);
 
         buttonActivity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +64,6 @@ public class DashboardFragment extends Fragment {
         transaction.replace(R.id.frameLayoutDashboard, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
-
 
         return view;
     }

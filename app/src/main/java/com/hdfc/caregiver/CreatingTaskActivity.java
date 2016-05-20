@@ -52,7 +52,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate;
     private ProgressDialog progressDialog;
     private Utils utils;
-    private EditText dateTime, editTextTitle;
+    private EditText editTextTitle, dateAnd;
+    private TextView dateTime;
     private JSONObject jsonObject;
 
         private SlideDateTimeListener listener = new SlideDateTimeListener() {
@@ -66,7 +67,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                 strDate = Utils.writeFormat.format(date);
                 _strDate = Utils.readFormat.format(date);
-                dateTime.setText(strDate);
+                dateAnd.setText(strDate);
             }
 
             @Override
@@ -79,7 +80,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creating_task);
-        dateTime = (EditText)findViewById(R.id.editTextDate);
+        dateAnd = (EditText) findViewById(R.id.editDob);
         editTextTitle = (EditText)findViewById(R.id.editTextTitle);
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
         inputSearchServices = (AutoCompleteTextView)findViewById(R.id.inputSearchServices);
@@ -116,7 +117,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         /*Bundle b = getIntent().getExtras();
         intWhichScreen = b.getInt("WHICH_SCREEN", Config.intDashboardScreen);*/
 
-        dateTime.setOnClickListener(new View.OnClickListener() {
+        dateAnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new SlideDateTimePicker.Builder(getSupportFragmentManager())
@@ -133,13 +134,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 valTitle = editTextTitle.getText().toString().trim();
-                valDateTime = dateTime.getText().toString().trim();
+                valDateTime = dateAnd.getText().toString().trim();
                 valSearch = inputSearch.getText().toString().trim();
                 strServiceName = inputSearchServices.getText().toString().trim();
 
                 if (TextUtils.isEmpty(valDateTime)) {
-                    dateTime.setError(getString(R.string.error_field_required));
-                    focusView = dateTime;
+                    dateAnd.setError(getString(R.string.error_field_required));
+                    focusView = dateAnd;
                     cancel = true;
                 }
 

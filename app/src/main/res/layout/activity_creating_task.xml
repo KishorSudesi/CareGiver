@@ -93,20 +93,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <EditText
-            android:id="@+id/editTextDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:drawableEnd="@drawable/activity_icon_32"
-            android:drawableRight="@drawable/activity_icon_32"
-            android:hint="@string/dateAndTime"
-            android:inputType="datetime"
-            android:paddingEnd="20dp"
-            android:paddingLeft="20dp"
-            android:paddingStart="20dp" />
 
+        <EditText
+            android:id="@+id/editDob"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/edit_text_margin"
+            android:layout_marginRight="@dimen/edit_text_margin"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/edit_text"
+            android:drawableLeft="@drawable/activity_icon_32"
+            android:drawablePadding="10dp"
+            android:focusableInTouchMode="false"
+            android:hint="@string/dateAndTime"
+            android:inputType="textPersonName"
+            android:padding="10dp" />
 
     </LinearLayout>
 
