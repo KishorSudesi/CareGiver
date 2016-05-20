@@ -18,12 +18,19 @@ public class DependentModel {
     private String strImageUrl;
     private String strDob;
 
+    private String strCountry;
+    private String strCity;
+    private String strState;
+    private String strPinCode;
+
     private int intAge;
     private int intHealthBp;
     private int intHealthHeartRate;
 
     private String strDependentID;
     private String strCustomerID;
+
+    private String[] strProviderIds;
 
     private ArrayList<ServiceModel> serviceModels = new ArrayList<>();
     private ArrayList<ActivityModel> activityModels = new ArrayList<>();
@@ -54,6 +61,7 @@ public class DependentModel {
         this.serviceModels = serviceModels;
     }
 
+
     public DependentModel(String strName, String strRelation, String strNotes, String strAddress,
                           String strContacts, String strEmail, String strIllness,
                           String strImagePath, String strImageUrl, int intAge, int intHealthBp,
@@ -72,6 +80,46 @@ public class DependentModel {
         this.intHealthHeartRate = intHealthHeartRate;
         this.strDependentID = strDependentID;
         this.strCustomerID = strCustomerID;
+    }
+
+    public String[] getStrProviderIds() {
+        return strProviderIds;
+    }
+
+    public void setStrProviderIds(String[] strProviderIds) {
+        this.strProviderIds = strProviderIds;
+    }
+
+    public String getStrCountry() {
+        return strCountry;
+    }
+
+    public void setStrCountry(String strCountry) {
+        this.strCountry = strCountry;
+    }
+
+    public String getStrCity() {
+        return strCity;
+    }
+
+    public void setStrCity(String strCity) {
+        this.strCity = strCity;
+    }
+
+    public String getStrState() {
+        return strState;
+    }
+
+    public void setStrState(String strState) {
+        this.strState = strState;
+    }
+
+    public String getStrPinCode() {
+        return strPinCode;
+    }
+
+    public void setStrPinCode(String strPinCode) {
+        this.strPinCode = strPinCode;
     }
 
     public String getStrDob() {
@@ -97,6 +145,8 @@ public class DependentModel {
     /*public void setActivityModels(ArrayList<ActivityModel> activityModels) {
         this.activityModels = activityModels;
     }*/
+
+    //todo get and set provider ids array if required
 
     public void setActivityModels(ActivityModel activityModel) {
         this.activityModels.add(activityModel);

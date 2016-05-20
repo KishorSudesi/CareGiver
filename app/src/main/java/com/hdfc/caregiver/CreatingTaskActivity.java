@@ -329,11 +329,10 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 jsonObjectMilestone.put("status", milestoneModel.getStrMilestoneStatus());
                 jsonObjectMilestone.put("name", milestoneModel.getStrMilestoneName());
                 jsonObjectMilestone.put("date", milestoneModel.getStrMilestoneDate());
-                jsonObjectMilestone.put("show", milestoneModel.isVisible());
-                //jsonObjectMilestone.put("reschedule", milestoneModel.isReschedule());
 
-                if (jsonObjectMilestone.has("reschedule"))
-                    milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
+                jsonObjectMilestone.put("show", milestoneModel.isVisible());
+                jsonObjectMilestone.put("reschedule", milestoneModel.isReschedule());
+                jsonObjectMilestone.put("scheduled_date", milestoneModel.getStrMilestoneScheduledDate());
 
                 JSONArray jsonArrayFields = new JSONArray();
 

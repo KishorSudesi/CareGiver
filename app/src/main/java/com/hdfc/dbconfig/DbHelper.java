@@ -21,14 +21,18 @@ import java.util.Date;
 
 public class DbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "caregiver";
     private static final String strTableNameCollection = "collections";
+    private static final String strTableNameFiles = "files";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
     private static SQLiteDatabase db;
     public String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection + " ( id integer primary key autoincrement," +
-            " object_id VARCHAR(50), updated_date VARCHAR(20), document text,  collection_name VARCHAR(50))";
+            " object_id VARCHAR(50), updated_date VARCHAR(20), document text,  collection_name VARCHAR(50), status integer)";
+
+    public String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
+            " name VARCHAR(100), url VARCHAR(300), file_type VARCHAR(10),  file_hash VARCHAR(50))";
 
     private Context _ctxt;
 
@@ -83,7 +87,7 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(strCollectionsQuery);
-        //db.execSQL(Create_Dependant_Tbl);
+        db.execSQL(strFilesQuery);
         Log.i("DB", "onCreate");
     }
 
@@ -99,7 +103,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public void dropDb(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + strTableNameCollection);
-        //db.execSQL("DROP TABLE IF EXISTS dependant");
+        db.execSQL("DROP TABLE IF EXISTS " + strTableNameFiles);
     }
 
     public void closeCursor(Cursor cursor) {

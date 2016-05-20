@@ -671,8 +671,10 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 jsonObjectMilestone.put("status", milestoneModel.getStrMilestoneStatus());
                 jsonObjectMilestone.put("name", milestoneModel.getStrMilestoneName());
                 jsonObjectMilestone.put("date", milestoneModel.getStrMilestoneDate());
+
                 jsonObjectMilestone.put("show", milestoneModel.isVisible());
                 jsonObjectMilestone.put("reschedule", milestoneModel.isReschedule());
+                jsonObjectMilestone.put("scheduled_date", milestoneModel.getStrMilestoneScheduledDate());
 
                 JSONArray jsonArrayFields = new JSONArray();
 

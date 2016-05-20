@@ -12,6 +12,12 @@ public class ProviderModel {
     private String strContacts = "";
     private String strEmail = "";
 
+    private String strCountry;
+    private String strCity;
+    private String strState;
+    private String strPinCode;
+
+
     private String strProviderId;
 
     public ProviderModel() {
@@ -27,6 +33,38 @@ public class ProviderModel {
         this.strContacts = strContacts;
         this.strEmail = strEmail;
         this.strProviderId = strProviderId;
+    }
+
+    public String getStrCountry() {
+        return strCountry;
+    }
+
+    public void setStrCountry(String strCountry) {
+        this.strCountry = strCountry;
+    }
+
+    public String getStrCity() {
+        return strCity;
+    }
+
+    public void setStrCity(String strCity) {
+        this.strCity = strCity;
+    }
+
+    public String getStrState() {
+        return strState;
+    }
+
+    public void setStrState(String strState) {
+        this.strState = strState;
+    }
+
+    public String getStrPinCode() {
+        return strPinCode;
+    }
+
+    public void setStrPinCode(String strPinCode) {
+        this.strPinCode = strPinCode;
     }
 
     public String getStrName() {

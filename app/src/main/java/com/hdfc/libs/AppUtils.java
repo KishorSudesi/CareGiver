@@ -109,6 +109,11 @@ public class AppUtils {
                         jsonObject.getString("provider_email"),
                         strProviderId);
 
+                Config.providerModel.setStrCountry(jsonObject.getString("provider_country"));
+                Config.providerModel.setStrState(jsonObject.getString("provider_state"));
+                Config.providerModel.setStrCity(jsonObject.getString("provider_city"));
+                Config.providerModel.setStrPinCode(jsonObject.getString("provider_pin_code"));
+
                 Config.fileModels.add(new FileModel(strProviderId,
                         jsonObject.getString("provider_profile_url"), "IMAGE"));
 
@@ -651,6 +656,10 @@ public class AppUtils {
 
                             if (jsonObjectMilestone.has("reschedule"))
                                 milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
+
+                            if (jsonObjectMilestone.has("scheduled_date"))
+                                milestoneModel.setStrMilestoneScheduledDate(jsonObjectMilestone.
+                                        getString("scheduled_date"));
 
                             if (jsonObjectMilestone.has("fields")) {
 

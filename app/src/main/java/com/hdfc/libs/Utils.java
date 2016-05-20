@@ -1167,6 +1167,10 @@ public class Utils {
                     if (jsonObjectMilestone.has("reschedule"))
                         milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
 
+                    if (jsonObjectMilestone.has("scheduled_date"))
+                        milestoneModel.setStrMilestoneScheduledDate(jsonObjectMilestone.
+                                getString("scheduled_date"));
+
                     //
                     if (jsonObjectMilestone.has("fields")) {
 

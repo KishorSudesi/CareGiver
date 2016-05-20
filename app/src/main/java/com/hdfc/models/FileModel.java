@@ -8,6 +8,7 @@ public class FileModel {
     private String strFileName;
     private String strFileUrl;
     private String strImageType;
+    private String strUrlMd5;
 
     public FileModel(String strFileName, String strFileUrl, String strImageType) {
         this.strFileName = strFileName;
@@ -15,15 +16,35 @@ public class FileModel {
         this.strImageType = strImageType;
     }
 
+    public String getStrUrlMd5() {
+        return strUrlMd5;
+    }
+
+    public void setStrUrlMd5(String strUrlMd5) {
+        this.strUrlMd5 = strUrlMd5;
+    }
+
     public String getStrFileName() {
         return strFileName;
+    }
+
+    public void setStrFileName(String strFileName) {
+        this.strFileName = strFileName;
     }
 
     public String getStrFileUrl() {
         return strFileUrl;
     }
 
+    public void setStrFileUrl(String strFileUrl) {
+        this.strFileUrl = strFileUrl;
+    }
+
     public String getStrImageType() {
         return strImageType;
+    }
+
+    public void setStrImageType(String strImageType) {
+        this.strImageType = strImageType;
     }
 }
