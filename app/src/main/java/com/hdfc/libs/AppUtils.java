@@ -95,7 +95,7 @@ public class AppUtils {
         thread.start();
     }
 
-    public void createProviderModel(String strDocument, String strProviderId) {
+    public void createProviderModel(String strDocument, String strProviderId, String strUpdatedAt) {
 
         try {
             JSONObject jsonObject = new JSONObject(strDocument);
@@ -113,6 +113,8 @@ public class AppUtils {
                 Config.providerModel.setStrState(jsonObject.getString("provider_state"));
                 Config.providerModel.setStrCity(jsonObject.getString("provider_city"));
                 Config.providerModel.setStrPinCode(jsonObject.getString("provider_pin_code"));
+
+                //CareGiver.dbCon.insertProvider(strProviderId, strDocument, strUpdatedAt);
 
                 Config.fileModels.add(new FileModel(strProviderId,
                         jsonObject.getString("provider_profile_url"), "IMAGE"));

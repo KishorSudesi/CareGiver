@@ -21,9 +21,9 @@ import java.util.Date;
 
 public class DbHelper extends SQLiteOpenHelper {
 
+    public static final String strTableNameCollection = "collections";
     private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "caregiver";
-    private static final String strTableNameCollection = "collections";
     private static final String strTableNameFiles = "files";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;

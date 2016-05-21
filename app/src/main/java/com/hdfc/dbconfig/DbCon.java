@@ -40,6 +40,50 @@ public class DbCon {
         dbHelper.close();
     }
 
+    public void insertProvider(String strProviderId, String strDocument, String strUpdatedAt) {
+
+        long longInserted = 0;
+
+        /*if (isDbOpened) {
+
+            Cursor cur = null;
+
+            try {
+
+                //
+                id integer primary key autoincrement," +
+                " object_id VARCHAR(50), updated_date VARCHAR(20), document text,  collection_name VARCHAR(50), status integer
+
+                cur = dbHelper.fetch(DbHelper.strTableNameCollection, new String[]{"id"}, "object_id=?", new String[]{strProviderId}, null, null, false, null, null);
+
+                if (cur.getCount() <= 0) {
+
+                    longInserted = dbHelper.insert(new String[]{strName, strEmail, strPassword, strContactNo, "0", strImagPath, strAddress},
+                            new String[]{"name", "email", "password", "contact_no", "status", "image_path", "address"}, "user");
+                } else {
+
+                    dbHelper.update("user_id=?", new String[]{strName, strEmail, strPassword, strContactNo, strAddress},
+                            new String[]{"name", "email", "password", "contact_no", "address"}, "user", new String[]{String.valueOf(longUserId)});
+
+                    if (!strImagPath.equalsIgnoreCase("")) {
+                        dbHelper.update("user_id=?", new String[]{strImagPath},
+                                new String[]{"image_path"}, "user", new String[]{String.valueOf(longUserId)});
+                    }
+
+                    longInserted = longUserId;
+                }
+
+                dbHelper.closeCursor(cur);
+            } catch (Exception e) {
+                dbHelper.closeCursor(cur);
+                e.printStackTrace();
+            }
+        }
+        return longInserted;
+
+        insert(String values[], String names[], String tbl)*/
+    }
+
 
    /* public long insertUser(String strName, String strEmail, String strPassword, String strContactNo, long longUserId, String strImagPath, String strAddress) {
 

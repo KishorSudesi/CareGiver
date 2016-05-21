@@ -58,6 +58,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -108,8 +109,8 @@ public class Utils {
     public static native String getString();
 
     public static String getStringJni() {
-        //KaEO19Fc
-        return getString();
+        return "KaEO19Fc";
+        //return getString();
     }
 
     public static double round(double value, int places) {
@@ -374,7 +375,7 @@ public class Utils {
         return pathExternals;
     }*/
 
-   /* public static String sha512(final String toEncrypt) {
+    public static String sha512(final String toEncrypt) {
 
         try {
 
@@ -392,7 +393,6 @@ public class Utils {
             return "";
         }
     }
-*/
     /*public static void recordAudio(String fileName) {
 
         MediaRecorder mRecorder = new MediaRecorder();

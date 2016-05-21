@@ -14,6 +14,7 @@ import android.os.StatFs;
 import android.support.v4.app.NotificationCompat;
 
 import com.hdfc.caregiver.R;
+import com.hdfc.config.CareGiver;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -329,6 +330,12 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         checkAndSendLogs(context);
 
         try {
+
+            if (CareGiver.dbCon != null) {
+                CareGiver.dbCon.close();
+            }
+
+
             Intent homeIntent = new Intent(Intent.ACTION_MAIN);
             homeIntent.addCategory(Intent.CATEGORY_HOME);
             homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

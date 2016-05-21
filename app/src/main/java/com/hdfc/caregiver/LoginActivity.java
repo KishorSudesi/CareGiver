@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,13 +18,13 @@ import android.widget.RelativeLayout;
 
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UserService;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbCon;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.ClientModel;
-import com.hdfc.models.DependentModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
@@ -30,18 +32,17 @@ import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 public class LoginActivity extends AppCompatActivity {
 
     public static Utils utils;
-    public static String userName, uName, password;
-    public static AppUtils appUtils;
-    private static Context _ctxt;
+    private static String userName;
     private static ProgressDialog progressDialog;
-    ArrayList<DependentModel> dependentModels = Config.dependentModels;
+    private static Handler dbOpenHandler;
+    private AppUtils appUtils;
+    private Context _ctxt;
+    //private ArrayList<DependentModel> dependentModels = Config.dependentModels;
     // ArrayList<CustomerModel> customerModels = Config.customerModels;
-    ArrayList<ClientModel> clientModels = Config.clientModels;
+    //private ArrayList<ClientModel> clientModels = Config.clientModels;
     private RelativeLayout relLayout;
     private EditText editEmail, editPassword;
     private RelativeLayout layoutLogin;
@@ -68,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                         R.drawable.bg_blue, Config.intScreenWidth, Config.intScreenHeight));
             }
 
-            CrashLogger.getInstance().init(LoginActivity.this);
+            // CrashLogger.getInstance().init(LoginActivity.this);
         } catch (Exception | OutOfMemoryError e) {
             e.printStackTrace();
         }
@@ -120,8 +121,27 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (CareGiver.dbCon != null) {
+            CareGiver.dbCon.close();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+
+        // Crash log
+        CrashLogger.getInstance().init(LoginActivity.this);
+
+		/*Log.e(TAG,""+ DesEnc.encrypt(Constant.uatURL));
+        Log.e(TAG," 1 "+ DesEnc.decrypt(DesEnc.encrypt(Constant.uatURL)));*/
+
+        dbOpenHandler = new DbOpenHandler();
+
+        DbOpenThread dbOpenThread = new DbOpenThread();
+        dbOpenThread.start();
     }
 
     public void validateLogin(View v) {
@@ -136,9 +156,9 @@ public class LoginActivity extends AppCompatActivity {
             editEmail.setError(null);
             editPassword.setError(null);
 
-            uName = editEmail.getText().toString();
+            String uName = editEmail.getText().toString();
             userName = uName.toLowerCase();
-            password = editPassword.getText().toString();
+            String password = editPassword.getText().toString();
 
             boolean cancel = false;
             View focusView = null;
@@ -171,25 +191,22 @@ public class LoginActivity extends AppCompatActivity {
                     userService.authenticate(userName, password, new App42CallBack() {
                         @Override
                         public void onSuccess(Object o) {
-                            dependentModels.clear();
-                            // customerModels.clear();
-                            clientModels.clear();
 
                             if(o != null){
 
                                 Config.dependentIds.clear();
                                 Config.strActivityIds.clear();
                                 Config.customerIds.clear();
-                                Config.feedBackModels.clear();
 
                                 Config.dependentIdsAdded.clear();
                                 Config.customerIdsAdded.clear();
 
+                                Config.feedBackModels.clear();
                                 Config.fileModels.clear();
-
                                 Config.activityModels.clear();
-                                Config.dependentModels.clear();
                                 Config.customerModels.clear();
+                                Config.dependentModels.clear();
+                                Config.clientModels.clear();
 
                                 /*User user = (User)o;
 
@@ -236,7 +253,7 @@ public class LoginActivity extends AppCompatActivity {
         } //
     }
 
-    public void fetchProviders(final ProgressDialog progressDialog, final String strUserName) {
+    private void fetchProviders(final ProgressDialog progressDialog, final String strUserName) {
 
         StorageService storageService = new StorageService(LoginActivity.this);
 
@@ -262,7 +279,10 @@ public class LoginActivity extends AppCompatActivity {
                                     String strDocument = jsonDocument.getJsonDoc();
                                     String strProviderId = jsonDocument.getDocId();
 
-                                    appUtils.createProviderModel(strDocument, strProviderId);
+                                    String strUpdatedDate = jsonDocument.getUpdatedAt();
+
+                                    appUtils.createProviderModel(strDocument, strProviderId,
+                                            strUpdatedDate);
 
                                     goToDashboard();
 
@@ -309,7 +329,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    public void goToDashboard() {
+    private void goToDashboard() {
         if (progressDialog.isShowing())
             progressDialog.dismiss();
 
@@ -327,4 +347,26 @@ public class LoginActivity extends AppCompatActivity {
         moveTaskToBack(true);
         finish();
     }
+
+    public class DbOpenThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                CareGiver.dbCon = DbCon.getInstance(LoginActivity.this);
+                CareGiver.dbCon.open();
+                dbOpenHandler.sendEmptyMessage(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    //
+
+    public class DbOpenHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+
+        }
+    }
+
 }

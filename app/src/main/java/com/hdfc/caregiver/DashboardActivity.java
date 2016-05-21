@@ -1,6 +1,5 @@
 package com.hdfc.caregiver;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,9 +22,7 @@ import com.hdfc.app42service.App42GCMService;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
-import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
-import com.hdfc.dbconfig.DbCon;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
 import com.shephertz.app42.paas.sdk.android.App42API;
@@ -37,11 +34,9 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
 
     private static Handler threadHandler;
-    private static ProgressDialog progressDialog;
     private static AppUtils appUtils;
     private static AppCompatActivity appCompatActivity;
     private static RelativeLayout loadingPanel;
-    private static LinearLayout net_error_layout;
     final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -72,6 +67,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
         }
     };
+    private LinearLayout net_error_layout;
     private NetworkStateReceiver networkStateReceiver = new NetworkStateReceiver();
     private ImageView mytask, clients, feedback;
     private TextView textViewTasks, textViewClients, textViewFeedback;
@@ -118,7 +114,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
             loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
-            progressDialog = new ProgressDialog(DashboardActivity.this);
+            //ProgressDialog progressDialog = new ProgressDialog(DashboardActivity.this);
             threadHandler = new ThreadHandler();
 
             textViewTasks = (TextView) findViewById(R.id.textViewTasks);
@@ -200,7 +196,17 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
             loadingPanel.setVisibility(View.VISIBLE);
 
-            CareGiver.dbCon = DbCon.getInstance(DashboardActivity.this);
+            //
+
+            if (Config.intSelectedMenu == Config.intDashboardScreen) {
+
+                mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+                textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                refreshData();
+            }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -318,13 +324,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
                 builder.show();
             } else {*/
 
-                if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
-                    mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
-                    textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-
-                    refreshData();
-                }
                 //}
             } catch (Exception e) {
                 e.printStackTrace();
@@ -436,7 +436,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         //net_error_layout.setVisibility(View.VISIBLE);
     }
 
-    public static class ThreadHandler extends Handler {
+    private static class ThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
            /* if (progressDialog.isShowing())
@@ -449,7 +449,7 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         }
     }
 
-    public static class BackgroundThread extends Thread {
+    private static class BackgroundThread extends Thread {
         @Override
         public void run() {
             try {
