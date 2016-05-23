@@ -97,12 +97,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         storageService = new StorageService(CreatingTaskActivity.this);
 
-       /* ArrayAdapter<String> adapter;
+        ArrayAdapter<String> adapter;
         adapter = new ArrayAdapter<String>(CreatingTaskActivity.this,android.R.layout.select_dialog_item, Config.servicelist);
         //Getting the instance of AutoCompleteTextView
         //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
         inputSearchServices.setThreshold(1);//will start working from first character
-        inputSearchServices.setAdapter(adapter);*/
+        inputSearchServices.setAdapter(adapter);
 
         //setItems();
         ImageView backImage = (ImageView) findViewById(R.id.imgBackCreatingTaskDetail);
