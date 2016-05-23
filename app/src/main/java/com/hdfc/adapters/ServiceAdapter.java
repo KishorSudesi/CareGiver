@@ -10,9 +10,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.hdfc.caregiver.CreatingTaskActivity;
 import com.hdfc.caregiver.R;
-import com.hdfc.libs.Utils;
 import com.hdfc.models.ServiceModel;
 
 import java.util.ArrayList;
@@ -118,7 +116,7 @@ public class ServiceAdapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             Filterdata = (ArrayList<ServiceModel>) results.values;
-            CreatingTaskActivity.serviceAdapter.notifyDataSetChanged();
+            //CreatingTaskActivity.serviceAdapter.notifyDataSetChanged();
 
 
         }

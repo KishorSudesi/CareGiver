@@ -64,8 +64,8 @@ public class DependentModel {
 
     public DependentModel(String strName, String strRelation, String strNotes, String strAddress,
                           String strContacts, String strEmail, String strIllness,
-                          String strImagePath, String strImageUrl, int intAge, int intHealthBp,
-                          int intHealthHeartRate, String strDependentID, String strCustomerID) {
+                          String strImagePath, String strImageUrl, String strDependentID,
+                          String strCustomerID) {
         this.strName = strName;
         this.strRelation = strRelation;
         this.strNotes = strNotes;
@@ -75,12 +75,10 @@ public class DependentModel {
         this.strIllness = strIllness;
         this.strImagePath = strImagePath;
         this.strImageUrl = strImageUrl;
-        this.intAge = intAge;
-        this.intHealthBp = intHealthBp;
-        this.intHealthHeartRate = intHealthHeartRate;
         this.strDependentID = strDependentID;
         this.strCustomerID = strCustomerID;
     }
+
 
     public String[] getStrProviderIds() {
         return strProviderIds;

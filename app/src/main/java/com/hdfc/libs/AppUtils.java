@@ -3,6 +3,7 @@ package com.hdfc.libs;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -11,22 +12,28 @@ import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.LoginActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbCon;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
 import com.hdfc.models.FieldModel;
-import com.hdfc.models.FileModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.models.ProviderModel;
+import com.hdfc.models.ServiceModel;
 import com.hdfc.models.VideoModel;
+import com.scottyab.aescrypt.AESCrypt;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
+
+import net.sqlcipher.Cursor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,12 +52,20 @@ public class AppUtils {
     //private static ProgressDialog progressDialog;
     private static Utils utils;
 
+    private static SharedPreferences sharedPreferences;
+
+    private static String strDocumentLocal = "", strProviderId = "";
+
 
     public AppUtils(Context context) {
         _ctxt = context;
         utils = new Utils(_ctxt);
         //progressDialog = new ProgressDialog(_ctxt);
         storageService = new StorageService(_ctxt);
+        sharedPreferences = _ctxt.getSharedPreferences(Config.strPreferenceName,
+                Context.MODE_PRIVATE);
+
+        strProviderId = sharedPreferences.getString("PROVIDER_ID", "");
     }
 
     public static void logout() {
@@ -62,9 +77,15 @@ public class AppUtils {
 
             Config.boolIsLoggedIn = false;
 
-            Config.fileModels.clear();
+            //Config.fileModels.clear();
+            CareGiver.dbCon.deleteFiles();
 
             //todo clear shared pref.
+
+            SharedPreferences.Editor editor = _ctxt.getSharedPreferences(Config.strPreferenceName,
+                    Context.MODE_PRIVATE).edit();
+            editor.clear();
+            editor.commit();
 
             File fileImage = Utils.createFileInternal("images/");
             Utils.deleteAllFiles(fileImage);
@@ -95,7 +116,7 @@ public class AppUtils {
         thread.start();
     }
 
-    public void createProviderModel(String strDocument, String strProviderId, String strUpdatedAt) {
+    public void createProviderModel(String strDocument, String strProviderId) {
 
         try {
             JSONObject jsonObject = new JSONObject(strDocument);
@@ -114,10 +135,45 @@ public class AppUtils {
                 Config.providerModel.setStrCity(jsonObject.getString("provider_city"));
                 Config.providerModel.setStrPinCode(jsonObject.getString("provider_pin_code"));
 
-                //CareGiver.dbCon.insertProvider(strProviderId, strDocument, strUpdatedAt);
+                String strUrl = jsonObject.getString("provider_profile_url");
 
-                Config.fileModels.add(new FileModel(strProviderId,
-                        jsonObject.getString("provider_profile_url"), "IMAGE"));
+                String strUrlHash = Utils.sha512(strUrl);
+
+                Cursor cur = CareGiver.dbCon.fetch(
+                        DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                        new String[]{strProviderId}, null, "0, 1", true, null, null
+                );
+
+                String strHashLocal = "";
+
+                if (cur.getCount() <= 0) {
+                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{strProviderId,
+                                    strUrl, "IMAGE", strUrlHash},
+                            new String[]{"name", "url", "file_type", "file_hash"});
+                } else {
+
+                    cur.moveToFirst();
+
+                    while (!cur.isAfterLast()) {
+                        //strUrlLocal=cur.getString(0);
+                        strHashLocal = cur.getString(0);
+                        cur.moveToNext();
+                    }
+
+                    //CareGiver.dbCon.closeCursor(cur);
+
+                    if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                        CareGiver.dbCon.update(
+                                DbHelper.strTableNameFiles, "name=?",
+                                new String[]{strUrl, strUrlHash},
+                                new String[]{"url", "file_hash"}, new String[]{strProviderId}
+                        );
+                    }
+                }
+
+                CareGiver.dbCon.closeCursor(cur);
+
+                //Config.fileModels.add(new FileModel(strProviderId, strUrl, "IMAGE"));
 
             }
         } catch (JSONException e) {
@@ -127,11 +183,11 @@ public class AppUtils {
 
     public void fetchDependents(final RelativeLayout relativeLayout) {
 
-        if (Config.customerIds.size() > 0) {
+        if (Config.dependentIds.size() > 0) {
 
             if (utils.isConnectingToInternet()) {
 
-                Query query = QueryBuilder.build("customer_id", Config.customerIds,
+                Query query = QueryBuilder.build("_id", Config.dependentIds,
                         QueryBuilder.Operator.INLIST);
 
                 storageService.findDocsByQuery(Config.collectionDependent, query,
@@ -181,6 +237,7 @@ public class AppUtils {
                             public void onException(Exception e) {
                                 try {
                                     if (e != null) {
+                                        //Utils.log(e.getMessage(), " fetchDependents failure ");
                                         DashboardActivity.gotoSimpleActivityMenu();
                                     } else {
                                        /* if (progressDialog.isShowing())
@@ -290,49 +347,141 @@ public class AppUtils {
     }
 
     public void createDependentModel(String strDocumentId, String strDocument) {
+
         try {
 
             JSONObject jsonObjectDependent = new JSONObject(strDocument);
 
-            if (jsonObjectDependent.has("dependent_name")) {
+            DependentModel dependentModel = new DependentModel(
+                    jsonObjectDependent.getString("dependent_name"),
+                    jsonObjectDependent.getString("dependent_relation"),
+                    jsonObjectDependent.getString("dependent_notes"),
+                    jsonObjectDependent.getString("dependent_address"),
+                    jsonObjectDependent.getString("dependent_contact_no"),
+                    jsonObjectDependent.getString("dependent_email"),
+                    jsonObjectDependent.getString("dependent_illness"),
+                    "",
+                    jsonObjectDependent.getString("dependent_profile_url"),
+                    strDocumentId,
+                    jsonObjectDependent.getString("customer_id"));
 
-                DependentModel dependentModel = new DependentModel(
-                        jsonObjectDependent.getString("dependent_name"),
-                        jsonObjectDependent.getString("dependent_relation"),
-                        jsonObjectDependent.getString("dependent_notes"),
-                        jsonObjectDependent.getString("dependent_address"),
-                        jsonObjectDependent.getString("dependent_contact_no"),
-                        jsonObjectDependent.getString("dependent_email"),
-                        jsonObjectDependent.getString("dependent_illness"),
-                        "",
-                        jsonObjectDependent.getString("dependent_profile_url"),
-                        jsonObjectDependent.getInt("dependent_age"), //todo check values
-                        jsonObjectDependent.getInt("health_bp"),
-                        jsonObjectDependent.getInt("health_heart_rate"),
-
-                        strDocumentId,
-                        jsonObjectDependent.getString("customer_id"));
-
-                dependentModel.setStrDob(jsonObjectDependent.getString("dependent_dob"));
+            dependentModel.setStrDob(jsonObjectDependent.getString("dependent_dob"));
 
 
-                if (!Config.dependentIdsAdded.contains(strDocumentId)) {
+            if (jsonObjectDependent.has("dependent_age")) {
 
-                    Config.dependentIdsAdded.add(strDocumentId);
+                try {
+                    dependentModel.setIntAge(jsonObjectDependent.getInt("dependent_age"));
+                } catch (Exception e) {
+                    try {
+                        String strAge = jsonObjectDependent.getString("dependent_age");
 
-                    Config.dependentModels.add(dependentModel);
+                        int iAge = 0;
+                        if (!strAge.equalsIgnoreCase(""))
+                            iAge = Integer.parseInt(strAge);
 
-                    Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
+                        dependentModel.setIntAge(iAge);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
 
-                    if (Config.clientModels.size() > 0) {
-                        int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
-                        Config.clientModels.get(iPosition).setDependentModel(dependentModel);
+            if (jsonObjectDependent.has("health_bp")) {
+
+                try {
+                    dependentModel.setIntHealthBp(jsonObjectDependent.getInt("health_bp"));
+                } catch (Exception e) {
+                    try {
+                        String strBp = jsonObjectDependent.getString("health_bp");
+
+                        int iBp = 0;
+                        if (!strBp.equalsIgnoreCase(""))
+                            iBp = Integer.parseInt(strBp);
+
+                        dependentModel.setIntHealthBp(iBp);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+
+            if (jsonObjectDependent.has("health_heart_rate")) {
+
+                try {
+                    dependentModel.setIntHealthHeartRate(jsonObjectDependent.getInt("health_heart_rate"));
+                } catch (Exception e) {
+                    try {
+
+                        String strPulse = jsonObjectDependent.getString("health_heart_rate");
+
+                        int iPulse = 0;
+                        if (!strPulse.equalsIgnoreCase(""))
+                            iPulse = Integer.parseInt(strPulse);
+
+                        dependentModel.setIntHealthHeartRate(iPulse);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+
+
+            if (!Config.dependentIdsAdded.contains(strDocumentId)) {
+
+                Config.dependentIdsAdded.add(strDocumentId);
+
+                Config.dependentModels.add(dependentModel);
+
+                Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
+
+               /* if (Config.clientModels.size() > 0) {
+                    int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
+                    Config.clientModels.get(iPosition).setDependentModel(dependentModel);
+                }*/
+
+               /* Config.fileModels.add(new FileModel(strDocumentId,
+                        jsonObjectDependent.getString("dependent_profile_url"), "IMAGE"));*/
+
+                //
+                String strUrl = jsonObjectDependent.getString("dependent_profile_url");
+
+                String strUrlHash = Utils.sha512(strUrl);
+
+                Cursor cur = CareGiver.dbCon.fetch(
+                        DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                        new String[]{strDocumentId}, null, "0, 1", true, null, null
+                );
+
+
+                String strHashLocal = "";
+
+                if (cur.getCount() <= 0) {
+                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{strDocumentId,
+                                    strUrl, "IMAGE", strUrlHash},
+                            new String[]{"name", "url", "file_type", "file_hash"});
+                } else {
+
+                    cur.moveToFirst();
+
+                    while (!cur.isAfterLast()) {
+                        //strUrlLocal=cur.getString(0);
+                        strHashLocal = cur.getString(0);
+                        cur.moveToNext();
                     }
 
-                    Config.fileModels.add(new FileModel(strDocumentId,
-                            jsonObjectDependent.getString("dependent_profile_url"), "IMAGE"));
+                    CareGiver.dbCon.closeCursor(cur);
 
+                    if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                        CareGiver.dbCon.update(
+                                DbHelper.strTableNameFiles, "name=?",
+                                new String[]{strUrl, strUrlHash},
+                                new String[]{"url", "file_hash"}, new String[]{strDocumentId}
+                        );
+                    }
                 }
+
+                CareGiver.dbCon.closeCursor(cur);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -374,8 +523,48 @@ public class AppUtils {
 
                     Config.strCustomerNames.add(jsonObject.getString("customer_name"));
 
-                    Config.fileModels.add(new FileModel(strDocumentId,
-                            jsonObject.getString("customer_profile_url"), "IMAGE"));
+                    /*Config.fileModels.add(new FileModel(strDocumentId,
+                            jsonObject.getString("customer_profile_url"), "IMAGE"));*/
+                    //
+                    String strUrl = jsonObject.getString("customer_profile_url");
+
+                    String strUrlHash = Utils.sha512(strUrl);
+
+                    Cursor cur = CareGiver.dbCon.fetch(
+                            DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                            new String[]{strDocumentId}, null, "0, 1", true, null, null
+                    );
+
+
+                    String strHashLocal = "";
+
+                    if (cur.getCount() <= 0) {
+                        CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{strDocumentId,
+                                        strUrl, "IMAGE", strUrlHash},
+                                new String[]{"name", "url", "file_type", "file_hash"});
+                    } else {
+
+                        cur.moveToFirst();
+
+                        while (!cur.isAfterLast()) {
+                            //strUrlLocal=cur.getString(0);
+                            strHashLocal = cur.getString(0);
+                            cur.moveToNext();
+                        }
+
+                        //CareGiver.dbCon.closeCursor(cur);
+
+                        if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                            CareGiver.dbCon.update(
+                                    DbHelper.strTableNameFiles, "name=?",
+                                    new String[]{strUrl, strUrlHash},
+                                    new String[]{"url", "file_hash"}, new String[]{strDocumentId}
+                            );
+                        }
+                    }
+
+                    CareGiver.dbCon.closeCursor(cur);
+
                 }
             }
         } catch (JSONException e) {
@@ -411,7 +600,42 @@ public class AppUtils {
 
         Utils.log(strDate, " FDATE ");
 
-        Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(), QueryBuilder.Operator.EQUALS);
+
+        //////////////////////////////////
+        /*String strUpdatedDate="";
+
+        if (DbCon.isDbOpened) {
+
+            Cursor cur = null;
+
+            try {
+
+                if(!strProviderId.equalsIgnoreCase("")) {
+
+                    strProviderId = AESCrypt.decrypt(Config.string, strProviderId);
+                    cur = CareGiver.dbCon.fetch(DbHelper.strTableNameCollection,
+                            new String[]{"updated_date", "document"}, "object_id=?",
+                            new String[]{strProviderId}, null, "0, 1", true, null, null);
+
+                    if (cur.getCount() > 0) {
+                        cur.moveToFirst();
+                           *//* while (!cur.isAfterLast()) {*//*
+                        strUpdatedDate = cur.getString(0);
+                        strDocumentLocal = cur.getString(1);
+                            *//*    cur.moveToNext();
+                            }*//*
+                    }
+                    CareGiver.dbCon.closeCursor(cur);
+                }
+            } catch (Exception e) {
+                CareGiver.dbCon.closeCursor(cur);
+                e.printStackTrace();
+            }
+        }*/
+        //////////////////////////////////
+
+        Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
+                QueryBuilder.Operator.EQUALS);
 
         Query q2 = QueryBuilder.build("activity_date", strDate, QueryBuilder.
                 Operator.LESS_THAN_EQUALTO);
@@ -445,6 +669,7 @@ public class AppUtils {
                                 createActivityModel(strDocumentId, strActivities);
                             }
                             fetchCustomers(relativeLayout); //progressDialog
+                            //fetchDependents(relativeLayout);
                         } else {
                    /* if (progressDialog.isShowing())
                         progressDialog.dismiss();*/
@@ -458,6 +683,7 @@ public class AppUtils {
                         try {
                             if (ex != null) {
                                 fetchCustomers(relativeLayout);
+                                //fetchDependents(relativeLayout);
                             } else {
                         /*if (progressDialog.isShowing())
                             progressDialog.dismiss();*/
@@ -479,7 +705,32 @@ public class AppUtils {
     }
 
     public void loadAllFiles() {
-        for (int i = 0; i < Config.fileModels.size(); i++) {
+
+        Cursor cur = null;
+
+        try {
+
+            cur = CareGiver.dbCon.fetch(
+                    DbHelper.strTableNameFiles, new String[]{"name", "url"}, null,
+                    null, null, null, true, null, null
+            );
+
+            if (cur.getCount() > 0) {
+                cur.moveToFirst();
+                while (!cur.isAfterLast()) {
+                    utils.loadImageFromWeb(cur.getString(0), cur.getString(1));
+                    cur.moveToNext();
+                }
+            }
+
+            CareGiver.dbCon.closeCursor(cur);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            CareGiver.dbCon.closeCursor(cur);
+        }
+
+        /*for (int i = 0; i < Config.fileModels.size(); i++) {
             FileModel fileModel = Config.fileModels.get(i);
 
             if (fileModel != null && fileModel.getStrFileUrl() != null &&
@@ -487,7 +738,7 @@ public class AppUtils {
                 utils.loadImageFromWeb(fileModel.getStrFileName(),
                         fileModel.getStrFileUrl());
             }
-        }
+        }*/
     }
 
     public void createActivityModel(String strDocumentId, final String strDocument) {
@@ -557,8 +808,48 @@ public class AppUtils {
                                         jsonObjectVideo.getString("video_description"),
                                         jsonObjectVideo.getString("video_taken"));
 
-                                Config.fileModels.add(new FileModel(jsonObjectVideo.getString("video_name"),
-                                        jsonObjectVideo.getString("video_url"), "VIDEO"));
+                                //
+
+                                String strUrlHash = Utils.sha512(jsonObjectVideo.getString("video_url"));
+
+                                Cursor cur = CareGiver.dbCon.fetch(
+                                        DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                                        new String[]{jsonObjectVideo.getString("video_name")}, null, "0, 1", true, null, null
+                                );
+
+
+                                String strHashLocal = "";
+
+                                if (cur.getCount() <= 0) {
+                                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectVideo.getString("video_name"),
+                                                    jsonObjectVideo.getString("video_url"), "VIDEO", strUrlHash},
+                                            new String[]{"name", "url", "file_type", "file_hash"});
+                                } else {
+
+                                    cur.moveToFirst();
+
+                                    while (!cur.isAfterLast()) {
+                                        //strUrlLocal=cur.getString(0);
+                                        strHashLocal = cur.getString(0);
+                                        cur.moveToNext();
+                                    }
+
+                                    CareGiver.dbCon.closeCursor(cur);
+
+                                    if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                                        CareGiver.dbCon.update(
+                                                DbHelper.strTableNameFiles, "name=?",
+                                                new String[]{jsonObjectVideo.getString("video_url"), strUrlHash},
+                                                new String[]{"url", "file_hash"}, new String[]{jsonObjectVideo.getString("video_name")}
+                                        );
+                                    }
+                                }
+
+                                CareGiver.dbCon.closeCursor(cur);
+                                //
+
+                                /*Config.fileModels.add(new FileModel(jsonObjectVideo.getString("video_name"),
+                                        jsonObjectVideo.getString("video_url"), "VIDEO"));*/
 
                                 videoModels.add(videoModel);
                             }
@@ -584,8 +875,47 @@ public class AppUtils {
                                         jsonObjectImage.getString("image_description"),
                                         jsonObjectImage.getString("image_taken"));
 
-                                Config.fileModels.add(new FileModel(jsonObjectImage.getString("image_name"),
-                                        jsonObjectImage.getString("image_url"), "IMAGE"));
+                               /* Config.fileModels.add(new FileModel(jsonObjectImage.getString("image_name"),
+                                        jsonObjectImage.getString("image_url"), "IMAGE"));*/
+
+                                //
+                                String strUrlHash = Utils.sha512(jsonObjectImage.getString("image_url"));
+
+                                Cursor cur = CareGiver.dbCon.fetch(
+                                        DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                                        new String[]{jsonObjectImage.getString("image_name")}, null, "0, 1", true, null, null
+                                );
+
+
+                                String strHashLocal = "";
+
+                                if (cur.getCount() <= 0) {
+                                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectImage.getString("image_name"),
+                                                    jsonObjectImage.getString("image_url"), "IMAGE", strUrlHash},
+                                            new String[]{"name", "url", "file_type", "file_hash"});
+                                } else {
+
+                                    cur.moveToFirst();
+
+                                    while (!cur.isAfterLast()) {
+                                        //strUrlLocal=cur.getString(0);
+                                        strHashLocal = cur.getString(0);
+                                        cur.moveToNext();
+                                    }
+
+                                    CareGiver.dbCon.closeCursor(cur);
+
+                                    if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                                        CareGiver.dbCon.update(
+                                                DbHelper.strTableNameFiles, "name=?",
+                                                new String[]{jsonObjectImage.getString("image_url"), strUrlHash},
+                                                new String[]{"url", "file_hash"}, new String[]{jsonObjectImage.getString("image_name")}
+                                        );
+                                    }
+                                }
+
+                                CareGiver.dbCon.closeCursor(cur);
+                                //
 
                                 imageModels.add(imageModel);
 
@@ -652,12 +982,37 @@ public class AppUtils {
                             milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
                             milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
 
-                            //todo check values
-                            if (jsonObjectMilestone.has("show"))
-                                milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
+                            if (jsonObjectMilestone.has("show")) {
 
-                            if (jsonObjectMilestone.has("reschedule"))
-                                milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
+                                try {
+                                    milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
+                                } catch (Exception e) {
+                                    boolean b = true;
+                                    try {
+                                        if (jsonObjectMilestone.getInt("show") == 0)
+                                            b = false;
+                                        milestoneModel.setVisible(b);
+                                    } catch (Exception e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            if (jsonObjectMilestone.has("reschedule")) {
+
+                                try {
+                                    milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
+                                } catch (Exception e) {
+                                    boolean b = true;
+                                    try {
+                                        if (jsonObjectMilestone.getInt("reschedule") == 0)
+                                            b = false;
+                                        milestoneModel.setReschedule(b);
+                                    } catch (Exception e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
 
                             if (jsonObjectMilestone.has("scheduled_date"))
                                 milestoneModel.setStrMilestoneScheduledDate(jsonObjectMilestone.
@@ -677,10 +1032,38 @@ public class AppUtils {
 
                                     fieldModel.setiFieldID(jsonObjectField.getInt("id"));
 
-                                    if (jsonObjectField.has("hide"))
-                                        fieldModel.setFieldView(jsonObjectField.getBoolean("hide"));
+                                    if (jsonObjectField.has("hide")) {
 
-                                    fieldModel.setFieldRequired(jsonObjectField.getBoolean("required"));
+                                        try {
+                                            fieldModel.setFieldView(jsonObjectField.getBoolean("hide"));
+                                        } catch (Exception e) {
+                                            boolean b = true;
+                                            try {
+                                                if (jsonObjectField.getInt("hide") == 0)
+                                                    b = false;
+                                                fieldModel.setFieldView(b);
+                                            } catch (Exception e1) {
+                                                e1.printStackTrace();
+                                            }
+                                        }
+                                    }
+
+                                    if (jsonObjectField.has("required")) {
+
+                                        try {
+                                            fieldModel.setFieldRequired(jsonObjectField.getBoolean("required"));
+                                        } catch (Exception e) {
+                                            boolean b = true;
+                                            try {
+                                                if (jsonObjectField.getInt("required") == 0)
+                                                    b = false;
+                                                fieldModel.setFieldRequired(b);
+                                            } catch (Exception e1) {
+                                                e1.printStackTrace();
+                                            }
+                                        }
+                                    }
+
                                     fieldModel.setStrFieldData(jsonObjectField.getString("data"));
                                     fieldModel.setStrFieldLabel(jsonObjectField.getString("label"));
                                     fieldModel.setStrFieldType(jsonObjectField.getString("type"));
@@ -693,7 +1076,22 @@ public class AppUtils {
 
                                     if (jsonObjectField.has("child")) {
 
-                                        fieldModel.setChild(jsonObjectField.getBoolean("child"));
+                                        if (jsonObjectField.has("child")) {
+
+                                            try {
+                                                fieldModel.setChild(jsonObjectField.getBoolean("child"));
+                                            } catch (Exception e) {
+                                                boolean b = true;
+                                                try {
+                                                    if (jsonObjectField.getInt("child") == 0)
+                                                        b = false;
+                                                    fieldModel.setChild(b);
+                                                } catch (Exception e1) {
+                                                    e1.printStackTrace();
+                                                }
+                                            }
+                                        }
+
 
                                         if (jsonObjectField.has("child_type"))
                                             fieldModel.setStrChildType(utils.jsonToStringArray(jsonObjectField.
@@ -725,6 +1123,290 @@ public class AppUtils {
 
         }catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void createServiceModel(String strDocumentId, JSONObject jsonObject) {
+
+        try {
+            ServiceModel serviceModel = new ServiceModel();
+
+            serviceModel.setDoubleCost(jsonObject.getDouble("cost"));
+            serviceModel.setStrServiceName(jsonObject.getString("service_name"));
+            serviceModel.setiServiceNo(jsonObject.getInt("service_no"));
+            serviceModel.setStrCategoryName(jsonObject.getString("category_name"));
+            serviceModel.setiUnit(jsonObject.getInt("unit"));
+            serviceModel.setiUnitValue(jsonObject.getInt("unit_value"));
+            //serviceModel.setStrServiceType(jsonObject.getString("service_type"));
+
+
+            Config.serviceModels.add(serviceModel);
+
+            if (jsonObject.has("milestones")) {
+
+
+                JSONArray jsonArrayMilestones = jsonObject.
+                        getJSONArray("milestones");
+
+                for (int k = 0; k < jsonArrayMilestones.length(); k++) {
+
+                    JSONObject jsonObjectMilestone =
+                            jsonArrayMilestones.getJSONObject(k);
+
+                    MilestoneModel milestoneModel = new MilestoneModel();
+
+                    milestoneModel.setiMilestoneId(jsonObjectMilestone.getInt("id"));
+                    milestoneModel.setStrMilestoneStatus(jsonObjectMilestone.getString("status"));
+                    milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
+                    milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
+                    //milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
+
+                    if (jsonObjectMilestone.has("show"))
+                        milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
+
+                    if (jsonObjectMilestone.has("reschedule"))
+                        milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
+
+                    if (jsonObjectMilestone.has("scheduled_date"))
+                        milestoneModel.setStrMilestoneScheduledDate(jsonObjectMilestone.
+                                getString("scheduled_date"));
+
+                    //
+                    if (jsonObjectMilestone.has("fields")) {
+
+                        JSONArray jsonArrayFields = jsonObjectMilestone.
+                                getJSONArray("fields");
+
+                        for (int l = 0; l < jsonArrayFields.length(); l++) {
+
+                            JSONObject jsonObjectField =
+                                    jsonArrayFields.getJSONObject(l);
+
+                            FieldModel fieldModel = new FieldModel();
+
+                            fieldModel.setiFieldID(jsonObjectField.getInt("id"));
+
+                            if (jsonObjectField.has("hide"))
+                                fieldModel.setFieldView(jsonObjectField.getBoolean("hide"));
+
+                            fieldModel.setFieldRequired(jsonObjectField.getBoolean("required"));
+                            fieldModel.setStrFieldData(jsonObjectField.getString("data"));
+                            fieldModel.setStrFieldLabel(jsonObjectField.getString("label"));
+                            fieldModel.setStrFieldType(jsonObjectField.getString("type"));
+
+                            if (jsonObjectField.has("values")) {
+
+                                fieldModel.setStrFieldValues(utils.jsonToStringArray(jsonObjectField.
+                                        getJSONArray("values")));
+                            }
+
+                            if (jsonObjectField.has("child")) {
+
+                                fieldModel.setChild(jsonObjectField.getBoolean("child"));
+
+                                if (jsonObjectField.has("child_type"))
+                                    fieldModel.setStrChildType(utils.jsonToStringArray(jsonObjectField.
+                                            getJSONArray("child_type")));
+
+                                if (jsonObjectField.has("child_value"))
+                                    fieldModel.setStrChildValue(utils.jsonToStringArray(jsonObjectField.
+                                            getJSONArray("child_value")));
+
+                                if (jsonObjectField.has("child_condition"))
+                                    fieldModel.setStrChildCondition(utils.jsonToStringArray(jsonObjectField.
+                                            getJSONArray("child_condition")));
+
+                                if (jsonObjectField.has("child_field"))
+                                    fieldModel.setiChildfieldID(utils.jsonToIntArray(jsonObjectField.
+                                            getJSONArray("child_field")));
+                            }
+
+                            milestoneModel.setFieldModel(fieldModel);
+                        }
+                    }
+
+                    serviceModel.setMilestoneModels(milestoneModel);
+                }
+            }
+
+            serviceModel.setStrServiceId(strDocumentId);
+
+            if (!Config.strServcieIds.contains(strDocumentId)) {
+                Config.serviceModels.add(serviceModel);
+                Config.strServcieIds.add(strDocumentId);
+
+                Config.servicelist.add(jsonObject.getString("service_name"));
+
+
+                //
+               /* if (!Config.strServiceCategoryNames.contains(jsonObject.getString("category_name"))) {
+                    Config.strServiceCategoryNames.add(jsonObject.getString("category_name"));
+
+                    CategoryServiceModel categoryServiceModel = new CategoryServiceModel();
+                    categoryServiceModel.setStrCategoryName(jsonObject.getString("category_name"));
+                    categoryServiceModel.setServiceModels(serviceModel);
+
+                    Config.categoryServiceModels.add(categoryServiceModel);
+                } else {
+                    int iPosition = Config.strServiceCategoryNames.indexOf(jsonObject.getString("category_name"));
+                    Config.categoryServiceModels.get(iPosition).setServiceModels(serviceModel);
+                }*/
+                //
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //refresh Providers
+    private void fetchProviders(final String strUserName) {
+
+        if (utils.isConnectingToInternet()) {
+
+            String strUpdatedDate = "";
+
+            if (DbCon.isDbOpened) {
+
+                Cursor cur = null;
+
+                try {
+
+                    if (!strProviderId.equalsIgnoreCase("")) {
+
+                        strProviderId = AESCrypt.decrypt(Config.string, strProviderId);
+                        cur = CareGiver.dbCon.fetch(DbHelper.strTableNameCollection,
+                                new String[]{"updated_date", "document"}, "object_id=?",
+                                new String[]{strProviderId}, null, "0, 1", true, null, null);
+
+                        if (cur.getCount() > 0) {
+                            cur.moveToFirst();
+                           /* while (!cur.isAfterLast()) {*/
+                            strUpdatedDate = cur.getString(0);
+                            strDocumentLocal = cur.getString(1);
+                            /*    cur.moveToNext();
+                            }*/
+                        }
+                        CareGiver.dbCon.closeCursor(cur);
+                    }
+                } catch (Exception e) {
+                    CareGiver.dbCon.closeCursor(cur);
+                    e.printStackTrace();
+                }
+            }
+
+            StorageService storageService = new StorageService(_ctxt);
+
+            Query q1 = QueryBuilder.build("provider_email", strUserName, QueryBuilder.
+                    Operator.EQUALS);
+
+            Query q4, q2, q3;
+
+            if (!strUpdatedDate.equalsIgnoreCase("")) {
+                q2 = QueryBuilder.build("_updatedAt", strUpdatedDate, QueryBuilder.
+                        Operator.GREATER_THAN);
+
+                q3 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
+
+                q4 = q3;
+
+            } else q4 = q1;
+
+            storageService.findDocsByQueryOrderBy(Config.collectionProvider, q4, 1, 0,
+                    "updated_date", 1, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            try {
+                                if (o != null) {
+
+                                    Storage storage = (Storage) o;
+
+                                    if (storage.getJsonDocList().size() > 0) {
+
+                                        Storage.JSONDocument jsonDocument = storage.getJsonDocList().
+                                                get(0);
+                                        String strDocument = jsonDocument.getJsonDoc();
+                                        String _strProviderId = jsonDocument.getDocId();
+
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putString("PROVIDER_ID", AESCrypt.encrypt(
+                                                Config.string, _strProviderId));
+                                        editor.apply();
+
+                                        String strUpdatedDate = jsonDocument.getUpdatedAt();
+
+                                        Cursor cur = null;
+
+                                        try {
+
+                                            cur = CareGiver.dbCon.fetch(
+                                                    DbHelper.strTableNameCollection,
+                                                    new String[]{"id"}, "object_id=?",
+                                                    new String[]{_strProviderId}, null, null, false,
+                                                    null, null);
+
+                                            if (cur.getCount() <= 0) {
+                                                CareGiver.dbCon.insert(
+                                                        DbHelper.strTableNameCollection,
+                                                        new String[]{_strProviderId, strUpdatedDate,
+                                                                strDocument,
+                                                                Config.collectionProvider, "1"},
+                                                        new String[]{"object_id", "updated_date",
+                                                                "document", "collection_name",
+                                                                "status"});
+                                            } else {
+                                                CareGiver.dbCon.update(
+                                                        DbHelper.strTableNameCollection,
+                                                        "object_id=? and collection_name=?",
+                                                        new String[]{strUpdatedDate, strDocument},
+                                                        new String[]{"updated_date", "document"},
+                                                        new String[]{_strProviderId,
+                                                                Config.collectionProvider});
+                                            }
+
+                                            CareGiver.dbCon.closeCursor(cur);
+                                        } catch (Exception e) {
+                                            CareGiver.dbCon.closeCursor(cur);
+                                            e.printStackTrace();
+                                        }
+
+                                        createProviderModel(strDocument, _strProviderId);
+
+                                    } else {
+
+                                        if (!strDocumentLocal.equalsIgnoreCase("")) {
+                                            createProviderModel(strDocumentLocal, strProviderId);
+
+                                        } else {
+
+                                            utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                        }
+                                    }
+
+                                } else {
+
+                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                }
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+
+                            }
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+
+                            try {
+                                if (e != null) {
+                                    utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                } else {
+                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                }
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    });
         }
     }
 }

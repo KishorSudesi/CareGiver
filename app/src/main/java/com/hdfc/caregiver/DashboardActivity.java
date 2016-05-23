@@ -30,7 +30,8 @@ import com.shephertz.app42.paas.sdk.android.App42API;
 /**
  * Created by yuyidong on 16/1/23.
  */
-public class DashboardActivity extends AppCompatActivity implements App42GCMController.App42GCMListener, NetworkStateReceiver.NetworkStateReceiverListener {
+public class DashboardActivity extends AppCompatActivity implements
+        App42GCMController.App42GCMListener, NetworkStateReceiver.NetworkStateReceiverListener {
 
 
     private static Handler threadHandler;
@@ -78,7 +79,8 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
         Config.intSelectedMenu = Config.intDashboardScreen;
 
         DashboardFragment fragment = DashboardFragment.newInstance();
-        FragmentTransaction transaction = appCompatActivity.getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = appCompatActivity.getSupportFragmentManager().
+                beginTransaction();
         transaction.replace(R.id.frameLayout, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
@@ -194,11 +196,9 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
 
             appCompatActivity = DashboardActivity.this;
 
-            loadingPanel.setVisibility(View.VISIBLE);
-
-            //
-
             if (Config.intSelectedMenu == Config.intDashboardScreen) {
+
+                loadingPanel.setVisibility(View.VISIBLE);
 
                 mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
                 textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -289,7 +289,8 @@ public class DashboardActivity extends AppCompatActivity implements App42GCMCont
             filter.setPriority(2);
             registerReceiver(mBroadcastReceiver, filter);
 
-            registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+            registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.
+                    CONNECTIVITY_ACTION));
 
         } catch (Exception e) {
             e.printStackTrace();

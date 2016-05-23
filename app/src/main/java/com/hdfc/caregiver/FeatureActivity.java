@@ -119,7 +119,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             utils = new Utils(FeatureActivity.this);
 
-            int iPosition = Config.dependentIds.indexOf(act.getStrDependentID());
+            int iPosition = Config.dependentIdsAdded.indexOf(act.getStrDependentID());
             String name = Config.dependentModels.get(iPosition).getStrName();
 
             int iPositionCustomer = Config.customerIdsAdded.indexOf(act.getStrCustomerID());

@@ -4,9 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -22,11 +21,12 @@ import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbCon;
 import com.hdfc.libs.AppUtils;
-import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.Utils;
+import com.scottyab.aescrypt.AESCrypt;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
-import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.storage.Query;
+import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
 import org.json.JSONException;
@@ -37,15 +37,13 @@ public class LoginActivity extends AppCompatActivity {
     public static Utils utils;
     private static String userName;
     private static ProgressDialog progressDialog;
-    private static Handler dbOpenHandler;
+    private static String strUpdatedDate = "", strDocumentLocal = "", strProviderId = "";
     private AppUtils appUtils;
     private Context _ctxt;
-    //private ArrayList<DependentModel> dependentModels = Config.dependentModels;
-    // ArrayList<CustomerModel> customerModels = Config.customerModels;
-    //private ArrayList<ClientModel> clientModels = Config.clientModels;
     private RelativeLayout relLayout;
     private EditText editEmail, editPassword;
     private RelativeLayout layoutLogin;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
         editPassword = (EditText) findViewById(R.id.editPassword);
         _ctxt= LoginActivity.this;
         appUtils = new AppUtils(LoginActivity.this);
+
+        sharedPreferences = getSharedPreferences(Config.strPreferenceName, MODE_PRIVATE);
 
         utils = new Utils(LoginActivity.this);
         progressDialog = new ProgressDialog(LoginActivity.this);
@@ -99,6 +99,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        CrashLogger.getInstance().init(LoginActivity.this);
+
+        CareGiver.dbCon = DbCon.getInstance(LoginActivity.this);
+        //CareGiver.dbCon.open();
+
     }
 
     private void showPasswordfield() {
@@ -131,17 +136,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        // Crash log
-        CrashLogger.getInstance().init(LoginActivity.this);
-
-		/*Log.e(TAG,""+ DesEnc.encrypt(Constant.uatURL));
-        Log.e(TAG," 1 "+ DesEnc.decrypt(DesEnc.encrypt(Constant.uatURL)));*/
-
-        dbOpenHandler = new DbOpenHandler();
-
-        DbOpenThread dbOpenThread = new DbOpenThread();
-        dbOpenThread.start();
     }
 
     public void validateLogin(View v) {
@@ -202,7 +196,9 @@ public class LoginActivity extends AppCompatActivity {
                                 Config.customerIdsAdded.clear();
 
                                 Config.feedBackModels.clear();
-                                Config.fileModels.clear();
+                                //Config.fileModels.clear();
+                                CareGiver.dbCon.deleteFiles();
+
                                 Config.activityModels.clear();
                                 Config.customerModels.clear();
                                 Config.dependentModels.clear();
@@ -214,9 +210,9 @@ public class LoginActivity extends AppCompatActivity {
 
                                 //todo check rolelist
                                 //roleList.size()>0 && roleList.get(0).equalsIgnoreCase("provider")
-                                if (true)
+                                if (true) {
                                     fetchProviders(progressDialog, userName);
-                                else {
+                                } else {
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
                                     utils.toast(2, 2, getString(R.string.invalid_credentials));
@@ -236,7 +232,8 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 if (e != null) {
                                     JSONObject jsonObject = new JSONObject(e.getMessage());
-                                    JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
+                                    JSONObject jsonObjectError = jsonObject.
+                                            getJSONObject("app42Fault");
                                     String strMess = jsonObjectError.getString("details");
 
                                     utils.toast(2, 2, strMess);
@@ -255,78 +252,73 @@ public class LoginActivity extends AppCompatActivity {
 
     private void fetchProviders(final ProgressDialog progressDialog, final String strUserName) {
 
-        StorageService storageService = new StorageService(LoginActivity.this);
+        if (utils.isConnectingToInternet()) {
 
-        storageService.findDocsByKeyValue(Config.collectionProvider, "provider_email", strUserName,
-                new AsyncApp42ServiceApi.App42StorageServiceListener() {
-                    @Override
-                    public void onDocumentInserted(Storage response) {
-                    }
+            StorageService storageService = new StorageService(LoginActivity.this);
 
-                    @Override
-                    public void onUpdateDocSuccess(Storage response) {
-                    }
+            Query q1 = QueryBuilder.build("provider_email", strUserName, QueryBuilder.
+                    Operator.EQUALS);
 
-                    @Override
-                    public void onFindDocSuccess(Storage response) {
-                        try {
-                            if (response != null) {
+            storageService.findDocsByQueryOrderBy(Config.collectionProvider, q1, 1, 0,
+                    "updated_date", 1, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            try {
+                                if (o != null) {
 
-                                if (response.getJsonDocList().size() > 0) {
+                                    Storage storage = (Storage) o;
 
-                                    Storage.JSONDocument jsonDocument = response.getJsonDocList().
-                                            get(0);
-                                    String strDocument = jsonDocument.getJsonDoc();
-                                    String strProviderId = jsonDocument.getDocId();
+                                    if (storage.getJsonDocList().size() > 0) {
 
-                                    String strUpdatedDate = jsonDocument.getUpdatedAt();
+                                        Storage.JSONDocument jsonDocument = storage.getJsonDocList().
+                                                get(0);
+                                        String strDocument = jsonDocument.getJsonDoc();
+                                        String _strProviderId = jsonDocument.getDocId();
 
-                                    appUtils.createProviderModel(strDocument, strProviderId,
-                                            strUpdatedDate);
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putString("PROVIDER_ID", AESCrypt.encrypt(
+                                                Config.string, _strProviderId));
+                                        editor.apply();
 
-                                    goToDashboard();
+                                        appUtils.createProviderModel(strDocument, _strProviderId);
+
+                                        goToDashboard();
+
+                                    } else {
+                                        if (progressDialog.isShowing())
+                                            progressDialog.dismiss();
+                                        utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
+                                    }
 
                                 } else {
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
+                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                 }
-                            } else {
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                             }
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
                             if (progressDialog.isShowing())
                                 progressDialog.dismiss();
-                        }
-                    }
-
-                    @Override
-                    public void onInsertionFailed(App42Exception ex) {
-
-                    }
-
-                    @Override
-                    public void onFindDocFailed(App42Exception ex) {
-                        if (progressDialog.isShowing())
-                            progressDialog.dismiss();
-                        try {
-                            if (ex != null) {
-                                utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
-                            } else {
-                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                            try {
+                                if (e != null) {
+                                    Utils.log(e.getMessage(), " Failure ");
+                                    utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
+                                } else {
+                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                }
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
                             }
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
                         }
-                    }
-
-                    @Override
-                    public void onUpdateDocFailed(App42Exception ex) {
-                    }
-                });
+                    });
+        }
     }
 
     private void goToDashboard() {
@@ -347,26 +339,4 @@ public class LoginActivity extends AppCompatActivity {
         moveTaskToBack(true);
         finish();
     }
-
-    public class DbOpenThread extends Thread {
-        @Override
-        public void run() {
-            try {
-                CareGiver.dbCon = DbCon.getInstance(LoginActivity.this);
-                CareGiver.dbCon.open();
-                dbOpenHandler.sendEmptyMessage(0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    //
-
-    public class DbOpenHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-
-        }
-    }
-
 }

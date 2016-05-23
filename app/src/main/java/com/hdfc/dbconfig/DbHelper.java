@@ -2,13 +2,12 @@ package com.hdfc.dbconfig;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.util.Log;
 
 import com.hdfc.config.Config;
+import com.hdfc.libs.Utils;
 import com.scottyab.aescrypt.AESCrypt;
 
 import net.sqlcipher.Cursor;
-import net.sqlcipher.database.DatabaseObjectNotClosedException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
@@ -22,16 +21,17 @@ import java.util.Date;
 public class DbHelper extends SQLiteOpenHelper {
 
     public static final String strTableNameCollection = "collections";
-    private static final int DATABASE_VERSION = 2;
+    public static final String strTableNameFiles = "files";
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "caregiver";
-    private static final String strTableNameFiles = "files";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
     private static SQLiteDatabase db;
-    public String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection + " ( id integer primary key autoincrement," +
+    private Utils utils;
+    private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection + " ( id integer primary key autoincrement," +
             " object_id VARCHAR(50), updated_date VARCHAR(20), document text,  collection_name VARCHAR(50), status integer)";
 
-    public String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
+    private String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
             " name VARCHAR(100), url VARCHAR(300), file_type VARCHAR(10),  file_hash VARCHAR(50))";
 
     private Context _ctxt;
@@ -41,6 +41,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this._ctxt = context;
+        utils = new Utils(context);
         originalFile = _ctxt.getDatabasePath(DATABASE_NAME);
 
         try {
@@ -50,7 +51,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public static synchronized DbHelper getInstance(Context ctx) {
+    static synchronized DbHelper getInstance(Context ctx) {
 
         if (dbInstance == null) {
             dbInstance = new DbHelper(ctx.getApplicationContext());
@@ -72,7 +73,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 e2.printStackTrace();
             }
         }
-        Log.i("DB", "open");
+        Utils.log("DB", "open");
     }
 
     public void close() {
@@ -81,14 +82,14 @@ public class DbHelper extends SQLiteOpenHelper {
                 db.close();
         } catch (Exception e) {
         }
-        Log.i("DB", "close");
+        Utils.log("DB", "close");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(strCollectionsQuery);
         db.execSQL(strFilesQuery);
-        Log.i("DB", "onCreate");
+        Utils.log("DB", "onCreate");
     }
 
     @Override
@@ -106,7 +107,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + strTableNameFiles);
     }
 
-    public void closeCursor(Cursor cursor) {
+    void closeCursor(Cursor cursor) {
         if (cursor != null && !cursor.isClosed())
             cursor.close();
     }
@@ -121,7 +122,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return values1;
     }
 
-    public long insert(String values[], String names[], String tbl) {
+    long insert(String values[], String names[], String tbl) {
 
         if (!db.isOpen())
             open();
@@ -135,23 +136,21 @@ public class DbHelper extends SQLiteOpenHelper {
         return inserted;
     }
 
-    @SuppressWarnings("DatabaseObjectNotClosedException")
-    public Cursor fetch(String tbl, String names[], String where, String args[], String order, String limit, boolean isDistinct, String groupBy, String having) {
+    Cursor fetch(String tbl, String names[], String where, String args[], String order, String limit,
+                 boolean isDistinct, String groupBy, String having) {
 
         if (!db.isOpen())
             open();
 
-        Cursor cur = null;
-        try {
-            cur = db.query(isDistinct, tbl, names, where, args, groupBy, having, order, limit);
-        } catch (DatabaseObjectNotClosedException e) {
-        } catch (Exception e) {
-        }
-
-        return cur;
+        //Cursor cur = null;
+        //try {
+        return db.query(isDistinct, tbl, names, where, args, groupBy, having, order, limit);
+        /*} catch (Exception e) {
+            return null;
+        }*/
     }
 
-    public boolean delete(String tbl, String where, String args[]) {
+    boolean delete(String tbl, String where, String args[]) {
 
         if (!db.isOpen())
             open();
@@ -164,7 +163,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return isDeleted;
     }
 
-    public boolean update(String where, String values[], String names[], String tbl, String args[]) {
+    boolean update(String where, String values[], String names[], String tbl, String args[]) {
 
         if (!db.isOpen())
             open();
@@ -189,7 +188,8 @@ public class DbHelper extends SQLiteOpenHelper {
             FileInputStream fIs = new FileInputStream(databaseFile);
 
             Date now = new Date();
-            FileOutputStream fOs = _ctxt.openFileOutput(DATABASE_NAME + "_bkp_" + now.getTime(), Context.MODE_PRIVATE);
+            FileOutputStream fOs = _ctxt.openFileOutput(DATABASE_NAME + "_bkp_" + now.getTime(),
+                    Context.MODE_PRIVATE);
             byte[] buffer = new byte[1024];
             int length;
 
@@ -212,17 +212,19 @@ public class DbHelper extends SQLiteOpenHelper {
         return isSuccess;
     }
 
-    public void encrypt(boolean isToOpen) throws IOException {
+    private void encrypt(boolean isToOpen) throws IOException {
 
         if (originalFile.exists()) {
 
             File newFile = File.createTempFile("database", "_tmp_", _ctxt.getFilesDir());
 
-            String dbPath = originalFile.getAbsolutePath().toString();
+            String dbPath = originalFile.getAbsolutePath();
 
-            SQLiteDatabase db = SQLiteDatabase.openDatabase(originalFile.getAbsolutePath(), "", null, SQLiteDatabase.OPEN_READWRITE);
+            SQLiteDatabase db = SQLiteDatabase.openDatabase(originalFile.getAbsolutePath(), "",
+                    null, SQLiteDatabase.OPEN_READWRITE);
 
-            db.rawExecSQL(String.format("ATTACH DATABASE '%s' AS encrypted KEY '%s';", newFile.getAbsolutePath(), dbPass));
+            db.rawExecSQL(String.format("ATTACH DATABASE '%s' AS encrypted KEY '%s';",
+                    newFile.getAbsolutePath(), dbPass));
             db.rawExecSQL("SELECT sqlcipher_export('encrypted')");
             db.rawExecSQL("DETACH DATABASE encrypted;");
 

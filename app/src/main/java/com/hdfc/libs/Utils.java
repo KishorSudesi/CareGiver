@@ -38,15 +38,9 @@ import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.Action;
-import com.hdfc.models.CustomerModel;
-import com.hdfc.models.FieldModel;
-import com.hdfc.models.FileModel;
-import com.hdfc.models.MilestoneModel;
-import com.hdfc.models.ServiceModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -1126,170 +1120,6 @@ public class Utils {
         return strDisplayDate;
     }
 
-    public void createServiceModel(String strDocumentId, JSONObject jsonObject) {
-
-        try {
-            ServiceModel serviceModel = new ServiceModel();
-
-            serviceModel.setDoubleCost(jsonObject.getDouble("cost"));
-            serviceModel.setStrServiceName(jsonObject.getString("service_name"));
-            serviceModel.setiServiceNo(jsonObject.getInt("service_no"));
-            serviceModel.setStrCategoryName(jsonObject.getString("category_name"));
-            serviceModel.setiUnit(jsonObject.getInt("unit"));
-            serviceModel.setiUnitValue(jsonObject.getInt("unit_value"));
-            serviceModel.setStrServiceType(jsonObject.getString("service_type"));
-
-
-            Config.serviceModels.add(serviceModel);
-
-            if (jsonObject.has("milestones")) {
-
-
-                JSONArray jsonArrayMilestones = jsonObject.
-                        getJSONArray("milestones");
-
-                for (int k = 0; k < jsonArrayMilestones.length(); k++) {
-
-                    JSONObject jsonObjectMilestone =
-                            jsonArrayMilestones.getJSONObject(k);
-
-                    MilestoneModel milestoneModel = new MilestoneModel();
-
-                    milestoneModel.setiMilestoneId(jsonObjectMilestone.getInt("id"));
-                    milestoneModel.setStrMilestoneStatus(jsonObjectMilestone.getString("status"));
-                    milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
-                    milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
-                    //milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
-
-                    if (jsonObjectMilestone.has("show"))
-                        milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
-
-                    if (jsonObjectMilestone.has("reschedule"))
-                        milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
-
-                    if (jsonObjectMilestone.has("scheduled_date"))
-                        milestoneModel.setStrMilestoneScheduledDate(jsonObjectMilestone.
-                                getString("scheduled_date"));
-
-                    //
-                    if (jsonObjectMilestone.has("fields")) {
-
-                        JSONArray jsonArrayFields = jsonObjectMilestone.
-                                getJSONArray("fields");
-
-                        for (int l = 0; l < jsonArrayFields.length(); l++) {
-
-                            JSONObject jsonObjectField =
-                                    jsonArrayFields.getJSONObject(l);
-
-                            FieldModel fieldModel = new FieldModel();
-
-                            fieldModel.setiFieldID(jsonObjectField.getInt("id"));
-
-                            if (jsonObjectField.has("hide"))
-                                fieldModel.setFieldView(jsonObjectField.getBoolean("hide"));
-
-                            fieldModel.setFieldRequired(jsonObjectField.getBoolean("required"));
-                            fieldModel.setStrFieldData(jsonObjectField.getString("data"));
-                            fieldModel.setStrFieldLabel(jsonObjectField.getString("label"));
-                            fieldModel.setStrFieldType(jsonObjectField.getString("type"));
-
-                            if (jsonObjectField.has("values")) {
-
-                                fieldModel.setStrFieldValues(jsonToStringArray(jsonObjectField.
-                                        getJSONArray("values")));
-                            }
-
-                            if (jsonObjectField.has("child")) {
-
-                                fieldModel.setChild(jsonObjectField.getBoolean("child"));
-
-                                if (jsonObjectField.has("child_type"))
-                                    fieldModel.setStrChildType(jsonToStringArray(jsonObjectField.
-                                            getJSONArray("child_type")));
-
-                                if (jsonObjectField.has("child_value"))
-                                    fieldModel.setStrChildValue(jsonToStringArray(jsonObjectField.
-                                            getJSONArray("child_value")));
-
-                                if (jsonObjectField.has("child_condition"))
-                                    fieldModel.setStrChildCondition(jsonToStringArray(jsonObjectField.
-                                            getJSONArray("child_condition")));
-
-                                if (jsonObjectField.has("child_field"))
-                                    fieldModel.setiChildfieldID(jsonToIntArray(jsonObjectField.
-                                            getJSONArray("child_field")));
-                            }
-
-                            milestoneModel.setFieldModel(fieldModel);
-                        }
-                    }
-
-                    serviceModel.setMilestoneModels(milestoneModel);
-                }
-            }
-
-            serviceModel.setStrServiceId(strDocumentId);
-
-            if (!Config.strServcieIds.contains(strDocumentId)) {
-                Config.serviceModels.add(serviceModel);
-                Config.strServcieIds.add(strDocumentId);
-
-                Config.servicelist.add(jsonObject.getString("service_name"));
-
-
-
-                //
-               /* if (!Config.strServiceCategoryNames.contains(jsonObject.getString("category_name"))) {
-                    Config.strServiceCategoryNames.add(jsonObject.getString("category_name"));
-
-                    CategoryServiceModel categoryServiceModel = new CategoryServiceModel();
-                    categoryServiceModel.setStrCategoryName(jsonObject.getString("category_name"));
-                    categoryServiceModel.setServiceModels(serviceModel);
-
-                    Config.categoryServiceModels.add(categoryServiceModel);
-                } else {
-                    int iPosition = Config.strServiceCategoryNames.indexOf(jsonObject.getString("category_name"));
-                    Config.categoryServiceModels.get(iPosition).setServiceModels(serviceModel);
-                }*/
-                //
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void createCustomerModel(String strDocumentId, String strDocument) {
-        try {
-            JSONObject jsonObject = new JSONObject(strDocument);
-            if (jsonObject.has("customer_name")) {
-
-                Config.customerModel = new CustomerModel(
-                        jsonObject.getString("customer_name"),
-                        jsonObject.getString("paytm_account"),
-                        jsonObject.getString("customer_profile_url"),
-                        jsonObject.getString("customer_address"),
-                        jsonObject.getString("customer_contact_no"),
-                        jsonObject.getString("customer_email"),
-                        strDocumentId, "");
-
-                Config.customerModel.setStrDob(jsonObject.getString("customer_dob"));
-                Config.customerModel.setStrCountryCode(jsonObject.getString("customer_country"));
-                Config.customerModel.setStrCountryIsdCode(jsonObject.getString("customer_country_code"));
-                Config.customerModel.setStrCountryAreaCode(jsonObject.getString("customer_area_code"));
-                Config.customerModel.setStrCity(jsonObject.getString("customer_city"));
-                Config.customerModel.setStrState(jsonObject.getString("customer_state"));
-
-                Config.fileModels.add(new FileModel(Config.customerModel.getStrCustomerID(),
-                        jsonObject.getString("customer_profile_url"), "IMAGE"));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     public String[] jsonToStringArray(JSONArray jsonArray) {
 
         String strings[] = new String[0];
@@ -1361,6 +1191,5 @@ public class Utils {
 
         return jsonArray;
     }
-
 
 }

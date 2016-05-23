@@ -9,7 +9,6 @@ import com.hdfc.models.ClientModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
-import com.hdfc.models.FileModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
 
@@ -25,6 +24,8 @@ import java.util.Locale;
 public class Config {
 
     public static final String dbName = "newzeal";
+    public static final String strPreferenceName = "CARE_GIVER";
+
     public static final String collectionService = "service";
     public static final String collectionServiceHistory = "servicehistory";
     public static final String collectionServiceCustomer = "servicecustomer";
@@ -61,7 +62,7 @@ public class Config {
     public static int intDashboardScreen = 1;
     public static int intScreenWidth = 0;
     public static int intScreenHeight = 0;
-    public static ArrayList<FileModel> fileModels = new ArrayList<>();
+    //public static ArrayList<FileModel> fileModels = new ArrayList<>();
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
     public static ArrayList<String> dependentIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();

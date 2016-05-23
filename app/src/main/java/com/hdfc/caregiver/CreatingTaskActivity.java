@@ -15,10 +15,10 @@ import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
-import com.hdfc.adapters.ServiceAdapter;
 import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.DependentModel;
@@ -41,19 +41,18 @@ import java.util.Date;
  */
 public class CreatingTaskActivity extends AppCompatActivity {
 
-    public static String valDateTime, valTitle, valSearch,strServiceName;
-    public static ServiceAdapter serviceAdapter;
+    private static String valDateTime, valTitle, valSearch, strServiceName;
+    //private static ServiceAdapter serviceAdapter;
     private static StorageService storageService;
-    TextView createtaskDone;
-    boolean cancel = false;
-    View focusView = null;
-    ImageView backImage;
-    AutoCompleteTextView inputSearch,inputSearchServices;
+    private boolean cancel = false;
+    private View focusView = null;
+    private AutoCompleteTextView inputSearch, inputSearchServices;
     private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate;
     private ProgressDialog progressDialog;
     private Utils utils;
+    private AppUtils appUtils;
     private EditText editTextTitle, dateAnd;
-    private TextView dateTime;
+    //private TextView dateTime;
     private JSONObject jsonObject;
 
         private SlideDateTimeListener listener = new SlideDateTimeListener() {
@@ -93,6 +92,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         dependentlist.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
 
         utils = new Utils(CreatingTaskActivity.this);
+        appUtils = new AppUtils(CreatingTaskActivity.this);
         progressDialog = new ProgressDialog(CreatingTaskActivity.this);
 
         storageService = new StorageService(CreatingTaskActivity.this);
@@ -105,7 +105,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         inputSearchServices.setAdapter(adapter);*/
 
         //setItems();
-        backImage = (ImageView)findViewById(R.id.imgBackCreatingTaskDetail);
+        ImageView backImage = (ImageView) findViewById(R.id.imgBackCreatingTaskDetail);
         backImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,7 +128,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             }
         });
 
-        createtaskDone = (TextView)findViewById(R.id.textViewDoneHeaderCreatingTask);
+        TextView createtaskDone = (TextView) findViewById(R.id.textViewDoneHeaderCreatingTask);
 
         createtaskDone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,7 +219,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     JSONObject jsonObjectServcies = new JSONObject(strServices);
 
                                     if (jsonObjectServcies.has("unit"))
-                                        utils.createServiceModel(strDocumentId, jsonObjectServcies);
+                                        appUtils.createServiceModel(strDocumentId, jsonObjectServcies);
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
