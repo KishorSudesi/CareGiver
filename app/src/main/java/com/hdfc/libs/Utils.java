@@ -69,7 +69,7 @@ public class Utils {
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Config.locale);
 
     public final static SimpleDateFormat writeFormat = new
-            SimpleDateFormat("kk:mm aa dd MMM yyyy", Config.locale);
+            SimpleDateFormat("kk:mm dd MMM yyyy", Config.locale);
     public final static SimpleDateFormat writeFormatMonth = new
             SimpleDateFormat("kk:mm", Config.locale); // aa
 

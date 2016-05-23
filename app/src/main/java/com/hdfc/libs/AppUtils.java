@@ -12,6 +12,7 @@ import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.LoginActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.caregiver.fragments.SimpleActivityFragment;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbCon;
@@ -435,10 +436,10 @@ public class AppUtils {
 
                 Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
 
-               /* if (Config.clientModels.size() > 0) {
+                if (Config.clientModels.size() > 0) {
                     int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
                     Config.clientModels.get(iPosition).setDependentModel(dependentModel);
-                }*/
+                }
 
                /* Config.fileModels.add(new FileModel(strDocumentId,
                         jsonObjectDependent.getString("dependent_profile_url"), "IMAGE"));*/
@@ -612,6 +613,8 @@ public class AppUtils {
 
                 if(!strProviderId.equalsIgnoreCase("")) {
 
+                //_$createdAt
+
                     strProviderId = AESCrypt.decrypt(Config.string, strProviderId);
                     cur = CareGiver.dbCon.fetch(DbHelper.strTableNameCollection,
                             new String[]{"updated_date", "document"}, "object_id=?",
@@ -666,7 +669,7 @@ public class AppUtils {
                                 Storage.JSONDocument jsonDocument = jsonDocList.get(i);
                                 String strDocumentId = jsonDocument.getDocId();
                                 String strActivities = jsonDocument.getJsonDoc();
-                                createActivityModel(strDocumentId, strActivities);
+                                createActivityModel(strDocumentId, strActivities, 1);
                             }
                             fetchCustomers(relativeLayout); //progressDialog
                             //fetchDependents(relativeLayout);
@@ -741,7 +744,7 @@ public class AppUtils {
         }*/
     }
 
-    public void createActivityModel(String strDocumentId, final String strDocument) {
+    public void createActivityModel(String strDocumentId, final String strDocument, final int iFlag) {
 
         try {
 
@@ -1117,7 +1120,11 @@ public class AppUtils {
                         }
                     }
 
-                    Config.activityModels.add(activityModel);
+                    if (iFlag == 1)
+                        Config.activityModels.add(activityModel);
+
+                    if (iFlag == 2)
+                        Config.milestoneModels.add(activityModel);
                 }
             }
 
@@ -1409,4 +1416,242 @@ public class AppUtils {
                     });
         }
     }
+
+    //refresh Providers
+    public void fetchClients(final RelativeLayout relativeLayout) {
+
+        if (utils.isConnectingToInternet()) {
+
+            StorageService storageService = new StorageService(_ctxt);
+
+            Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
+                    QueryBuilder.Operator.EQUALS);
+
+            storageService.findDocsByQueryOrderBy(Config.collectionProviderDependent, q1, 1000, 0,
+                    "dependent_name", 1, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            try {
+                                if (o != null) {
+
+                                    Utils.log(o.toString(), " s1 ");
+
+                                    Storage storage = (Storage) o;
+
+                                    if (storage.getJsonDocList().size() > 0) {
+
+                                        ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
+
+                                        for (int i = 0; i < jsonDocList.size(); i++) {
+
+                                            Storage.JSONDocument jsonDocument = storage.getJsonDocList().
+                                                    get(0);
+
+                                            String strDocument = jsonDocument.getJsonDoc();
+                                            //String _strProviderId = jsonDocument.getDocId();
+
+                                            try {
+                                                JSONObject jsonObject = new JSONObject(strDocument);
+
+                                                if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
+                                                    Config.customerIds.add(jsonObject.getString("customer_id"));
+
+                                                if (!Config.dependentIds.contains("dependent_id"))
+                                                    Config.dependentIds.add("dependent_id");
+
+                                                fetchActivities(relativeLayout);
+
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+
+                                    } else {
+                                        utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                        relativeLayout.setVisibility(View.GONE);
+                                    }
+                                    fetchActivities(relativeLayout);
+                                } else {
+                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                    relativeLayout.setVisibility(View.GONE);
+                                }
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                            if (e != null) {
+                                Utils.log(e.getMessage(), " f1 ");
+                                fetchActivities(relativeLayout);
+                                //utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                //relativeLayout.setVisibility(View.GONE);
+                            } else {
+                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                relativeLayout.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+        } else {
+            utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+            relativeLayout.setVisibility(View.GONE);
+        }
+    }
+
+    //fetch mile stones
+    public void fetchMileStone(final RelativeLayout relativeLayout) {//final ProgressDialog progressDialog
+
+        if (utils.isConnectingToInternet()) {
+            //////////////////////////
+            ///
+            Calendar calendar = Calendar.getInstance();
+
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH) + 1; // Note: zero based!
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+          /*  int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+            int millis = calendar.get(Calendar.MILLISECOND);*/
+            ///
+
+            String strDay = String.valueOf(day);
+            String strMonth = String.valueOf(month);
+
+            if (day <= 9)
+                strDay = String.valueOf("0" + day);
+
+            if (month <= 9)
+                strMonth = String.valueOf("0" + month);
+
+            String strDate = String.valueOf(year + "-" + strMonth + "-" + strDay) + "T23:59:59.999+0000";
+
+            String strDateStart = String.valueOf(year + "-" + strMonth + "-" + strDay) + "T00:00:00.000+0000";
+
+            Utils.log(strDate + " @ " + strDateStart, " FDATE ");
+
+
+            //////////////////////////////////
+            /*String strUpdatedDate="";
+
+            if (DbCon.isDbOpened) {
+
+                Cursor cur = null;
+
+                try {
+
+                    if(!strProviderId.equalsIgnoreCase("")) {
+
+                        strProviderId = AESCrypt.decrypt(Config.string, strProviderId);
+                        cur = CareGiver.dbCon.fetch(DbHelper.strTableNameCollection,
+                                new String[]{"updated_date", "document"}, "object_id=?",
+                                new String[]{strProviderId}, null, "0, 1", true, null, null);
+
+                        if (cur.getCount() > 0) {
+                            cur.moveToFirst();
+                               *//* while (!cur.isAfterLast()) {*//*
+                            strUpdatedDate = cur.getString(0);
+                            strDocumentLocal = cur.getString(1);
+                                *//*    cur.moveToNext();
+                                }*//*
+                        }
+                        CareGiver.dbCon.closeCursor(cur);
+                    }
+                } catch (Exception e) {
+                    CareGiver.dbCon.closeCursor(cur);
+                    e.printStackTrace();
+                }
+            }*/
+            //////////////////////////////////
+
+            Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
+                    QueryBuilder.Operator.EQUALS);
+
+            Query q2 = QueryBuilder.build("$milestones.date_scheduled", strDate, QueryBuilder.
+                    Operator.LESS_THAN_EQUALTO);
+
+            Query q3 = QueryBuilder.build("$milestones.date_scheduled", strDateStart, QueryBuilder.
+                    Operator.GREATER_THAN_EQUALTO);
+
+            Query q4 = QueryBuilder.compoundOperator(q2, QueryBuilder.Operator.AND, q3);
+
+            Query q5 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q4);
+
+               /* int max = 1;
+                int offset = 0;
+    */
+            ///////////////////////////
+
+            Utils.log(q5.get(), " QUERY ");
+
+            storageService.findDocsByQueryOrderBy(Config.collectionActivity, q5, 1000, 0,
+                    "activity_date", 1,
+                    new App42CallBack() {
+
+                        @Override
+                        public void onSuccess(Object o) {
+
+                            relativeLayout.setVisibility(View.GONE);
+                            if (o != null) {
+
+                                Storage storage = (Storage) o;
+
+                                Utils.log(storage.toString(), " MS ");
+
+                                ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
+
+                                for (int i = 0; i < jsonDocList.size(); i++) {
+
+                                    Storage.JSONDocument jsonDocument = jsonDocList.get(i);
+                                    String strDocumentId = jsonDocument.getDocId();
+                                    String strActivities = jsonDocument.getJsonDoc();
+                                    createActivityModel(strDocumentId, strActivities, 2);
+                                }
+                                //fetchCustomers(relativeLayout); //progressDialog
+                                //fetchDependents(relativeLayout);
+
+                                SimpleActivityFragment.activityModels = Config.milestoneModels;
+                                SimpleActivityFragment.mAdapter.notifyDataSetChanged();
+                            } else {
+                       /* if (progressDialog.isShowing())
+                            progressDialog.dismiss();*/
+                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                            }
+                        }
+
+                        @Override
+                        public void onException(Exception ex) {
+                            relativeLayout.setVisibility(View.GONE);
+                            try {
+                                if (ex != null) {
+                                    Utils.log(ex.getMessage(), " f2 ");
+
+                                    SimpleActivityFragment.activityModels = Config.milestoneModels;
+                                    SimpleActivityFragment.mAdapter.notifyDataSetChanged();
+                                    //fetchCustomers(relativeLayout);
+                                    //fetchDependents(relativeLayout);
+                                } else {
+                            /*if (progressDialog.isShowing())
+                                progressDialog.dismiss();*/
+                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                }
+                            } catch (Exception e1) {
+                       /* if (progressDialog.isShowing())
+                            progressDialog.dismiss();*/
+                                e1.printStackTrace();
+                            }
+                        }
+
+                        /* storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id",
+                                        Config.providerModel.getStrProviderId(),
+                                        new AsyncApp42ServiceApi.App42StorageServiceListener() {*/
+                    });
+        } else {
+            utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+            relativeLayout.setVisibility(View.GONE);
+        }
+    }
+    //
+
 }

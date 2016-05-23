@@ -2,6 +2,7 @@ package com.hdfc.caregiver.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
@@ -52,13 +53,12 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     private static final String TAG = "";
     private static final int PICK_CONTACT = 979;
+    public static ArrayList<ActivityModel> activityModels = Config.activityModels;
     private static StorageService storageService;
-    public ArrayList<ActivityModel> activityModels = Config.activityModels;
-    private MultiBitmapLoader multiBitmapLoader;
-    private Menu mMenu;
-    private SlideAndDragListView<ApplicationInfo> mListView;
-    private Utils utils;
-    public BaseAdapter mAdapter = new BaseAdapter() {
+    private static MultiBitmapLoader multiBitmapLoader;
+    private static Utils utils;
+    private static Context context;
+    public static BaseAdapter mAdapter = new BaseAdapter() {
 
         @Override
         public int getCount() {
@@ -82,7 +82,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             if (convertView == null) {
                 cvh = new CustomViewHolder();
 
-                convertView = LayoutInflater.from(getActivity()).inflate(R.layout.my_tasks_item, null);
+                convertView = LayoutInflater.from(context).inflate(R.layout.my_tasks_item, null);
                 cvh.imageTiming = (TextView) convertView.findViewById(R.id.imageTiming);
                 cvh.textMessage = (TextView) convertView.findViewById(R.id.task_message);
                 cvh.textSubject = (TextView) convertView.findViewById(R.id.task_subject);
@@ -96,7 +96,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
             if (Config.activityModels.size() > 0) {
 
-                ActivityModel activityModel = Config.activityModels.get(position);
+                ActivityModel activityModel = activityModels.get(position);
 
                 //System.out.println("Message value: "+activityModel.getStrActivityMessage());
                 String strMessage = activityModel.getStrActivityDesc();
@@ -118,10 +118,10 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 if (!activityModel.getStrActivityStatus().equalsIgnoreCase("completed")) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(utils.formatDateTime(activityModel.getStrActivityDate()));
-                    cvh.imageTiming.setTextColor(getResources().getColor(R.color.gray_holo_dark));
+                    cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.gray_holo_dark));
                 }else{
                     cvh.imageTiming.setBackgroundResource(R.drawable.done);
-                    cvh.imageTiming.setTextColor(getResources().getColor(R.color.colorWhite));
+                    cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorWhite));
                     cvh.imageTiming.setText("");
                 }
                // cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
@@ -133,20 +133,22 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                     String filename = fileImage.getAbsolutePath();
                     multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
                 } else {
-                    cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.person_icon));
+                    cvh.imagePerson.setImageDrawable(context.getResources().getDrawable(R.drawable.person_icon));
                 }
             }
             return convertView;
         }
 
         class CustomViewHolder {
-            public TextView imageTiming;
-            public TextView textSubject;
-            public ImageView imagePerson;
-            public TextView textMessage;
-            public TextView textTime;
+            TextView imageTiming;
+            TextView textSubject;
+            ImageView imagePerson;
+            TextView textMessage;
+            TextView textTime;
         }
     };
+    private Menu mMenu;
+    private SlideAndDragListView<ApplicationInfo> mListView;
     // public ActivityModel activityModel = Config.activityModel;
     private JSONObject responseJSONDoc, responseProvider;
     private JSONObject responseJSONDocCarla;
@@ -179,6 +181,8 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         progressDialog = new ProgressDialog(getActivity());
         utils = new Utils(getActivity());
         multiBitmapLoader = new MultiBitmapLoader(getActivity());
+
+        context = getActivity();
 
         ImageButton add = (ImageButton) view.findViewById(R.id.add_button);
 

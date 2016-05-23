@@ -25,6 +25,7 @@ import com.hdfc.caregiver.fragments.RatingsFragment;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
+import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42API;
 
 /**
@@ -34,10 +35,10 @@ public class DashboardActivity extends AppCompatActivity implements
         App42GCMController.App42GCMListener, NetworkStateReceiver.NetworkStateReceiverListener {
 
 
+    public static RelativeLayout loadingPanel;
     private static Handler threadHandler;
     private static AppUtils appUtils;
     private static AppCompatActivity appCompatActivity;
-    private static RelativeLayout loadingPanel;
     final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -69,7 +70,7 @@ public class DashboardActivity extends AppCompatActivity implements
         }
     };
     private LinearLayout net_error_layout;
-    private NetworkStateReceiver networkStateReceiver = new NetworkStateReceiver();
+    private NetworkStateReceiver networkStateReceiver;
     private ImageView mytask, clients, feedback;
     private TextView textViewTasks, textViewClients, textViewFeedback;
 
@@ -128,9 +129,9 @@ public class DashboardActivity extends AppCompatActivity implements
             setMenu();
 
             try {
-                //networkStateReceiver = new NetworkStateReceiver();
+                networkStateReceiver = new NetworkStateReceiver();
                 networkStateReceiver.addListener(this);
-                //this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+                this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -272,8 +273,8 @@ public class DashboardActivity extends AppCompatActivity implements
         super.onPause();
         try {
             unregisterReceiver(mBroadcastReceiver);
-            if (networkStateReceiver != null)
-                unregisterReceiver(networkStateReceiver);
+            /*if (networkStateReceiver != null)
+                unregisterReceiver(networkStateReceiver);*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -289,8 +290,8 @@ public class DashboardActivity extends AppCompatActivity implements
             filter.setPriority(2);
             registerReceiver(mBroadcastReceiver, filter);
 
-            registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.
-                    CONNECTIVITY_ACTION));
+            /*registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.
+                    CONNECTIVITY_ACTION));*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -395,7 +396,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
         loadingPanel.setVisibility(View.VISIBLE);
 
-        appUtils.fetchActivities(loadingPanel);
+        appUtils.fetchClients(loadingPanel);
     }
 
     public void gotoClient() {
@@ -429,12 +430,14 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void networkAvailable() {
-        //net_error_layout.setVisibility(View.GONE);
+        Utils.log(" 1 ", " Network ");
+        net_error_layout.setVisibility(View.GONE);
     }
 
     @Override
     public void networkUnavailable() {
-        //net_error_layout.setVisibility(View.VISIBLE);
+        Utils.log(" 0 ", " Network ");
+        net_error_layout.setVisibility(View.VISIBLE);
     }
 
     private static class ThreadHandler extends Handler {

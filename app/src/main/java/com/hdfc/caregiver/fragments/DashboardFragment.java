@@ -10,7 +10,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.config.Config;
+import com.hdfc.libs.AppUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,7 +22,9 @@ public class DashboardFragment extends Fragment {
 
     //private static int iMenuLength=2;
 
-    private static Button buttonActivity, buttonTask;
+    private Button buttonActivity, buttonTask;
+
+    private AppUtils appUtils;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -39,6 +44,8 @@ public class DashboardFragment extends Fragment {
 
         buttonActivity = (Button) view.findViewById(R.id.buttonActivity);
         buttonTask = (Button) view.findViewById(R.id.buttonTask);
+
+        appUtils = new AppUtils(getActivity());
 
         final LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.dashboardlinearLayout);
 
@@ -81,11 +88,17 @@ public class DashboardFragment extends Fragment {
             if (iPosition == 0) {
                 buttonActivity.setBackgroundResource(R.drawable.one_side_border);
                 buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+
+                SimpleActivityFragment.activityModels = Config.activityModels;
+                SimpleActivityFragment.mAdapter.notifyDataSetChanged();
             }
 
             if (iPosition == 1) {
                 buttonTask.setBackgroundResource(R.drawable.one_side_border);
                 buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+
+                DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
+                appUtils.fetchMileStone(DashboardActivity.loadingPanel);
             }
 
         } catch (Exception e) {

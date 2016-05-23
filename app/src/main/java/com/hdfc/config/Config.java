@@ -31,6 +31,7 @@ public class Config {
     public static final String collectionServiceCustomer = "servicecustomer";
     public static final String collectionServices = "service";
     public static final String collectionProvider = "provider";
+    public static final String collectionProviderDependent = "providerdependent";
     public static final String collectionCustomer = "customer";
     public static final String collectionActivity = "activity";
     public static final String collectionDependent = "dependent";
@@ -64,6 +65,7 @@ public class Config {
     public static int intScreenHeight = 0;
     //public static ArrayList<FileModel> fileModels = new ArrayList<>();
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
+    public static ArrayList<ActivityModel> milestoneModels = new ArrayList<>();
     public static ArrayList<String> dependentIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
     public static ArrayList<String> strActivityIds = new ArrayList<>();

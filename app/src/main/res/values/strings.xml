@@ -43,6 +43,7 @@
 
     <string name="warning_profile_pic">Profile Picture Needed</string>
     <string name="warning_internet">Please check your internet connection and try again</string>
+    <string name="warning_internet_alert">No internet connection …</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
