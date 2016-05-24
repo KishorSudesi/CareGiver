@@ -22,10 +22,10 @@ import com.hdfc.app42service.App42GCMService;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
+import com.hdfc.caregiver.fragments.SimpleActivityFragment;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
-import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42API;
 
 /**
@@ -204,6 +204,8 @@ public class DashboardActivity extends AppCompatActivity implements
                 mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
                 textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
+                gotoSimpleActivity();
+
                 refreshData();
             }
 
@@ -218,6 +220,7 @@ public class DashboardActivity extends AppCompatActivity implements
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
         textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         //Config.intSelectedMenu = 0;
+        gotoSimpleActivity();
         refreshData();
     }
 
@@ -367,33 +370,6 @@ public class DashboardActivity extends AppCompatActivity implements
 
     public void refreshData() {
 
-        Config.dependentIds.clear();
-        Config.strActivityIds.clear();
-        Config.customerIds.clear();
-
-        Config.dependentIdsAdded.clear();
-        Config.customerIdsAdded.clear();
-
-        //Config.fileModels.clear();
-
-        Config.activityModels.clear();
-        Config.dependentModels.clear();
-        Config.customerModels.clear();
-
-        Config.clientModels.clear();
-        Config.feedBackModels.clear();
-
-       /* Config.strServcieIds.clear();
-        Config.serviceModels.clear();*/
-        //Config.servicelist.clear();
-        Config.strDependentNames.clear();
-
-       /* progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(false);
-        progressDialog.show();*/
-
-        //gotoSimpleActivity();
-
         loadingPanel.setVisibility(View.VISIBLE);
 
         appUtils.fetchClients(loadingPanel);
@@ -430,13 +406,13 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void networkAvailable() {
-        Utils.log(" 1 ", " Network ");
+        //Utils.log(" 1 ", " Network ");
         net_error_layout.setVisibility(View.GONE);
     }
 
     @Override
     public void networkUnavailable() {
-        Utils.log(" 0 ", " Network ");
+        //Utils.log(" 0 ", " Network ");
         net_error_layout.setVisibility(View.VISIBLE);
         loadingPanel.setVisibility(View.GONE);
     }
@@ -449,8 +425,11 @@ public class DashboardActivity extends AppCompatActivity implements
 
             loadingPanel.setVisibility(View.GONE);
 
-            if (Config.intSelectedMenu == Config.intDashboardScreen)
-                gotoSimpleActivity();
+            if (Config.intSelectedMenu == Config.intDashboardScreen) {
+                SimpleActivityFragment.activityModels = Config.activityModels;
+                SimpleActivityFragment.mAdapter.notifyDataSetChanged();
+            }
+            //gotoSimpleActivity();
         }
     }
 

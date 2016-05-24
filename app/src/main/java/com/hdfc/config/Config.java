@@ -50,11 +50,11 @@ public class Config {
     public static final int CACHE_EXPIRE = 1;//In Minutes
     public static final int intWidth = 300, intHeight = 300;
 
-    /* public static final String[] weekNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    /* public static final String[] weekNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};*/
      public static final String[] months = {"January", "February", "March", "April", "May", "June",
              "July", "August", "September", "October", "November", "December"};
 
-     public static final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};*/
+    /*public static final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};*/
     public static final boolean isDebuggable = true;
     public static final boolean release = false;
     //Login specific //User Specific clear at logout or whenever needed
