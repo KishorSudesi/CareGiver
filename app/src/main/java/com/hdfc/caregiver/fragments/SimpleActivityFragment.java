@@ -98,7 +98,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                 ActivityModel activityModel = activityModels.get(position);
 
-                //System.out.println("Message value: "+activityModel.getStrActivityMessage());
                 String strMessage = activityModel.getStrActivityDesc();
 
                 if (strMessage != null && strMessage.length() > 20)
@@ -124,9 +123,9 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorWhite));
                     cvh.imageTiming.setText("");
                 }
-               // cvh.imagePerson.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.mrs_hungal_circle2));
 
-                //System.out.println("Rahul : "+activityModel.getStrActivityDependentName());
+                Utils.log(activityModel.getStrDependentID(), " IMG ");
+
                 File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(activityModel.getStrDependentID().trim()));
 
                 if (fileImage.exists()) {

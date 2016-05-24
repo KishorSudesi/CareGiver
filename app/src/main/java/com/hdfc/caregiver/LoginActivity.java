@@ -1,6 +1,5 @@
 package com.hdfc.caregiver;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -329,7 +328,7 @@ public class LoginActivity extends AppCompatActivity {
         //intent.putExtra("WHICH_SCREEN", intWhichScreen);
         Config.intSelectedMenu = Config.intDashboardScreen;
         _ctxt.startActivity(intent);
-        ((Activity) _ctxt).finish();
+        //((Activity) _ctxt).finish();
     }
 
 

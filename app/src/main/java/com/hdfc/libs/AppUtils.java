@@ -193,6 +193,8 @@ public class AppUtils {
                 Query query = QueryBuilder.build("_id", Config.dependentIds,
                         QueryBuilder.Operator.INLIST);
 
+                //Utils.log(query.get(), " fetchDependents ");
+
                 storageService.findDocsByQuery(Config.collectionDependent, query,
                         new App42CallBack() {
 
@@ -240,7 +242,7 @@ public class AppUtils {
                             public void onException(Exception e) {
                                 try {
                                     if (e != null) {
-                                        //Utils.log(e.getMessage(), " fetchDependents failure ");
+                                        Utils.log(e.getMessage(), " fetchDependents failure ");
                                         DashboardActivity.gotoSimpleActivityMenu();
                                     } else {
                                        /* if (progressDialog.isShowing())
@@ -436,11 +438,13 @@ public class AppUtils {
 
                 Config.dependentModels.add(dependentModel);
 
-                Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
+                //if(!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name")))
+                //Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
 
                 if (Config.clientModels.size() > 0) {
                     int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
-                    Config.clientModels.get(iPosition).setDependentModel(dependentModel);
+                    if (iPosition > 0)
+                        Config.clientModels.get(iPosition).setDependentModel(dependentModel);
                 }
 
                /* Config.fileModels.add(new FileModel(strDocumentId,
@@ -524,7 +528,8 @@ public class AppUtils {
 
                     Config.customerModels.add(customerModel);
 
-                    Config.strCustomerNames.add(jsonObject.getString("customer_name"));
+                    if (!Config.strCustomerNames.contains(jsonObject.getString("customer_name")))
+                        Config.strCustomerNames.add(jsonObject.getString("customer_name"));
 
                     /*Config.fileModels.add(new FileModel(strDocumentId,
                             jsonObject.getString("customer_profile_url"), "IMAGE"));*/
@@ -601,6 +606,8 @@ public class AppUtils {
 
         String strDate = String.valueOf(year + "-" + strMonth + "-" + strDay) + "T23:59:59.999+0000";
 
+        String strDateStart = String.valueOf(year + "-" + strMonth + "-" + strDay) + "T00:00:00.000+0000";
+
         Utils.log(strDate, " FDATE ");
 
 
@@ -645,14 +652,19 @@ public class AppUtils {
         Query q2 = QueryBuilder.build("activity_date", strDate, QueryBuilder.
                 Operator.LESS_THAN_EQUALTO);
 
-        Query q3 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
+        Query q3 = QueryBuilder.build("activity_date", strDateStart, QueryBuilder.
+                Operator.GREATER_THAN_EQUALTO);
+
+        Query q4 = QueryBuilder.compoundOperator(q2, QueryBuilder.Operator.AND, q3);
+
+        Query q5 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q4);
 
            /* int max = 1;
             int offset = 0;
 */
         ///////////////////////////
 
-        storageService.findDocsByQueryOrderBy(Config.collectionActivity, q3, 100, 0,
+        storageService.findDocsByQueryOrderBy(Config.collectionActivity, q5, 100, 0,
                 "activity_date", 1,
                 new App42CallBack() {
 
@@ -662,7 +674,7 @@ public class AppUtils {
 
                             Storage storage = (Storage) o;
 
-                            Utils.log(storage.toString(), " Activity ");
+                            Utils.log(storage.toString(), " Activity All ");
 
                             ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
 
@@ -1459,9 +1471,9 @@ public class AppUtils {
                                                     Config.customerIds.add(jsonObject.getString("customer_id"));
 
                                                 if (!Config.dependentIds.contains("dependent_id"))
-                                                    Config.dependentIds.add("dependent_id");
+                                                    Config.dependentIds.add(jsonObject.getString("dependent_id"));
 
-                                                fetchActivities(relativeLayout);
+                                                //fetchActivities(relativeLayout);
 
                                             } catch (Exception e) {
                                                 e.printStackTrace();

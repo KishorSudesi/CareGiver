@@ -124,7 +124,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     long insert(String values[], String names[], String tbl) {
 
-        if (!db.isOpen())
+        if (db != null && !db.isOpen())
             open();
 
         ContentValues initialValues = createContentValues(values, names);
@@ -139,7 +139,7 @@ public class DbHelper extends SQLiteOpenHelper {
     Cursor fetch(String tbl, String names[], String where, String args[], String order, String limit,
                  boolean isDistinct, String groupBy, String having) {
 
-        if (!db.isOpen())
+        if (db != null && !db.isOpen())
             open();
 
         //Cursor cur = null;
@@ -152,7 +152,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     boolean delete(String tbl, String where, String args[]) {
 
-        if (!db.isOpen())
+        if (db != null && !db.isOpen())
             open();
 
         boolean isDeleted = false;
@@ -165,7 +165,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     boolean update(String where, String values[], String names[], String tbl, String args[]) {
 
-        if (!db.isOpen())
+        if (db != null && !db.isOpen())
             open();
 
         ContentValues updateValues = createContentValues(values, names);
