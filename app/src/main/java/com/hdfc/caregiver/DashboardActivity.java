@@ -167,7 +167,7 @@ public class DashboardActivity extends AppCompatActivity implements
             feedback.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    menuClients();
                 }
             });
 
@@ -438,6 +438,7 @@ public class DashboardActivity extends AppCompatActivity implements
     public void networkUnavailable() {
         Utils.log(" 0 ", " Network ");
         net_error_layout.setVisibility(View.VISIBLE);
+        loadingPanel.setVisibility(View.GONE);
     }
 
     private static class ThreadHandler extends Handler {

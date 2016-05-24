@@ -86,16 +86,13 @@ public class AppUtils {
             SharedPreferences.Editor editor = _ctxt.getSharedPreferences(Config.strPreferenceName,
                     Context.MODE_PRIVATE).edit();
             editor.clear();
-            editor.commit();
+            editor.apply();
 
             File fileImage = Utils.createFileInternal("images/");
             Utils.deleteAllFiles(fileImage);
 
             unregisterGcm();
 
-            Intent dashboardIntent = new Intent(_ctxt, LoginActivity.class);
-            _ctxt.startActivity(dashboardIntent);
-            ((Activity) _ctxt).finish();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,6 +106,11 @@ public class AppUtils {
             public void run() {
                 try {
                     App42GCMService.unRegisterGcm();
+
+                    Intent dashboardIntent = new Intent(_ctxt, LoginActivity.class);
+                    _ctxt.startActivity(dashboardIntent);
+                    ((Activity) _ctxt).finish();
+
                 } catch (Exception bug) {
                     bug.printStackTrace();
                 }
