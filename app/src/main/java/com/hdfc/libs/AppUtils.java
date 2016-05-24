@@ -442,6 +442,11 @@ public class AppUtils {
                 //if(!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name")))
                 //Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
 
+                //
+
+               
+                //
+
                 if (Config.clientModels.size() > 0) {
                     int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
                     if (iPosition > 0)
