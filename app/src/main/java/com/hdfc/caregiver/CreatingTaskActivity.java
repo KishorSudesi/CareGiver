@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
+import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FieldModel;
 import com.hdfc.models.MilestoneModel;
@@ -41,7 +43,8 @@ import java.util.Date;
  */
 public class CreatingTaskActivity extends AppCompatActivity {
 
-    private static String valDateTime, valTitle, valSearch, strServiceName;
+    private static String valDateTime, valTitle, valSearch, strServiceName,name;
+    private Spinner dependentlist;
     //private static ServiceAdapter serviceAdapter;
     private static StorageService storageService;
     private boolean cancel = false;
@@ -54,6 +57,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private EditText editTextTitle, dateAnd;
     //private TextView dateTime;
     private JSONObject jsonObject;
+    private ArrayList<String> names = new ArrayList<>();
+
 
         private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -83,19 +88,16 @@ public class CreatingTaskActivity extends AppCompatActivity {
         editTextTitle = (EditText)findViewById(R.id.editTextTitle);
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
         inputSearchServices = (AutoCompleteTextView)findViewById(R.id.inputSearchServices);
-        Spinner dependentlist = (Spinner) findViewById(R.id.spindependentList);
+         dependentlist = (Spinner) findViewById(R.id.spindependentList);
 
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.strDependentNames);
-        //Getting the instance of AutoCompleteTextView
-        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
-        // dependentlist.setThreshold(1);//will start working from first character
-        dependentlist.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
 
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);
         progressDialog = new ProgressDialog(CreatingTaskActivity.this);
 
         storageService = new StorageService(CreatingTaskActivity.this);
+
+
 
         ArrayAdapter<String> adapter;
         adapter = new ArrayAdapter<String>(CreatingTaskActivity.this,android.R.layout.select_dialog_item, Config.servicelist);
@@ -261,7 +263,30 @@ public class CreatingTaskActivity extends AppCompatActivity {
         //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
         inputSearch.setThreshold(1);//will start working from first character
         inputSearch.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView*/
-    }
+
+
+        inputSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                names =   Config.clientNames.get(position).getStrDependeneNames();
+            }
+        });
+                 // int iPosition = Config.strCustomerNames.indexOf(valSearch);
+              //   if (iPosition > 0)
+               // names =   Config.clientNames.get(iPosition).getStrDependeneNames();
+                System.out.println("gurujiiiiiiiiiiiiiiiiii"+Config.clientNames);
+
+                // int position = Config.strCustomerNames.indexOf(inputSearch.getText().toString().trim());
+                // name = Config.strDependentNames.get(0);
+                // names.add(name);
+                ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, names);
+                //Getting the instance of AutoCompleteTextView
+                //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
+                // dependentlist.setThreshold(1);//will start working from first character
+                dependentlist.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
+
+
+        }
 
     public void refreshServices() {
         ArrayAdapter<String> adapter;
