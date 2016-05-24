@@ -8,12 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
+
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,7 +48,7 @@ public class DashboardFragment extends Fragment {
 
         appUtils = new AppUtils(getActivity());
 
-        final LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.dashboardlinearLayout);
+        //final LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.dashboardlinearLayout);
 
         buttonActivity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,14 +64,31 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        buttonClicked(0);
-
-
         SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frameLayoutDashboard, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+
+        //
+        Calendar calendar = Calendar.getInstance();
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH); // Note: zero based!
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        TextView textView = (TextView) view.findViewById(R.id.textViewDate);
+
+        String strDay = String.valueOf(day);
+
+        if (day <= 9)
+            strDay = "0" + strDay;
+
+        String strDate = strDay + "-" + Config.months[month] + "-" + String.valueOf(year);
+
+        textView.setText(strDate);
+
+        buttonClicked(0);
 
         return view;
     }
@@ -97,8 +115,12 @@ public class DashboardFragment extends Fragment {
                 buttonTask.setBackgroundResource(R.drawable.one_side_border);
                 buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
 
-                DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
-                appUtils.fetchMileStone(DashboardActivity.loadingPanel);
+
+                SimpleActivityFragment.activityModels = Config.milestoneModels;
+                SimpleActivityFragment.mAdapter.notifyDataSetChanged();
+
+                /*DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
+                appUtils.fetchMileStone(DashboardActivity.loadingPanel);*/
             }
 
         } catch (Exception e) {

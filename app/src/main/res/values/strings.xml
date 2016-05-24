@@ -95,7 +95,7 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
 
-    <string name="noActivities">No Activities</string>
+    <string name="noActivities">No Information Available for Selected Date</string>
 
     <string name="timeHint">7 am</string>
     <string name="taskSubject">Take me to Temple</string>

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -47,7 +48,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private boolean cancel = false;
     private View focusView = null;
     private AutoCompleteTextView inputSearch, inputSearchServices;
-    private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate;
+    private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate, strSelectedDependent;
     private ProgressDialog progressDialog;
     private Utils utils;
     private AppUtils appUtils;
@@ -90,6 +91,18 @@ public class CreatingTaskActivity extends AppCompatActivity {
         //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
         // dependentlist.setThreshold(1);//will start working from first character
         dependentlist.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
+
+        dependentlist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                strSelectedDependent = Config.strDependentNames.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);
@@ -176,10 +189,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
                         int iServicePosition = Config.servicelist.indexOf(strServiceName);
                         ServiceModel serviceModel = Config.serviceModels.get(iServicePosition);
 
-                        int iDependentPosition = Config.strDependentNames.indexOf(valSearch);
-                        DependentModel dependentModel = Config.dependentModels.get(iDependentPosition);
+                        int iDependentPosition = Config.strDependentNames.indexOf(strSelectedDependent);
 
-                        uploadData(serviceModel, dependentModel);
+                        if (iDependentPosition > -1) {
+                            DependentModel dependentModel = Config.dependentModels.get(iDependentPosition);
+
+                            uploadData(serviceModel, dependentModel);
+                        }
 
                     } else utils.toast(2, 2, getString(R.string.warning_internet));
 
