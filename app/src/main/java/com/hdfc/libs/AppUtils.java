@@ -19,6 +19,7 @@ import com.hdfc.dbconfig.DbCon;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ClientModel;
+import com.hdfc.models.ClientName;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
@@ -447,6 +448,12 @@ public class AppUtils {
                         Config.clientModels.get(iPosition).setDependentModel(dependentModel);
                 }
 
+                if (Config.clientNames.size() > 0) {
+                    int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
+                    if (iPosition > 0)
+                        Config.clientNames.get(iPosition).setStrDependeneName(jsonObjectDependent.getString("dependent_name"));
+                }
+
                /* Config.fileModels.add(new FileModel(strDocumentId,
                         jsonObjectDependent.getString("dependent_profile_url"), "IMAGE"));*/
 
@@ -525,6 +532,11 @@ public class AppUtils {
                     ClientModel clientModel = new ClientModel();
                     clientModel.setCustomerModel(customerModel);
                     Config.clientModels.add(clientModel);
+
+                    ClientName clientName = new ClientName();
+                    clientName.setStrCustomerName(jsonObject.getString("customer_name"));
+
+                    Config.clientNames.add(clientName);
 
                     Config.customerModels.add(customerModel);
 

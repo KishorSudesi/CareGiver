@@ -6,6 +6,7 @@ import com.hdfc.caregiver.BuildConfig;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ClientModel;
+import com.hdfc.models.ClientName;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
@@ -79,6 +80,7 @@ public class Config {
     public static JSONObject jsonObject = null;
     public static int intSelectedMenu = 0;
     public static ArrayList<ClientModel> clientModels = new ArrayList<>();
+    public static ArrayList<ClientName> clientNames = new ArrayList<>();
     public static boolean boolIsLoggedIn = false;
     public static double iRatings = 0;
     public static int iRatingCount = 0;
