@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
@@ -22,7 +23,6 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FieldModel;
 import com.hdfc.models.MilestoneModel;
@@ -44,9 +44,9 @@ import java.util.Date;
 public class CreatingTaskActivity extends AppCompatActivity {
 
     private static String valDateTime, valTitle, valSearch, strServiceName,name;
-    private Spinner dependentlist;
     //private static ServiceAdapter serviceAdapter;
     private static StorageService storageService;
+    private Spinner dependentlist;
     private boolean cancel = false;
     private View focusView = null;
     private AutoCompleteTextView inputSearch, inputSearchServices;
@@ -284,12 +284,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 names =   Config.clientNames.get(position).getStrDependeneNames();
-            }
-        });
-                 // int iPosition = Config.strCustomerNames.indexOf(valSearch);
-              //   if (iPosition > 0)
-               // names =   Config.clientNames.get(iPosition).getStrDependeneNames();
-                System.out.println("gurujiiiiiiiiiiiiiiiiii"+Config.clientNames);
+                Toast.makeText(CreatingTaskActivity.this, "Selected", Toast.LENGTH_LONG).show();
+                // int iPosition = Config.strCustomerNames.indexOf(valSearch);
+                //   if (iPosition > 0)
+                // names =   Config.clientNames.get(iPosition).getStrDependeneNames();
+                System.out.println("gurujiiiiiiiiiiiiiiiiii" + names);
 
                 // int position = Config.strCustomerNames.indexOf(inputSearch.getText().toString().trim());
                 // name = Config.strDependentNames.get(0);
@@ -299,6 +298,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
                 // dependentlist.setThreshold(1);//will start working from first character
                 dependentlist.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
+
+            }
+        });
 
 
         }
