@@ -12,6 +12,7 @@ import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.LoginActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbCon;
@@ -25,6 +26,7 @@ import com.hdfc.models.FeedBackModel;
 import com.hdfc.models.FieldModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
+import com.hdfc.models.MilestoneViewModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
 import com.hdfc.models.VideoModel;
@@ -42,7 +44,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Created by Admin on 4/25/2016.
@@ -192,9 +193,6 @@ public class AppUtils {
 
                 Query query = QueryBuilder.build("_id", Config.dependentIds,
                         QueryBuilder.Operator.INLIST);
-
-                //Utils.log(query.get(), " fetchDependents ");
-
                 storageService.findDocsByQuery(Config.collectionDependent, query,
                         new App42CallBack() {
 
@@ -202,8 +200,6 @@ public class AppUtils {
                             public void onSuccess(Object o) {
                                 try {
                                     if (o != null) {
-
-                                        // Utils.log(o.toString(), " fetchDependents ");
 
                                         Storage storage = (Storage) o;
 
@@ -221,50 +217,24 @@ public class AppUtils {
                                             }
                                         }
 
-                                        DashboardActivity.gotoSimpleActivityMenu();
-                                    } else {
-                                       /* if (progressDialog.isShowing())
-                                            progressDialog.dismiss();*/
-                                        relativeLayout.setVisibility(View.GONE);
-                                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                  /*  if (progressDialog.isShowing())
-                                        progressDialog.dismiss();*/
-                                    relativeLayout.setVisibility(View.GONE);
-                                    utils.toast(2, 2, _ctxt.getString(R.string.error));
-                                }
 
+                                    }
+                                    DashboardActivity.gotoSimpleActivityMenu();
+                                } catch (Exception e) {
+                                    DashboardActivity.gotoSimpleActivityMenu();
+                                }
                             }
 
                             @Override
                             public void onException(Exception e) {
-                                try {
-                                    if (e != null) {
-                                        //Utils.log(e.getMessage(), " fetchDependents failure ");
-                                        DashboardActivity.gotoSimpleActivityMenu();
-                                    } else {
-                                       /* if (progressDialog.isShowing())
-                                            progressDialog.dismiss();*/
-                                        relativeLayout.setVisibility(View.GONE);
-                                        utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                                    }
-                                } catch (Exception e1) {
-                                   /* if (progressDialog.isShowing())
-                                        progressDialog.dismiss();*/
-                                    //relativeLayout.setVisibility(View.GONE);
-                                    e1.printStackTrace();
-                                }
+                                DashboardActivity.gotoSimpleActivityMenu();
                             }
 
                         });
 
             } else {
-               /* if (progressDialog.isShowing())
-                    progressDialog.dismiss();*/
-                relativeLayout.setVisibility(View.GONE);
-                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                //utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                DashboardActivity.gotoSimpleActivityMenu();
             }
 
         } else DashboardActivity.gotoSimpleActivityMenu();
@@ -591,20 +561,13 @@ public class AppUtils {
         }
     }
 
-    public void fetchActivities(final RelativeLayout relativeLayout) {//final ProgressDialog progressDialog
+    public void fetchActivities(final RelativeLayout relativeLayout) {
 
-        //////////////////////////
-        ///
-        Calendar calendar = Calendar.getInstance();
+        /*Calendar calendar = Calendar.getInstance();
 
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1; // Note: zero based!
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-      /*  int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        int second = calendar.get(Calendar.SECOND);
-        int millis = calendar.get(Calendar.MILLISECOND);*/
-        ///
 
         String strDay = String.valueOf(day);
         String strMonth = String.valueOf(month);
@@ -613,14 +576,9 @@ public class AppUtils {
             strDay = String.valueOf("0" + day);
 
         if (month <= 9)
-            strMonth = String.valueOf("0" + month);
+            strMonth = String.valueOf("0" + month);*/
 
-        String strDate = String.valueOf(year + "-" + strMonth + "-" + strDay) + "T23:59:59.999+0000";
-
-        String strDateStart = String.valueOf(year + "-" + strMonth + "-" + strDay) + "T00:00:00.000+0000";
-
-        //Utils.log(strDate, " FDATE ");
-
+        Utils.log(DashboardFragment.strStartDate + " ~ " + DashboardFragment.strEndDate, " Date ");
 
         //////////////////////////////////
         /*String strUpdatedDate="";
@@ -655,27 +613,21 @@ public class AppUtils {
                 e.printStackTrace();
             }
         }*/
-        //////////////////////////////////
 
         Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
                 QueryBuilder.Operator.EQUALS);
 
-        Query q2 = QueryBuilder.build("activity_date", strDate, QueryBuilder.
+        Query q2 = QueryBuilder.build("activity_date", DashboardFragment.strEndDate, QueryBuilder.
                 Operator.LESS_THAN_EQUALTO);
 
-        Query q3 = QueryBuilder.build("activity_date", strDateStart, QueryBuilder.
+        Query q3 = QueryBuilder.build("activity_date", DashboardFragment.strStartDate, QueryBuilder.
                 Operator.GREATER_THAN_EQUALTO);
 
         Query q4 = QueryBuilder.compoundOperator(q2, QueryBuilder.Operator.AND, q3);
 
         Query q5 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q4);
 
-           /* int max = 1;
-            int offset = 0;
-*/
-        ///////////////////////////
-
-        storageService.findDocsByQueryOrderBy(Config.collectionActivity, q5, 100, 0,
+        storageService.findDocsByQueryOrderBy(Config.collectionActivity, q5, 1000, 0,
                 "activity_date", 1,
                 new App42CallBack() {
 
@@ -684,8 +636,6 @@ public class AppUtils {
                         if (o != null) {
 
                             Storage storage = (Storage) o;
-
-                            //Utils.log(storage.toString(), " Activity All ");
 
                             ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
 
@@ -696,41 +646,20 @@ public class AppUtils {
                                 String strActivities = jsonDocument.getJsonDoc();
                                 createActivityModel(strDocumentId, strActivities);
                             }
-                            //progressDialog
-                            fetchMileStone(relativeLayout);
-                            //fetchDependents(relativeLayout);
-                        } else {
-                   /* if (progressDialog.isShowing())
-                        progressDialog.dismiss();*/
-                            relativeLayout.setVisibility(View.GONE);
-                            utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                         }
+
+                        fetchMileStone(relativeLayout);
                     }
 
                     @Override
                     public void onException(Exception ex) {
-                        try {
-                            if (ex != null) {
 
-                                fetchMileStone(relativeLayout);
-                                //fetchDependents(relativeLayout);
-                            } else {
-                        /*if (progressDialog.isShowing())
-                            progressDialog.dismiss();*/
-                                relativeLayout.setVisibility(View.GONE);
-                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                            }
-                        } catch (Exception e1) {
-                   /* if (progressDialog.isShowing())
-                        progressDialog.dismiss();*/
-                            //relativeLayout.setVisibility(View.GONE);
-                            e1.printStackTrace();
+                        if (ex != null) {
+                            Utils.log(ex.getMessage(), " Activity All f ");
+
                         }
+                        fetchMileStone(relativeLayout);
                     }
-
-                    /* storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id",
-                                    Config.providerModel.getStrProviderId(),
-                                    new AsyncApp42ServiceApi.App42StorageServiceListener() {*/
         });
     }
 
@@ -838,15 +767,12 @@ public class AppUtils {
                                         jsonObjectVideo.getString("video_description"),
                                         jsonObjectVideo.getString("video_taken"));
 
-                                //
-
                                 String strUrlHash = Utils.sha512(jsonObjectVideo.getString("video_url"));
 
                                 Cursor cur = CareGiver.dbCon.fetch(
                                         DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
                                         new String[]{jsonObjectVideo.getString("video_name")}, null, "0, 1", true, null, null
                                 );
-
 
                                 String strHashLocal = "";
 
@@ -857,13 +783,8 @@ public class AppUtils {
                                 } else {
 
                                     cur.moveToFirst();
-
-                                    while (!cur.isAfterLast()) {
-                                        //strUrlLocal=cur.getString(0);
-                                        strHashLocal = cur.getString(0);
-                                        cur.moveToNext();
-                                    }
-
+                                    strHashLocal = cur.getString(0);
+                                    cur.moveToNext();
                                     CareGiver.dbCon.closeCursor(cur);
 
                                     if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
@@ -876,11 +797,6 @@ public class AppUtils {
                                 }
 
                                 CareGiver.dbCon.closeCursor(cur);
-                                //
-
-                                /*Config.fileModels.add(new FileModel(jsonObjectVideo.getString("video_name"),
-                                        jsonObjectVideo.getString("video_url"), "VIDEO"));*/
-
                                 videoModels.add(videoModel);
                             }
                         }
@@ -905,17 +821,12 @@ public class AppUtils {
                                         jsonObjectImage.getString("image_description"),
                                         jsonObjectImage.getString("image_taken"));
 
-                               /* Config.fileModels.add(new FileModel(jsonObjectImage.getString("image_name"),
-                                        jsonObjectImage.getString("image_url"), "IMAGE"));*/
-
-                                //
                                 String strUrlHash = Utils.sha512(jsonObjectImage.getString("image_url"));
 
                                 Cursor cur = CareGiver.dbCon.fetch(
                                         DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
                                         new String[]{jsonObjectImage.getString("image_name")}, null, "0, 1", true, null, null
                                 );
-
 
                                 String strHashLocal = "";
 
@@ -926,13 +837,8 @@ public class AppUtils {
                                 } else {
 
                                     cur.moveToFirst();
-
-                                    while (!cur.isAfterLast()) {
-                                        //strUrlLocal=cur.getString(0);
-                                        strHashLocal = cur.getString(0);
-                                        cur.moveToNext();
-                                    }
-
+                                    strHashLocal = cur.getString(0);
+                                    cur.moveToNext();
                                     CareGiver.dbCon.closeCursor(cur);
 
                                     if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
@@ -945,10 +851,8 @@ public class AppUtils {
                                 }
 
                                 CareGiver.dbCon.closeCursor(cur);
-                                //
 
                                 imageModels.add(imageModel);
-
                             }
                         }
                         activityModel.setImageModels(imageModels);
@@ -981,7 +885,6 @@ public class AppUtils {
                                     if (!Config.dependentIds.contains(jsonObjectFeedback.getString("feedback_by")))
                                         Config.dependentIds.add(jsonObjectFeedback.getString("feedback_by"));
                                 }
-
 
                                 feedBackModels.add(feedBackModel);
 
@@ -1122,7 +1025,6 @@ public class AppUtils {
                                             }
                                         }
 
-
                                         if (jsonObjectField.has("child_type"))
                                             fieldModel.setStrChildType(utils.jsonToStringArray(jsonObjectField.
                                                     getJSONArray("child_type")));
@@ -1146,9 +1048,7 @@ public class AppUtils {
                             activityModel.setMilestoneModel(milestoneModel);
                         }
                     }
-
                     Config.activityModels.add(activityModel);
-
                 }
             }
 
@@ -1166,360 +1066,405 @@ public class AppUtils {
 
             if (jsonObject.has("dependent_id")) {
 
-                if (!Config.strActivityIds.contains(strDocumentId))// {
+                MilestoneViewModel milestoneViewModel = null;
+
+                if (!Config.strActivityIds.contains(strDocumentId)) {
                     Config.strActivityIds.add(strDocumentId);
 
-                if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
-                    Config.dependentIds.add(jsonObject.getString("dependent_id"));
+                    if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
+                        Config.dependentIds.add(jsonObject.getString("dependent_id"));
 
-                if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
-                    Config.customerIds.add(jsonObject.getString("customer_id"));
+                    if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
+                        Config.customerIds.add(jsonObject.getString("customer_id"));
 
-                ActivityModel activityModel = new ActivityModel();
+                    //
+                    ActivityModel activityModel = new ActivityModel();
 
-                activityModel.setStrActivityName(jsonObject.getString("activity_name"));
-                activityModel.setStrActivityID(strDocumentId);
-                activityModel.setStrProviderID(jsonObject.getString("provider_id"));
-                activityModel.setStrDependentID(jsonObject.getString("dependent_id"));
-                activityModel.setStrCustomerID(jsonObject.getString("customer_id"));
-                activityModel.setStrActivityStatus(jsonObject.getString("status"));
-                activityModel.setStrActivityDesc(jsonObject.getString("activity_desc"));
+                    activityModel.setStrActivityName(jsonObject.getString("activity_name"));
+                    activityModel.setStrActivityID(strDocumentId);
+                    activityModel.setStrProviderID(jsonObject.getString("provider_id"));
+                    activityModel.setStrDependentID(jsonObject.getString("dependent_id"));
+                    activityModel.setStrCustomerID(jsonObject.getString("customer_id"));
+                    activityModel.setStrActivityStatus(jsonObject.getString("status"));
+                    activityModel.setStrActivityDesc(jsonObject.getString("activity_desc"));
 
-                activityModel.setStrServcieID(jsonObject.getString("service_id"));
-                activityModel.setStrServiceName(jsonObject.getString("service_name"));
+                    activityModel.setStrServcieID(jsonObject.getString("service_id"));
+                    activityModel.setStrServiceName(jsonObject.getString("service_name"));
 
-                if (jsonObject.has("activity_date"))
-                    activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
+                    if (jsonObject.has("activity_date"))
+                        activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
 
-                activityModel.setStrActivityDoneDate(jsonObject.
-                        getString("activity_done_date"));
+                    activityModel.setStrActivityDoneDate(jsonObject.
+                            getString("activity_done_date"));
 
-                //activityModel.setbActivityOverdue(jsonObject.getBoolean("overdue"));
+                    //activityModel.setbActivityOverdue(jsonObject.getBoolean("overdue"));
 
-                activityModel.setStrActivityProviderStatus(jsonObject.
-                        getString("provider_status"));
+                    activityModel.setStrActivityProviderStatus(jsonObject.
+                            getString("provider_status"));
 
-                activityModel.setStrActivityProviderMessage(jsonObject.
-                        getString("provider_message"));
+                    activityModel.setStrActivityProviderMessage(jsonObject.
+                            getString("provider_message"));
 
-                ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
-                ArrayList<VideoModel> videoModels = new ArrayList<>();
-                ArrayList<ImageModel> imageModels = new ArrayList<>();
+                    ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
+                    ArrayList<VideoModel> videoModels = new ArrayList<>();
+                    ArrayList<ImageModel> imageModels = new ArrayList<>();
 
-                if (jsonObject.has("videos")) {
+                    if (jsonObject.has("videos")) {
 
-                    JSONArray jsonArrayVideos = jsonObject.
-                            getJSONArray("videos");
+                        JSONArray jsonArrayVideos = jsonObject.
+                                getJSONArray("videos");
 
-                    for (int k = 0; k < jsonArrayVideos.length(); k++) {
+                        for (int k = 0; k < jsonArrayVideos.length(); k++) {
 
-                        JSONObject jsonObjectVideo = jsonArrayVideos.
-                                getJSONObject(k);
+                            JSONObject jsonObjectVideo = jsonArrayVideos.
+                                    getJSONObject(k);
 
-                        if (jsonObjectVideo.has("video_name")) {
+                            if (jsonObjectVideo.has("video_name")) {
 
-                            VideoModel videoModel = new VideoModel(
-                                    jsonObjectVideo.getString("video_name"),
-                                    jsonObjectVideo.getString("video_url"),
-                                    jsonObjectVideo.getString("video_description"),
-                                    jsonObjectVideo.getString("video_taken"));
+                                VideoModel videoModel = new VideoModel(
+                                        jsonObjectVideo.getString("video_name"),
+                                        jsonObjectVideo.getString("video_url"),
+                                        jsonObjectVideo.getString("video_description"),
+                                        jsonObjectVideo.getString("video_taken"));
 
-                            String strUrlHash = Utils.sha512(jsonObjectVideo.getString("video_url"));
+                                String strUrlHash = Utils.sha512(jsonObjectVideo.getString("video_url"));
 
-                            Cursor cur = CareGiver.dbCon.fetch(
-                                    DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
-                                    new String[]{jsonObjectVideo.getString("video_name")}, null, "0, 1", true, null, null
-                            );
+                                Cursor cur = CareGiver.dbCon.fetch(
+                                        DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                                        new String[]{jsonObjectVideo.getString("video_name")}, null, "0, 1", true, null, null
+                                );
 
-                            String strHashLocal = "";
+                                String strHashLocal = "";
 
-                            if (cur.getCount() <= 0) {
-                                CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectVideo.getString("video_name"),
-                                                jsonObjectVideo.getString("video_url"), "VIDEO", strUrlHash},
-                                        new String[]{"name", "url", "file_type", "file_hash"});
-                            } else {
+                                if (cur.getCount() <= 0) {
+                                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectVideo.getString("video_name"),
+                                                    jsonObjectVideo.getString("video_url"), "VIDEO", strUrlHash},
+                                            new String[]{"name", "url", "file_type", "file_hash"});
+                                } else {
 
-                                cur.moveToFirst();
-
-                                while (!cur.isAfterLast()) {
+                                    cur.moveToFirst();
                                     strHashLocal = cur.getString(0);
                                     cur.moveToNext();
+                                    CareGiver.dbCon.closeCursor(cur);
+
+                                    if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                                        CareGiver.dbCon.update(
+                                                DbHelper.strTableNameFiles, "name=?",
+                                                new String[]{jsonObjectVideo.getString("video_url"), strUrlHash},
+                                                new String[]{"url", "file_hash"}, new String[]{jsonObjectVideo.getString("video_name")}
+                                        );
+                                    }
                                 }
 
                                 CareGiver.dbCon.closeCursor(cur);
 
-                                if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                                    CareGiver.dbCon.update(
-                                            DbHelper.strTableNameFiles, "name=?",
-                                            new String[]{jsonObjectVideo.getString("video_url"), strUrlHash},
-                                            new String[]{"url", "file_hash"}, new String[]{jsonObjectVideo.getString("video_name")}
-                                    );
-                                }
+                                videoModels.add(videoModel);
                             }
-
-                            CareGiver.dbCon.closeCursor(cur);
-
-                            videoModels.add(videoModel);
                         }
+                        activityModel.setVideoModels(videoModels);
                     }
-                    activityModel.setVideoModels(videoModels);
-                }
 
-                if (jsonObject.has("images")) {
+                    if (jsonObject.has("images")) {
 
-                    JSONArray jsonArrayVideos = jsonObject.
-                            getJSONArray("images");
+                        JSONArray jsonArrayVideos = jsonObject.
+                                getJSONArray("images");
 
-                    for (int k = 0; k < jsonArrayVideos.length(); k++) {
+                        for (int k = 0; k < jsonArrayVideos.length(); k++) {
 
-                        JSONObject jsonObjectImage = jsonArrayVideos.
-                                getJSONObject(k);
+                            JSONObject jsonObjectImage = jsonArrayVideos.
+                                    getJSONObject(k);
 
-                        if (jsonObjectImage.has("image_name")) {
+                            if (jsonObjectImage.has("image_name")) {
 
-                            ImageModel imageModel = new ImageModel(
-                                    jsonObjectImage.getString("image_name"),
-                                    jsonObjectImage.getString("image_url"),
-                                    jsonObjectImage.getString("image_description"),
-                                    jsonObjectImage.getString("image_taken"));
+                                ImageModel imageModel = new ImageModel(
+                                        jsonObjectImage.getString("image_name"),
+                                        jsonObjectImage.getString("image_url"),
+                                        jsonObjectImage.getString("image_description"),
+                                        jsonObjectImage.getString("image_taken"));
 
-                            String strUrlHash = Utils.sha512(jsonObjectImage.getString("image_url"));
+                                String strUrlHash = Utils.sha512(jsonObjectImage.getString("image_url"));
 
-                            Cursor cur = CareGiver.dbCon.fetch(
-                                    DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
-                                    new String[]{jsonObjectImage.getString("image_name")}, null, "0, 1", true, null, null
-                            );
+                                Cursor cur = CareGiver.dbCon.fetch(
+                                        DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                                        new String[]{jsonObjectImage.getString("image_name")}, null, "0, 1", true, null, null
+                                );
 
-                            String strHashLocal = "";
+                                String strHashLocal = "";
 
-                            if (cur.getCount() <= 0) {
-                                CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectImage.getString("image_name"),
-                                                jsonObjectImage.getString("image_url"), "IMAGE", strUrlHash},
-                                        new String[]{"name", "url", "file_type", "file_hash"});
-                            } else {
+                                if (cur.getCount() <= 0) {
+                                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectImage.getString("image_name"),
+                                                    jsonObjectImage.getString("image_url"), "IMAGE", strUrlHash},
+                                            new String[]{"name", "url", "file_type", "file_hash"});
+                                } else {
 
-                                cur.moveToFirst();
-
-                                while (!cur.isAfterLast()) {
+                                    cur.moveToFirst();
                                     strHashLocal = cur.getString(0);
                                     cur.moveToNext();
+                                    CareGiver.dbCon.closeCursor(cur);
+
+                                    if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                                        CareGiver.dbCon.update(
+                                                DbHelper.strTableNameFiles, "name=?",
+                                                new String[]{jsonObjectImage.getString("image_url"), strUrlHash},
+                                                new String[]{"url", "file_hash"}, new String[]{jsonObjectImage.getString("image_name")}
+                                        );
+                                    }
                                 }
 
                                 CareGiver.dbCon.closeCursor(cur);
 
-                                if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                                    CareGiver.dbCon.update(
-                                            DbHelper.strTableNameFiles, "name=?",
-                                            new String[]{jsonObjectImage.getString("image_url"), strUrlHash},
-                                            new String[]{"url", "file_hash"}, new String[]{jsonObjectImage.getString("image_name")}
-                                    );
-                                }
+                                imageModels.add(imageModel);
+
                             }
-
-                            CareGiver.dbCon.closeCursor(cur);
-
-                            imageModels.add(imageModel);
-
                         }
+                        activityModel.setImageModels(imageModels);
                     }
-                    activityModel.setImageModels(imageModels);
-                }
 
-                if (jsonObject.has("feedbacks")) {
+                    if (jsonObject.has("feedbacks")) {
 
-                    JSONArray jsonArrayFeedback = jsonObject.getJSONArray("feedbacks");
+                        JSONArray jsonArrayFeedback = jsonObject.getJSONArray("feedbacks");
 
-                    for (int k = 0; k < jsonArrayFeedback.length(); k++) {
+                        for (int k = 0; k < jsonArrayFeedback.length(); k++) {
 
-                        JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
+                            JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
 
-                        if (jsonObjectFeedback.has("feedback_message")) {
+                            if (jsonObjectFeedback.has("feedback_message")) {
 
-                            FeedBackModel feedBackModel = new FeedBackModel(
-                                    jsonObjectFeedback.getString("feedback_message"),
-                                    jsonObjectFeedback.getString("feedback_by"),
-                                    jsonObjectFeedback.getInt("feedback_rating"),
-                                    jsonObjectFeedback.getBoolean("feedback_report"),
-                                    jsonObjectFeedback.getString("feedback_time"),
-                                    jsonObjectFeedback.getString("feedback_by_type"));
+                                FeedBackModel feedBackModel = new FeedBackModel(
+                                        jsonObjectFeedback.getString("feedback_message"),
+                                        jsonObjectFeedback.getString("feedback_by"),
+                                        jsonObjectFeedback.getInt("feedback_rating"),
+                                        jsonObjectFeedback.getBoolean("feedback_report"),
+                                        jsonObjectFeedback.getString("feedback_time"),
+                                        jsonObjectFeedback.getString("feedback_by_type"));
 
-                            if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("customer")) {
-                                if (!Config.customerIds.contains(jsonObjectFeedback.getString("feedback_by")))
-                                    Config.customerIds.add(jsonObjectFeedback.getString("feedback_by"));
-                            }
+                                if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("customer")) {
+                                    if (!Config.customerIds.contains(jsonObjectFeedback.getString("feedback_by")))
+                                        Config.customerIds.add(jsonObjectFeedback.getString("feedback_by"));
+                                }
 
-                            if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("dependent")) {
-                                if (!Config.dependentIds.contains(jsonObjectFeedback.getString("feedback_by")))
-                                    Config.dependentIds.add(jsonObjectFeedback.getString("feedback_by"));
-                            }
+                                if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("dependent")) {
+                                    if (!Config.dependentIds.contains(jsonObjectFeedback.getString("feedback_by")))
+                                        Config.dependentIds.add(jsonObjectFeedback.getString("feedback_by"));
+                                }
 
+                                feedBackModels.add(feedBackModel);
 
-                            feedBackModels.add(feedBackModel);
-
-                              /*  Config.iRatings += jsonObjectFeedback.getInt("feedback_rating");
+                                Config.iRatings += jsonObjectFeedback.getInt("feedback_rating");
 
                                 Config.iRatingCount += 1;
 
-                                Config.feedBackModels.add(feedBackModel);*/
+                                Config.feedBackModels.add(feedBackModel);
+                            }
                         }
+                        activityModel.setFeedBackModels(feedBackModels);
                     }
-                    activityModel.setFeedBackModels(feedBackModels);
-                }
 
-                if (jsonObject.has("milestones")) {
+                    if (jsonObject.has("milestones")) {
 
-                    JSONArray jsonArrayMilestones = jsonObject.
-                            getJSONArray("milestones");
+                        JSONArray jsonArrayMilestones = jsonObject.
+                                getJSONArray("milestones");
 
-                    for (int k = 0; k < jsonArrayMilestones.length(); k++) {
+                        milestoneViewModel = new MilestoneViewModel();
 
-                        JSONObject jsonObjectMilestone =
-                                jsonArrayMilestones.getJSONObject(k);
+                        milestoneViewModel.setStrActivityId(strDocumentId);
+                        milestoneViewModel.setStrDependentId(jsonObject.getString("dependent_id"));
 
-                        MilestoneModel milestoneModel = new MilestoneModel();
+                        for (int k = 0; k < jsonArrayMilestones.length(); k++) {
 
-                        milestoneModel.setiMilestoneId(jsonObjectMilestone.getInt("id"));
-                        milestoneModel.setStrMilestoneStatus(jsonObjectMilestone.getString("status"));
-                        milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
-                        milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
+                            JSONObject jsonObjectMilestone =
+                                    jsonArrayMilestones.getJSONObject(k);
 
-                        if (jsonObjectMilestone.has("show")) {
+                            MilestoneModel milestoneModel = new MilestoneModel();
 
-                            try {
-                                milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
-                            } catch (Exception e) {
-                                boolean b = true;
+                            milestoneModel.setiMilestoneId(jsonObjectMilestone.getInt("id"));
+                            milestoneModel.setStrMilestoneStatus(jsonObjectMilestone.getString("status"));
+                            milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
+                            milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
+
+                            milestoneViewModel.setStrMileStoneName(jsonObjectMilestone.getString("name"));
+                            milestoneViewModel.setStrMileStoneStatus(jsonObjectMilestone.getString("status"));
+
+                            milestoneViewModel.setStrDependentId(jsonObject.getString("dependent_id"));
+
+                            if (jsonObjectMilestone.has("show")) {
+
                                 try {
-                                    if (jsonObjectMilestone.getInt("show") == 0)
-                                        b = false;
-                                    milestoneModel.setVisible(b);
-                                } catch (Exception e1) {
-                                    e1.printStackTrace();
-                                }
-                            }
-                        }
-
-                        if (jsonObjectMilestone.has("reschedule")) {
-
-                            try {
-                                milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
-                            } catch (Exception e) {
-                                boolean b = true;
-                                try {
-                                    if (jsonObjectMilestone.getInt("reschedule") == 0)
-                                        b = false;
-                                    milestoneModel.setReschedule(b);
-                                } catch (Exception e1) {
-                                    e1.printStackTrace();
-                                }
-                            }
-                        }
-
-                        if (jsonObjectMilestone.has("scheduled_date"))
-                            milestoneModel.setStrMilestoneScheduledDate(jsonObjectMilestone.
-                                    getString("scheduled_date"));
-
-                        if (jsonObjectMilestone.has("fields")) {
-
-                            JSONArray jsonArrayFields = jsonObjectMilestone.
-                                    getJSONArray("fields");
-
-                            for (int l = 0; l < jsonArrayFields.length(); l++) {
-
-                                JSONObject jsonObjectField =
-                                        jsonArrayFields.getJSONObject(l);
-
-                                FieldModel fieldModel = new FieldModel();
-
-                                fieldModel.setiFieldID(jsonObjectField.getInt("id"));
-
-                                if (jsonObjectField.has("hide")) {
-
+                                    milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
+                                } catch (Exception e) {
+                                    boolean b = true;
                                     try {
-                                        fieldModel.setFieldView(jsonObjectField.getBoolean("hide"));
-                                    } catch (Exception e) {
-                                        boolean b = true;
-                                        try {
-                                            if (jsonObjectField.getInt("hide") == 0)
-                                                b = false;
-                                            fieldModel.setFieldView(b);
-                                        } catch (Exception e1) {
-                                            e1.printStackTrace();
-                                        }
+                                        if (jsonObjectMilestone.getInt("show") == 0)
+                                            b = false;
+                                        milestoneModel.setVisible(b);
+                                    } catch (Exception e1) {
+                                        e1.printStackTrace();
                                     }
                                 }
+                            }
 
-                                if (jsonObjectField.has("required")) {
+                            if (jsonObjectMilestone.has("reschedule")) {
 
+                                try {
+                                    milestoneModel.setReschedule(jsonObjectMilestone.getBoolean("reschedule"));
+                                } catch (Exception e) {
+                                    boolean b = true;
                                     try {
-                                        fieldModel.setFieldRequired(jsonObjectField.getBoolean("required"));
-                                    } catch (Exception e) {
-                                        boolean b = true;
-                                        try {
-                                            if (jsonObjectField.getInt("required") == 0)
-                                                b = false;
-                                            fieldModel.setFieldRequired(b);
-                                        } catch (Exception e1) {
-                                            e1.printStackTrace();
-                                        }
+                                        if (jsonObjectMilestone.getInt("reschedule") == 0)
+                                            b = false;
+                                        milestoneModel.setReschedule(b);
+                                    } catch (Exception e1) {
+                                        e1.printStackTrace();
                                     }
                                 }
+                            }
 
-                                fieldModel.setStrFieldData(jsonObjectField.getString("data"));
-                                fieldModel.setStrFieldLabel(jsonObjectField.getString("label"));
-                                fieldModel.setStrFieldType(jsonObjectField.getString("type"));
+                            if (jsonObjectMilestone.has("scheduled_date")) {
+                                milestoneModel.setStrMilestoneScheduledDate(jsonObjectMilestone.
+                                        getString("scheduled_date"));
+                                milestoneViewModel.setStrMilestoneDate(jsonObjectMilestone.
+                                        getString("scheduled_date"));
+                            }
 
-                                if (jsonObjectField.has("values")) {
+                            if (jsonObjectMilestone.has("fields")) {
 
-                                    fieldModel.setStrFieldValues(utils.jsonToStringArray(jsonObjectField.
-                                            getJSONArray("values")));
-                                }
+                                JSONArray jsonArrayFields = jsonObjectMilestone.
+                                        getJSONArray("fields");
 
-                                if (jsonObjectField.has("child")) {
+                                for (int l = 0; l < jsonArrayFields.length(); l++) {
 
-                                    if (jsonObjectField.has("child")) {
+                                    JSONObject jsonObjectField =
+                                            jsonArrayFields.getJSONObject(l);
+
+                                    FieldModel fieldModel = new FieldModel();
+
+                                    fieldModel.setiFieldID(jsonObjectField.getInt("id"));
+
+                                    if (jsonObjectField.has("hide")) {
 
                                         try {
-                                            fieldModel.setChild(jsonObjectField.getBoolean("child"));
+                                            fieldModel.setFieldView(jsonObjectField.getBoolean("hide"));
                                         } catch (Exception e) {
                                             boolean b = true;
                                             try {
-                                                if (jsonObjectField.getInt("child") == 0)
+                                                if (jsonObjectField.getInt("hide") == 0)
                                                     b = false;
-                                                fieldModel.setChild(b);
+                                                fieldModel.setFieldView(b);
                                             } catch (Exception e1) {
                                                 e1.printStackTrace();
                                             }
                                         }
                                     }
 
-                                    if (jsonObjectField.has("child_type"))
-                                        fieldModel.setStrChildType(utils.jsonToStringArray(jsonObjectField.
-                                                getJSONArray("child_type")));
+                                    if (jsonObjectField.has("required")) {
 
-                                    if (jsonObjectField.has("child_value"))
-                                        fieldModel.setStrChildValue(utils.jsonToStringArray(jsonObjectField.
-                                                getJSONArray("child_value")));
+                                        try {
+                                            fieldModel.setFieldRequired(jsonObjectField.getBoolean("required"));
+                                        } catch (Exception e) {
+                                            boolean b = true;
+                                            try {
+                                                if (jsonObjectField.getInt("required") == 0)
+                                                    b = false;
+                                                fieldModel.setFieldRequired(b);
+                                            } catch (Exception e1) {
+                                                e1.printStackTrace();
+                                            }
+                                        }
+                                    }
 
-                                    if (jsonObjectField.has("child_condition"))
-                                        fieldModel.setStrChildCondition(utils.jsonToStringArray(jsonObjectField.
-                                                getJSONArray("child_condition")));
+                                    fieldModel.setStrFieldData(jsonObjectField.getString("data"));
+                                    fieldModel.setStrFieldLabel(jsonObjectField.getString("label"));
+                                    fieldModel.setStrFieldType(jsonObjectField.getString("type"));
 
-                                    if (jsonObjectField.has("child_field"))
-                                        fieldModel.setiChildfieldID(utils.jsonToIntArray(jsonObjectField.
-                                                getJSONArray("child_field")));
+                                    if (jsonObjectField.has("values")) {
+
+                                        fieldModel.setStrFieldValues(utils.jsonToStringArray(jsonObjectField.
+                                                getJSONArray("values")));
+                                    }
+
+                                    if (jsonObjectField.has("child")) {
+
+                                        if (jsonObjectField.has("child")) {
+
+                                            try {
+                                                fieldModel.setChild(jsonObjectField.getBoolean("child"));
+                                            } catch (Exception e) {
+                                                boolean b = true;
+                                                try {
+                                                    if (jsonObjectField.getInt("child") == 0)
+                                                        b = false;
+                                                    fieldModel.setChild(b);
+                                                } catch (Exception e1) {
+                                                    e1.printStackTrace();
+                                                }
+                                            }
+                                        }
+
+                                        if (jsonObjectField.has("child_type"))
+                                            fieldModel.setStrChildType(utils.jsonToStringArray(jsonObjectField.
+                                                    getJSONArray("child_type")));
+
+                                        if (jsonObjectField.has("child_value"))
+                                            fieldModel.setStrChildValue(utils.jsonToStringArray(jsonObjectField.
+                                                    getJSONArray("child_value")));
+
+                                        if (jsonObjectField.has("child_condition"))
+                                            fieldModel.setStrChildCondition(utils.jsonToStringArray(jsonObjectField.
+                                                    getJSONArray("child_condition")));
+
+                                        if (jsonObjectField.has("child_field"))
+                                            fieldModel.setiChildfieldID(utils.jsonToIntArray(jsonObjectField.
+                                                    getJSONArray("child_field")));
+                                    }
+
+                                    milestoneModel.setFieldModel(fieldModel);
                                 }
-
-                                milestoneModel.setFieldModel(fieldModel);
                             }
+
+                            if (milestoneViewModel != null &&
+                                    milestoneViewModel.getStrMileStoneStatus() != null
+                                    && !milestoneViewModel.getStrMileStoneStatus().
+                                    equalsIgnoreCase("completed")) {
+                                Config.milestoneModels.remove(milestoneViewModel);
+                                Config.milestoneModels.add(milestoneViewModel);
+                            }
+
+                            activityModel.setMilestoneModel(milestoneModel);
                         }
-                        activityModel.setMilestoneModel(milestoneModel);
+                    }
+                    //
+                } else {
+
+                    ActivityModel activityModel = null;
+
+                    int iPosition = Config.strActivityIds.indexOf(strDocumentId);
+
+                    if (iPosition > -1) activityModel = Config.activityModels.get(iPosition);
+
+                    if (activityModel != null) {
+
+                        milestoneViewModel = new MilestoneViewModel();
+
+                        milestoneViewModel.setStrActivityId(activityModel.getStrActivityID());
+                        milestoneViewModel.setStrDependentId(activityModel.getStrDependentID());
+
+                        for (MilestoneModel milestoneModel : activityModel.getMilestoneModels()) {
+
+                            milestoneViewModel.setStrMileStoneName(milestoneModel.getStrMilestoneName());
+                            milestoneViewModel.setStrMileStoneStatus(milestoneModel.getStrMilestoneStatus());
+                            milestoneViewModel.setStrMilestoneDate(milestoneModel.getStrMilestoneScheduledDate());
+
+                            if (milestoneViewModel != null &&
+                                    milestoneViewModel.getStrMileStoneStatus() != null
+                                    && !milestoneViewModel.getStrMileStoneStatus().
+                                    equalsIgnoreCase("completed")) {
+                                Config.milestoneModels.remove(milestoneViewModel);
+                                Config.milestoneModels.add(milestoneViewModel);
+                            }
+                            activityModel.setMilestoneModel(milestoneModel);
+                        }
                     }
                 }
-
-                Config.milestoneModels.remove(activityModel);
-                Config.milestoneModels.add(activityModel);
-                //}
             }
 
         } catch (JSONException e) {
@@ -1817,25 +1762,6 @@ public class AppUtils {
 
         if (utils.isConnectingToInternet()) {
 
-            Config.dependentIds.clear();
-            Config.strActivityIds.clear();
-            Config.customerIds.clear();
-
-            Config.dependentIdsAdded.clear();
-            Config.customerIdsAdded.clear();
-
-            Config.activityModels.clear();
-            Config.dependentModels.clear();
-            Config.customerModels.clear();
-
-            Config.clientModels.clear();
-            Config.clientNames.clear();
-            Config.feedBackModels.clear();
-
-            Config.strDependentNames.clear();
-            Config.milestoneModels.clear();
-            //
-
             StorageService storageService = new StorageService(_ctxt);
 
             Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
@@ -1884,7 +1810,7 @@ public class AppUtils {
                                         utils.toast(2, 2, _ctxt.getString(R.string.error));
                                         relativeLayout.setVisibility(View.GONE);
                                     }
-                                    fetchActivities(relativeLayout);
+                                    //fetchActivities(relativeLayout);
                                 } else {
                                     utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
                                     relativeLayout.setVisibility(View.GONE);
@@ -1898,7 +1824,7 @@ public class AppUtils {
                         public void onException(Exception e) {
                             if (e != null) {
                                 //Utils.log(e.getMessage(), " f1 ");
-                                fetchActivities(relativeLayout);
+                                //fetchActivities(relativeLayout);
                                 //utils.toast(2, 2, _ctxt.getString(R.string.error));
                                 //relativeLayout.setVisibility(View.GONE);
                             } else {
@@ -1917,36 +1843,7 @@ public class AppUtils {
     public void fetchMileStone(final RelativeLayout relativeLayout) {//final ProgressDialog progressDialog
 
         if (utils.isConnectingToInternet()) {
-            //////////////////////////
-            ///
-            Calendar calendar = Calendar.getInstance();
 
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH) + 1; // Note: zero based!
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-          /*  int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            int minute = calendar.get(Calendar.MINUTE);
-            int second = calendar.get(Calendar.SECOND);
-            int millis = calendar.get(Calendar.MILLISECOND);*/
-            ///
-
-            String strDay = String.valueOf(day);
-            String strMonth = String.valueOf(month);
-
-            if (day <= 9)
-                strDay = String.valueOf("0" + day);
-
-            if (month <= 9)
-                strMonth = String.valueOf("0" + month);
-
-            String strDate = String.valueOf(year + "-" + strMonth + "-" + strDay) + "T23:59:59.999+0000";
-
-            String strDateStart = String.valueOf(year + "-" + strMonth + "-" + strDay) + "T00:00:00.000+0000";
-
-            //Utils.log(strDate + " @ " + strDateStart, " FDATE ");
-
-
-            //////////////////////////////////
             /*String strUpdatedDate="";
 
             if (DbCon.isDbOpened) {
@@ -1977,16 +1874,37 @@ public class AppUtils {
                     e.printStackTrace();
                 }
             }*/
-            //////////////////////////////////
 
             Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
                     QueryBuilder.Operator.EQUALS);
 
-            Query q2 = QueryBuilder.build("milestones.scheduled_date", strDate, QueryBuilder.
+            Query q2 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strEndDate, QueryBuilder.
                     Operator.LESS_THAN_EQUALTO);
 
-            Query q3 = QueryBuilder.build("milestones.scheduled_date", strDateStart, QueryBuilder.
+            Query q3 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strEndDate, QueryBuilder.
                     Operator.GREATER_THAN_EQUALTO);
+
+
+
+           /* for(String strIds: Config.strActivityIds){
+
+                Query q33 = QueryBuilder.build("_id", strIds, QueryBuilder.Operator.NOT_EQUALS);
+
+                Query q34 = QueryBuilder.compoundOperator(q3, QueryBuilder.Operator.AND, q33);
+
+
+                try {
+                    JSONObject ex1 = new JSONObject();
+                    ex1.put("key", "_id");
+                    ex1.put("value", strIds);
+                    ex1.put("operator", QueryBuilder.Operator.NOT_EQUALS);
+                    query = new Query(ex1);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }*/
 
             Query q4 = QueryBuilder.compoundOperator(q2, QueryBuilder.Operator.AND, q3);
 
@@ -1995,23 +1913,20 @@ public class AppUtils {
             Query q6 = QueryBuilder.build("milestones.status", Config.MilestoneStatus.COMPLETED, QueryBuilder.
                     Operator.NOT_EQUALS);
 
-            Query q7 = QueryBuilder.compoundOperator(q5, QueryBuilder.Operator.AND, q6);
+           /* Query q7 = QueryBuilder.build("_id",  Config.strActivityIds, QueryBuilder.
+                    Operator.INLIST);*/
 
-               /* int max = 1;
-                int offset = 0;
-    */
-            ///////////////////////////
+            Query q8 = QueryBuilder.compoundOperator(q5, QueryBuilder.Operator.AND, q6);
 
-            //Utils.log(q5.get(), " QUERY ");
+            Utils.log(q8.get(), " QUERY ");
 
-            storageService.findDocsByQueryOrderBy(Config.collectionActivity, q7, 1000, 0,
+            storageService.findDocsByQueryOrderBy(Config.collectionActivity, q8, 1000, 0,
                     "activity_date", 1,
                     new App42CallBack() {
 
                         @Override
                         public void onSuccess(Object o) {
 
-                            relativeLayout.setVisibility(View.GONE);
                             if (o != null) {
 
                                 Storage storage = (Storage) o;
@@ -2027,54 +1942,21 @@ public class AppUtils {
                                     String strActivities = jsonDocument.getJsonDoc();
                                     createActivityMSModel(strDocumentId, strActivities);
                                 }
-                                //fetchCustomers(relativeLayout); //progressDialog
-                                //fetchDependents(relativeLayout);
-                                fetchCustomers(relativeLayout);
-
-                                //SimpleActivityFragment.activityModels = Config.milestoneModels;
-                                //SimpleActivityFragment.mAdapter.notifyDataSetChanged();
-                            } else {
-                       /* if (progressDialog.isShowing())
-                            progressDialog.dismiss();*/
-                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                                relativeLayout.setVisibility(View.GONE);
                             }
+                            fetchDependents(relativeLayout);
                         }
 
                         @Override
                         public void onException(Exception ex) {
-                            try {
-                                if (ex != null) {
-                                    Utils.log(ex.getMessage(), " f2 ");
 
-                                    //SimpleActivityFragment.activityModels = Config.milestoneModels;
-                                    //SimpleActivityFragment.mAdapter.notifyDataSetChanged();
-                                    //fetchCustomers(relativeLayout);
-                                    //fetchDependents(relativeLayout);
-                                    fetchCustomers(relativeLayout);
-                                } else {
-                            /*if (progressDialog.isShowing())
-                                progressDialog.dismiss();*/
-                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                                    relativeLayout.setVisibility(View.GONE);
-                                }
-                            } catch (Exception e1) {
-                       /* if (progressDialog.isShowing())
-                            progressDialog.dismiss();*/
-                                e1.printStackTrace();
+                            if (ex != null) {
+                                Utils.log(ex.getMessage(), " f2 ");
                             }
+                            fetchDependents(relativeLayout);
                         }
-
-                        /* storageService.findDocsByKeyValue(Config.collectionActivity, "provider_id",
-                                        Config.providerModel.getStrProviderId(),
-                                        new AsyncApp42ServiceApi.App42StorageServiceListener() {*/
                     });
         } else {
-            utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-            //relativeLayout.setVisibility(View.GONE);
-            //fetchCustomers(relativeLayout);
+            fetchDependents(relativeLayout);
         }
     }
-    //
-
 }

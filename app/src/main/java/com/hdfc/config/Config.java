@@ -10,6 +10,7 @@ import com.hdfc.models.ClientName;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
+import com.hdfc.models.MilestoneViewModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
 
@@ -62,11 +63,12 @@ public class Config {
     public static int intClientScreen = 2;
     public static int intRatingsScreen = 3;
     public static int intDashboardScreen = 1;
+    public static int intMileStoneScreen = 4;
     public static int intScreenWidth = 0;
     public static int intScreenHeight = 0;
     //public static ArrayList<FileModel> fileModels = new ArrayList<>();
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
-    public static ArrayList<ActivityModel> milestoneModels = new ArrayList<>();
+    public static ArrayList<MilestoneViewModel> milestoneModels = new ArrayList<>();
     public static ArrayList<String> dependentIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
     public static ArrayList<String> strActivityIds = new ArrayList<>();

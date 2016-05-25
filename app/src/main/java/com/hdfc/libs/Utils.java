@@ -55,7 +55,6 @@ import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -70,15 +69,22 @@ public class Utils {
 
     public final static SimpleDateFormat writeFormat = new
             SimpleDateFormat("kk:mm dd MMM yyyy", Config.locale);
-    public final static SimpleDateFormat writeFormatMonth = new
+
+    public final static SimpleDateFormat writeFormatDate = new
+            SimpleDateFormat("dd-MMM-yyyy", Config.locale);
+
+    public final static SimpleDateFormat writeFormatDateDB = new
+            SimpleDateFormat("yyyy-MM-dd", Config.locale);
+
+    public final static SimpleDateFormat writeFormatTime = new
             SimpleDateFormat("kk:mm", Config.locale); // aa
 
-    public final static SimpleDateFormat dateFormat =
-            new SimpleDateFormat("yyyy-MM-dd", Config.locale);
+  /*  public final static SimpleDateFormat dateFormat =
+            new SimpleDateFormat("yyyy-MM-dd", Config.locale);*/
 
-    public final static SimpleDateFormat readFormatDate =
+   /* public final static SimpleDateFormat readFormatDate =
             new SimpleDateFormat("yyyy-MM-dd", Config.locale);
-
+*/
 
     public static Uri customerImageUri;
     private static Context _ctxt;
@@ -553,7 +559,7 @@ public class Utils {
         return file;
     }
 
-    public String getMonthLastDate(String strFromDate) {
+   /* public String getMonthLastDate(String strFromDate) {
 
         String strLastDateMonth = "";
 
@@ -577,7 +583,7 @@ public class Utils {
         log(strLastDateMonth, "LAST DATE ");
 
         return strLastDateMonth;
-    }
+    }*/
 
     public void toast(int type, int duration, String message) {
 
@@ -1114,7 +1120,7 @@ public class Utils {
             Date date = convertStringToDate(strDate);
 
             if (date != null)
-                strDisplayDate = writeFormatMonth.format(date);
+                strDisplayDate = writeFormatTime.format(date);
         }
 
         return strDisplayDate;

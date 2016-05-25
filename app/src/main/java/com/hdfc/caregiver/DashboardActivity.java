@@ -21,12 +21,17 @@ import com.hdfc.app42service.App42GCMController;
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
+import com.hdfc.caregiver.fragments.MileStoneFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
 import com.hdfc.caregiver.fragments.SimpleActivityFragment;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
+import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42API;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by yuyidong on 16/1/23.
@@ -35,17 +40,16 @@ public class DashboardActivity extends AppCompatActivity implements
         App42GCMController.App42GCMListener, NetworkStateReceiver.NetworkStateReceiverListener {
 
 
-    public static RelativeLayout loadingPanel;
+    private static RelativeLayout loadingPanel;
     private static Handler threadHandler;
     private static AppUtils appUtils;
+    private static Utils utils;
     private static AppCompatActivity appCompatActivity;
-    final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent
                     .getStringExtra(App42GCMService.ExtraMessage);
-            /*Log.i("mBroadcastReceiver", "" + " : "
-                    + message);*/
 
             if (message != null && !message.equalsIgnoreCase("")) {
 
@@ -58,17 +62,11 @@ public class DashboardActivity extends AppCompatActivity implements
                         dialog.dismiss();
                     }
                 });
-              /*  builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });*/
                 builder.show();
             }
-
         }
     };
+
     private LinearLayout net_error_layout;
     private NetworkStateReceiver networkStateReceiver;
     private ImageView mytask, clients, feedback;
@@ -90,12 +88,6 @@ public class DashboardActivity extends AppCompatActivity implements
 
     public static void gotoSimpleActivityMenu() {
 
-        /*progressDialog.setMessage(appCompatActivity.getString(R.string.loading));
-        progressDialog.setCancelable(true);
-        progressDialog.show();*/
-
-        //loadingPanel.setVisibility(View.INVISIBLE);
-
         Config.intSelectedMenu = Config.intDashboardScreen;
 
         Thread backgroundThread = new BackgroundThread();
@@ -108,16 +100,14 @@ public class DashboardActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_my_tasks);
 
         try {
-
             appUtils = new AppUtils(DashboardActivity.this);
+            utils = new Utils(DashboardActivity.this);
 
             mytask = (ImageView) findViewById(R.id.buttonMyTasks);
             clients = (ImageView) findViewById(R.id.buttonClients);
             feedback = (ImageView) findViewById(R.id.buttonFeedback);
 
             loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
-
-            //ProgressDialog progressDialog = new ProgressDialog(DashboardActivity.this);
             threadHandler = new ThreadHandler();
 
             textViewTasks = (TextView) findViewById(R.id.textViewTasks);
@@ -221,7 +211,7 @@ public class DashboardActivity extends AppCompatActivity implements
         textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         //Config.intSelectedMenu = 0;
         gotoSimpleActivity();
-        refreshData();
+        //refreshData();
     }
 
     public void menuClients() {
@@ -242,12 +232,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void onError(String var1) {
-
     }
 
     @Override
     public void onGCMRegistrationId(String gcmRegId) {
-        //Log.e("Registr" , gcmRegId);
         App42GCMController.storeRegistrationId(this, gcmRegId);
         if (!App42GCMController.isApp42Registerd(DashboardActivity.this))
             App42GCMController.registerOnApp42(App42API.getLoggedInUser(), gcmRegId, this);
@@ -255,7 +243,6 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void onApp42Response(String var1) {
-
     }
 
     @Override
@@ -264,10 +251,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
         if (App42GCMController.isPlayServiceAvailable(this)) {
             App42GCMController.getRegistrationId(DashboardActivity.this,
-                    Config.strAppId, this);//prod. - 272065924531
-        } else {
-            /*Log.i("App42PushNotification",
-                    "No valid Google Play Services APK found.");*/
+                    Config.strAppId, this);
         }
     }
 
@@ -276,8 +260,8 @@ public class DashboardActivity extends AppCompatActivity implements
         super.onPause();
         try {
             unregisterReceiver(mBroadcastReceiver);
-            /*if (networkStateReceiver != null)
-                unregisterReceiver(networkStateReceiver);*/
+            if (networkStateReceiver != null)
+                unregisterReceiver(networkStateReceiver);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -293,47 +277,15 @@ public class DashboardActivity extends AppCompatActivity implements
             filter.setPriority(2);
             registerReceiver(mBroadcastReceiver, filter);
 
-            /*registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.
-                    CONNECTIVITY_ACTION));*/
+            registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.
+                    CONNECTIVITY_ACTION));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
         if (Config.providerModel == null || Config.providerModel.getStrName() == null) {
             AppUtils.logout();
-        } else {
-
-            try {
-            /*boolean isPushReceived = getIntent().getBooleanExtra("message_delivered", false);
-            String strPushMess = getIntent().getStringExtra("message");
-
-            if (isPushReceived && strPushMess != null && !strPushMess.equalsIgnoreCase("")) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
-                builder.setTitle(getString(R.string.app_name));
-                builder.setMessage(strPushMess);
-                builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.show();
-            } else {*/
-
-
-                //}
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -343,7 +295,7 @@ public class DashboardActivity extends AppCompatActivity implements
         App42GCMController.storeApp42Success(DashboardActivity.this);
     }
 
-    public void setMenu(){
+    private void setMenu() {
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks));
         clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients));
         feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback));
@@ -355,24 +307,59 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
-
-       /* Config.intSelectedMenu = Config.intDashboardScreen;
-
-        SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frameLayout, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();*/
     }
 
-    public void refreshData() {
+    private void refreshData() {
 
-        loadingPanel.setVisibility(View.VISIBLE);
+        if (utils.isConnectingToInternet()) {
 
-        appUtils.fetchClients(loadingPanel);
+            loadingPanel.setVisibility(View.VISIBLE);
+
+            Config.dependentIds.clear();
+            Config.strActivityIds.clear();
+            Config.customerIds.clear();
+
+            Config.dependentIdsAdded.clear();
+            Config.customerIdsAdded.clear();
+
+            Config.activityModels.clear();
+            Config.dependentModels.clear();
+            Config.customerModels.clear();
+
+            Config.clientModels.clear();
+            Config.clientNames.clear();
+            Config.feedBackModels.clear();
+
+            Config.strDependentNames.clear();
+            Config.milestoneModels.clear();
+
+            Calendar calendar = Calendar.getInstance();
+
+          /*  int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH); // Note: zero based!
+            int day = calendar.get(Calendar.DAY_OF_MONTH);*/
+
+            Date date = calendar.getTime();
+
+            /*String strDay = String.valueOf(day);
+
+            if (day <= 9)
+                strDay = "0" + strDay;
+
+            String strDate = strDay + "-" + Config.months[month] + "-" + String.valueOf(year);*/
+
+            DashboardFragment.strEndDate = Utils.writeFormatDateDB.format(date) + "T23:59:59.999+0000";
+            DashboardFragment.strStartDate = Utils.writeFormatDateDB.format(date) + "T00:00:00.000+0000";
+
+            DashboardFragment.strDate = Utils.writeFormatDate.format(date);
+
+
+            //appUtils.fetchClients(loadingPanel);
+            appUtils.fetchActivities(loadingPanel);
+
+        } else {
+            utils.toast(2, 2, getString(R.string.warning_internet));
+        }
     }
 
     public void gotoClient() {
@@ -406,13 +393,12 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void networkAvailable() {
-        //Utils.log(" 1 ", " Network ");
         net_error_layout.setVisibility(View.GONE);
+        refreshData();
     }
 
     @Override
     public void networkUnavailable() {
-        //Utils.log(" 0 ", " Network ");
         net_error_layout.setVisibility(View.VISIBLE);
         loadingPanel.setVisibility(View.GONE);
     }
@@ -420,16 +406,21 @@ public class DashboardActivity extends AppCompatActivity implements
     private static class ThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-           /* if (progressDialog.isShowing())
-                progressDialog.dismiss();*/
+
+            if (!utils.isConnectingToInternet())
+                utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet));
 
             if (Config.intSelectedMenu == Config.intDashboardScreen) {
                 SimpleActivityFragment.activityModels = Config.activityModels;
                 SimpleActivityFragment.mAdapter.notifyDataSetChanged();
             }
 
+            if (Config.intSelectedMenu == Config.intMileStoneScreen) {
+                MileStoneFragment.milestoneModels = Config.milestoneModels;
+                MileStoneFragment.mAdapter.notifyDataSetChanged();
+            }
+
             loadingPanel.setVisibility(View.GONE);
-            //gotoSimpleActivity();
         }
     }
 
@@ -437,7 +428,9 @@ public class DashboardActivity extends AppCompatActivity implements
         @Override
         public void run() {
             try {
-                appUtils.loadAllFiles();
+                if (utils.isConnectingToInternet())
+                    appUtils.loadAllFiles();
+
                 threadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
                 e.printStackTrace();
