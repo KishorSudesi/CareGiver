@@ -195,10 +195,9 @@
     <string name="uploading_profile_pic">Setting Profile Images…</string>
 
     <!--Error Strings-->
-    <string name="dpndnt_details_not_saved">Dependent Not Saved. Check Name</string>
     <string name="error_register">Error in uploading with server. Please try again Later!!!</string>
     <string name="error_register_image">Error in Setting Profile picture. Please try again Later!!!</string>
-    <string name="error_service">Select a Service</string>
+    <string name="error_service">Select a Valid Service</string>
     <string name="error_service_zero">Select a Valid Service</string>
     <string name="dependent_data_lost">Something went wrong, Please create Dependent again</string>
     <string name="no_memory_camera">No storage mounted to save camera image</string>
@@ -206,6 +205,7 @@
     <string name="invalid_login">Invalid Credentials</string>
     <string name="no_push_actiity_added">Activity Added. Not able to Notify the Customer</string>
     <string name="no_push_actiity_updated">Activity Updated. Not able to Notify the Customer</string>
+    <string name="error_client">Select a Valid Client</string>
 
 
     <!--Dashboard Menu Strings-->
@@ -216,7 +216,7 @@
     <string name="menu_account">My Account</string>
 
     <!--Warning Strings-->
-
+    <string name="no_dependents">No Care Recepients</string>
 
     <!--Permission Strings-->
     <string name="permission_contact_rationale">We need access to Contacts to Proceed Further</string>

@@ -107,6 +107,12 @@ public class DashboardFragment extends Fragment {
                 buttonActivity.setBackgroundResource(R.drawable.one_side_border);
                 buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
 
+                SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frameLayoutDashboard, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
                 SimpleActivityFragment.activityModels = Config.activityModels;
                 SimpleActivityFragment.mAdapter.notifyDataSetChanged();
             }
@@ -115,9 +121,15 @@ public class DashboardFragment extends Fragment {
                 buttonTask.setBackgroundResource(R.drawable.one_side_border);
                 buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
 
+                MileStoneFragment fragment = MileStoneFragment.newInstance();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frameLayoutDashboard, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
 
-                SimpleActivityFragment.activityModels = Config.milestoneModels;
-                SimpleActivityFragment.mAdapter.notifyDataSetChanged();
+
+                MileStoneFragment.activityModels = Config.milestoneModels;
+                MileStoneFragment.mAdapter.notifyDataSetChanged();
 
                 /*DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
                 appUtils.fetchMileStone(DashboardActivity.loadingPanel);*/

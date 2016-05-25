@@ -31,4 +31,6 @@
 
     <dimen name="photo_width">100dp</dimen>
     <dimen name="photo_height">100dp</dimen>
+
+    <dimen name="label_text">16sp</dimen>
 </resources>

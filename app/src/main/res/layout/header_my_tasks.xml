@@ -65,7 +65,7 @@
         android:layout_marginRight="11dp"
         android:layout_toLeftOf="@+id/imgNext"
         android:layout_toStartOf="@+id/imgNext"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/colorWhite" />
 
 </RelativeLayout>

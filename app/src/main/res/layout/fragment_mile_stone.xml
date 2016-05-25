@@ -1,0 +1,28 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@android:id/empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="@dimen/padding_general"
+            android:text="@string/noActivities"
+            android:visibility="gone" />
+
+        <com.yydcdut.sdlv.SlideAndDragListView
+            android:id="@+id/listViewEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"></com.yydcdut.sdlv.SlideAndDragListView>
+
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -1,6 +1,6 @@
 package com.hdfc.caregiver.fragments;
 
-import android.app.ProgressDialog;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,18 +30,17 @@ import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 
-
-public class SimpleActivityFragment extends Fragment implements SlideAndDragListView.OnListItemLongClickListener,
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class MileStoneFragment extends Fragment implements SlideAndDragListView.OnListItemLongClickListener,
         SlideAndDragListView.OnDragListener, SlideAndDragListView.OnSlideListener,
-         SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnListItemClickListener,
+        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnListItemClickListener,
         SlideAndDragListView.OnItemDeleteListener {
 
-    private static final String TAG = "";
     private static final int PICK_CONTACT = 979;
     public static ArrayList<ActivityModel> activityModels = Config.activityModels;
     private static MultiBitmapLoader multiBitmapLoader;
@@ -72,10 +70,9 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             if (convertView == null) {
                 cvh = new CustomViewHolder();
 
-                convertView = LayoutInflater.from(context).inflate(R.layout.my_tasks_item, null);
+                convertView = LayoutInflater.from(context).inflate(R.layout.my_tasks_ms_item, null);
                 cvh.imageTiming = (TextView) convertView.findViewById(R.id.imageTiming);
                 cvh.textMessage = (TextView) convertView.findViewById(R.id.task_message);
-                cvh.textSubject = (TextView) convertView.findViewById(R.id.task_subject);
                 cvh.textTime = (TextView) convertView.findViewById(R.id.task_time);
                 cvh.imagePerson = (ImageView) convertView.findViewById(R.id.imagePerson);
                 convertView.setTag(cvh);
@@ -84,7 +81,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 cvh = (CustomViewHolder) convertView.getTag();
             }
 
-            if (Config.activityModels.size() > 0) {
+            if (Config.milestoneModels.size() > 0) {
 
                 ActivityModel activityModel = activityModels.get(position);
 
@@ -98,8 +95,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 if (strName.length() > 20)
                     strName = activityModel.getStrActivityName().substring(0, 18) + "..";
 
-                cvh.textSubject.setText(strName);
-
                 cvh.textMessage.setText(strMessage);
 
                 cvh.textTime.setText(utils.formatDate(activityModel.getStrActivityDate()));
@@ -108,7 +103,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(utils.formatDateTime(activityModel.getStrActivityDate()));
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.gray_holo_dark));
-                }else{
+                } else {
                     cvh.imageTiming.setBackgroundResource(R.drawable.done);
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorWhite));
                     cvh.imageTiming.setText("");
@@ -130,7 +125,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
         class CustomViewHolder {
             TextView imageTiming;
-            TextView textSubject;
             ImageView imagePerson;
             TextView textMessage;
             TextView textTime;
@@ -138,17 +132,13 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
     };
     private Menu mMenu;
     private SlideAndDragListView<ApplicationInfo> mListView;
-    private JSONObject responseJSONDoc, responseProvider;
-    private JSONObject responseJSONDocCarla;
-    private ProgressDialog progressDialog;
 
-    public static SimpleActivityFragment newInstance() {
-        return new SimpleActivityFragment();
+    public MileStoneFragment() {
+        // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public static MileStoneFragment newInstance() {
+        return new MileStoneFragment();
     }
 
     @Override
@@ -156,9 +146,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_simple_activity, container, false);
-
         initMenu();
-        progressDialog = new ProgressDialog(getActivity());
         utils = new Utils(getActivity());
         multiBitmapLoader = new MultiBitmapLoader(getActivity());
 
@@ -172,7 +160,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CreatingTaskActivity.class);
-                Config.intSelectedMenu=Config.intDashboardScreen;
+                Config.intSelectedMenu = Config.intDashboardScreen;
                 startActivity(intent);
             }
         });
@@ -183,33 +171,17 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         mListView.setAdapter(mAdapter);
         mListView.setEmptyView(textViewEmpty);
         mListView.setOnListItemLongClickListener(this);
-        //mListView.setOnDragListener(this, mAppList);
-        //mListView.setOnListItemClickListener(this);
         mListView.setOnSlideListener(this);
         mListView.setOnMenuItemClickListener(this);
         mListView.setOnItemDeleteListener(this);
-
-       /* mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-              *//*  intent.putExtra("WHICH_SCREEN",intWhichScreen);
-                System.out.println("Data contained in model class is : "+activityModels.get(position)+" Parent item is "+parent.getItemAtPosition(position));
-                intent.putExtra("WHICH_SCREEN",activityModels.get(position));
-                startActivity(intent);*//*
-
-            }
-        });*/
 
         return view;
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        //refreshData();
     }
-
 
     public void initMenu() {
 
@@ -244,7 +216,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
         //swipe left
 
-        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)-30)
+        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
                 .setIcon(getResources().getDrawable(R.mipmap.map))
@@ -256,7 +228,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 .setIcon(getResources().getDrawable(R.mipmap.message))
                 .build());
 
-        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)-30)
+        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
                 .setIcon(getResources().getDrawable(R.mipmap.call1))
@@ -271,37 +243,30 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     @Override
     public void onListItemLongClick(View view, int position) {
-        Log.i(TAG, "onListItemLongClick   " + position);
     }
 
     @Override
     public void onDragViewStart(int position) {
-        Log.i(TAG, "onDragViewStart   " + position);
     }
 
     @Override
     public void onDragViewMoving(int position) {
-        Log.i("yuyidong", "onDragViewMoving   " + position);
     }
 
     @Override
     public void onDragViewDown(int position) {
-        Log.i(TAG, "onDragViewDown   " + position);
     }
 
     @Override
     public void onSlideOpen(View view, View parentView, int position, int direction) {
-        Log.i(TAG, "onSlideOpen   " + position);
     }
 
     @Override
     public void onSlideClose(View view, View parentView, int position, int direction) {
-        Log.i(TAG, "onSlideClose   " + position);
     }
 
     @Override
     public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
-        //todo add string
         switch (direction) {
             case MenuItem.DIRECTION_LEFT:
                 switch (buttonPosition) {
@@ -354,11 +319,11 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                         return Menu.ITEM_NOTHING;
                 }
                 break;
+
             case MenuItem.DIRECTION_RIGHT:
                 ActivityModel activityModel = activityModels.get(itemPosition);
                 switch (buttonPosition) {
                     case 0:
-
                         int iPosition3 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
                         String strNo4 = Config.dependentModels.get(iPosition3).getStrAddress();
                         Toast.makeText(getContext(), strNo4, Toast.LENGTH_LONG).show();
@@ -391,7 +356,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                         return Menu.ITEM_SCROLL_BACK;
                 }
 
-
         }
         return Menu.ITEM_NOTHING;
     }
@@ -404,4 +368,5 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
     @Override
     public void onListItemClick(View v, int position) {
     }
+
 }

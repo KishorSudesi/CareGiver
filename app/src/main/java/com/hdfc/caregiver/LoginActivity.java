@@ -53,9 +53,10 @@ public class LoginActivity extends AppCompatActivity {
         layoutLogin = (RelativeLayout) findViewById(R.id.layoutLogin);
         editEmail = (EditText) findViewById(R.id.editEmail);
         editPassword = (EditText) findViewById(R.id.editPassword);
+        utils = new Utils(LoginActivity.this);
         _ctxt= LoginActivity.this;
         appUtils = new AppUtils(LoginActivity.this);
-        utils = new Utils(LoginActivity.this);
+
 
         sharedPreferences = getSharedPreferences(Config.strPreferenceName, MODE_PRIVATE);
 
@@ -328,7 +329,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(_ctxt, DashboardActivity.class);
         //intent.putExtra("WHICH_SCREEN", intWhichScreen);
         Config.intSelectedMenu = Config.intDashboardScreen;
-        _ctxt.startActivity(intent);
+        startActivity(intent);
         //((Activity) _ctxt).finish();
     }
 

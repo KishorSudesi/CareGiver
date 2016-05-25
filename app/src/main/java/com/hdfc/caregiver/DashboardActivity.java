@@ -423,12 +423,12 @@ public class DashboardActivity extends AppCompatActivity implements
            /* if (progressDialog.isShowing())
                 progressDialog.dismiss();*/
 
-            loadingPanel.setVisibility(View.GONE);
-
             if (Config.intSelectedMenu == Config.intDashboardScreen) {
                 SimpleActivityFragment.activityModels = Config.activityModels;
                 SimpleActivityFragment.mAdapter.notifyDataSetChanged();
             }
+
+            loadingPanel.setVisibility(View.GONE);
             //gotoSimpleActivity();
         }
     }

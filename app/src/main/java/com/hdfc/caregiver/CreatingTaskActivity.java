@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
@@ -43,11 +42,10 @@ import java.util.Date;
  */
 public class CreatingTaskActivity extends AppCompatActivity {
 
-    private static String valDateTime, valTitle, valSearch, strServiceName,name;
-    //private static ServiceAdapter serviceAdapter;
+    private static String valDateTime, valTitle, valSearch, strServiceName;
     private static StorageService storageService;
     private Spinner dependentlist;
-    private boolean cancel = false;
+    private boolean isClicked = false;
     private View focusView = null;
     private AutoCompleteTextView inputSearch, inputSearchServices;
     private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate, strSelectedDependent;
@@ -55,29 +53,26 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private Utils utils;
     private AppUtils appUtils;
     private EditText editTextTitle, dateAnd;
-    //private TextView dateTime;
     private JSONObject jsonObject;
-    private ArrayList<String> names = new ArrayList<>();
 
+    private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
-        private SlideDateTimeListener listener = new SlideDateTimeListener() {
+        @Override
+        public void onDateTimeSet(Date date) {
+            // selectedDateTime = date.getDate()+"-"+date.getMonth()+"-"+date.getYear()+" "+
+            // date.getTime();
+            // Do something with the date. This Date object contains
+            // the date and time that the user has selected.
 
-            @Override
-            public void onDateTimeSet(Date date) {
-                // selectedDateTime = date.getDate()+"-"+date.getMonth()+"-"+date.getYear()+" "+
-                // date.getTime();
-                // Do something with the date. This Date object contains
-                // the date and time that the user has selected.
+            strDate = Utils.writeFormat.format(date);
+            _strDate = Utils.readFormat.format(date);
+            dateAnd.setText(strDate);
+        }
 
-                strDate = Utils.writeFormat.format(date);
-                _strDate = Utils.readFormat.format(date);
-                dateAnd.setText(strDate);
-            }
-
-            @Override
-            public void onDateTimeCancel() {
-                // Overriding onDateTimeCancel() is optional.
-            }
+        @Override
+        public void onDateTimeCancel() {
+            // Overriding onDateTimeCancel() is optional.
+        }
 
     };
 
@@ -88,8 +83,18 @@ public class CreatingTaskActivity extends AppCompatActivity {
         editTextTitle = (EditText)findViewById(R.id.editTextTitle);
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
         inputSearchServices = (AutoCompleteTextView)findViewById(R.id.inputSearchServices);
-         dependentlist = (Spinner) findViewById(R.id.spindependentList);
+        dependentlist = (Spinner) findViewById(R.id.spindependentList);
 
+        utils = new Utils(CreatingTaskActivity.this);
+        appUtils = new AppUtils(CreatingTaskActivity.this);
+        progressDialog = new ProgressDialog(CreatingTaskActivity.this);
+        storageService = new StorageService(CreatingTaskActivity.this);
+
+        ArrayAdapter<String> adapter;
+        adapter = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.servicelist);
+
+        inputSearchServices.setThreshold(1);//will start working from first character
+        inputSearchServices.setAdapter(adapter);
 
         dependentlist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -103,33 +108,18 @@ public class CreatingTaskActivity extends AppCompatActivity {
             }
         });
 
-        utils = new Utils(CreatingTaskActivity.this);
-        appUtils = new AppUtils(CreatingTaskActivity.this);
-        progressDialog = new ProgressDialog(CreatingTaskActivity.this);
 
-        storageService = new StorageService(CreatingTaskActivity.this);
-
-
-
-        ArrayAdapter<String> adapter;
-        adapter = new ArrayAdapter<String>(CreatingTaskActivity.this,android.R.layout.select_dialog_item, Config.servicelist);
-        //Getting the instance of AutoCompleteTextView
-        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
-        inputSearchServices.setThreshold(1);//will start working from first character
-        inputSearchServices.setAdapter(adapter);
-
-        //setItems();
         ImageView backImage = (ImageView) findViewById(R.id.imgBackCreatingTaskDetail);
-        backImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CreatingTaskActivity.this,DashboardActivity.class);
-                Config.intSelectedMenu=Config.intDashboardScreen;
-                startActivity(intent);
-            }
-        });
-        /*Bundle b = getIntent().getExtras();
-        intWhichScreen = b.getInt("WHICH_SCREEN", Config.intDashboardScreen);*/
+        if (backImage != null) {
+            backImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
+                    Config.intSelectedMenu = Config.intDashboardScreen;
+                    startActivity(intent);
+                }
+            });
+        }
 
         dateAnd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,75 +132,146 @@ public class CreatingTaskActivity extends AppCompatActivity {
             }
         });
 
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.strCustomerNames);
+        //Getting the instance of AutoCompleteTextView
+        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
+        inputSearch.setThreshold(1);//will start working from first character
+        inputSearch.setAdapter(arrayAdapter);//setting the adapter data into the AutoCompleteTextView*/
+
+
+        inputSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                ArrayList<String> names = new ArrayList<>();
+                names.clear();
+                names.add(getString(R.string.no_dependents));
+
+                valSearch = inputSearch.getText().toString().trim();
+
+                int iPosition = Config.strCustomerNames.indexOf(valSearch.trim());
+
+                if (iPosition > -1) {
+                    names.clear();
+                    names = Config.clientNames.get(iPosition).getStrDependeneNames();
+                }
+
+                ArrayAdapter<String> adapter1 = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, names);
+                dependentlist.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
+
+            }
+        });
+
         TextView createtaskDone = (TextView) findViewById(R.id.textViewDoneHeaderCreatingTask);
 
-        createtaskDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                valTitle = editTextTitle.getText().toString().trim();
-                valDateTime = dateAnd.getText().toString().trim();
-                valSearch = inputSearch.getText().toString().trim();
-                strServiceName = inputSearchServices.getText().toString().trim();
+        if (createtaskDone != null) {
+            createtaskDone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                if (TextUtils.isEmpty(valDateTime)) {
-                    dateAnd.setError(getString(R.string.error_field_required));
-                    focusView = dateAnd;
-                    cancel = true;
-                }
+                    if (!isClicked) {
+                        isClicked = true;
 
-                if (TextUtils.isEmpty(valTitle)) {
-                    editTextTitle.setError(getString(R.string.error_field_required));
-                    focusView = editTextTitle;
-                    cancel = true;
-                }
+                        boolean cancel = false;
 
-                if (TextUtils.isEmpty(strServiceName)) {
-                    inputSearchServices.setError(getString(R.string.error_field_required));
-                    focusView = inputSearchServices;
-                    cancel = true;
-                }
+                        editTextTitle.setError(null);
+                        dateAnd.setError(null);
+                        inputSearch.setError(null);
+                        inputSearchServices.setError(null);
 
-                if (TextUtils.isEmpty(valSearch)) {
-                    inputSearch.setError(getString(R.string.error_field_required));
-                    focusView = inputSearch;
-                    cancel = true;
-                }
+                        valTitle = editTextTitle.getText().toString().trim();
+                        valDateTime = dateAnd.getText().toString().trim();
+                        valSearch = inputSearch.getText().toString().trim();
+                        strServiceName = inputSearchServices.getText().toString().trim();
 
-
-                if (cancel) {
-                    focusView.requestFocus();
-                } else {
-
-                    if (utils.isConnectingToInternet()) {
-
-                        progressDialog.setMessage(getString(R.string.loading));
-                        progressDialog.setCancelable(false);
-                        progressDialog.show();
-
-                        int iServicePosition = Config.servicelist.indexOf(strServiceName);
-                        ServiceModel serviceModel = Config.serviceModels.get(iServicePosition);
-
-                        int iDependentPosition = Config.strDependentNames.indexOf(strSelectedDependent);
-
-                        if (iDependentPosition > -1) {
-                            DependentModel dependentModel = Config.dependentModels.get(iDependentPosition);
-
-                            uploadData(serviceModel, dependentModel);
+                        if (TextUtils.isEmpty(valDateTime)) {
+                            dateAnd.setError(getString(R.string.error_field_required));
+                            focusView = dateAnd;
+                            cancel = true;
                         }
 
-                    } else utils.toast(2, 2, getString(R.string.warning_internet));
+                        if (TextUtils.isEmpty(valTitle)) {
+                            editTextTitle.setError(getString(R.string.error_field_required));
+                            focusView = editTextTitle;
+                            cancel = true;
+                        }
 
+                        if (TextUtils.isEmpty(strServiceName)) {
+                            inputSearchServices.setError(getString(R.string.error_field_required));
+                            focusView = inputSearchServices;
+                            cancel = true;
+                        }
+
+                        if (TextUtils.isEmpty(strSelectedDependent)) {
+                            //dependentlist.setError(getString(R.string.error_field_required));
+                            focusView = dependentlist;
+                            cancel = true;
+                        }
+
+                        if (TextUtils.isEmpty(valSearch)) {
+                            inputSearch.setError(getString(R.string.error_field_required));
+                            focusView = inputSearch;
+                            cancel = true;
+                        }
+
+                        if (cancel) {
+                            focusView.requestFocus();
+                            isClicked = false;
+                        } else {
+
+                            if (utils.isConnectingToInternet()) {
+
+                                ServiceModel serviceModel = null;
+                                DependentModel dependentModel = null;
+
+                                int iServicePosition = Config.servicelist.indexOf(strServiceName);
+                                if (iServicePosition > -1)
+                                    serviceModel = Config.serviceModels.get(iServicePosition);
+
+                                int iDependentPosition = Config.strDependentNames.indexOf(strSelectedDependent);
+                                if (iDependentPosition > -1)
+                                    dependentModel = Config.dependentModels.get(iDependentPosition);
+
+                                int iCustomerPosition = Config.strCustomerNames.indexOf(valSearch);
+                                if (iCustomerPosition > -1)
+                                    strSelectedCustomer = Config.clientModels.get(iCustomerPosition).getCustomerModel().getStrEmail();
+
+                                if (iCustomerPosition > -1) {
+
+                                    if (iServicePosition > -1) {
+
+                                        progressDialog.setMessage(getString(R.string.loading));
+                                        progressDialog.setCancelable(false);
+                                        progressDialog.show();
+
+                                        uploadData(serviceModel, dependentModel);
+
+                                    } else {
+                                        isClicked = false;
+                                        utils.toast(2, 2, getString(R.string.error_service));
+                                    }
+
+                                } else {
+                                    isClicked = false;
+                                    utils.toast(2, 2, getString(R.string.error_client));
+                                }
+
+                            } else {
+                                isClicked = false;
+                                utils.toast(2, 2, getString(R.string.warning_internet));
+                            }
+
+                        }
+                    }
                 }
-            }
 
-        });
+            });
+        }
     }
 
     @Override
     public void onResume(){
         super.onResume();
-
-        refreshClients();
 
         storageService.findAllDocs(Config.collectionService,
                 new App42CallBack() {
@@ -272,55 +333,23 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 });
     }
 
-    public void refreshClients(){
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.strCustomerNames);
-        //Getting the instance of AutoCompleteTextView
-        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
-        inputSearch.setThreshold(1);//will start working from first character
-        inputSearch.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView*/
 
-
-        inputSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                names =   Config.clientNames.get(position).getStrDependeneNames();
-                Toast.makeText(CreatingTaskActivity.this, "Selected", Toast.LENGTH_LONG).show();
-                // int iPosition = Config.strCustomerNames.indexOf(valSearch);
-                //   if (iPosition > 0)
-                // names =   Config.clientNames.get(iPosition).getStrDependeneNames();
-                System.out.println("gurujiiiiiiiiiiiiiiiiii" + names);
-
-                // int position = Config.strCustomerNames.indexOf(inputSearch.getText().toString().trim());
-                // name = Config.strDependentNames.get(0);
-                // names.add(name);
-                ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, names);
-                //Getting the instance of AutoCompleteTextView
-                //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
-                // dependentlist.setThreshold(1);//will start working from first character
-                dependentlist.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
-
-            }
-        });
-
-
-        }
-
-    public void refreshServices() {
-        ArrayAdapter<String> adapter;
-        adapter = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.servicelist);
+    private void refreshServices() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(CreatingTaskActivity.this,
+                android.R.layout.select_dialog_item, Config.servicelist);
         //Getting the instance of AutoCompleteTextView
         //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
         inputSearchServices.setThreshold(1);//will start working from first character
         inputSearchServices.setAdapter(adapter);
     }
 
-    public void uploadData(ServiceModel serviceModel, DependentModel dependentModel) {
+    private void uploadData(ServiceModel serviceModel, DependentModel dependentModel) {
 
         addActivity(serviceModel, dependentModel);
 
     }
 
-    public void addActivity(final ServiceModel serviceModel, final DependentModel dependentModel) {
+    private void addActivity(final ServiceModel serviceModel, final DependentModel dependentModel) {
 
         JSONObject jsonObjectServices = null;
 
@@ -337,10 +366,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
             jsonObjectServices.put("customer_id", dependentModel.getStrCustomerID());
             jsonObjectServices.put("dependent_id", dependentModel.getStrDependentID());
             jsonObjectServices.put("provider_id", Config.providerModel.getStrProviderId());
-
-            int iPosition = Config.customerIdsAdded.indexOf(dependentModel.getStrCustomerID());
-
-            strSelectedCustomer = Config.clientModels.get(iPosition).getCustomerModel().getStrEmail();
 
             jsonObjectServices.put("status", "new");
             jsonObjectServices.put("provider_status", "new");
@@ -374,7 +399,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                 jsonObjectMilestone.put("show", milestoneModel.isVisible());
                 jsonObjectMilestone.put("reschedule", milestoneModel.isReschedule());
-                jsonObjectMilestone.put("scheduled_date", milestoneModel.getStrMilestoneScheduledDate());
+                jsonObjectMilestone.put("scheduled_date", milestoneModel.
+                        getStrMilestoneScheduledDate());
 
                 JSONArray jsonArrayFields = new JSONArray();
 
@@ -395,6 +421,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     jsonObject.put("user_id", dependentModel.getStrDependentID());
                     jsonObject.put("created_by_type", "provider");
                     jsonObject.put("notification_message", strPushMessage);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -430,7 +457,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             jsonObjectField.put("child_condition", utils.stringToJsonArray(fieldModel.getStrChildCondition()));
 
                         if (fieldModel.getiChildfieldID() != null && fieldModel.getiChildfieldID().length > 0)
-                            jsonObjectField.put("values", utils.intToJsonArray(fieldModel.getiChildfieldID()));
+                            jsonObjectField.put("child_field", utils.intToJsonArray(fieldModel.getiChildfieldID()));
                     }
 
                     jsonArrayFields.put(jsonObjectField);
@@ -439,7 +466,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 }
                 jsonArrayMilestones.put(jsonObjectMilestone);
             }
-            ////////////////////
 
             jsonObjectServices.put("milestones", jsonArrayMilestones);
 
@@ -463,17 +489,20 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 } else {
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
+                                    isClicked = false;
                                     utils.toast(2, 2, getString(R.string.error));
                                 }
                             } else {
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
+                                isClicked = false;
                                 utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                             if (progressDialog.isShowing())
                                 progressDialog.dismiss();
+                            isClicked = false;
                             utils.toast(2, 2, getString(R.string.error));
                         }
                     }
@@ -488,6 +517,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                     @Override
                     public void onInsertionFailed(App42Exception ex) {
+                        isClicked = false;
                         if (progressDialog.isShowing())
                             progressDialog.dismiss();
                         try {
@@ -670,11 +700,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
           }
       }
   */
-    public void sendPushToProvider() {
+    private void sendPushToProvider() {
 
         if (utils.isConnectingToInternet()) {
 
-            PushNotificationService pushNotificationService = new PushNotificationService(CreatingTaskActivity.this);
+            PushNotificationService pushNotificationService =
+                    new PushNotificationService(CreatingTaskActivity.this);
 
             pushNotificationService.sendPushToUser(strSelectedCustomer, strPushMessage,
                     new App42CallBack() {
@@ -703,7 +734,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
         }
     }
 
-    public void goToActivityList(String strAlert) {
+    private void goToActivityList(String strAlert) {
+
+        isClicked = false;
 
         Intent newIntent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
 
@@ -757,7 +790,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         }
     }*/
 
-    public void insertNotification() {
+    private void insertNotification() {
 
         if (utils.isConnectingToInternet()) {
 
