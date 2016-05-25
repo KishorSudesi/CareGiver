@@ -55,10 +55,11 @@ public class LoginActivity extends AppCompatActivity {
         editPassword = (EditText) findViewById(R.id.editPassword);
         _ctxt= LoginActivity.this;
         appUtils = new AppUtils(LoginActivity.this);
+        utils = new Utils(LoginActivity.this);
 
         sharedPreferences = getSharedPreferences(Config.strPreferenceName, MODE_PRIVATE);
 
-        utils = new Utils(LoginActivity.this);
+
         progressDialog = new ProgressDialog(LoginActivity.this);
 
         try {

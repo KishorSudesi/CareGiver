@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#EEEEEE"
-    android:orientation="vertical"
-    android:weightSum="3">
+    android:orientation="vertical">
 
     <!-- <include
          android:id="@+id/include_header_my_tasks"
@@ -16,10 +15,10 @@
     <TextView
         android:id="@android:id/empty"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/include_header_my_tasks"
-        android:background="#EEEEEE"
         android:gravity="center"
+        android:padding="@dimen/padding_general"
         android:text="@string/noActivities"
         android:visibility="gone" />
 
@@ -28,7 +27,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/include_header_my_tasks"
-        android:background="#EEEEEE"
         android:clickable="true">
     </com.yydcdut.sdlv.SlideAndDragListView>
 

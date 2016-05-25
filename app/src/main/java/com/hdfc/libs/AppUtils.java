@@ -12,7 +12,6 @@ import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.LoginActivity;
 import com.hdfc.caregiver.R;
-import com.hdfc.caregiver.fragments.SimpleActivityFragment;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbCon;
@@ -439,23 +438,18 @@ public class AppUtils {
 
                 Config.dependentModels.add(dependentModel);
 
-                //if(!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name")))
-                //Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
-
-                //
-
-               
-                //
+                if (!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name")))
+                    Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
 
                 if (Config.clientModels.size() > 0) {
                     int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
-                    if (iPosition > 0)
+                    if (iPosition > -1)
                         Config.clientModels.get(iPosition).setDependentModel(dependentModel);
                 }
 
                 if (Config.clientNames.size() > 0) {
                     int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
-                    if (iPosition > 0)
+                    if (iPosition > -1)
                         Config.clientNames.get(iPosition).setStrDependeneName(jsonObjectDependent.getString("dependent_name"));
                 }
 
@@ -702,7 +696,8 @@ public class AppUtils {
                                 String strActivities = jsonDocument.getJsonDoc();
                                 createActivityModel(strDocumentId, strActivities, 1);
                             }
-                            fetchCustomers(relativeLayout); //progressDialog
+                            //progressDialog
+                            fetchMileStone(relativeLayout);
                             //fetchDependents(relativeLayout);
                         } else {
                    /* if (progressDialog.isShowing())
@@ -716,7 +711,8 @@ public class AppUtils {
                     public void onException(Exception ex) {
                         try {
                             if (ex != null) {
-                                fetchCustomers(relativeLayout);
+
+                                fetchMileStone(relativeLayout);
                                 //fetchDependents(relativeLayout);
                             } else {
                         /*if (progressDialog.isShowing())
@@ -1453,13 +1449,30 @@ public class AppUtils {
 
         if (utils.isConnectingToInternet()) {
 
+            Config.dependentIds.clear();
+            Config.strActivityIds.clear();
+            Config.customerIds.clear();
+
+            Config.dependentIdsAdded.clear();
+            Config.customerIdsAdded.clear();
+
+            Config.activityModels.clear();
+            Config.dependentModels.clear();
+            Config.customerModels.clear();
+
+            Config.clientModels.clear();
+            Config.feedBackModels.clear();
+
+            Config.strDependentNames.clear();
+            //
+
             StorageService storageService = new StorageService(_ctxt);
 
             Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
                     QueryBuilder.Operator.EQUALS);
 
             storageService.findDocsByQueryOrderBy(Config.collectionProviderDependent, q1, 1000, 0,
-                    "dependent_name", 1, new App42CallBack() {
+                    "provider_id", 1, new App42CallBack() {
                         @Override
                         public void onSuccess(Object o) {
                             try {
@@ -1476,7 +1489,7 @@ public class AppUtils {
                                         for (int i = 0; i < jsonDocList.size(); i++) {
 
                                             Storage.JSONDocument jsonDocument = storage.getJsonDocList().
-                                                    get(0);
+                                                    get(i);
 
                                             String strDocument = jsonDocument.getJsonDoc();
                                             //String _strProviderId = jsonDocument.getDocId();
@@ -1487,7 +1500,7 @@ public class AppUtils {
                                                 if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
                                                     Config.customerIds.add(jsonObject.getString("customer_id"));
 
-                                                if (!Config.dependentIds.contains("dependent_id"))
+                                                if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
                                                     Config.dependentIds.add(jsonObject.getString("dependent_id"));
 
                                                 //fetchActivities(relativeLayout);
@@ -1599,10 +1612,10 @@ public class AppUtils {
             Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
                     QueryBuilder.Operator.EQUALS);
 
-            Query q2 = QueryBuilder.build("$milestones.date_scheduled", strDate, QueryBuilder.
+            Query q2 = QueryBuilder.build("milestones.scheduled_date", strDate, QueryBuilder.
                     Operator.LESS_THAN_EQUALTO);
 
-            Query q3 = QueryBuilder.build("$milestones.date_scheduled", strDateStart, QueryBuilder.
+            Query q3 = QueryBuilder.build("milestones.scheduled_date", strDateStart, QueryBuilder.
                     Operator.GREATER_THAN_EQUALTO);
 
             Query q4 = QueryBuilder.compoundOperator(q2, QueryBuilder.Operator.AND, q3);
@@ -1641,9 +1654,10 @@ public class AppUtils {
                                 }
                                 //fetchCustomers(relativeLayout); //progressDialog
                                 //fetchDependents(relativeLayout);
+                                fetchCustomers(relativeLayout);
 
-                                SimpleActivityFragment.activityModels = Config.milestoneModels;
-                                SimpleActivityFragment.mAdapter.notifyDataSetChanged();
+                                //SimpleActivityFragment.activityModels = Config.milestoneModels;
+                                //SimpleActivityFragment.mAdapter.notifyDataSetChanged();
                             } else {
                        /* if (progressDialog.isShowing())
                             progressDialog.dismiss();*/
@@ -1658,10 +1672,11 @@ public class AppUtils {
                                 if (ex != null) {
                                     Utils.log(ex.getMessage(), " f2 ");
 
-                                    SimpleActivityFragment.activityModels = Config.milestoneModels;
-                                    SimpleActivityFragment.mAdapter.notifyDataSetChanged();
+                                    //SimpleActivityFragment.activityModels = Config.milestoneModels;
+                                    //SimpleActivityFragment.mAdapter.notifyDataSetChanged();
                                     //fetchCustomers(relativeLayout);
                                     //fetchDependents(relativeLayout);
+                                    fetchCustomers(relativeLayout);
                                 } else {
                             /*if (progressDialog.isShowing())
                                 progressDialog.dismiss();*/
@@ -1680,7 +1695,8 @@ public class AppUtils {
                     });
         } else {
             utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
-            relativeLayout.setVisibility(View.GONE);
+            //relativeLayout.setVisibility(View.GONE);
+            fetchCustomers(relativeLayout);
         }
     }
     //
