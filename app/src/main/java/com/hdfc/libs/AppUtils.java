@@ -1881,7 +1881,7 @@ public class AppUtils {
             Query q2 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strEndDate, QueryBuilder.
                     Operator.LESS_THAN_EQUALTO);
 
-            Query q3 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strEndDate, QueryBuilder.
+            Query q3 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strStartDate, QueryBuilder.
                     Operator.GREATER_THAN_EQUALTO);
 
 

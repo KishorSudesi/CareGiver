@@ -44,9 +44,9 @@ public class DashboardFragment extends Fragment {
             strEndDate = strDate + "T23:59:59.999+0000";
             strStartDate = strDate + "T00:00:00.000+0000";
 
-            String _strDate = Utils.writeFormatDateDB.format(date);
+            //String _strDate = Utils.writeFormatDateDB.format(date);
 
-            textView.setText(Utils.writeFormatDate.format(_strDate));
+            textView.setText(Utils.writeFormatDate.format(date));
         }
 
         @Override
