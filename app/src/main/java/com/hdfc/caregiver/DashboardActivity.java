@@ -72,26 +72,26 @@ public class DashboardActivity extends AppCompatActivity implements
     private ImageView mytask, clients, feedback;
     private TextView textViewTasks, textViewClients, textViewFeedback;
 
-    public static void gotoSimpleActivity() {
-
-        // if (Config.intSelectedMenu != Config.intSimpleActivityScreen) {
-        Config.intSelectedMenu = Config.intDashboardScreen;
-
-        DashboardFragment fragment = DashboardFragment.newInstance();
-        FragmentTransaction transaction = appCompatActivity.getSupportFragmentManager().
-                beginTransaction();
-        transaction.replace(R.id.frameLayout, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-        // }
-    }
-
     public static void gotoSimpleActivityMenu() {
-
-        Config.intSelectedMenu = Config.intDashboardScreen;
 
         Thread backgroundThread = new BackgroundThread();
         backgroundThread.start();
+    }
+
+    private void gotoSimpleActivity() {
+
+        if (Config.intSelectedMenu != Config.intDashboardScreen) {
+            Config.intSelectedMenu = Config.intDashboardScreen;
+
+            DashboardFragment fragment = DashboardFragment.newInstance();
+            FragmentTransaction transaction = getSupportFragmentManager().
+                    beginTransaction();
+            transaction.replace(R.id.frameLayout, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+
+        refreshDashboardData();
     }
 
     @Override
@@ -169,20 +169,13 @@ public class DashboardActivity extends AppCompatActivity implements
             });
 
             if (Config.intSelectedMenu == Config.intClientScreen) {
-                //Config.intSelectedMenu = 0;
-            /*clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
-            textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-            gotoClient();*/
                 menuClients();
             }
 
             if (Config.intSelectedMenu == Config.intRatingsScreen) {
-            /*Config.intSelectedMenu = 0;
-            feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
-            textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-            gotoFeedback();*/
                 menuFeedback();
             }
+
             App42API.setLoggedInUser(Config.providerModel.getStrEmail());
 
             appCompatActivity = DashboardActivity.this;
@@ -195,8 +188,6 @@ public class DashboardActivity extends AppCompatActivity implements
                 textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
                 gotoSimpleActivity();
-
-                refreshData();
             }
 
 
@@ -205,28 +196,27 @@ public class DashboardActivity extends AppCompatActivity implements
         }
     }
 
-    public void menuDashboard() {
+    private void menuDashboard() {
         setMenu();
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
         textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        //Config.intSelectedMenu = 0;
+        Config.intSelectedMenu = 0;
         gotoSimpleActivity();
-        //refreshData();
     }
 
-    public void menuClients() {
+    private void menuClients() {
         setMenu();
         clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
         textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        //Config.intSelectedMenu = 0;
+        Config.intSelectedMenu = 0;
         gotoClient();
     }
 
-    public void menuFeedback() {
+    private void menuFeedback() {
         setMenu();
         feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
         textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        //Config.intSelectedMenu = 0;
+        Config.intSelectedMenu = 0;
         gotoFeedback();
     }
 
@@ -309,7 +299,7 @@ public class DashboardActivity extends AppCompatActivity implements
     public void onBackPressed() {
     }
 
-    private void refreshData() {
+    private void refreshDashboardData() {
 
         if (utils.isConnectingToInternet()) {
 
@@ -326,7 +316,7 @@ public class DashboardActivity extends AppCompatActivity implements
             Config.dependentModels.clear();
             Config.customerModels.clear();
 
-            Config.clientModels.clear();
+            //Config.clientModels.clear();
             Config.clientNames.clear();
             Config.feedBackModels.clear();
 
@@ -341,29 +331,41 @@ public class DashboardActivity extends AppCompatActivity implements
 
             Date date = calendar.getTime();
 
-            /*String strDay = String.valueOf(day);
-
-            if (day <= 9)
-                strDay = "0" + strDay;
-
-            String strDate = strDay + "-" + Config.months[month] + "-" + String.valueOf(year);*/
-
             DashboardFragment.strEndDate = Utils.writeFormatDateDB.format(date) + "T23:59:59.999+0000";
             DashboardFragment.strStartDate = Utils.writeFormatDateDB.format(date) + "T00:00:00.000+0000";
 
             DashboardFragment.strDate = Utils.writeFormatDate.format(date);
 
+            Config.intSelectedMenu = Config.intDashboardScreen;
 
-            //appUtils.fetchClients(loadingPanel);
-            appUtils.fetchActivities(loadingPanel);
+            appUtils.fetchActivities();
 
         } else {
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }
 
-    public void gotoClient() {
-        // if (Config.intSelectedMenu != Config.intClientScreen) {
+    private void refreshClientsData() {
+
+        if (utils.isConnectingToInternet()) {
+
+            loadingPanel.setVisibility(View.VISIBLE);
+
+            Config.dependentIds.clear();
+            Config.customerIds.clear();
+
+            Config.intSelectedMenu = Config.intClientScreen;
+
+            appUtils.fetchClients();
+
+        } else {
+            utils.toast(2, 2, getString(R.string.warning_internet));
+        }
+    }
+
+
+    private void gotoClient() {
+        if (Config.intSelectedMenu != Config.intClientScreen) {
             Config.intSelectedMenu = Config.intClientScreen;
 
             ClientFragment fragment = ClientFragment.newInstance();
@@ -373,28 +375,29 @@ public class DashboardActivity extends AppCompatActivity implements
             transaction.replace(R.id.frameLayout, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
-        //}
+
+            refreshClientsData();
+        }
     }
 
-    public void gotoFeedback() {
+    private void gotoFeedback() {
 
-        //if (Config.intSelectedMenu != Config.intRatingsScreen) {
-        Config.intSelectedMenu = Config.intRatingsScreen;
+        if (Config.intSelectedMenu != Config.intRatingsScreen) {
+            Config.intSelectedMenu = Config.intRatingsScreen;
 
-        RatingsFragment fragment = RatingsFragment.newInstance();
+            RatingsFragment fragment = RatingsFragment.newInstance();
             Bundle args = new Bundle();
             fragment.setArguments(args);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.frameLayout, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
-        // }
+        }
     }
 
     @Override
     public void networkAvailable() {
         net_error_layout.setVisibility(View.GONE);
-        refreshData();
     }
 
     @Override
@@ -418,6 +421,10 @@ public class DashboardActivity extends AppCompatActivity implements
             if (Config.intSelectedMenu == Config.intMileStoneScreen) {
                 MileStoneFragment.milestoneModels = Config.milestoneModels;
                 MileStoneFragment.mAdapter.notifyDataSetChanged();
+            }
+
+            if (Config.intSelectedMenu == Config.intClientScreen) {
+                ClientFragment.prepareListData();
             }
 
             loadingPanel.setVisibility(View.GONE);

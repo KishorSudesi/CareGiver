@@ -1,6 +1,5 @@
 package com.hdfc.caregiver.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -8,9 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +15,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hdfc.caregiver.CreatingTaskActivity;
 import com.hdfc.caregiver.FeatureActivity;
@@ -31,8 +27,6 @@ import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -42,8 +36,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
          SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnListItemClickListener,
         SlideAndDragListView.OnItemDeleteListener {
 
-    private static final String TAG = "";
-    private static final int PICK_CONTACT = 979;
+    //private static final int PICK_CONTACT = 979;
     public static ArrayList<ActivityModel> activityModels = Config.activityModels;
     private static MultiBitmapLoader multiBitmapLoader;
     private static Utils utils;
@@ -114,7 +107,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                     cvh.imageTiming.setText("");
                 }
 
-                Utils.log(activityModel.getStrDependentID(), " IMG ");
+                //Utils.log(activityModel.getStrDependentID(), " IMG ");
 
                 File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(activityModel.getStrDependentID().trim()));
 
@@ -138,9 +131,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
     };
     private Menu mMenu;
     private SlideAndDragListView<ApplicationInfo> mListView;
-    private JSONObject responseJSONDoc, responseProvider;
-    private JSONObject responseJSONDocCarla;
-    private ProgressDialog progressDialog;
 
     public static SimpleActivityFragment newInstance() {
         return new SimpleActivityFragment();
@@ -158,7 +148,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         View view = inflater.inflate(R.layout.fragment_simple_activity, container, false);
 
         initMenu();
-        progressDialog = new ProgressDialog(getActivity());
+        //progressDialog = new ProgressDialog(getActivity());
         utils = new Utils(getActivity());
         multiBitmapLoader = new MultiBitmapLoader(getActivity());
 
@@ -271,32 +261,27 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     @Override
     public void onListItemLongClick(View view, int position) {
-        Log.i(TAG, "onListItemLongClick   " + position);
     }
 
     @Override
     public void onDragViewStart(int position) {
-        Log.i(TAG, "onDragViewStart   " + position);
+
     }
 
     @Override
     public void onDragViewMoving(int position) {
-        Log.i("yuyidong", "onDragViewMoving   " + position);
     }
 
     @Override
     public void onDragViewDown(int position) {
-        Log.i(TAG, "onDragViewDown   " + position);
     }
 
     @Override
     public void onSlideOpen(View view, View parentView, int position, int direction) {
-        Log.i(TAG, "onSlideOpen   " + position);
     }
 
     @Override
     public void onSlideClose(View view, View parentView, int position, int direction) {
-        Log.i(TAG, "onSlideClose   " + position);
     }
 
     @Override
@@ -359,34 +344,47 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                 switch (buttonPosition) {
                     case 0:
 
-                        int iPosition3 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
-                        String strNo4 = Config.dependentModels.get(iPosition3).getStrAddress();
-                        Toast.makeText(getContext(), strNo4, Toast.LENGTH_LONG).show();
+                       /* int iPosition3 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
+                        String strNo4 = Config.dependentModels.get(iPosition3).getStrAddress();*/
+                        //Toast.makeText(getContext(), strNo4, Toast.LENGTH_LONG).show();
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
                         Intent sendIntent = new Intent(Intent.ACTION_VIEW);
 
                         int iPosition = Config.dependentIds.indexOf(activityModel.getStrDependentID());
-                        String strNo2 = Config.dependentModels.get(iPosition).getStrContacts();
 
-                        sendIntent.putExtra("sms_body", activityModel != null ? activityModel.getStrActivityName() : "Activity Name");
-                        sendIntent.putExtra("address", activityModel != null ? strNo2 : "0000000000");
-                        sendIntent.setType("vnd.android-dir/mms-sms");
-                        startActivity(sendIntent);
+                        String strNo2 = "";
+
+                        if (iPosition > -1)
+                            strNo2 = Config.dependentModels.get(iPosition).getStrContacts();
+
+                        if (!strNo2.equalsIgnoreCase("")) {
+
+                            sendIntent.putExtra("sms_body", activityModel.getStrActivityName());
+                            sendIntent.putExtra("address", strNo2);
+                            sendIntent.setType("vnd.android-dir/mms-sms");
+                            startActivity(sendIntent);
+                        }
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
 
                         int iPosition2 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
-                        String strNo3 = Config.dependentModels.get(iPosition2).getStrContacts();
 
-                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                        String strNo1 = "tel:" + String.valueOf(activityModel != null ? strNo3 : "0000000000");
-                        callIntent.setData(Uri.parse(strNo1));
-                        startActivity(callIntent);
+                        String strNo3 = "";
+
+                        if (iPosition2 > -1)
+                            strNo3 = Config.dependentModels.get(iPosition2).getStrContacts();
+
+                        if (!strNo3.equalsIgnoreCase("")) {
+                            Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                            String strNo1 = "tel:" + String.valueOf(strNo3);
+                            callIntent.setData(Uri.parse(strNo1));
+                            startActivity(callIntent);
+                        }
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:
-                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                        startActivityForResult(intent, PICK_CONTACT);
+                        /*Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, PICK_CONTACT);*/
 
                         return Menu.ITEM_SCROLL_BACK;
                 }
