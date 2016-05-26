@@ -2,7 +2,6 @@ package com.hdfc.caregiver.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -130,9 +129,8 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         }
     };
     private Menu mMenu;
-    private SlideAndDragListView<ApplicationInfo> mListView;
 
-    public static SimpleActivityFragment newInstance() {
+    static SimpleActivityFragment newInstance() {
         return new SimpleActivityFragment();
     }
 
@@ -167,7 +165,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
             }
         });
 
-        mListView = (SlideAndDragListView) view.findViewById(R.id.listViewEdit);
+        SlideAndDragListView mListView = (SlideAndDragListView) view.findViewById(R.id.listViewEdit);
 
         mListView.setMenu(mMenu);
         mListView.setAdapter(mAdapter);
@@ -286,7 +284,6 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     @Override
     public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
-        //todo add string
         switch (direction) {
             case MenuItem.DIRECTION_LEFT:
                 switch (buttonPosition) {
@@ -312,11 +309,11 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
 
                             if (!activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("completed")) {
-                                /*ActivityModel obj = activityModels.get(itemPosition);
+                                ActivityModel obj = activityModels.get(itemPosition);
                                 Intent intent = new Intent(getActivity(), FeatureActivity.class);
                                 args.putSerializable("ACTIVITY", obj);
                                 intent.putExtras(args);
-                                startActivity(intent);*/
+                                startActivity(intent);
                             } else {
                                 utils.toast(2, 2, "Activity is Closed");
                             }

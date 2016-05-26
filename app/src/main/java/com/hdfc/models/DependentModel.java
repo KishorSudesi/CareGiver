@@ -144,8 +144,6 @@ public class DependentModel {
         this.activityModels = activityModels;
     }*/
 
-    //todo get and set provider ids array if required
-
     public void setActivityModels(ActivityModel activityModel) {
         this.activityModels.add(activityModel);
     }

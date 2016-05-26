@@ -67,7 +67,7 @@ public class MultiBitmapLoader {
     private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
         if (imageView != null) {
             final Drawable drawable = imageView.getDrawable();
-            if (drawable instanceof AsyncDrawable) {//TODO check this
+            if (drawable instanceof AsyncDrawable) {
                 final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
                 return asyncDrawable.getBitmapWorkerTask();
             }

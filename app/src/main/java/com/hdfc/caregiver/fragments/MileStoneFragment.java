@@ -2,7 +2,6 @@ package com.hdfc.caregiver.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -129,7 +128,6 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
         }
     };
     private Menu mMenu;
-    private SlideAndDragListView<ApplicationInfo> mListView;
 
     public MileStoneFragment() {
         // Required empty public constructor
@@ -163,7 +161,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
             }
         });
 
-        mListView = (SlideAndDragListView) view.findViewById(R.id.listViewEdit);
+        SlideAndDragListView mListView = (SlideAndDragListView) view.findViewById(R.id.listViewEdit);
 
         mListView.setMenu(mMenu);
         mListView.setAdapter(mAdapter);
