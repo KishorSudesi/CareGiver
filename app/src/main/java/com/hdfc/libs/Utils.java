@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hdfc.caregiver.FeatureActivity;
+import com.hdfc.caregiver.Notify;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.Action;
@@ -584,6 +585,18 @@ public class Utils {
 
         return strLastDateMonth;
     }*/
+
+
+    public static void refreshNotifications() {
+
+        if (Notify.listViewActivities != null) {
+
+            // Notify.notificationAdapter = new NotifyAdapter(_ctxt,Config.dependentModels.get(Config.intSelectedDependent).getNotificationModels());
+
+            Notify.listViewActivities.
+                    setAdapter(Notify.notificationAdapter);
+        }
+    }
 
     public void toast(int type, int duration, String message) {
 

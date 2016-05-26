@@ -70,11 +70,13 @@ public class Config {
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
     public static ArrayList<MilestoneViewModel> milestoneModels = new ArrayList<>();
     public static ArrayList<String> dependentIds = new ArrayList<>();
+    public static ArrayList<String> strProviderIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
     public static ArrayList<String> strActivityIds = new ArrayList<>();
     public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
     public static ArrayList<String> customerIdsAdded = new ArrayList<>();
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
+    public static ArrayList<ProviderModel> providerModels = new ArrayList<>();
     public static ArrayList<CustomerModel> customerModels = new ArrayList<>();
     public static ProviderModel providerModel = null;
     public static CustomerModel customerModel = null;

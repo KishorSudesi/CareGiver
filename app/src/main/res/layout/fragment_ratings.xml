@@ -18,28 +18,39 @@
             android:id="@+id/textViewFeedback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/feedback"
-            android:textSize="15sp"
             android:layout_below="@+id/include_ratings_header"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:text="@string/feedback"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/textViewNotify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/include_ratings_header"
+            android:padding="10dp"
+            android:text="@string/menu_notification"
+            android:textSize="15sp" />
+
 
         <ImageView
             android:id="@+id/imageViewLine"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:padding="15dp"
+            android:layout_below="@+id/textViewFeedback"
             android:background="#E0E0E0"
-            android:layout_below="@+id/textViewFeedback"/>
+            android:padding="15dp" />
 
         <TextView
             android:id="@android:id/empty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imageViewLine"
-            android:text="@string/noFeedbacks"
-            android:visibility="gone"
+            android:layout_margin="10dp"
             android:gravity="center"
-            android:layout_margin="10dp"/>
+            android:text="@string/noFeedbacks"
+            android:visibility="gone" />
 
         <ListView
             android:id="@+id/listViewRatings"
