@@ -1,7 +1,6 @@
 package com.hdfc.caregiver;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -36,9 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     public static Utils utils;
     private static String userName;
     private static ProgressDialog progressDialog;
-    private static String strUpdatedDate = "", strDocumentLocal = "", strProviderId = "";
     private AppUtils appUtils;
-    private Context _ctxt;
     private RelativeLayout relLayout;
     private EditText editEmail, editPassword;
     private RelativeLayout layoutLogin;
@@ -54,9 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         editEmail = (EditText) findViewById(R.id.editEmail);
         editPassword = (EditText) findViewById(R.id.editPassword);
         utils = new Utils(LoginActivity.this);
-        _ctxt= LoginActivity.this;
         appUtils = new AppUtils(LoginActivity.this);
-
 
         sharedPreferences = getSharedPreferences(Config.strPreferenceName, MODE_PRIVATE);
 
@@ -176,12 +171,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (utils.isConnectingToInternet()) {
 
                     if (progressDialog != null) {
-                        progressDialog.setMessage(_ctxt.getString(R.string.process_login));
+                        progressDialog.setMessage(getString(R.string.process_login));
                         progressDialog.setCancelable(false);
                         progressDialog.show();
                     }
 
-                    UserService userService = new UserService(_ctxt);
+                    UserService userService = new UserService(LoginActivity.this);
 
                     userService.authenticate(userName, password, new App42CallBack() {
                         @Override
@@ -239,14 +234,14 @@ public class LoginActivity extends AppCompatActivity {
 
                                     utils.toast(2, 2, strMess);
                                 } else
-                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
-                                utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                         }
                     });
-                } else utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                } else utils.toast(2, 2, getString(R.string.warning_internet));
             }
         } //
     }
@@ -288,13 +283,13 @@ public class LoginActivity extends AppCompatActivity {
                                     } else {
                                         if (progressDialog.isShowing())
                                             progressDialog.dismiss();
-                                        utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
+                                        utils.toast(2, 2, getString(R.string.invalid_credentials));
                                     }
 
                                 } else {
                                     if (progressDialog.isShowing())
                                         progressDialog.dismiss();
-                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
                             } catch (Exception e1) {
                                 e1.printStackTrace();
@@ -310,9 +305,9 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 if (e != null) {
                                     Utils.log(e.getMessage(), " Failure ");
-                                    utils.toast(2, 2, _ctxt.getString(R.string.invalid_credentials));
+                                    utils.toast(2, 2, getString(R.string.invalid_credentials));
                                 } else {
-                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
                             } catch (Exception e1) {
                                 e1.printStackTrace();
@@ -326,7 +321,7 @@ public class LoginActivity extends AppCompatActivity {
         if (progressDialog.isShowing())
             progressDialog.dismiss();
 
-        Intent intent = new Intent(_ctxt, DashboardActivity.class);
+        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
         //intent.putExtra("WHICH_SCREEN", intWhichScreen);
         Config.intSelectedMenu = Config.intDashboardScreen;
         startActivity(intent);

@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.hdfc.adapters.RatingsAdapter;
 import com.hdfc.caregiver.MyProfileActivity;
+import com.hdfc.caregiver.Notify;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
@@ -70,6 +71,15 @@ public class RatingsFragment extends Fragment {
         listratings = (ListView) view.findViewById(R.id.listViewRatings);
         textViewName = (TextView) view.findViewById(R.id.name);
         textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
+
+        TextView notification = (TextView) view.findViewById(R.id.textViewNotify);
+        notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), Notify.class);
+                startActivity(intent);
+            }
+        });
 
         layout = (LinearLayout) view.findViewById(R.id.linearLayoutRatings);
 

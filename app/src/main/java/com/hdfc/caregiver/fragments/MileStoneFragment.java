@@ -2,12 +2,10 @@ package com.hdfc.caregiver.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +14,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hdfc.caregiver.CreatingTaskActivity;
 import com.hdfc.caregiver.FeatureActivity;
@@ -41,7 +38,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
         SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnListItemClickListener,
         SlideAndDragListView.OnItemDeleteListener {
 
-    private static final int PICK_CONTACT = 979;
+    //private static final int PICK_CONTACT = 979;
     public static ArrayList<MilestoneViewModel> milestoneModels = Config.milestoneModels;
     private static MultiBitmapLoader multiBitmapLoader;
     private static Utils utils;
@@ -88,12 +85,14 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
                 if (strMessage != null && strMessage.length() > 20)
                     strMessage = milestoneModels.get(position).getStrMileStoneName().substring(0, 18) + "..";
 
-                String strName = milestoneModels.get(position).getStrMileStoneName();
+               /* String strName = milestoneModels.get(position).getStrMileStoneName();
 
                 if (strName.length() > 20)
-                    strName = milestoneModels.get(position).getStrMileStoneName().substring(0, 18) + "..";
+                    strName = milestoneModels.get(position).getStrMileStoneName().substring(0, 18) + "..";*/
 
                 cvh.textMessage.setText(strMessage);
+
+                //Utils.log(milestoneModels.get(position).getStrMilestoneDate(), "DATE  ");
 
                 cvh.textTime.setText(utils.formatDate(milestoneModels.get(position).getStrMilestoneDate()));
 
@@ -107,7 +106,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
                     cvh.imageTiming.setText("");
                 }*/
 
-                Utils.log(milestoneModels.get(position).getStrDependentId(), " IMG ");
+                //Utils.log(milestoneModels.get(position).getStrDependentId(), " IMG MS ");
 
                 File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(milestoneModels.get(position).getStrDependentId()));
 
@@ -129,7 +128,6 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
         }
     };
     private Menu mMenu;
-    private SlideAndDragListView<ApplicationInfo> mListView;
 
     public MileStoneFragment() {
         // Required empty public constructor
@@ -163,7 +161,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
             }
         });
 
-        mListView = (SlideAndDragListView) view.findViewById(R.id.listViewEdit);
+        SlideAndDragListView mListView = (SlideAndDragListView) view.findViewById(R.id.listViewEdit);
 
         mListView.setMenu(mMenu);
         mListView.setAdapter(mAdapter);
@@ -270,7 +268,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
 
         if (milestoneModels != null && milestoneModels.get(itemPosition) != null &&
                 milestoneModels.get(itemPosition).getStrActivityId() != null) {
-            iPosition = Config.activityModels.indexOf(milestoneModels.get(itemPosition).getStrActivityId());
+            iPosition = Config.strActivityIds.indexOf(milestoneModels.get(itemPosition).getStrActivityId());
         }
 
         ActivityModel activityModel = null;
@@ -326,39 +324,56 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
             case MenuItem.DIRECTION_RIGHT:
                 switch (buttonPosition) {
                     case 0:
-                        if (activityModel != null) {
+                      /*  if (activityModel != null) {
                             int iPosition3 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
                             String strNo4 = Config.dependentModels.get(iPosition3).getStrAddress();
                             Toast.makeText(getContext(), strNo4, Toast.LENGTH_LONG).show();
-                        }
+                        }*/
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
                         if (activityModel != null) {
+
                             Intent sendIntent = new Intent(Intent.ACTION_VIEW);
 
-                            int intPosition = Config.dependentIds.indexOf(activityModel.getStrDependentID());
-                            String strNo2 = Config.dependentModels.get(intPosition).getStrContacts();
+                            int iPosition2 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
 
-                            sendIntent.putExtra("sms_body", activityModel != null ? activityModel.getStrActivityName() : "Activity Name");
-                            sendIntent.putExtra("address", activityModel != null ? strNo2 : "0000000000");
-                            sendIntent.setType("vnd.android-dir/mms-sms");
-                            startActivity(sendIntent);
+                            String strNo2 = "";
+
+                            if (iPosition2 > -1)
+                                strNo2 = Config.dependentModels.get(iPosition2).getStrContacts();
+
+                            if (!strNo2.equalsIgnoreCase("")) {
+
+                                sendIntent.putExtra("sms_body", activityModel.getStrActivityName());
+                                sendIntent.putExtra("address", strNo2);
+                                sendIntent.setType("vnd.android-dir/mms-sms");
+                                startActivity(sendIntent);
+                            }
                         }
+
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
                         if (activityModel != null) {
-                            int iPosition2 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
-                            String strNo3 = Config.dependentModels.get(iPosition2).getStrContacts();
 
-                            Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                            String strNo1 = "tel:" + String.valueOf(activityModel != null ? strNo3 : "0000000000");
-                            callIntent.setData(Uri.parse(strNo1));
-                            startActivity(callIntent);
+                            int iPosition3 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
+
+                            String strNo3 = "";
+
+                            if (iPosition3 > -1)
+                                strNo3 = Config.dependentModels.get(iPosition3).getStrContacts();
+
+                            if (!strNo3.equalsIgnoreCase("")) {
+                                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                                String strNo1 = "tel:" + String.valueOf(strNo3);
+                                callIntent.setData(Uri.parse(strNo1));
+                                startActivity(callIntent);
+                            }
                         }
+
                         return Menu.ITEM_SCROLL_BACK;
                     case 3:
-                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                        startActivityForResult(intent, PICK_CONTACT);
+                        /*Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, PICK_CONTACT);*/
 
                         return Menu.ITEM_SCROLL_BACK;
                 }

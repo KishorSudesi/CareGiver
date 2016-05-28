@@ -42,10 +42,13 @@ public class Config {
     public static final Locale locale = Locale.ENGLISH;
 
     public static final String string = Utils.getStringJni();
+
     public static final int iSdkVersion = Build.VERSION.SDK_INT;
     public static final int iAppVersion = BuildConfig.VERSION_CODE;
     public static final String strOs = "android";
+
     public static final String strAppId = "910502819263";
+
     public static final int START_CAMERA_REQUEST_CODE = 1;
     public static final int START_GALLERY_REQUEST_CODE = 2;
     public static final int CACHE_EXPIRE = 1;//In Minutes
@@ -70,11 +73,13 @@ public class Config {
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
     public static ArrayList<MilestoneViewModel> milestoneModels = new ArrayList<>();
     public static ArrayList<String> dependentIds = new ArrayList<>();
+    public static ArrayList<String> strProviderIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
     public static ArrayList<String> strActivityIds = new ArrayList<>();
     public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
     public static ArrayList<String> customerIdsAdded = new ArrayList<>();
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
+    public static ArrayList<ProviderModel> providerModels = new ArrayList<>();
     public static ArrayList<CustomerModel> customerModels = new ArrayList<>();
     public static ProviderModel providerModel = null;
     public static CustomerModel customerModel = null;
@@ -90,6 +95,7 @@ public class Config {
     public static ArrayList<String> strServcieIds = new ArrayList<>();
     public static ArrayList<ServiceModel> serviceModels = new ArrayList<>();
     public static ArrayList<String> servicelist = new ArrayList<>();
+
     public static ArrayList<String> strDependentNames = new ArrayList<>();
     public static ArrayList<String> strCustomerNames = new ArrayList<>();
 
