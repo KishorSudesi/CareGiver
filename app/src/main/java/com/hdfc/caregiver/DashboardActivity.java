@@ -80,16 +80,16 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void gotoSimpleActivity() {
 
-        if (Config.intSelectedMenu != Config.intDashboardScreen) {
+        /*if (Config.intSelectedMenu != Config.intDashboardScreen) {
+*/
             Config.intSelectedMenu = Config.intDashboardScreen;
-
             DashboardFragment fragment = DashboardFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().
                     beginTransaction();
             transaction.replace(R.id.frameLayout, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
-        }
+        //}
 
         refreshDashboardData();
     }
@@ -200,7 +200,7 @@ public class DashboardActivity extends AppCompatActivity implements
         setMenu();
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
         textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        Config.intSelectedMenu = 0;
+        //Config.intSelectedMenu = 0;
         gotoSimpleActivity();
     }
 
@@ -208,7 +208,7 @@ public class DashboardActivity extends AppCompatActivity implements
         setMenu();
         clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
         textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        Config.intSelectedMenu = 0;
+        //Config.intSelectedMenu = 0;
         gotoClient();
     }
 
@@ -216,7 +216,7 @@ public class DashboardActivity extends AppCompatActivity implements
         setMenu();
         feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
         textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        Config.intSelectedMenu = 0;
+        //Config.intSelectedMenu = Config.intRatingsScreen;
         gotoFeedback();
     }
 
@@ -365,9 +365,9 @@ public class DashboardActivity extends AppCompatActivity implements
 
 
     private void gotoClient() {
-        if (Config.intSelectedMenu != Config.intClientScreen) {
+        /*if (Config.intSelectedMenu != Config.intClientScreen) {
+            Config.intSelectedMenu = Config.intClientScreen;*/
             Config.intSelectedMenu = Config.intClientScreen;
-
             ClientFragment fragment = ClientFragment.newInstance();
             Bundle args = new Bundle();
             fragment.setArguments(args);
@@ -377,12 +377,12 @@ public class DashboardActivity extends AppCompatActivity implements
             transaction.commit();
 
             refreshClientsData();
-        }
+        //}
     }
 
     private void gotoFeedback() {
 
-        if (Config.intSelectedMenu != Config.intRatingsScreen) {
+        //if (Config.intSelectedMenu != Config.intRatingsScreen) {
             Config.intSelectedMenu = Config.intRatingsScreen;
 
             RatingsFragment fragment = RatingsFragment.newInstance();
@@ -392,7 +392,7 @@ public class DashboardActivity extends AppCompatActivity implements
             transaction.replace(R.id.frameLayout, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
-        }
+        //}
     }
 
     @Override

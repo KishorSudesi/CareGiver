@@ -626,6 +626,7 @@ public class Utils {
             toast.show();
         } catch (Exception e) {
             e.printStackTrace();
+            log(" 1 ", " 1 ");
             Toast.makeText(_ctxt, message, Toast.LENGTH_SHORT).show();
         }
     }

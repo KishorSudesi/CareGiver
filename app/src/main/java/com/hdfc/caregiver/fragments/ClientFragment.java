@@ -35,20 +35,27 @@ public class ClientFragment extends Fragment {
     }
 
     public static void prepareListData() {
-        listDataHeader = new ArrayList<>();
-        listDataChild = new HashMap<>();
+        try {
+            listDataHeader = new ArrayList<>();
+            listDataChild = new HashMap<>();
 
-        if (expListView != null) {
+            if (expListView != null) {
 
-            listDataHeader.clear();
-            listDataChild.clear();
+                listDataHeader.clear();
+                listDataChild.clear();
 
-            for (ClientModel clientModel : Config.clientModels) {
-                listDataHeader.add(clientModel.getCustomerModel());
-                //Utils.log(String.valueOf(clientModel.getCustomerModel().getStrAddress()), " 1 ");
-                listDataChild.put(clientModel.getCustomerModel(), clientModel.getDependentModels());
+                if (Config.clientModels != null && Config.clientModels.size() > 0) {
+
+                    for (ClientModel clientModel : Config.clientModels) {
+                        listDataHeader.add(clientModel.getCustomerModel());
+                        //Utils.log(String.valueOf(clientModel.getCustomerModel().getStrAddress()), " 1 ");
+                        listDataChild.put(clientModel.getCustomerModel(), clientModel.getDependentModels());
+                    }
+                    listAdapter.notifyDataSetChanged();
+                }
             }
-            listAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

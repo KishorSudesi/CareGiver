@@ -272,10 +272,7 @@ public class MyProfileActivity extends AppCompatActivity {
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MyProfileActivity.this,DashboardActivity.class);
-                //intent.putExtra("WHICH_SCREEN", intWhichScreen);
-                Config.intSelectedMenu=Config.intRatingsScreen;
-                startActivity(intent);
+                goBack();
             }
         });
 
@@ -329,6 +326,13 @@ public class MyProfileActivity extends AppCompatActivity {
 
         mProgress.setMessage(getResources().getString(R.string.loading));
         mProgress.show();
+    }
+
+    private void goBack() {
+        Intent intent = new Intent(MyProfileActivity.this, DashboardActivity.class);
+        Config.intSelectedMenu = Config.intRatingsScreen;
+        startActivity(intent);
+        finish();
     }
 
     public void checkImage() {
@@ -525,6 +529,12 @@ public class MyProfileActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             utils.toast(2, 2, getString(R.string.error));
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();]
+        goBack();
     }
 
     public class BackgroundThreadHandler extends Handler {
