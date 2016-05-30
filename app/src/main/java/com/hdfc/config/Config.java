@@ -90,6 +90,8 @@ public class Config {
     public static int intSelectedMenu = 0;
     public static int intSelectedDependent = 0;
     public static ArrayList<ClientModel> clientModels = new ArrayList<>();
+
+
     public static ArrayList<ClientName> clientNames = new ArrayList<>();
     public static boolean boolIsLoggedIn = false;
     public static double iRatings = 0;

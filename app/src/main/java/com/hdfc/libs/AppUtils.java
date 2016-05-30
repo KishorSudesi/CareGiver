@@ -196,7 +196,6 @@ public class AppUtils {
 
                             @Override
                             public void onSuccess(Object o) {
-
                                 try {
                                     if (o != null) {
 
@@ -245,13 +244,15 @@ public class AppUtils {
                 final Query query = QueryBuilder.build("_id", Config.customerIds,
                         QueryBuilder.Operator.INLIST);
 
-                storageService.findDocsByQuery(Config.collectionCustomer, query, new App42CallBack() {
+                storageService.findDocsByQuery(Config.collectionCustomer, query,
+                        new App42CallBack() {
 
                             @Override
                             public void onSuccess(Object o) {
                                 try {
 
                                     if (o != null) {
+
                                         //Utils.log(o.toString(), " fetchCustomers ");
                                         Storage storage = (Storage) o;
 
@@ -371,10 +372,9 @@ public class AppUtils {
                         }
                     }
                 }
+                ///
 
                 Config.dependentIdsAdded.add(strDocumentId);
-
-                System.out.println("YYYYYEEEEEEEE : "+dependentModel.getStrName());
 
                 Config.dependentModels.add(dependentModel);
 

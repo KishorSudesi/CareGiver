@@ -44,6 +44,7 @@ public class ClientFragment extends Fragment {
                 listDataHeader.clear();
                 listDataChild.clear();
 
+
                 if (Config.clientModels != null && Config.clientModels.size() > 0) {
 
                     for (ClientModel clientModel : Config.clientModels) {
