@@ -69,6 +69,7 @@ public class Config {
     public static int intMileStoneScreen = 4;
     public static int intScreenWidth = 0;
     public static int intScreenHeight = 0;
+    public static int intNotificationScreen = 2;
     //public static ArrayList<FileModel> fileModels = new ArrayList<>();
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
     public static ArrayList<MilestoneViewModel> milestoneModels = new ArrayList<>();
@@ -78,6 +79,7 @@ public class Config {
     public static ArrayList<String> strActivityIds = new ArrayList<>();
     public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
     public static ArrayList<String> customerIdsAdded = new ArrayList<>();
+    public static ArrayList<String> strNotificationIds = new ArrayList<>();
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
     public static ArrayList<ProviderModel> providerModels = new ArrayList<>();
     public static ArrayList<CustomerModel> customerModels = new ArrayList<>();
@@ -86,6 +88,7 @@ public class Config {
     public static DependentModel dependentModel = null;
     public static JSONObject jsonObject = null;
     public static int intSelectedMenu = 0;
+    public static int intSelectedDependent = 0;
     public static ArrayList<ClientModel> clientModels = new ArrayList<>();
     public static ArrayList<ClientName> clientNames = new ArrayList<>();
     public static boolean boolIsLoggedIn = false;

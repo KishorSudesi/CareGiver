@@ -29,11 +29,15 @@ public class NotifyAdapter extends BaseAdapter {
     private Utils utils;
     private MultiBitmapLoader multiBitmapLoader;
 
-    public NotifyAdapter(Context ctxt, ArrayList d) {
+    public NotifyAdapter(Context ctxt, ArrayList<NotificationModel> d) {
         _context = ctxt;
         adapterNotificationModels = d;
         utils = new Utils(ctxt);
         multiBitmapLoader = new MultiBitmapLoader(ctxt);
+    }
+
+    public NotifyAdapter(){
+        System.out.println("Trial");
     }
 
     @Override
@@ -77,7 +81,7 @@ public class NotifyAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        if (adapterNotificationModels.size() > 0) {
+      //  if (adapterNotificationModels.size() > 0) {
 
             NotificationModel notificationModel = adapterNotificationModels.get(position);
 
@@ -85,12 +89,13 @@ public class NotifyAdapter extends BaseAdapter {
 
             String strName = "";
 
-            viewHolder.textViewText.setText(notificationModel.getStrMessage());
+            viewHolder.textViewText.setText("Rushi created activity");
 
             if (notificationModel.getStrCreatedByType().equalsIgnoreCase("provider")) {
                 if (Config.strProviderIds.contains(strId)) {
                     strName = Config.providerModels.get(Config.strProviderIds.
                             indexOf(strId)).getStrName();
+                    System.out.println("Brilliant Person : "+strName);
                 }
             }
 
@@ -112,12 +117,12 @@ public class NotifyAdapter extends BaseAdapter {
                         _context.getResources().getString(R.string.space) +
                         utils.formatDate(strDate);
 
-                viewHolder.textViewTime.setText(strDisplayDate);
+                viewHolder.textViewTime.setText("12.23 AM");
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            viewHolder.textViewName.setText(strName);
+            viewHolder.textViewName.setText("Rushikesh Belavalekar");
 
             try {
                 File f = utils.getInternalFileImages(utils.replaceSpace(strId));
@@ -132,7 +137,7 @@ public class NotifyAdapter extends BaseAdapter {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+    //    }
 
         return convertView;
     }
