@@ -237,23 +237,23 @@ public class AppUtils {
     }
 
     private void fetchCustomers(final int iFlag) {
-
+        System.out.println("rushiiiiiiiiiiiiiiiiiiiiii");
         if (Config.customerIds.size() > 0) {
-
+            System.out.println("rushiiiiiiiiiiiiiiiiiiiiii22");
             if (utils.isConnectingToInternet()) {
 
                 final Query query = QueryBuilder.build("_id", Config.customerIds,
                         QueryBuilder.Operator.INLIST);
-
+                System.out.println("rushiiiiiiiiiiiiiiiiiiiiii33" + Config.customerIds);
                 storageService.findDocsByQuery(Config.collectionCustomer, query,
                         new App42CallBack() {
 
                             @Override
                             public void onSuccess(Object o) {
                                 try {
-
+                                    System.out.println("rushiiiiiiiiiiiiiiiiiiiiii44");
                                     if (o != null) {
-
+                                        System.out.println("rushiiiiiiiiiiiiiiiiiiiiii55");
                                         //Utils.log(o.toString(), " fetchCustomers ");
                                         Storage storage = (Storage) o;
 
@@ -481,11 +481,12 @@ public class AppUtils {
                             jsonObject.getString("customer_contact_no"),
                             strDocumentId);
 
-                    if (iFlag == 2) {
+                    //if (iFlag == 2) {
                         ClientModel clientModel = new ClientModel();
                         clientModel.setCustomerModel(customerModel);
                         Config.clientModels.add(clientModel);
-                    }
+                    System.out.println("shriiiiiiiiiiiiiiiiiii" + Config.clientModels);
+                    // }
 
                     ClientName clientName = new ClientName();
                     clientName.setStrCustomerName(jsonObject.getString("customer_name"));
@@ -530,7 +531,7 @@ public class AppUtils {
                     }
 
                 } else {
-                    if (iFlag == 2) {
+                    // if (iFlag == 2) {
 
                         int iPosition = Config.strCustomerNames.indexOf(jsonObject.getString("customer_name"));
 
@@ -540,8 +541,9 @@ public class AppUtils {
                             ClientModel clientModel = new ClientModel();
                             clientModel.setCustomerModel(customerModel);
                             Config.clientModels.add(clientModel);
+
                         }
-                    }
+                    // }
                 }
             }
         } catch (JSONException e) {
@@ -1764,7 +1766,7 @@ public class AppUtils {
     public void fetchClients() {
 
         if (utils.isConnectingToInternet()) {
-
+            fetchCustomers(2);
             StorageService storageService = new StorageService(_ctxt);
 
             Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),

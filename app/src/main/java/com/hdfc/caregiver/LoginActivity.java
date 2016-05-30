@@ -275,9 +275,8 @@ public class LoginActivity extends AppCompatActivity {
                                         editor.putString("PROVIDER_ID", AESCrypt.encrypt(
                                                 Config.string, _strProviderId));
                                         editor.apply();
-
                                         appUtils.createProviderModel(strDocument, _strProviderId);
-
+                                        Config.providerModel.setStrProviderId(_strProviderId);
                                         goToDashboard();
 
                                     } else {

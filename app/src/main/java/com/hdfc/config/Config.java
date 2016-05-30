@@ -87,6 +87,8 @@ public class Config {
     public static JSONObject jsonObject = null;
     public static int intSelectedMenu = 0;
     public static ArrayList<ClientModel> clientModels = new ArrayList<>();
+
+
     public static ArrayList<ClientName> clientNames = new ArrayList<>();
     public static boolean boolIsLoggedIn = false;
     public static double iRatings = 0;
