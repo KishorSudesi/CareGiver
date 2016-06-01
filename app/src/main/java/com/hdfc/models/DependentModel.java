@@ -30,12 +30,6 @@ public class DependentModel {
     private String strDependentID;
     private String strCustomerID;
 
-    private String[] strProviderIds;
-
-    private ArrayList<ServiceModel> serviceModels = new ArrayList<>();
-    private ArrayList<ActivityModel> activityModels = new ArrayList<>();
-    private ArrayList<NotificationModel> notificationModels = new ArrayList<>();
-
     public DependentModel() {
     }
 
@@ -58,7 +52,6 @@ public class DependentModel {
         this.intHealthHeartRate = intHealthHeartRate;
         this.strDependentID = strDependentID;
         this.strCustomerID = strCustomerID;
-        this.serviceModels = serviceModels;
     }
 
 
@@ -77,15 +70,6 @@ public class DependentModel {
         this.strImageUrl = strImageUrl;
         this.strDependentID = strDependentID;
         this.strCustomerID = strCustomerID;
-    }
-
-
-    public String[] getStrProviderIds() {
-        return strProviderIds;
-    }
-
-    public void setStrProviderIds(String[] strProviderIds) {
-        this.strProviderIds = strProviderIds;
     }
 
     public String getStrCountry() {
@@ -126,26 +110,6 @@ public class DependentModel {
 
     public void setStrDob(String strDob) {
         this.strDob = strDob;
-    }
-
-    public void setActivityModels(ArrayList<ActivityModel> activityModels) {
-        this.activityModels = activityModels;
-    }
-
-    public void setNotificationModels(ArrayList<NotificationModel> notificationModels) {
-        this.notificationModels = notificationModels;
-    }
-
-    public ArrayList<ActivityModel> getActivityModels() {
-        return activityModels;
-    }
-
-    /*public void setActivityModels(ArrayList<ActivityModel> activityModels) {
-        this.activityModels = activityModels;
-    }*/
-
-    public void setActivityModels(ActivityModel activityModel) {
-        this.activityModels.add(activityModel);
     }
 
     public String getStrName() {
@@ -258,25 +222,5 @@ public class DependentModel {
 
     public void setStrCustomerID(String strCustomerID) {
         this.strCustomerID = strCustomerID;
-    }
-
-    public ArrayList<ServiceModel> getServiceModels() {
-        return serviceModels;
-    }
-
-    public void setServiceModels(ArrayList<ServiceModel> serviceModels) {
-        this.serviceModels = serviceModels;
-    }
-
-    public void setServiceModel(ServiceModel serviceModel) {
-        this.serviceModels.add(serviceModel);
-    }
-
-    public ArrayList<NotificationModel> getNotificationModels() {
-        return notificationModels;
-    }
-
-    public void setNotificationModels(NotificationModel notificationModels) {
-        this.notificationModels.add(notificationModels);
     }
 }

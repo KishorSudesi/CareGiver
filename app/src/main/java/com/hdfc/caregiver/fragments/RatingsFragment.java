@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.hdfc.adapters.RatingsAdapter;
 import com.hdfc.caregiver.MyProfileActivity;
-import com.hdfc.caregiver.Notify;
+import com.hdfc.caregiver.NotificationActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
@@ -76,7 +76,7 @@ public class RatingsFragment extends Fragment {
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Notify.class);
+                Intent intent = new Intent(getActivity(), NotificationActivity.class);
                 startActivity(intent);
             }
         });

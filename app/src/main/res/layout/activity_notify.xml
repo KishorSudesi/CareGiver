@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.hdfc.caregiver.Notify">
+    android:background="@color/background"
+    android:orientation="vertical">
 
-    <include
-        android:id="@+id/header"
-        layout="@layout/header_activities" />
+    <TextView
+        android:id="@+id/textViewMyProfileEmail"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/header_gradient"
+        android:gravity="center_vertical"
+        android:padding="@dimen/padding_general"
+        android:text="@string/menu_notification"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/white" />
 
     <ListView
         android:id="@+id/listViewActivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/header"/>
+        android:layout_below="@+id/textViewMyProfileEmail" />
 
     <TextView
         android:id="@android:id/empty"
@@ -26,6 +30,5 @@
         android:layout_alignTop="@+id/listViewActivity"
         android:gravity="center"
         android:text="@string/no_notifications" />
-
 
 </RelativeLayout>

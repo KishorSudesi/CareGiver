@@ -112,7 +112,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".Notify"></activity>
+        <activity android:name=".NotificationActivity"></activity>
     </application>
 
 </manifest>

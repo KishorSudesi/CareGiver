@@ -21,7 +21,7 @@ import java.util.ArrayList;
 /**
  * Created by Sudesi infotech on 5/26/2016.
  */
-public class NotifyAdapter extends BaseAdapter {
+public class NotificationAdapter extends BaseAdapter {
 
     private LayoutInflater inflater = null;
     private Context _context;
@@ -29,15 +29,11 @@ public class NotifyAdapter extends BaseAdapter {
     private Utils utils;
     private MultiBitmapLoader multiBitmapLoader;
 
-    public NotifyAdapter(Context ctxt, ArrayList<NotificationModel> d) {
+    public NotificationAdapter(Context ctxt, ArrayList<NotificationModel> d) {
         _context = ctxt;
         adapterNotificationModels = d;
         utils = new Utils(ctxt);
         multiBitmapLoader = new MultiBitmapLoader(ctxt);
-    }
-
-    public NotifyAdapter(){
-        System.out.println("Trial");
     }
 
     @Override
@@ -81,48 +77,45 @@ public class NotifyAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-      //  if (adapterNotificationModels.size() > 0) {
+        if (adapterNotificationModels.size() > 0) {
 
-            NotificationModel notificationModel = adapterNotificationModels.get(position);
-
-            String strId = notificationModel.getStrCreatedByID();
+            String strId = adapterNotificationModels.get(position).getStrCreatedByID();
 
             String strName = "";
 
-            viewHolder.textViewText.setText("Rushi created activity");
+            viewHolder.textViewText.setText(adapterNotificationModels.get(position).getStrMessage());
 
-            if (notificationModel.getStrCreatedByType().equalsIgnoreCase("provider")) {
-                if (Config.strProviderIds.contains(strId)) {
-                    strName = Config.providerModels.get(Config.strProviderIds.
-                            indexOf(strId)).getStrName();
-                    System.out.println("Brilliant Person : "+strName);
-                }
+            if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("provider")) {
+                strName = Config.providerModel.getStrName();
             }
 
-            if (notificationModel.getStrCreatedByType().equalsIgnoreCase("dependent")) {
-                if (Config.dependentIds.contains(strId)) {
-                    strName = Config.dependentModels.get(Config.dependentIds.
+            if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("dependent")) {
+                if (Config.dependentIdsAdded.contains(strId)) {
+                    strName = Config.dependentModels.get(Config.dependentIdsAdded.
                             indexOf(strId)).getStrName();
                 }
             }
 
-            if (notificationModel.getStrCreatedByType().equalsIgnoreCase("customer")) {
-                strName = Config.customerModel.getStrName();
+            if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("customer")) {
+                if (Config.customerIdsAdded.contains(strId)) {
+                    strName = Config.customerModels.get(Config.customerIdsAdded.
+                            indexOf(strId)).getStrName();
+                }
             }
 
             try {
-                String strDate = notificationModel.getStrDateTime();
+                String strDate = adapterNotificationModels.get(position).getStrDateTime();
                 String strDisplayDate = _context.getResources().getString(R.string.space) +
                         _context.getResources().getString(R.string.at) +
                         _context.getResources().getString(R.string.space) +
                         utils.formatDate(strDate);
 
-                viewHolder.textViewTime.setText("12.23 AM");
+                viewHolder.textViewTime.setText(strDisplayDate);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            viewHolder.textViewName.setText("Rushikesh Belavalekar");
+            viewHolder.textViewName.setText(strName);
 
             try {
                 File f = utils.getInternalFileImages(utils.replaceSpace(strId));
@@ -137,12 +130,12 @@ public class NotifyAdapter extends BaseAdapter {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-    //    }
+        }
 
         return convertView;
     }
 
-    public class ViewHolder {
+    private static class ViewHolder {
         TextView textViewName;
         TextView textViewText;
         TextView textViewTime;

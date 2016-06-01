@@ -1,11 +1,9 @@
 package com.hdfc.libs;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,22 +30,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hdfc.adapters.NotifyAdapter;
-import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.FeatureActivity;
-import com.hdfc.caregiver.Notify;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.Action;
 import com.hdfc.models.NotificationModel;
-import com.shephertz.app42.paas.sdk.android.App42Exception;
-import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +57,6 @@ import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -576,16 +566,6 @@ public class Utils {
         return file;
     }
 
-    public static void refreshNotifications() {
-
-        if (Notify.listViewActivities != null) {
-
-            Notify.notificationAdapter = new NotifyAdapter(_ctxt, Config.dependentModels.get(Config.intSelectedDependent).getNotificationModels());
-
-            Notify.listViewActivities.setAdapter(Notify.notificationAdapter);
-        }
-    }
-
    /* public String getMonthLastDate(String strFromDate) {
 
         String strLastDateMonth = "";
@@ -611,179 +591,9 @@ public class Utils {
 
         return strLastDateMonth;
     }*/
-   public void populateHeaderDependents(final LinearLayout dynamicUserTab,
-                                        final int intWhichScreen) {
 
-       int tabWidth;
-       //calculate tab width according to screen width so that no. of tabs will fit to screen
-       int screenSize = _ctxt.getResources().getConfiguration().screenLayout &
-               Configuration.SCREENLAYOUT_SIZE_MASK;
 
-       switch (screenSize) {
-           case Configuration.SCREENLAYOUT_SIZE_LARGE:
-               tabWidth = (Config.intScreenWidth - 24) / 3;
-               break;
-           case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-               tabWidth = (Config.intScreenWidth - 18) / 2;
-               break;
-           case Configuration.SCREENLAYOUT_SIZE_SMALL:
-               tabWidth = Config.intScreenWidth - 50;
-               break;
-           default:
-               tabWidth = 100;
-       }
 
-       dynamicUserTab.removeAllViews();
-
-       Config.intSelectedDependent = 0;
-
-       loadDependentData(intWhichScreen);
-
-       for (int i = 0; i < Config.dependentModels.size(); i++) {
-
-           Button bt = new Button(_ctxt);
-           bt.setId(i);
-           bt.setText(Config.dependentModels.get(i).getStrName());
-
-           LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                   tabWidth, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
-           //params.setMargins(3, 0, 3, 0);
-           bt.setLayoutParams(params);
-           bt.setAllCaps(false);
-           bt.setTextAppearance(_ctxt, android.R.style.TextAppearance_Small);
-
-           if (i == 0)
-               bt.setBackgroundResource(R.drawable.one_side_border);
-           else
-               bt.setBackgroundResource(R.drawable.button_back_trans);
-
-           bt.setOnClickListener(new View.OnClickListener() {
-
-               @Override
-               public void onClick(View v) {
-
-                   try {
-                       Config.intSelectedDependent = v.getId();
-                       updateTabColor(v.getId(), dynamicUserTab);
-
-                       loadDependentData(intWhichScreen);
-
-                   } catch (Exception e) {
-                       e.printStackTrace();
-                   }
-               }
-           });
-
-           dynamicUserTab.addView(bt);
-       }
-   }
-
-    public void loadDependentData(int intWhichScreen) {
-
-        if (intWhichScreen == Config.intNotificationScreen) {
-            loadNotifications();
-        }
-/*
-        if (intWhichScreen == Config.intListActivityScreen ||
-                intWhichScreen == Config.intActivityScreen) {
-            ActivityFragment.reload();
-        }*/
-    }
-
-    public void loadNotifications() {
-
-        final ProgressDialog progressDialog = new ProgressDialog(_ctxt);
-
-        if (isConnectingToInternet()) {
-
-            progressDialog.setMessage(_ctxt.getString(R.string.loading));
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-
-            StorageService storageService = new StorageService(_ctxt);
-
-            storageService.findDocsByKeyValue(Config.collectionNotification,
-                    "user_id",
-                    "57459e8fe4b0342551b353c9",
-                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
-
-                        @Override
-                        public void onDocumentInserted(Storage response) {
-                        }
-
-                        @Override
-                        public void onUpdateDocSuccess(Storage response) {
-                        }
-
-                        @Override
-                        public void onFindDocSuccess(Storage storage) {
-
-                            if (storage != null) {
-
-                                Utils.log(storage.toString(), "not ");
-
-                                if (storage.getJsonDocList().size() > 0) {
-
-                                    ArrayList<Storage.JSONDocument> jsonDocList = storage.
-                                            getJsonDocList();
-
-                                    for (int i = 0; i < jsonDocList.size(); i++) {
-
-                                        createNotificationModel(jsonDocList.get(i).getDocId(),
-                                                jsonDocList.get(i).getJsonDoc());
-                                    }
-
-                                    /*iProviderCount = 0;
-
-                                    fetchProviders(progressDialog, 1);*/
-                                }
-                            } else {
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
-                                toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                                refreshNotifications();
-                            }
-                        }
-
-                        @Override
-                        public void onInsertionFailed(App42Exception ex) {
-                        }
-
-                        @Override
-                        public void onFindDocFailed(App42Exception ex) {
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
-
-                            if (ex != null) {
-                                try {
-                                       /* JSONObject jsonObject = new JSONObject(ex.getMessage());
-                                        JSONObject jsonObjectError = jsonObject.
-                                                getJSONObject("app42Fault");
-                                        String strMess = jsonObjectError.getString("details");
-
-                                        toast(2, 2, strMess);*/
-                                    //toast(2, 2, _ctxt.getString(R.string.error));
-                                } catch (Exception e1) {
-                                    e1.printStackTrace();
-                                }
-                            } else {
-                                toast(2, 2, _ctxt.getString(R.string.warning_internet));
-                            }
-                            refreshNotifications();
-                        }
-
-                        @Override
-                        public void onUpdateDocFailed(App42Exception ex) {
-                        }
-                    });
-
-        } else {
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
-            toast(2, 2, _ctxt.getString(R.string.warning_internet));
-            refreshNotifications();
-        }
-    }
 
     public void createNotificationModel(String strDocumentId, String strDocument) {
         try {
@@ -800,35 +610,24 @@ public class Utils {
                         jsonObjectProvider.getString("user_id"),
                         jsonObjectProvider.getString("created_by"), strDocumentId);
 
-                if (jsonObjectProvider.getString("created_by_type").equalsIgnoreCase("provider")) {
-                    if (!Config.strProviderIds.contains(jsonObjectProvider.getString("created_by")))
-                        Config.strProviderIds.add(jsonObjectProvider.getString("created_by"));
+                if (jsonObjectProvider.getString("created_by_type").equalsIgnoreCase("customer")) {
+                    if (!Config.customerIdsAdded.contains(jsonObjectProvider.getString("created_by")))
+                        Config.customerIds.add(jsonObjectProvider.getString("created_by"));
+                }
+
+                if (jsonObjectProvider.getString("created_by_type").equalsIgnoreCase("dependent")) {
+                    if (!Config.dependentIdsAdded.contains(jsonObjectProvider.getString("created_by")))
+                        Config.dependentIds.add(jsonObjectProvider.getString("created_by"));
                 }
 
                 if (!Config.strNotificationIds.contains(strDocumentId)) {
                     Config.strNotificationIds.add(strDocumentId);
-                    Config.dependentModels.get(Config.intSelectedDependent).
-                            setNotificationModels(notificationModel);
+                    Config.notificationModels.add(notificationModel);
                 }
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-    }
-
-    protected void updateTabColor(int id, View v) {
-
-        for (int i = 0; i < Config.dependentModels.size(); i++) {
-            Button tab = (Button) v.findViewById(i);
-            if (i == id) {
-                tab.setBackgroundResource(R.drawable.one_side_border);
-                tab.setTextColor(_ctxt.getResources().getColor(R.color.colorPrimaryDark));
-            } else {
-                tab.setBackgroundResource(R.drawable.button_back_trans);
-                tab.setTextColor(_ctxt.getResources().getColor(R.color.colorAccentDark));
-            }
-
         }
     }
 

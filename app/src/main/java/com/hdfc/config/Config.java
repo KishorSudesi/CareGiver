@@ -11,6 +11,7 @@ import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
 import com.hdfc.models.MilestoneViewModel;
+import com.hdfc.models.NotificationModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
 
@@ -40,26 +41,20 @@ public class Config {
     public static final String collectionNotification = "notification";
 
     public static final Locale locale = Locale.ENGLISH;
-
-    public static final String string = Utils.getStringJni();
-
     public static final int iSdkVersion = Build.VERSION.SDK_INT;
     public static final int iAppVersion = BuildConfig.VERSION_CODE;
     public static final String strOs = "android";
-
     public static final String strAppId = "910502819263";
-
     public static final int START_CAMERA_REQUEST_CODE = 1;
     public static final int START_GALLERY_REQUEST_CODE = 2;
     public static final int CACHE_EXPIRE = 1;//In Minutes
     public static final int intWidth = 300, intHeight = 300;
-
     /* public static final String[] weekNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};*/
      public static final String[] months = {"January", "February", "March", "April", "May", "June",
              "July", "August", "September", "October", "November", "December"};
-
     /*public static final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};*/
     public static final boolean isDebuggable = true;
+    public static final String string = Utils.getStringJni();
     public static final boolean release = false;
     //Login specific //User Specific clear at logout or whenever needed
     public final static String strCustomerImageName = "provider_image";
@@ -79,17 +74,17 @@ public class Config {
     public static ArrayList<String> strActivityIds = new ArrayList<>();
     public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
     public static ArrayList<String> customerIdsAdded = new ArrayList<>();
-    public static ArrayList<String> strNotificationIds = new ArrayList<>();
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();
-    public static ArrayList<ProviderModel> providerModels = new ArrayList<>();
     public static ArrayList<CustomerModel> customerModels = new ArrayList<>();
     public static ProviderModel providerModel = null;
     public static CustomerModel customerModel = null;
     public static DependentModel dependentModel = null;
     public static JSONObject jsonObject = null;
     public static int intSelectedMenu = 0;
-    public static int intSelectedDependent = 0;
     public static ArrayList<ClientModel> clientModels = new ArrayList<>();
+
+    public static ArrayList<NotificationModel> notificationModels = new ArrayList<>();
+    public static ArrayList<String> strNotificationIds = new ArrayList<>();
 
 
     public static ArrayList<ClientName> clientNames = new ArrayList<>();
@@ -97,6 +92,7 @@ public class Config {
     public static double iRatings = 0;
     public static int iRatingCount = 0;
     public static List<FeedBackModel> feedBackModels = new ArrayList<>();
+
     public static ArrayList<String> strServcieIds = new ArrayList<>();
     public static ArrayList<ServiceModel> serviceModels = new ArrayList<>();
     public static ArrayList<String> servicelist = new ArrayList<>();
