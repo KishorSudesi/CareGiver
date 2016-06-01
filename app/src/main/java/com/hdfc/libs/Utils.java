@@ -121,8 +121,8 @@ public class Utils {
     public static native String getString();
 
     public static String getStringJni() {
-        return "KaEO19Fc";
-        //return getString();
+        //return "KaEO19Fc";
+        return getString();
     }
 
     public static double round(double value, int places) {
@@ -571,6 +571,16 @@ public class Utils {
         return file;
     }
 
+    public static void refreshNotifications() {
+
+        if (Notify.listViewActivities != null) {
+
+            Notify.notificationAdapter = new NotifyAdapter(_ctxt, Config.dependentModels.get(Config.intSelectedDependent).getNotificationModels());
+
+            Notify.listViewActivities.setAdapter(Notify.notificationAdapter);
+        }
+    }
+
    /* public String getMonthLastDate(String strFromDate) {
 
         String strLastDateMonth = "";
@@ -814,15 +824,6 @@ public class Utils {
                 tab.setTextColor(_ctxt.getResources().getColor(R.color.colorAccentDark));
             }
 
-        }
-    }
-    public static void refreshNotifications() {
-
-        if (Notify.listViewActivities != null) {
-
-            Notify.notificationAdapter = new NotifyAdapter(_ctxt,Config.dependentModels.get(Config.intSelectedDependent).getNotificationModels());
-
-            Notify.listViewActivities.setAdapter(Notify.notificationAdapter);
         }
     }
 
