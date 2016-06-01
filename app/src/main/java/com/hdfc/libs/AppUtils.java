@@ -199,6 +199,8 @@ public class AppUtils {
                                 try {
                                     if (o != null) {
 
+                                        Utils.log(o.toString(), " MESS 1");
+
                                         Storage storage = (Storage) o;
 
                                         if (storage.getJsonDocList().size() > 0) {
@@ -223,6 +225,7 @@ public class AppUtils {
 
                             @Override
                             public void onException(Exception e) {
+                                Utils.log(e.getMessage(), " MESS 1");
                                 DashboardActivity.gotoSimpleActivityMenu();
                             }
 
@@ -244,6 +247,12 @@ public class AppUtils {
                 final Query query = QueryBuilder.build("_id", Config.customerIds,
                         QueryBuilder.Operator.INLIST);
 
+              /*  try {
+                    Utils.log(query.get(), " query ");
+                }catch (Exception e){
+                    e.printStackTrace();
+                }*/
+
                 storageService.findDocsByQuery(Config.collectionCustomer, query,
                         new App42CallBack() {
 
@@ -253,7 +262,7 @@ public class AppUtils {
 
                                     if (o != null) {
 
-                                        //Utils.log(o.toString(), " fetchCustomers ");
+                                        Utils.log(o.toString(), " fetchCustomers ");
                                         Storage storage = (Storage) o;
 
                                         if (storage.getJsonDocList().size() > 0) {
@@ -279,6 +288,7 @@ public class AppUtils {
 
                             @Override
                             public void onException(Exception e) {
+                                Utils.log(e.getMessage(), " MESS 0");
                                 fetchDependents(iFlag);
                             }
 
@@ -1806,6 +1816,7 @@ public class AppUtils {
                                         }
                                     }
                                 }
+                                Utils.log(" 0 ", " MESS ");
                                 fetchCustomers(2);
                             } catch (Exception e1) {
                                 e1.printStackTrace();
@@ -1815,6 +1826,7 @@ public class AppUtils {
 
                         @Override
                         public void onException(Exception e) {
+                            Utils.log(e.getMessage(), " MESS ");
                             fetchCustomers(2);
                         }
                     });

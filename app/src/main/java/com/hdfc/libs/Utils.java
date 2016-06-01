@@ -68,6 +68,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 
@@ -76,20 +77,22 @@ import java.util.TimeZone;
  */
 public class Utils {
 
+    public static final Locale locale = Locale.ENGLISH;
+
     public final static SimpleDateFormat readFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Config.locale);
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale);
 
     public final static SimpleDateFormat writeFormat = new
-            SimpleDateFormat("kk:mm dd MMM yyyy", Config.locale);
+            SimpleDateFormat("kk:mm dd MMM yyyy", locale);
 
     public final static SimpleDateFormat writeFormatDate = new
-            SimpleDateFormat("dd-MMM-yyyy", Config.locale);
+            SimpleDateFormat("dd-MMM-yyyy", locale);
 
     public final static SimpleDateFormat writeFormatDateDB = new
-            SimpleDateFormat("yyyy-MM-dd", Config.locale);
+            SimpleDateFormat("yyyy-MM-dd", locale);
 
     public final static SimpleDateFormat writeFormatTime = new
-            SimpleDateFormat("kk:mm", Config.locale); // aa
+            SimpleDateFormat("kk:mm", locale); // aa
 
   /*  public final static SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd", Config.locale);*/
@@ -103,6 +106,7 @@ public class Utils {
 
     static {
         System.loadLibrary("stringGen");
+        log("Loaded 0", "NDK");
     }
 
     public Utils(Context context) {
@@ -121,6 +125,7 @@ public class Utils {
     public static native String getString();
 
     public static String getStringJni() {
+        log("Loaded 1", "NDK");
         //return "KaEO19Fc";
         return getString();
     }

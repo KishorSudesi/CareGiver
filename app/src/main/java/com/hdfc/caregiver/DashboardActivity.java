@@ -29,6 +29,7 @@ import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
 import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42API;
+import com.shephertz.app42.paas.sdk.android.App42Log;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -177,6 +178,9 @@ public class DashboardActivity extends AppCompatActivity implements
             }
 
             App42API.setLoggedInUser(Config.providerModel.getStrEmail());
+
+            App42Log.setDebug(true);
+
 
             appCompatActivity = DashboardActivity.this;
 
