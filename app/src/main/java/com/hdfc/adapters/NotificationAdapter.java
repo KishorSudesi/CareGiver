@@ -120,8 +120,6 @@ public class NotificationAdapter extends BaseAdapter {
             try {
                 File f = utils.getInternalFileImages(utils.replaceSpace(strId));
 
-                //todo load all images before loading views
-
                 //Utils.log(f.getAbsolutePath(), " P ");
 
                 if (f.exists())

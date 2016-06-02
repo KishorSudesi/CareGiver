@@ -44,6 +44,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -272,6 +273,7 @@ public class Utils {
             }
         }/////////////////*/
     }
+    //
 
     //source and destinatino rectangular regions to decode
     public static Rect calculateSrcRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
@@ -320,6 +322,25 @@ public class Utils {
         if (Config.isDebuggable)
             Log.e(tag, message);
 
+    }
+
+    public static String sha512(final String toEncrypt) {
+
+        try {
+
+            final MessageDigest digest = MessageDigest.getInstance("SHA-512");
+            digest.update(toEncrypt.getBytes());
+            final byte[] bytes = digest.digest();
+            final StringBuilder sb = new StringBuilder();
+
+            for (byte aByte : bytes) {
+                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString().toLowerCase();
+
+        } catch (Exception exc) {
+            return "";
+        }
     }
 
     /*public static long getAvailableExternalMemorySize() {
@@ -382,23 +403,31 @@ public class Utils {
         return pathExternals;
     }*/
 
-    public static String sha512(final String toEncrypt) {
+    public static boolean deleteAllFiles(File directory) {
+
+        final File[] files = directory.listFiles();
 
         try {
 
-            final MessageDigest digest = MessageDigest.getInstance("SHA-512");
-            digest.update(toEncrypt.getBytes());
-            final byte[] bytes = digest.digest();
-            final StringBuilder sb = new StringBuilder();
-
-            for (byte aByte : bytes) {
-                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+            if (files != null) {
+                for (File file : files) {
+                    if (file != null) {
+                        if (file.isDirectory()) {  // it is a folder.
+                            deleteAllFiles(file);
+                        } else {
+                            if (file.exists() && file.canRead() && file.canWrite()) {
+                                file.delete();
+                            }
+                        }
+                    }
+                }
             }
-            return sb.toString().toLowerCase();
 
-        } catch (Exception exc) {
-            return "";
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        return true;
     }
     /*public static void recordAudio(String fileName) {
 
@@ -465,31 +494,17 @@ public class Utils {
             btn.setBackground(drw);
     }*/
 
-    public static boolean deleteAllFiles(File directory) {
+    public static File createFileInternal(String strFileName) {
 
-        final File[] files = directory.listFiles();
-
+        File file = null;
         try {
-
-            if (files != null) {
-                for (File file : files) {
-                    if (file != null) {
-                        if (file.isDirectory()) {  // it is a folder.
-                            deleteAllFiles(file);
-                        } else {
-                            if (file.exists() && file.canRead() && file.canWrite()) {
-                                file.delete();
-                            }
-                        }
-                    }
-                }
-            }
-
+            file = new File(_ctxt.getFilesDir(), strFileName);
+            file.getParentFile().mkdirs();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return true;
+        return file;
     }
 
     /*public static String encrypt(String Data) {
@@ -553,17 +568,63 @@ public class Utils {
         return key;
     }*/
 
-    public static File createFileInternal(String strFileName) {
+    //
+    public boolean compressImageFromPath(String strPath, int reqWidth, int reqHeight, int iQuality) {
 
-        File file = null;
+        boolean b = true;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        Bitmap bmp = null;
         try {
-            file = new File(_ctxt.getFilesDir(), strFileName);
-            file.getParentFile().mkdirs();
-        } catch (Exception e) {
+            // First decode with inJustDecodeBounds=true to check dimensions
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(strPath, options);
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, reqWidth,
+                    reqHeight);
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            options.inDither = false;
+
+            reqWidth = options.outWidth;
+            reqHeight = options.outHeight;
+
+            bmp = createScaledBitmap(BitmapFactory.decodeFile(strPath), reqWidth,
+                    reqHeight);
+
+            //jpeg compress
+            byte[] bmpPicByteArray;
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bos.reset();
+            bmp.compress(Bitmap.CompressFormat.JPEG, iQuality, bos);
+            bmpPicByteArray = bos.toByteArray();
+            bmp.recycle();
+
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(new File(strPath));
+                fos.write(bmpPicByteArray);
+                fos.flush();
+                fos.close();
+                bos.reset();
+
+            } catch (IOException e) {
+                fos.flush();
+                fos.close();
+                bos.reset();
+                e.printStackTrace();
+                b = false;
+            }
+            //
+
+        } catch (Exception | OutOfMemoryError e) {
             e.printStackTrace();
+            b = false;
         }
 
-        return file;
+        return b;
     }
 
    /* public String getMonthLastDate(String strFromDate) {
@@ -591,9 +652,6 @@ public class Utils {
 
         return strLastDateMonth;
     }*/
-
-
-
 
     public void createNotificationModel(String strDocumentId, String strDocument) {
         try {

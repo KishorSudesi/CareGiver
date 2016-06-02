@@ -81,8 +81,6 @@ public class AppUtils {
             //Config.fileModels.clear();
             CareGiver.dbCon.deleteFiles();
 
-            //todo clear shared pref.
-
             SharedPreferences.Editor editor = _ctxt.getSharedPreferences(Config.strPreferenceName,
                     Context.MODE_PRIVATE).edit();
             editor.clear();
@@ -1002,21 +1000,19 @@ public class AppUtils {
 
                                     if (jsonObjectField.has("child")) {
 
-                                        if (jsonObjectField.has("child")) {
-
+                                        try {
+                                            fieldModel.setChild(jsonObjectField.getBoolean("child"));
+                                        } catch (Exception e) {
+                                            boolean b = true;
                                             try {
-                                                fieldModel.setChild(jsonObjectField.getBoolean("child"));
-                                            } catch (Exception e) {
-                                                boolean b = true;
-                                                try {
-                                                    if (jsonObjectField.getInt("child") == 0)
-                                                        b = false;
-                                                    fieldModel.setChild(b);
-                                                } catch (Exception e1) {
-                                                    e1.printStackTrace();
-                                                }
+                                                if (jsonObjectField.getInt("child") == 0)
+                                                    b = false;
+                                                fieldModel.setChild(b);
+                                            } catch (Exception e1) {
+                                                e1.printStackTrace();
                                             }
                                         }
+
 
                                         if (jsonObjectField.has("child_type"))
                                             fieldModel.setStrChildType(utils.jsonToStringArray(jsonObjectField.
@@ -1034,6 +1030,31 @@ public class AppUtils {
                                             fieldModel.setiChildfieldID(utils.jsonToIntArray(jsonObjectField.
                                                     getJSONArray("child_field")));
                                     }
+
+                                    ////
+                                    if (jsonObjectField.has("array_fields")) {
+
+                                        try {
+                                            fieldModel.setiArrayCount(jsonObjectField.getInt("array_fields"));
+                                        } catch (Exception e) {
+                                            int i = 0;
+                                            try {
+                                                i = Integer.parseInt(jsonObjectField.getString("array_fields"));
+                                                fieldModel.setiArrayCount(i);
+                                            } catch (Exception e1) {
+                                                e1.printStackTrace();
+                                            }
+                                        }
+
+                                        if (jsonObjectField.has("array_type"))
+                                            fieldModel.setStrArrayType(utils.jsonToStringArray(jsonObjectField.
+                                                    getJSONArray("array_type")));
+
+                                        if (jsonObjectField.has("array_data"))
+                                            fieldModel.setStrArrayData(new String[]{});
+
+                                    }
+                                    ////
 
                                     milestoneModel.setFieldModel(fieldModel);
                                 }
@@ -1378,19 +1399,16 @@ public class AppUtils {
 
                                     if (jsonObjectField.has("child")) {
 
-                                        if (jsonObjectField.has("child")) {
-
+                                        try {
+                                            fieldModel.setChild(jsonObjectField.getBoolean("child"));
+                                        } catch (Exception e) {
+                                            boolean b = true;
                                             try {
-                                                fieldModel.setChild(jsonObjectField.getBoolean("child"));
-                                            } catch (Exception e) {
-                                                boolean b = true;
-                                                try {
-                                                    if (jsonObjectField.getInt("child") == 0)
-                                                        b = false;
-                                                    fieldModel.setChild(b);
-                                                } catch (Exception e1) {
-                                                    e1.printStackTrace();
-                                                }
+                                                if (jsonObjectField.getInt("child") == 0)
+                                                    b = false;
+                                                fieldModel.setChild(b);
+                                            } catch (Exception e1) {
+                                                e1.printStackTrace();
                                             }
                                         }
 
@@ -1410,6 +1428,31 @@ public class AppUtils {
                                             fieldModel.setiChildfieldID(utils.jsonToIntArray(jsonObjectField.
                                                     getJSONArray("child_field")));
                                     }
+
+                                    ////
+                                    if (jsonObjectField.has("array_fields")) {
+
+                                        try {
+                                            fieldModel.setiArrayCount(jsonObjectField.getInt("array_fields"));
+                                        } catch (Exception e) {
+                                            int i = 0;
+                                            try {
+                                                i = Integer.parseInt(jsonObjectField.getString("array_fields"));
+                                                fieldModel.setiArrayCount(i);
+                                            } catch (Exception e1) {
+                                                e1.printStackTrace();
+                                            }
+                                        }
+
+                                        if (jsonObjectField.has("array_type"))
+                                            fieldModel.setStrArrayType(utils.jsonToStringArray(jsonObjectField.
+                                                    getJSONArray("array_type")));
+
+                                        if (jsonObjectField.has("array_data"))
+                                            fieldModel.setStrArrayData(new String[]{});
+
+                                    }
+                                    ////
 
                                     milestoneModel.setFieldModel(fieldModel);
                                 }
@@ -1561,7 +1604,20 @@ public class AppUtils {
 
                             if (jsonObjectField.has("child")) {
 
-                                fieldModel.setChild(jsonObjectField.getBoolean("child"));
+                                //fieldModel.setChild(jsonObjectField.getBoolean("child"));
+
+                                try {
+                                    fieldModel.setChild(jsonObjectField.getBoolean("child"));
+                                } catch (Exception e) {
+                                    boolean b = true;
+                                    try {
+                                        if (jsonObjectField.getInt("child") == 0)
+                                            b = false;
+                                        fieldModel.setChild(b);
+                                    } catch (Exception e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
 
                                 if (jsonObjectField.has("child_type"))
                                     fieldModel.setStrChildType(utils.jsonToStringArray(jsonObjectField.
@@ -1579,6 +1635,31 @@ public class AppUtils {
                                     fieldModel.setiChildfieldID(utils.jsonToIntArray(jsonObjectField.
                                             getJSONArray("child_field")));
                             }
+
+                            ////
+                            if (jsonObjectField.has("array_fields")) {
+
+                                try {
+                                    fieldModel.setiArrayCount(jsonObjectField.getInt("array_fields"));
+                                } catch (Exception e) {
+                                    int i = 0;
+                                    try {
+                                        i = Integer.parseInt(jsonObjectField.getString("array_fields"));
+                                        fieldModel.setiArrayCount(i);
+                                    } catch (Exception e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+
+                                if (jsonObjectField.has("array_type"))
+                                    fieldModel.setStrArrayType(utils.jsonToStringArray(jsonObjectField.
+                                            getJSONArray("array_type")));
+
+                                if (jsonObjectField.has("array_data"))
+                                    fieldModel.setStrArrayData(new String[]{});
+
+                            }
+                            ////
 
                             milestoneModel.setFieldModel(fieldModel);
                         }

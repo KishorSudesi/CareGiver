@@ -12,12 +12,6 @@
         android:text="@string/attachments"
         />
 
-    <!--<ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/background" />-->
-
     <HorizontalScrollView
         android:id="@+id/horizontal_scroll"
         android:layout_width="match_parent"

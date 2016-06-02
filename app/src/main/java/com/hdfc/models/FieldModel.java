@@ -15,6 +15,10 @@ public class FieldModel implements Serializable {
     private String strFieldData;
     private String strFieldValues[];
 
+    private String strArrayData[];
+    private String strArrayType[];
+    private int iArrayCount;
+
     private boolean isChild;
     private String strChildType[];
     private String strChildValue[];
@@ -115,5 +119,29 @@ public class FieldModel implements Serializable {
 
     public void setiChildfieldID(int[] iChildfieldID) {
         this.iChildfieldID = iChildfieldID;
+    }
+
+    public String[] getStrArrayData() {
+        return strArrayData;
+    }
+
+    public void setStrArrayData(String[] strArrayData) {
+        this.strArrayData = strArrayData;
+    }
+
+    public String[] getStrArrayType() {
+        return strArrayType;
+    }
+
+    public void setStrArrayType(String[] strArrayType) {
+        this.strArrayType = strArrayType;
+    }
+
+    public int getiArrayCount() {
+        return iArrayCount;
+    }
+
+    public void setiArrayCount(int iArrayCount) {
+        this.iArrayCount = iArrayCount;
     }
 }

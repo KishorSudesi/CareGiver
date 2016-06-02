@@ -70,7 +70,7 @@ JNIEXPORT jstring  JNICALL Java_com_hdfc_libs_Utils_getString(JNIEnv* env,jobjec
 
     LOG_F ("getString");
 
-    //TODO generate key dynamic with a logic no hardcode
+	//TODO generate static key dynamic logic with a logic no hardcode
 /*
     char dest[8];
     char charset[] = "0123456789"
