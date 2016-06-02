@@ -352,7 +352,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                         String strNo2 = "";
 
-                        if (iPosition > -1)
+                        if (iPosition > -1 && Config.dependentModels.size() > 0)
                             strNo2 = Config.dependentModels.get(iPosition).getStrContacts();
 
                         if (!strNo2.equalsIgnoreCase("")) {
@@ -369,7 +369,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
                         String strNo3 = "";
 
-                        if (iPosition2 > -1)
+                        if (iPosition2 > -1 && Config.dependentModels.size() > 0)
                             strNo3 = Config.dependentModels.get(iPosition2).getStrContacts();
 
                         if (!strNo3.equalsIgnoreCase("")) {
