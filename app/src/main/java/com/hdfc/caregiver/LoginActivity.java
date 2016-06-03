@@ -321,7 +321,7 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.dismiss();
 
         Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-        //intent.putExtra("WHICH_SCREEN", intWhichScreen);
+        intent.putExtra("LOGIN", true);
         Config.intSelectedMenu = Config.intDashboardScreen;
         startActivity(intent);
         //((Activity) _ctxt).finish();

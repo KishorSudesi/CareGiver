@@ -17,7 +17,7 @@ import com.hdfc.dbconfig.DbCon;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ClientModel;
-import com.hdfc.models.ClientName;
+import com.hdfc.models.ClientNameModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
@@ -195,10 +195,10 @@ public class AppUtils {
                             @Override
                             public void onSuccess(Object o) {
                                 try {
-                                    System.out.println("NACHIKET : "+(o!=null));
+                                    //System.out.println("NACHIKET : "+(o!=null));
                                     if (o != null) {
 
-                                        Utils.log(o.toString(), " MESS 1");
+                                        //Utils.log(o.toString(), " MESS 1");
 
                                         Storage storage = (Storage) o;
 
@@ -216,25 +216,39 @@ public class AppUtils {
                                             }
                                         }
                                     }
-                                    DashboardActivity.gotoSimpleActivityMenu();
+                                    if (iFlag == 2)
+                                        DashboardActivity.gotoSimpleActivityMenu();
+                                    else
+                                        DashboardActivity.refreshClientsData();
                                 } catch (Exception e) {
-                                    DashboardActivity.gotoSimpleActivityMenu();
+                                    DashboardActivity.refreshClientsData();
                                 }
                             }
 
                             @Override
                             public void onException(Exception e) {
                                 Utils.log(e.getMessage(), " MESS 1");
-                                DashboardActivity.gotoSimpleActivityMenu();
+                                if (iFlag == 2)
+                                    DashboardActivity.gotoSimpleActivityMenu();
+                                else
+                                    DashboardActivity.refreshClientsData();
                             }
 
                         });
 
             } else {
-                DashboardActivity.gotoSimpleActivityMenu();
+                if (iFlag == 2)
+                    DashboardActivity.gotoSimpleActivityMenu();
+                else
+                    DashboardActivity.refreshClientsData();
             }
 
-        } else DashboardActivity.gotoSimpleActivityMenu();
+        } else {
+            if (iFlag == 2)
+                DashboardActivity.gotoSimpleActivityMenu();
+            else
+                DashboardActivity.refreshClientsData();
+        }
     }
 
     private void fetchCustomers(final int iFlag) {
@@ -261,7 +275,7 @@ public class AppUtils {
 
                                     if (o != null) {
 
-                                        Utils.log(o.toString(), " fetchCustomers ");
+                                        //Utils.log(o.toString(), " fetchCustomers ");
                                         Storage storage = (Storage) o;
 
                                         if (storage.getJsonDocList().size() > 0) {
@@ -396,12 +410,13 @@ public class AppUtils {
                         if (iPosition > -1)
                             Config.clientModels.get(iPosition).setDependentModel(dependentModel);
                     }
-                }
 
-                if (Config.clientNames.size() > 0) {
-                    int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
-                    if (iPosition > -1)
-                        Config.clientNames.get(iPosition).setStrDependeneName(jsonObjectDependent.getString("dependent_name"));
+                    if (Config.clientNameModels.size() > 0) {
+                        int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
+                        if (iPosition > -1)
+                            Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                        Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                    }
                 }
 
                /* Config.fileModels.add(new FileModel(strDocumentId,
@@ -456,6 +471,14 @@ public class AppUtils {
                             }
                         }
                     }
+
+                    //
+                    if (Config.clientNameModels.size() > 0) {
+                        int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
+                        if (iPosition > -1)
+                            Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                        Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                    }
                 }
             }
         } catch (JSONException e) {
@@ -490,21 +513,21 @@ public class AppUtils {
                             jsonObject.getString("customer_contact_no"),
                             strDocumentId);
 
+                    if (!Config.strCustomerNames.contains(jsonObject.getString("customer_name")))
+                        Config.strCustomerNames.add(jsonObject.getString("customer_name"));
+
                     if (iFlag == 2) {
                         ClientModel clientModel = new ClientModel();
                         clientModel.setCustomerModel(customerModel);
                         Config.clientModels.add(clientModel);
+
+                        ClientNameModel clientNameModel = new ClientNameModel();
+                        clientNameModel.setStrCustomerName(jsonObject.getString("customer_name"));
+
+                        Config.clientNameModels.add(clientNameModel);
                     }
 
-                    ClientName clientName = new ClientName();
-                    clientName.setStrCustomerName(jsonObject.getString("customer_name"));
-
-                    Config.clientNames.add(clientName);
-
                     Config.customerModels.add(customerModel);
-
-                    if (!Config.strCustomerNames.contains(jsonObject.getString("customer_name")))
-                        Config.strCustomerNames.add(jsonObject.getString("customer_name"));
 
                     String strUrl = jsonObject.getString("customer_profile_url");
 
@@ -552,6 +575,13 @@ public class AppUtils {
                             clientModel.setCustomerModel(customerModel);
                             Config.clientModels.add(clientModel);
                         }
+
+                        //
+                        ClientNameModel clientNameModel = new ClientNameModel();
+                        clientNameModel.setStrCustomerName(jsonObject.getString("customer_name"));
+
+                        Config.clientNameModels.add(clientNameModel);
+                        //
                     }
                 }
             }
@@ -653,6 +683,7 @@ public class AppUtils {
 
                     @Override
                     public void onException(Exception ex) {
+                        Utils.log(ex.getMessage(), " f1 ");
                         fetchMileStone();
                     }
         });
@@ -1546,7 +1577,7 @@ public class AppUtils {
             //serviceModel.setStrServiceType(jsonObject.getString("service_type"));
 
 
-            Config.serviceModels.add(serviceModel);
+            //Config.serviceModels.add(serviceModel);
 
             if (jsonObject.has("milestones")) {
 
@@ -1855,7 +1886,7 @@ public class AppUtils {
     }
 
     //refresh Providers
-    public void fetchClients() {
+    public void fetchClients(final int iFlag) {
 
         if (utils.isConnectingToInternet()) {
 
@@ -1901,22 +1932,22 @@ public class AppUtils {
                                         }
                                     }
                                 }
-                                Utils.log(" 0 ", " MESS ");
-                                fetchCustomers(2);
+                                //Utils.log(" 0 ", " MESS ");
+                                fetchCustomers(iFlag);
                             } catch (Exception e1) {
                                 e1.printStackTrace();
-                                fetchCustomers(2);
+                                fetchCustomers(iFlag);
                             }
                         }
 
                         @Override
                         public void onException(Exception e) {
                             Utils.log(e.getMessage(), " MESS ");
-                            fetchCustomers(2);
+                            fetchCustomers(iFlag);
                         }
                     });
         } else {
-            fetchCustomers(2);
+            fetchCustomers(iFlag);
         }
     }
 

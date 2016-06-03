@@ -15,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hdfc.caregiver.CreatingTaskActivity;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
@@ -149,17 +148,10 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
         context = getActivity();
 
         ImageButton add = (ImageButton) view.findViewById(R.id.add_button);
+        add.setVisibility(View.GONE);
 
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
 
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreatingTaskActivity.class);
-                Config.intSelectedMenu = Config.intDashboardScreen;
-                startActivity(intent);
-            }
-        });
 
         SlideAndDragListView mListView = (SlideAndDragListView) view.findViewById(R.id.listViewEdit);
 

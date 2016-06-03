@@ -153,6 +153,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         context = getActivity();
 
         ImageButton add = (ImageButton) view.findViewById(R.id.add_button);
+        add.setVisibility(View.VISIBLE);
 
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
 

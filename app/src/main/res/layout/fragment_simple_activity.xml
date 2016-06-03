@@ -3,7 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <include layout="@layout/include_fragment_simple"/>
+  <TextView
+      android:id="@android:id/empty"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:gravity="center"
+      android:padding="@dimen/padding_general"
+      android:text="@string/noActivities"
+      android:visibility="gone" />
+
+  <com.yydcdut.sdlv.SlideAndDragListView
+      android:id="@+id/listViewEdit"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:clickable="true"></com.yydcdut.sdlv.SlideAndDragListView>
 
   <ImageButton
       android:id="@+id/add_button"
@@ -14,6 +27,8 @@
       android:layout_marginRight="30dp"
       android:background="@drawable/circle_float"
       android:src="@drawable/add_icon"
+      android:visibility="gone"
       />
+
 
 </FrameLayout>

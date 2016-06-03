@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -267,10 +268,10 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                     editText.setEnabled(false);
 
                                 if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
-                                    editText.setInputType(1);
+                                    editText.setInputType(InputType.TYPE_CLASS_TEXT);
 
                                 if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))
-                                    editText.setInputType(1);
+                                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
 
                                 //todo check type
                                 try {
@@ -322,9 +323,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                                         .show();
                                             }
                                         });
-
-                                        linearLayout1.addView(editText);
                                     }
+                                    linearLayout1.addView(editText);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -407,7 +407,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                     //editTextArray.setText(fieldModel.);
 
                                     if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
-                                        editTextArray.setInputType(1);
+                                        editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
 
                                     linearLayoutArray.addView(editTextArray);
 

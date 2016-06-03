@@ -78,20 +78,41 @@ public class DashboardActivity extends AppCompatActivity implements
         backgroundThread.start();
     }
 
+    public static void refreshClientsData() {
+
+        if (utils.isConnectingToInternet()) {
+
+            loadingPanel.setVisibility(View.VISIBLE);
+
+            Config.dependentIds.clear();
+            Config.customerIds.clear();
+            Config.clientModels.clear();
+
+            Config.clientNameModels.clear();
+            //Config.strDependentNames.clear();
+
+            appUtils.fetchClients(2);
+
+        } else {
+            utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet));
+        }
+    }
+
     private void gotoSimpleActivity() {
 
-        /*if (Config.intSelectedMenu != Config.intDashboardScreen) {
-*/
-            Config.intSelectedMenu = Config.intDashboardScreen;
-            DashboardFragment fragment = DashboardFragment.newInstance();
-            FragmentTransaction transaction = getSupportFragmentManager().
-                    beginTransaction();
-            transaction.replace(R.id.frameLayout, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+        /*if (Config.intSelectedMenu != Config.intDashboardScreen) {*/
+        goToDashboard();
         //}
-
         refreshDashboardData();
+    }
+
+    private void goToDashboard() {
+        Config.intSelectedMenu = Config.intDashboardScreen;
+        DashboardFragment fragment = DashboardFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frameLayout, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
@@ -143,14 +164,14 @@ public class DashboardActivity extends AppCompatActivity implements
             clients.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    menuClients();
+                    menuClientsLoad();
                 }
             });
 
             textViewClients.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    menuClients();
+                    menuClientsLoad();
                 }
             });
 
@@ -183,20 +204,52 @@ public class DashboardActivity extends AppCompatActivity implements
 
             appCompatActivity = DashboardActivity.this;
 
-            if (Config.intSelectedMenu == Config.intDashboardScreen) {
+            Bundle bundle = getIntent().getExtras();
 
+            boolean b = false;
+
+            if (bundle != null)
+                b = bundle.getBoolean("LOGIN");
+
+            if (b) {
                 loadingPanel.setVisibility(View.VISIBLE);
 
                 mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
                 textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
                 gotoSimpleActivity();
-            }
+            } else {
+                if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
+                    mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+                    textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                    goToDashboard();
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void goToClients() {
+        Config.intSelectedMenu = Config.intClientScreen;
+        ClientFragment fragment = ClientFragment.newInstance();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frameLayout, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void menuClientsLoad() {
+        setMenu();
+        clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
+        textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        //Config.intSelectedMenu = 0;
+        goToClients();
     }
 
     private void menuDashboard() {
@@ -212,7 +265,7 @@ public class DashboardActivity extends AppCompatActivity implements
         clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
         textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         //Config.intSelectedMenu = 0;
-        gotoClient();
+        goToClients();
     }
 
     private void menuFeedback() {
@@ -282,7 +335,6 @@ public class DashboardActivity extends AppCompatActivity implements
         }
     }
 
-
     @Override
     public void onRegisterApp42(String var1) {
         App42GCMController.storeApp42Success(DashboardActivity.this);
@@ -320,10 +372,8 @@ public class DashboardActivity extends AppCompatActivity implements
             Config.customerModels.clear();
 
             //Config.clientModels.clear();
-            Config.clientNames.clear();
-            Config.feedBackModels.clear();
 
-            Config.strDependentNames.clear();
+            Config.feedBackModels.clear();
             Config.milestoneModels.clear();
 
             Calendar calendar = Calendar.getInstance();
@@ -346,42 +396,6 @@ public class DashboardActivity extends AppCompatActivity implements
         } else {
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
-    }
-
-    private void refreshClientsData() {
-
-        if (utils.isConnectingToInternet()) {
-
-            loadingPanel.setVisibility(View.VISIBLE);
-
-            Config.dependentIds.clear();
-            Config.customerIds.clear();
-            Config.clientModels.clear();
-
-            Config.intSelectedMenu = Config.intClientScreen;
-
-            appUtils.fetchClients();
-
-        } else {
-            utils.toast(2, 2, getString(R.string.warning_internet));
-        }
-    }
-
-
-    private void gotoClient() {
-        /*if (Config.intSelectedMenu != Config.intClientScreen) {
-            Config.intSelectedMenu = Config.intClientScreen;*/
-            Config.intSelectedMenu = Config.intClientScreen;
-            ClientFragment fragment = ClientFragment.newInstance();
-            Bundle args = new Bundle();
-            fragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.frameLayout, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-
-            refreshClientsData();
-        //}
     }
 
     private void gotoFeedback() {
@@ -427,9 +441,9 @@ public class DashboardActivity extends AppCompatActivity implements
                 MileStoneFragment.mAdapter.notifyDataSetChanged();
             }
 
-            if (Config.intSelectedMenu == Config.intClientScreen) {
+           /* if (Config.intSelectedMenu == Config.intClientScreen) {
                 ClientFragment.prepareListData();
-            }
+            }*/
 
             loadingPanel.setVisibility(View.GONE);
         }
