@@ -444,10 +444,11 @@ public class AppUtils {
                 CareGiver.dbCon.closeCursor(cur);
             } else {
                 if (iFlag == 2) {
+
                     if (Config.clientModels.size() > 0) {
                         int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
                         if (iPosition > -1) {
-                            int iPosition1 = Config.dependentIdsAdded.indexOf(jsonObjectDependent.getString("dependent_id"));
+                            int iPosition1 = Config.dependentIdsAdded.indexOf(strDocumentId);
                             if (iPosition1 > -1) {
                                 DependentModel dependentModel = Config.dependentModels.get(iPosition1);
                                 Config.clientModels.get(iPosition).setDependentModel(dependentModel);
@@ -525,7 +526,7 @@ public class AppUtils {
                         cur.moveToFirst();
                         strHashLocal = cur.getString(0);
                         cur.moveToNext();
-                        CareGiver.dbCon.closeCursor(cur);
+
 
                         if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
                             CareGiver.dbCon.update(
@@ -535,6 +536,8 @@ public class AppUtils {
                             );
                         }
                     }
+
+                    CareGiver.dbCon.closeCursor(cur);
 
                 } else {
                     if (iFlag == 2) {

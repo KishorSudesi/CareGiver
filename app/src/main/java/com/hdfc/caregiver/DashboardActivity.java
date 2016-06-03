@@ -356,6 +356,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
             Config.dependentIds.clear();
             Config.customerIds.clear();
+            Config.clientModels.clear();
 
             Config.intSelectedMenu = Config.intClientScreen;
 
