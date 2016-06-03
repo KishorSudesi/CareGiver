@@ -1,17 +1,27 @@
 package com.hdfc.caregiver;
 
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hdfc.adapters.NotificationAdapter;
 import com.hdfc.app42service.StorageService;
+import com.hdfc.caregiver.fragments.RatingsFragment;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.event.IAMService;
+import com.shephertz.app42.paas.sdk.android.imageProcessor.Image;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
 import java.util.ArrayList;
@@ -22,6 +32,7 @@ public class NotificationActivity extends AppCompatActivity {
     private static ProgressDialog progressDialog;
     private ListView listViewActivities;
     private Utils utils;
+    private ImageButton backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +43,17 @@ public class NotificationActivity extends AppCompatActivity {
         TextView emptyTextView = (TextView) findViewById(android.R.id.empty);
         listViewActivities.setEmptyView(emptyTextView);
         utils = new Utils(NotificationActivity.this);
-
+        backButton = (ImageButton) findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RatingsFragment fragment = RatingsFragment.newInstance();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.add(R.id.frameLayout, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
         loadNotifications();
     }
 
@@ -43,10 +64,10 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void refreshNotifications() {
-        if (listViewActivities != null) {
+        //if (listViewActivities != null) {
             notificationAdapter = new NotificationAdapter(NotificationActivity.this, Config.notificationModels);
             listViewActivities.setAdapter(notificationAdapter);
-        }
+        //}
 
         if (progressDialog.isShowing())
             progressDialog.dismiss();

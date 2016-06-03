@@ -30,6 +30,7 @@ public class NotificationAdapter extends BaseAdapter {
     private MultiBitmapLoader multiBitmapLoader;
 
     public NotificationAdapter(Context ctxt, ArrayList<NotificationModel> d) {
+        System.out.println("Ullu");
         _context = ctxt;
         adapterNotificationModels = d;
         utils = new Utils(ctxt);
@@ -40,6 +41,7 @@ public class NotificationAdapter extends BaseAdapter {
     public int getCount() {
         return adapterNotificationModels.size();
     }
+
 
     @Override
     public Object getItem(int position) {
@@ -84,6 +86,11 @@ public class NotificationAdapter extends BaseAdapter {
             String strName = "";
 
             viewHolder.textViewText.setText(adapterNotificationModels.get(position).getStrMessage());
+
+            System.out.println("Sudesi Infotech Pvt Ltd 1 years : "+adapterNotificationModels.get(position).getStrMessage());
+
+            if (strName.length() > 20)
+                strName = adapterNotificationModels.get(position).getStrMessage().substring(0, 18) + "..";
 
             if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("provider")) {
                 strName = Config.providerModel.getStrName();

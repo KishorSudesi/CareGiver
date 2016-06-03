@@ -195,6 +195,7 @@ public class AppUtils {
                             @Override
                             public void onSuccess(Object o) {
                                 try {
+                                    System.out.println("NACHIKET : "+(o!=null));
                                     if (o != null) {
 
                                         Utils.log(o.toString(), " MESS 1");

@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -72,7 +73,7 @@ public class RatingsFragment extends Fragment {
         textViewName = (TextView) view.findViewById(R.id.name);
         textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
 
-        TextView notification = (TextView) view.findViewById(R.id.textViewNotify);
+        ImageButton notification = (ImageButton)view.findViewById(R.id.notificationButton);
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

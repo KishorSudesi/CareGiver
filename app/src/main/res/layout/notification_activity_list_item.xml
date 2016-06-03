@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/activityList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="85dp"
         android:layout_gravity="center_horizontal"
         android:background="@color/colorWhite"
         android:orientation="horizontal">
@@ -42,29 +42,35 @@
                 android:paddingLeft="13dp"
                 android:paddingRight="3dp"
                 android:paddingStart="13dp"
+
+                android:text="You are providing good service"
                 android:textColor="#000000"
-                android:textSize="14sp" />
+                android:textSize="17sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
 
                 <TextView
                     android:id="@+id/textViewName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="13dp"
+                    android:text="Amol Kolhe"
+                    android:layout_marginLeft="13dp"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="14sp" />
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/textViewTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:paddingRight="13dp"
+                    android:text="12.34 PM"
                     android:textColor="#333333"
-                    android:textSize="12sp" />
+                    android:textSize="15sp" />
 
             </LinearLayout>
 

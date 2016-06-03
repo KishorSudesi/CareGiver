@@ -23,16 +23,6 @@
             android:text="@string/feedback"
             android:textSize="15sp" />
 
-        <TextView
-            android:id="@+id/textViewNotify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/include_ratings_header"
-            android:padding="10dp"
-            android:text="@string/menu_notification"
-            android:textSize="15sp" />
-
 
         <ImageView
             android:id="@+id/imageViewLine"
