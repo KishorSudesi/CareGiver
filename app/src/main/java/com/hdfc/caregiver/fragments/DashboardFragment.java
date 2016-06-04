@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
-import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
@@ -95,11 +94,11 @@ public class DashboardFragment extends Fragment {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SlideDateTimePicker.Builder(getActivity().getSupportFragmentManager())
+               /* new SlideDateTimePicker.Builder(getActivity().getSupportFragmentManager())
                         .setListener(listener)
                         .setInitialDate(new Date())
                         .build()
-                        .show();
+                        .show();*/
             }
         });
 

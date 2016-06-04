@@ -77,9 +77,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
     };
 
-    public static void hideLoader() {
+   /* public static void hideLoader() {
         loadingPanel.setVisibility(View.GONE);
-    }
+    }*/
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -232,9 +232,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                     if (iServicePosition > -1) {
 
-                                        progressDialog.setMessage(getString(R.string.loading));
-                                        progressDialog.setCancelable(false);
-                                        progressDialog.show();
+                                        loadingPanel.setVisibility(View.VISIBLE);
 
                                         uploadData(serviceModel, dependentModel);
 
@@ -487,6 +485,15 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             jsonObjectField.put("child_field", utils.intToJsonArray(fieldModel.getiChildfieldID()));
                     }
 
+
+                    //
+                    if (fieldModel.getiArrayCount() > 0) {
+                        jsonObjectField.put("array_fields", fieldModel.getiArrayCount());
+                        jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.getStrArrayType()));
+                        jsonObjectField.put("array_data", utils.stringToJsonArray(fieldModel.getStrArrayType()));
+                    }
+                    //
+
                     jsonArrayFields.put(jsonObjectField);
 
                     jsonObjectMilestone.put("fields", jsonArrayFields);
@@ -514,21 +521,18 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     //fetchService(serviceModel, dependentModel);
                                     insertNotification();
                                 } else {
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
+                                    loadingPanel.setVisibility(View.GONE);
                                     isClicked = false;
                                     utils.toast(2, 2, getString(R.string.error));
                                 }
                             } else {
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
+                                loadingPanel.setVisibility(View.GONE);
                                 isClicked = false;
                                 utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
+                            loadingPanel.setVisibility(View.GONE);
                             isClicked = false;
                             utils.toast(2, 2, getString(R.string.error));
                         }
@@ -545,8 +549,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     @Override
                     public void onInsertionFailed(App42Exception ex) {
                         isClicked = false;
-                        if (progressDialog.isShowing())
-                            progressDialog.dismiss();
+                        loadingPanel.setVisibility(View.GONE);
                         try {
                             if (ex != null) {
                                 JSONObject jsonObject = new JSONObject(ex.getMessage());
@@ -750,6 +753,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                         @Override
                         public void onException(Exception ex) {
+                            Utils.log(ex.getMessage(), " STRING ");
                             strAlert = getString(R.string.no_push_actiity_added);
                             goToActivityList(strAlert);
                         }
@@ -767,12 +771,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         Intent newIntent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
 
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
+        loadingPanel.setVisibility(View.GONE);
 
         Config.intSelectedMenu = Config.intDashboardScreen;
         utils.toast(2, 2, strAlert);
-
+        newIntent.putExtra("LOAD", true);
         startActivity(newIntent);
         finish();
 
@@ -864,7 +867,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     });
         } else {
             strAlert = getString(R.string.no_push_actiity_added);
-
             goToActivityList(strAlert);
         }
     }

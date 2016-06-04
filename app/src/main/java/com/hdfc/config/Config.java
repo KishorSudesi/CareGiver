@@ -103,5 +103,5 @@ public class Config {
 
     public enum ActivityStatus {NEW, OPEN, INPROCESS, COMPLETED}
 
-    public enum MilestoneStatus {INACTIVE, OPEN, INPROCESS, COMPLETED, REOPENED}
+    public enum MilestoneStatus {INACTIVE, OPENED, INPROCESS, COMPLETED, REOPENED, PENDING}
 }

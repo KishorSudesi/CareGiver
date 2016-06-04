@@ -5,38 +5,6 @@
     android:background="@color/color_common"
     android:gravity="center">
 
-    <ImageView
-        android:id="@+id/imgBackHeaderTaskDetail"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="15dp"
-        android:src="@mipmap/back"
-        />
-
-    <ImageView
-        android:id="@+id/imgLogoHeaderTaskDetail"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="5dp"
-        android:layout_toRightOf="@+id/imgBackHeaderTaskDetail"
-        />
-
-    <TextView
-        android:id="@+id/textViewHeaderTaskDetail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="12dp"
-        android:layout_toRightOf="@+id/imgLogoHeaderTaskDetail"
-        android:gravity="center"
-        android:textColor="@color/colorWhite"
-        android:textSize="20dp"
-        />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
@@ -62,5 +30,40 @@
             android:textColor="@color/colorWhite" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgBackHeaderTaskDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/textViewHeaderTaskDetail"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:src="@mipmap/back" />
+
+    <ImageView
+        android:id="@+id/imgLogoHeaderTaskDetail"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="11dp"
+        android:layout_marginStart="11dp"
+        android:layout_toEndOf="@+id/imgBackHeaderTaskDetail"
+        android:layout_toRightOf="@+id/imgBackHeaderTaskDetail" />
+
+    <TextView
+        android:id="@+id/textViewHeaderTaskDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="11dp"
+        android:layout_marginStart="11dp"
+        android:layout_toEndOf="@+id/imgLogoHeaderTaskDetail"
+        android:layout_toRightOf="@+id/imgLogoHeaderTaskDetail"
+        android:gravity="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="20dp" />
 
 </RelativeLayout>

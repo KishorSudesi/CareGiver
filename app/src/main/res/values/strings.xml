@@ -4,6 +4,7 @@
     <string name="back">Back</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="update">Update</string>
 
     <string name="action_settings">Settings</string>
     <string name="menu_tasks">My Tasks</string>
@@ -25,6 +26,7 @@
     <string name="new_password">New Password</string>
     <string name="forgot">Forgot?</string>
     <string name="submit">Submit</string>
+    <string name="reschedule">Reschedule</string>
 
     <string name="error_confirm_password">Invalid Confirm Password</string>
     <string name="error_invalid_email">Invalid Email</string>
@@ -76,6 +78,7 @@
     <string name="signOut">SIGN OUT</string>
 
     <string name="done_button">DONE</string>
+    <string name="upload_button">Upload</string>
     <string name="noFeatures">No Features</string>
 
     <string name="age_val">59</string>
@@ -177,6 +180,10 @@
     <string name="to">&#160;for&#160;</string>
     <string name="activities">Activities</string>
     <string name="tasks">Tasks</string>
+
+    <!--Mislestone Related-->
+    <string name="medicine_name">Medicine Name</string>
+    <string name="qunatity">Quantity</string>
 
     <!--Success Strings-->
     <string name="account_success_header">Account Successfully Created</string>

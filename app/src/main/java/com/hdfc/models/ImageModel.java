@@ -1,9 +1,11 @@
 package com.hdfc.models;
 
+import java.io.Serializable;
+
 /**
  * Created by Suhail on 2/19/2016.
  */
-public class ImageModel {
+public class ImageModel implements Serializable {
 
     private String strImageName;
     private String strImageUrl;

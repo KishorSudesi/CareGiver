@@ -182,12 +182,12 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
                 .setIcon(getActivity().getResources().getDrawable(R.drawable.pen))
                 .build());
 
-        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
+        /*mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setText("Done")
                 .setTextColor(Color.WHITE)
                 .setTextSize((int) getResources().getDimension(R.dimen.txt_size))
-                .build());
+                .build());*/
 
        /* mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
@@ -284,7 +284,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
                         }
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
-                        if (activityModel != null) {
+                       /* if (activityModel != null) {
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModel);
 
@@ -293,7 +293,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
                                 intent.putExtras(args);
                                 startActivity(intent);
                             }
-                        }
+                        }*/
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
 

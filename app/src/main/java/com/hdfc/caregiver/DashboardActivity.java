@@ -209,15 +209,18 @@ public class DashboardActivity extends AppCompatActivity implements
             boolean b = false;
 
             if (bundle != null)
-                b = bundle.getBoolean("LOGIN");
+                b = bundle.getBoolean("LOAD");
 
             if (b) {
-                loadingPanel.setVisibility(View.VISIBLE);
 
-                mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
-                textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                if (Config.intSelectedMenu == Config.intDashboardScreen) {
+                    loadingPanel.setVisibility(View.VISIBLE);
 
-                gotoSimpleActivity();
+                    mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+                    textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                    gotoSimpleActivity();
+                }
             } else {
                 if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
@@ -256,8 +259,8 @@ public class DashboardActivity extends AppCompatActivity implements
         setMenu();
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
         textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        //Config.intSelectedMenu = 0;
-        gotoSimpleActivity();
+        Config.intSelectedMenu = Config.intDashboardScreen;
+        goToDashboard();
     }
 
     private void menuClients() {

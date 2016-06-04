@@ -1086,7 +1086,7 @@ public class AppUtils {
                                                     getJSONArray("array_type")));
 
                                         if (jsonObjectField.has("array_data"))
-                                            fieldModel.setStrArrayData(new String[]{});
+                                            fieldModel.setStrArrayData("");
 
                                     }
                                     ////
@@ -1484,7 +1484,7 @@ public class AppUtils {
                                                     getJSONArray("array_type")));
 
                                         if (jsonObjectField.has("array_data"))
-                                            fieldModel.setStrArrayData(new String[]{});
+                                            fieldModel.setStrArrayData("");
 
                                     }
                                     ////
@@ -1632,7 +1632,6 @@ public class AppUtils {
                             fieldModel.setStrFieldType(jsonObjectField.getString("type"));
 
                             if (jsonObjectField.has("values")) {
-
                                 fieldModel.setStrFieldValues(utils.jsonToStringArray(jsonObjectField.
                                         getJSONArray("values")));
                             }
@@ -1691,7 +1690,7 @@ public class AppUtils {
                                             getJSONArray("array_type")));
 
                                 if (jsonObjectField.has("array_data"))
-                                    fieldModel.setStrArrayData(new String[]{});
+                                    fieldModel.setStrArrayData("");
 
                             }
                             ////

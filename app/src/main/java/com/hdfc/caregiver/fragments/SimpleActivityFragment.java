@@ -305,7 +305,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                         }
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
-                        if (activityModels.size() > 0) {
+                      /*  if (activityModels.size() > 0) {
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
 
@@ -318,7 +318,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             } else {
                                 utils.toast(2, 2, "Activity is Closed");
                             }
-                        }
+                        }*/
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
 
