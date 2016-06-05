@@ -399,5 +399,19 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     @Override
     public void onListItemClick(View v, int position) {
+        if (activityModels.size() > 0) {
+            Bundle args = new Bundle();
+            args.putSerializable("ACTIVITY", activityModels.get(position));
+
+            if (!activityModels.get(position).getStrActivityStatus().equalsIgnoreCase("completed")) {
+                ActivityModel obj = activityModels.get(position);
+                Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                args.putSerializable("ACTIVITY", obj);
+                intent.putExtras(args);
+                startActivity(intent);
+            } else {
+                utils.toast(2, 2, "Activity is Closed");
+            }
+        }
     }
 }

@@ -845,7 +845,8 @@ public class AppUtils {
                                         jsonObjectImage.getString("image_name"),
                                         jsonObjectImage.getString("image_url"),
                                         jsonObjectImage.getString("image_description"),
-                                        jsonObjectImage.getString("image_taken"));
+                                        jsonObjectImage.getString("image_taken"),
+                                        "");
 
                                 String strUrlHash = Utils.sha512(jsonObjectImage.getString("image_url"));
 
@@ -1072,6 +1073,7 @@ public class AppUtils {
                                         try {
                                             fieldModel.setiArrayCount(jsonObjectField.getInt("array_fields"));
                                         } catch (Exception e) {
+                                            e.printStackTrace();
                                             int i = 0;
                                             try {
                                                 i = Integer.parseInt(jsonObjectField.getString("array_fields"));
@@ -1086,7 +1088,7 @@ public class AppUtils {
                                                     getJSONArray("array_type")));
 
                                         if (jsonObjectField.has("array_data"))
-                                            fieldModel.setStrArrayData("");
+                                            fieldModel.setStrArrayData(jsonObjectField.getString("array_data"));
 
                                     }
                                     ////
@@ -1229,7 +1231,7 @@ public class AppUtils {
                                         jsonObjectImage.getString("image_name"),
                                         jsonObjectImage.getString("image_url"),
                                         jsonObjectImage.getString("image_description"),
-                                        jsonObjectImage.getString("image_taken"));
+                                        jsonObjectImage.getString("image_taken"), "");
 
                                 String strUrlHash = Utils.sha512(jsonObjectImage.getString("image_url"));
 
@@ -1471,6 +1473,7 @@ public class AppUtils {
                                             fieldModel.setiArrayCount(jsonObjectField.getInt("array_fields"));
                                         } catch (Exception e) {
                                             int i = 0;
+                                            e.printStackTrace();
                                             try {
                                                 i = Integer.parseInt(jsonObjectField.getString("array_fields"));
                                                 fieldModel.setiArrayCount(i);
@@ -1484,7 +1487,7 @@ public class AppUtils {
                                                     getJSONArray("array_type")));
 
                                         if (jsonObjectField.has("array_data"))
-                                            fieldModel.setStrArrayData("");
+                                            fieldModel.setStrArrayData(jsonObjectField.getString("array_data"));
 
                                     }
                                     ////
@@ -1676,6 +1679,7 @@ public class AppUtils {
                                 try {
                                     fieldModel.setiArrayCount(jsonObjectField.getInt("array_fields"));
                                 } catch (Exception e) {
+                                    e.printStackTrace();
                                     int i = 0;
                                     try {
                                         i = Integer.parseInt(jsonObjectField.getString("array_fields"));
@@ -1690,7 +1694,7 @@ public class AppUtils {
                                             getJSONArray("array_type")));
 
                                 if (jsonObjectField.has("array_data"))
-                                    fieldModel.setStrArrayData("");
+                                    fieldModel.setStrArrayData(jsonObjectField.getString("array_data"));
 
                             }
                             ////
@@ -2033,7 +2037,11 @@ public class AppUtils {
 
             Query q8 = QueryBuilder.compoundOperator(q5, QueryBuilder.Operator.AND, q6);
 
-            //Utils.log(q8.get(), " QUERY ");
+            try {
+                Utils.log(q8.get(), " QUERY ");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             storageService.findDocsByQueryOrderBy(Config.collectionActivity, q8, 1000, 0,
                     "activity_date", 1,
@@ -2047,7 +2055,7 @@ public class AppUtils {
 
                                     Storage storage = (Storage) o;
 
-                                    //Utils.log(storage.toString(), " MS ");
+                                    Utils.log(storage.toString(), " MS ");
 
                                     ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
 

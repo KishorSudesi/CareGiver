@@ -381,6 +381,27 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
 
     @Override
     public void onListItemClick(View v, int position) {
-    }
+        int iPosition = 0;
 
+        if (milestoneModels != null && milestoneModels.get(position) != null &&
+                milestoneModels.get(position).getStrActivityId() != null) {
+            iPosition = Config.strActivityIds.indexOf(milestoneModels.get(position).getStrActivityId());
+        }
+
+        ActivityModel activityModel = null;
+
+        if (iPosition > -1)
+            activityModel = Config.activityModels.get(iPosition);
+
+        if (activityModel != null) {
+            Bundle args = new Bundle();
+            args.putSerializable("ACTIVITY", activityModel);
+
+            if (!activityModel.getStrActivityStatus().equalsIgnoreCase("completed")) {
+                Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                intent.putExtras(args);
+                startActivity(intent);
+            }
+        }
+    }
 }

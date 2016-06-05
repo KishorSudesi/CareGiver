@@ -60,13 +60,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class FeatureActivity extends AppCompatActivity implements Serializable{
+public class FeatureActivity extends AppCompatActivity {
 
     public static int IMAGE_COUNT = 0;
     private static String strImageName = "";
@@ -85,11 +85,13 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     private static Dialog dialog;
     private static RelativeLayout loadingPanel;
     private static boolean bLoad;
+    private static boolean bViewLoaded;
     private final Context context = this;
     private Utils utils;
     //private ProgressDialog progressDialog;
     private Point p;
     private JSONArray jsonArrayImagesAdded;
+    private TextView textViewName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,6 +217,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             });
         }
 
+        bViewLoaded = false;
+
         loadingPanel.setVisibility(View.VISIBLE);
 
         backgroundThreadHandler = new BackgroundThreadHandler();
@@ -233,15 +237,26 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         finish();
     }
 
-    private void traverseEditTexts(ViewGroup v, int iMileStoneId) {
+    private void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
 
         boolean b = true;
 
         try {
 
+            Calendar calendar = Calendar.getInstance();
+
             for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
 
                 if (milestoneModel.getiMilestoneId() == iMileStoneId) {
+
+                    Date date = calendar.getTime();
+                    milestoneModel.setStrMilestoneDate(utils.convertDateToString(date));
+
+                    //if(iFlag==1)
+                    //milestoneModel.setStrMilestoneStatus("opened");
+
+                    if (iFlag == 2)
+                        milestoneModel.setStrMilestoneStatus("completed");
 
                     for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
 
@@ -254,12 +269,23 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                             EditText editText = (EditText) v.findViewById(fieldModel.getiFieldID());
 
-                            boolean b1 = (Boolean) editText.getTag();
+                            boolean b1 = (Boolean) editText.getTag(R.id.one);
                             String data = editText.getText().toString().trim();
 
                             if (editText.isEnabled()) {
                                 if (b1 && !data.equalsIgnoreCase("")) {
                                     fieldModel.setStrFieldData(data);
+
+                                    if ((milestoneModel.isReschedule() || !milestoneModel.isReschedule())
+                                            && milestoneModel.getStrMilestoneScheduledDate() != null
+                                            && (!milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")
+                                            || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase(""))
+                                            && fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                            ) {
+                                        String strDate = (String) editText.getTag(R.id.two);
+                                        milestoneModel.setStrMilestoneScheduledDate(strDate);
+                                        milestoneModel.setReschedule(true);
+                                    }
                                 } else {
                                     editText.setError(context.getString(R.string.error_field_required));
                                     b = false;
@@ -290,27 +316,38 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                         //array
                         if (fieldModel.getStrFieldType().equalsIgnoreCase("array")) {
 
-                            ArrayList<String> strMedicineNames = utils.getEditTextValueByTag(layout, "medicine_name");
-                            ArrayList<String> strMedicineQty = utils.getEditTextValueByTag(layout, "medicine_qty");
+                            ArrayList<String> strMedicineNames = utils.getEditTextValueByTag(viewGroup, "medicine_name");
+                            ArrayList<String> strMedicineQty = utils.getEditTextValueByTag(viewGroup, "medicine_qty");
 
-                            JSONObject jsonObject = new JSONObject();
+                            int j = 0;
 
-                            JSONArray jsonArray = new JSONArray();
+                            if (strMedicineNames.size() > 0) {
 
-                            for (int i = 0; i < strMedicineNames.size(); i++) {
+                                JSONObject jsonObject = new JSONObject();
 
-                                if (!strMedicineNames.get(i).equalsIgnoreCase("") && !strMedicineQty.get(i).equalsIgnoreCase("")) {
-                                    JSONObject jsonObjectMedicine = new JSONObject();
+                                JSONArray jsonArray = new JSONArray();
 
-                                    jsonObjectMedicine.put("medicine_name", strMedicineNames.get(i));
-                                    jsonObjectMedicine.put("medicine_qty", Integer.parseInt(strMedicineQty.get(i)));
+                                for (int i = 0; i < strMedicineNames.size(); i++) {
 
-                                    jsonArray.put(jsonObjectMedicine);
+                                    if (!strMedicineNames.get(i).equalsIgnoreCase("") && !strMedicineQty.get(i).equalsIgnoreCase("")) {
+                                        j++;
+                                        JSONObject jsonObjectMedicine = new JSONObject();
+
+                                        jsonObjectMedicine.put("medicine_name", strMedicineNames.get(i));
+                                        jsonObjectMedicine.put("medicine_qty", Integer.parseInt(strMedicineQty.get(i)));
+
+                                        jsonArray.put(jsonObjectMedicine);
+                                    }
                                 }
-                            }
-                            jsonObject.put("array_data", jsonArray);
+                                jsonObject.put("array_data", jsonArray);
 
-                            fieldModel.setStrArrayData(jsonObject.toString());
+                                fieldModel.setStrArrayData(jsonObject.toString());
+                            }
+
+                            if (j <= 0) {
+                                b = false;
+                                utils.toast(2, 2, getString(R.string.error_medicines));
+                            }
                         }
                         //
                     }
@@ -322,11 +359,11 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
         if (b) {
 
-            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
+           /* for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
                 for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
                     Utils.log(fieldModel.getStrFieldLabel() + " ~ " + fieldModel.getStrFieldData(), " DATA ");
                 }
-            }
+            }*/
 
             //dialog.dismiss();
             uploadJson();
@@ -335,11 +372,15 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
     private void updateMileStones(JSONObject jsonToUpdate) {
 
-        loadingPanel.setVisibility(View.VISIBLE);
-
         if (utils.isConnectingToInternet()) {
 
+            dialog.dismiss();
+
+            loadingPanel.setVisibility(View.VISIBLE);
+
             bLoad = true;
+
+            Utils.log(jsonToUpdate.toString(), " JSON ");
 
             storageService.updateDocs(jsonToUpdate,
                     act.getStrActivityID(),
@@ -356,7 +397,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                         }
                     });
         } else {
-            loadingPanel.setVisibility(View.GONE);
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }
@@ -541,7 +581,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             UploadService uploadService = new UploadService(this);
 
-            uploadService.uploadImageCommon(imageModel.getStrImageName(),
+            uploadService.uploadImageCommon(imageModel.getStrImagePath(),
                     imageModel.getStrImageDesc(), imageModel.getStrImageDesc(),
                     Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
                     new App42CallBack() {
@@ -679,7 +719,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                     if (fieldModel.getiArrayCount() > 0) {
                         jsonObjectField.put("array_fields", fieldModel.getiArrayCount());
                         jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.getStrArrayType()));
-                        jsonObjectField.put("array_data", fieldModel.getStrFieldData());
+                        jsonObjectField.put("array_data", fieldModel.getStrArrayData());
                     }
                     //
 
@@ -882,6 +922,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
         utils.toast(2, 2, strAlert);
 
+        reloadMilestones();
+
         /*Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
         Config.intSelectedMenu = Config.intDashboardScreen;
         startActivity(intent);*/
@@ -892,6 +934,16 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
         super.onResume();
 
+        if (!bViewLoaded) {
+
+            bViewLoaded = true;
+
+            reloadMilestones();
+        }
+    }
+
+    private void reloadMilestones() {
+
         final ActivityModel activityModel = act;
 
         try {
@@ -900,7 +952,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.milestoneLayout);
 
-            TextView textViewName;
+            linearLayout.removeAllViews();
 
             Drawable drawable = null;
 
@@ -911,35 +963,77 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 textViewName.setText(milestoneModel.getStrMilestoneName());
                 textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
                 textViewName.setPadding(10, 10, 10, 10);
-                textViewName.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_success));
+                textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 30, 1);
                 params.setMargins(10, 10, 10, 10);
                 textViewName.setTag(milestoneModel);
+                //textViewName.setId(milestoneModel.getiMilestoneId());
+
+                if (milestoneModel.getStrMilestoneScheduledDate() != null && !milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")) {
+
+                    String strDate = milestoneModel.getStrMilestoneScheduledDate();
+
+                    Calendar calendar = Calendar.getInstance();
+
+                    Date date = null;
+                    String strdateCopy;
+                    Date milestoneDate = null;
+
+                    try {
+                        strdateCopy = Utils.readFormat.format(calendar.getTime());
+                        date = Utils.readFormat.parse(strdateCopy);
+                        milestoneDate = utils.convertStringToDate(strDate);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (date != null && milestoneDate != null) {
+
+                        if (milestoneDate.before(date) && !milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed"))
+                            milestoneModel.setStrMilestoneStatus("pending");
+                        else {
+                            if (milestoneDate.after(date) && !milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed"))
+                                milestoneModel.setStrMilestoneStatus("inprocess");
+                        }
+                    } else milestoneModel.setStrMilestoneStatus("opened");
+                }
 
                 final String strMilestoneStatus = milestoneModel.getStrMilestoneStatus();
 
-                if (milestoneModel.getStrMilestoneScheduledDate() != null) {
+                Drawable drawableBg = null;
 
+                if (strMilestoneStatus.equalsIgnoreCase("completed")) {
+                    drawable = getResources().getDrawable(R.mipmap.done);
+                    drawableBg = getResources().getDrawable(R.drawable.button_success);
                 }
 
-                if (strMilestoneStatus.equalsIgnoreCase("completed"))
-                    drawable = getResources().getDrawable(R.mipmap.done);
-
-                if (strMilestoneStatus.equalsIgnoreCase("pending"))
+                if (strMilestoneStatus.equalsIgnoreCase("pending")) {
                     drawable = getResources().getDrawable(R.mipmap.error);
+                    drawableBg = getResources().getDrawable(R.drawable.button_error);
+                }
 
                 if (strMilestoneStatus.equalsIgnoreCase("opened")
-                        || milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("reopened"))
+                        || milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("reopened")) {
                     drawable = getResources().getDrawable(R.mipmap.star_white);
+                    drawableBg = getResources().getDrawable(R.drawable.button_open);
+                }
 
-                if (strMilestoneStatus.equalsIgnoreCase("inactive"))
+                if (strMilestoneStatus.equalsIgnoreCase("inactive")) {
                     drawable = getResources().getDrawable(R.mipmap.star_grey);
+                    drawableBg = getResources().getDrawable(R.drawable.button_inactive);
+                }
 
-                if (strMilestoneStatus.equalsIgnoreCase("inprocess"))
+                if (strMilestoneStatus.equalsIgnoreCase("inprocess")) {
                     drawable = getResources().getDrawable(R.mipmap.star_gold);
+                    drawableBg = getResources().getDrawable(R.drawable.button_grey);
+                }
 
                 if (drawable != null)
                     textViewName.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+
+                if (drawableBg != null) {
+                    textViewName.setBackgroundDrawable(drawableBg);
+                }
 
                 textViewName.setLayoutParams(params);
 
@@ -953,20 +1047,33 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                         if (!strMilestoneStatus.equalsIgnoreCase("completed")) {
 
-                            MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
+                            final MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
 
                             //int i = 0;
 
                             View view = getLayoutInflater().inflate(R.layout.dialog_view, null, false);
 
-                            final LinearLayout layout = (LinearLayout) view.findViewById(R.id.linearLayout);
+                            final LinearLayout layoutDialog = (LinearLayout) view.findViewById(R.id.linearLayoutDialog);
 
                             Button button = (Button) view.findViewById(R.id.dialogButtonOK);
                             Button buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
+                            Button buttonDone = (Button) view.findViewById(R.id.buttonDone);
                             button.setTag(milestoneModelObject.getiMilestoneId());
+                            buttonDone.setTag(milestoneModelObject.getiMilestoneId());
 
                             TextView milestoneName = (TextView) view.findViewById(R.id.milestoneName);
                             milestoneName.setText(milestoneModelObject.getStrMilestoneName());
+
+                            if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")) {
+                                button.setText(getString(R.string.update));
+                                buttonDone.setVisibility(View.VISIBLE);
+                            }
+
+                            if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")
+                                    && milestoneModelObject.getStrMilestoneScheduledDate() != null
+                                    && !milestoneModelObject.getStrMilestoneScheduledDate().equalsIgnoreCase("")) {
+                                button.setText(getString(R.string.reschedule));
+                            }
 
                             for (FieldModel fieldModel : milestoneModelObject.getFieldModels()) {
 
@@ -996,7 +1103,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                     final EditText editText = new EditText(context);
 
                                     editText.setId(fieldModel.getiFieldID());
-                                    editText.setTag(fieldModel.isFieldRequired());
+                                    editText.setTag(R.id.one, fieldModel.isFieldRequired());
                                     editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
                                     editText.setText(fieldModel.getStrFieldData());
 
@@ -1035,9 +1142,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                                                     if (finalFieldModel.getStrFieldType().equalsIgnoreCase("date"))
                                                         strDate = Utils.writeFormatDate.format(date);
-                                               /*
-                                                _strDate = Utils.readFormat.format(date);
-                                                dateAnd.setText(strDate);*/
+
+                                                    editText.setTag(R.id.two, Utils.readFormat.format(date));
                                                     editText.setText(strDate);
                                                 }
 
@@ -1091,20 +1197,24 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                                                         if (finalFieldModel.getStrChildType()[i].equalsIgnoreCase("text")) {
 
-                                                            EditText editText = (EditText) layout.findViewById(finalFieldModel.getiChildfieldID()[i]);
+                                                            EditText editTextChild = (EditText) layoutDialog.findViewById(finalFieldModel.getiChildfieldID()[i]);
 
-                                                            String strValue = spinner.getSelectedItem().toString();
+                                                            if (editTextChild != null) {
 
-                                                            if (finalFieldModel.getStrChildCondition()[i].equalsIgnoreCase("equals")) {
+                                                                String strValue = spinner.getSelectedItem().toString();
 
-                                                                if (strValue.equalsIgnoreCase(finalFieldModel.getStrChildValue()[i])) {
-                                                                    //editText.setVisibility(View.VISIBLE);
-                                                                    editText.setEnabled(true);
-                                                                    break;
-                                                                } else {
-                                                                    editText.setEnabled(false);
-                                                                }
-                                                            } else editText.setEnabled(false);
+                                                                if (finalFieldModel.getStrChildCondition()[i].equalsIgnoreCase("equals")) {
+
+                                                                    if (strValue.equalsIgnoreCase(finalFieldModel.getStrChildValue()[i])) {
+                                                                        //editText.setVisibility(View.VISIBLE);
+                                                                        editTextChild.setEnabled(true);
+                                                                        break;
+                                                                    } else {
+                                                                        editTextChild.setEnabled(false);
+                                                                    }
+                                                                } else
+                                                                    editTextChild.setEnabled(false);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -1121,14 +1231,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                     if (fieldModel.getStrFieldData() != null && !fieldModel.getStrFieldData().equalsIgnoreCase("")) {
 
                                         int iSelected = adapter.getPosition(fieldModel.getStrFieldData());
-
-                                   /* for(int i=0; i<fieldModel.getStrFieldValues().length; i++){
-                                        if(fieldModel.getStrFieldValues()[i].equalsIgnoreCase()){
-                                            iSelected=i;
-                                            break;
-                                        }
-                                    }*/
-
                                         spinner.setSelection(iSelected);
                                     }
 
@@ -1139,10 +1241,79 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                                     final LinearLayout linearLayoutParent = new LinearLayout(context);
                                     linearLayoutParent.setOrientation(LinearLayout.VERTICAL);
+                                    linearLayoutParent.setTag(R.id.linearparent);
 
                                     LinearLayout.LayoutParams layoutParentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                     layoutParentParams.setMargins(10, 10, 10, 10);
                                     linearLayoutParent.setLayoutParams(layoutParentParams);
+
+                                    //
+                                    try {
+
+                                        JSONObject jsonObjectMedicines = new JSONObject(fieldModel.getStrArrayData());
+
+                                        JSONArray jsonArrayMedicines = jsonObjectMedicines.getJSONArray("array_data");
+
+                                        for (int i = 0; i < jsonArrayMedicines.length(); i++) {
+
+                                            JSONObject jsonObjectMedicine =
+                                                    jsonArrayMedicines.getJSONObject(i);
+
+                                            final LinearLayout linearLayoutArrayExist = new LinearLayout(context);
+                                            linearLayoutArrayExist.setOrientation(LinearLayout.HORIZONTAL);
+                                            //linearLayoutArrayExist.setId(R.id.actionBarNotification);
+
+                                            LinearLayout.LayoutParams layoutArrayExistParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            layoutArrayExistParams.setMargins(10, 10, 10, 10);
+                                            linearLayoutArrayExist.setLayoutParams(layoutArrayExistParams);
+
+
+                                            EditText editMedicineName = new EditText(context);
+                                            editMedicineName.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                                            editMedicineName.setHint(getString(R.string.medicine_name));
+                                            editMedicineName.setTag("medicine_name");
+                                            editMedicineName.setInputType(InputType.TYPE_CLASS_TEXT);
+                                            editMedicineName.setText(jsonObjectMedicine.getString("medicine_name"));
+                                            linearLayoutArrayExist.addView(editMedicineName);
+
+                                            EditText editMedicineQty = new EditText(context);
+                                            editMedicineQty.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                                            editMedicineQty.setHint(getString(R.string.qunatity));
+                                            editMedicineQty.setTag("medicine_qty");
+                                            editMedicineQty.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                            editMedicineQty.setText(String.valueOf(jsonObjectMedicine.getInt("medicine_qty")));
+                                            linearLayoutArrayExist.addView(editMedicineQty);
+
+
+                                            //
+                                            Button buttonDel = new Button(context);
+                                            buttonDel.setText("X");
+                                            //buttonDel.setTextColor(get);
+                                            //buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
+                                            buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
+                                            buttonDel.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+
+                                                    try {
+                                                        LinearLayout linearLayout = (LinearLayout) v.getParent();
+                                                        linearLayout.removeAllViews();
+
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            });
+                                            linearLayoutArrayExist.addView(buttonDel);
+
+                                            linearLayoutParent.addView(linearLayoutArrayExist);
+                                            ///
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    //
 
                                     final LinearLayout linearLayoutArray = new LinearLayout(context);
                                     linearLayoutArray.setOrientation(LinearLayout.HORIZONTAL);
@@ -1160,19 +1331,21 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                             editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
                                             editTextArray.setHint(getString(R.string.medicine_name));
                                             editTextArray.setTag("medicine_name");
+                                            editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
                                         }
 
                                         if (j == 1) {
                                             editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
                                             editTextArray.setHint(getString(R.string.qunatity));
                                             editTextArray.setTag("medicine_qty");
+                                            editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
                                         }
 
-                                        if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
-                                            editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
+                                           /* if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
 
-                                        if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))
-                                            editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                                            if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))*/
+
 
                                         linearLayoutArray.addView(editTextArray);
                                     }
@@ -1201,23 +1374,46 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                                         editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
                                                         editTextArray.setHint(getString(R.string.medicine_name));
                                                         editTextArray.setTag("medicine_name");
+                                                        editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
                                                     }
 
                                                     if (j == 1) {
                                                         editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
                                                         editTextArray.setHint(getString(R.string.qunatity));
                                                         editTextArray.setTag("medicine_qty");
+                                                        editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
                                                     }
 
-                                                    if (finalFieldModel.getStrFieldType().equalsIgnoreCase("text"))
-                                                        editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
+                                                        /*if (finalFieldModel.getStrFieldType().equalsIgnoreCase("text"))
 
-                                                    if (finalFieldModel.getStrFieldType().equalsIgnoreCase("number"))
-                                                        editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                                                        if (finalFieldModel.getStrFieldType().equalsIgnoreCase("number"))*/
 
 
                                                     linearLayoutArrayInner.addView(editTextArray);
                                                 }
+
+                                                //
+                                                Button buttonDel = new Button(context);
+                                                buttonDel.setText("X");
+                                                //buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
+                                                buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
+                                                buttonDel.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+
+                                                        try {
+                                                            LinearLayout linearLayout = (LinearLayout) v.getParent();
+                                                            linearLayout.removeAllViews();
+
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
+
+                                                linearLayoutArrayInner.addView(buttonDel);
+                                                ///
 
                                                 linearLayoutParent.addView(linearLayoutArrayInner);
                                                 //
@@ -1231,59 +1427,80 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                                     linearLayoutParent.addView(linearLayoutArray);
 
-                                    try {
-
-                                        JSONObject jsonObjectMedicines = new JSONObject(fieldModel.getStrArrayData());
-
-                                        JSONArray jsonArrayMedicines = jsonObjectMedicines.
-                                                getJSONArray("array_data");
-
-                                        for (int i = 0; i < jsonArrayMedicines.length(); i++) {
-
-                                            JSONObject jsonObjectMedicine =
-                                                    jsonArrayMedicines.getJSONObject(i);
-
-                                            final LinearLayout linearLayoutArrayExist = new LinearLayout(context);
-                                            linearLayoutArrayExist.setOrientation(LinearLayout.HORIZONTAL);
-
-                                            LinearLayout.LayoutParams layoutArrayExistParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                            layoutArrayExistParams.setMargins(10, 10, 10, 10);
-                                            linearLayoutArrayExist.setLayoutParams(layoutArrayExistParams);
-
-
-                                            EditText editMedicineName = new EditText(context);
-                                            editMedicineName.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
-                                            editMedicineName.setHint(getString(R.string.medicine_name));
-                                            editMedicineName.setTag("medicine_name");
-                                            editMedicineName.setInputType(InputType.TYPE_CLASS_TEXT);
-                                            editMedicineName.setText(jsonObjectMedicine.getString("medicine_name"));
-                                            linearLayoutArrayExist.addView(editMedicineName);
-
-                                            EditText editMedicineQty = new EditText(context);
-                                            editMedicineQty.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-                                            editMedicineQty.setHint(getString(R.string.qunatity));
-                                            editMedicineQty.setTag("medicine_qty");
-                                            editMedicineQty.setInputType(InputType.TYPE_CLASS_NUMBER);
-                                            editMedicineQty.setText(String.valueOf(jsonObjectMedicine.getInt("medicine_qty")));
-                                            linearLayoutArrayExist.addView(editMedicineQty);
-
-                                            linearLayoutParent.addView(linearLayoutArrayExist);
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-
                                     linearLayout1.addView(linearLayoutParent);
                                 }
-                                layout.addView(linearLayout1);
+                                layoutDialog.addView(linearLayout1);
                             }
 
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     int id = (int) v.getTag();
-                                    traverseEditTexts(layout, id);
+                                    LinearLayout linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                                    traverseEditTexts(layoutDialog, id, linearLayout, 1);
+
+                                    //
+                                       /* TextView textViewNameMs = (TextView) linearLayout.findViewById(milestoneModelObject.getiMilestoneId());
+
+                                        Drawable drawableBg = null, drawable=null;
+
+                                        if (strMilestoneStatus.equalsIgnoreCase("completed")){
+                                            drawable = getResources().getDrawable(R.mipmap.done);
+                                            drawableBg = getResources().getDrawable(R.drawable.button_success);
+                                        }
+
+                                        if (strMilestoneStatus.equalsIgnoreCase("pending")) {
+                                            drawable = getResources().getDrawable(R.mipmap.error);
+                                            drawableBg = getResources().getDrawable(R.drawable.button_error);
+                                        }
+
+                                        if (strMilestoneStatus.equalsIgnoreCase("opened")
+                                                || milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("reopened")) {
+                                            drawable = getResources().getDrawable(R.mipmap.star_white);
+                                            drawableBg = getResources().getDrawable(R.drawable.button_open);
+                                        }
+
+                                        if (strMilestoneStatus.equalsIgnoreCase("inactive")) {
+                                            drawable = getResources().getDrawable(R.mipmap.star_grey);
+                                            drawableBg = getResources().getDrawable(R.drawable.button_inactive);
+                                        }
+
+                                        if (strMilestoneStatus.equalsIgnoreCase("inprocess")) {
+                                            drawable = getResources().getDrawable(R.mipmap.star_gold);
+                                            drawableBg = getResources().getDrawable(R.drawable.button_grey);
+                                        }
+
+                                        if (drawable != null)
+                                            textViewNameMs.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+
+                                        if (drawableBg != null){
+                                            textViewNameMs.setBackgroundDrawable(drawableBg);
+                                        }*/
+                                    //
+                                }
+                            });
+
+                            buttonDone.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    int id = (int) v.getTag();
+                                    LinearLayout linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                                    traverseEditTexts(layoutDialog, id, linearLayout, 2);
+
+
+                                    //
+                                       /* TextView textViewNameMs = (TextView) linearLayout.findViewById(milestoneModelObject.getiMilestoneId());
+
+                                        Drawable drawableBg, drawable;
+
+                                        drawable = getResources().getDrawable(R.mipmap.done);
+                                        drawableBg = getResources().getDrawable(R.drawable.button_success);
+
+
+                                        textViewNameMs.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+                                        textViewNameMs.setBackgroundDrawable(drawableBg);*/
+
+                                    //
                                 }
                             });
 
@@ -1326,12 +1543,13 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             try {
                 for(int i=0;i<imagePaths.size();i++) {
                     Calendar calendar = new GregorianCalendar();
-                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
+                    String strTime = String.valueOf(calendar.getTimeInMillis());
+                    String strFileName = strTime + ".jpeg";
                     File galleryFile = utils.createFileInternalImage(strFileName);
                     strImageName = galleryFile.getAbsolutePath();
                     Date date = new Date();
 
-                    ImageModel imageModel = new ImageModel(strImageName, "", galleryFile.getName(), utils.convertDateToString(date));
+                    ImageModel imageModel = new ImageModel(strFileName, "", strTime, utils.convertDateToString(date), galleryFile.getAbsolutePath());
                     arrayListImageModel.add(imageModel);
 
                     utils.copyFile(new File(imagePaths.get(i)), galleryFile);
@@ -1358,7 +1576,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                     utils.compressImageFromPath(strImageName, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
                     Date date = new Date();
-                    ImageModel imageModel = new ImageModel(strImageName, "", strName, utils.convertDateToString(date));
+                    ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), strImageName);
                     arrayListImageModel.add(imageModel);
                     bitmaps.add(utils.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight));
                 }
@@ -1397,7 +1615,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                 for (ImageModel imageModel : act.getImageModels()) {
                     if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                        bitmaps.add(utils.getBitmapFromFile(imageModel.getStrImageName(), Config.intWidth, Config.intHeight));
+                        bitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
                         IMAGE_COUNT++;
 
                         jsonObjectImages.put("image_name", imageModel.getStrImageName());

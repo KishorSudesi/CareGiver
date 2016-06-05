@@ -24,7 +24,7 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:id="@+id/linearLayout"
+                android:id="@+id/linearLayoutDialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_general"
@@ -59,30 +59,6 @@
                     android:layout_weight="1"
                     android:background="@drawable/button_success"
                     android:text="@string/done"
-                    android:visibility="gone" />
-
-                <Button
-                    android:id="@+id/buttonUpdate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/margin_general"
-                    android:layout_marginTop="15dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/button_success"
-                    android:text="@string/update"
-                    android:visibility="gone" />
-
-                <Button
-                    android:id="@+id/buttonReschedule"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/margin_general"
-                    android:layout_marginTop="15dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/button_success"
-                    android:text="@string/reschedule"
                     android:visibility="gone" />
 
                 <Button
