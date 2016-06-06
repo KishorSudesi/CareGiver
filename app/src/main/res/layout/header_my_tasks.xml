@@ -15,7 +15,8 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
-        android:src="@mipmap/calendar" />
+        android:src="@mipmap/calendar"
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/imgNext"
@@ -27,7 +28,8 @@
         android:layout_marginRight="17dp"
         android:layout_toLeftOf="@+id/calendar"
         android:layout_toStartOf="@+id/calendar"
-        android:src="@mipmap/arrow_right" />
+        android:src="@mipmap/arrow_right"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/header"
@@ -53,7 +55,8 @@
         android:layout_marginRight="13dp"
         android:layout_toLeftOf="@+id/textViewDate"
         android:layout_toStartOf="@+id/textViewDate"
-        android:src="@mipmap/arrow_left" />
+        android:src="@mipmap/arrow_left"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/textViewDate"
@@ -65,7 +68,7 @@
         android:layout_marginRight="11dp"
         android:layout_toLeftOf="@+id/imgNext"
         android:layout_toStartOf="@+id/imgNext"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorWhite" />
 
 </RelativeLayout>

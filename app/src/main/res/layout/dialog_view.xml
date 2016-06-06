@@ -58,7 +58,7 @@
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_success"
-                    android:text="@string/done"
+                    android:text="@string/close"
                     android:visibility="gone" />
 
                 <Button

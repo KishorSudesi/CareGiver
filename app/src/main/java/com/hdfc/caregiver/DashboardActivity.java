@@ -40,7 +40,7 @@ public class DashboardActivity extends AppCompatActivity implements
         App42GCMController.App42GCMListener, NetworkStateReceiver.NetworkStateReceiverListener {
 
 
-    private static RelativeLayout loadingPanel;
+    public static RelativeLayout loadingPanel;
     private static Handler threadHandler;
     private static AppUtils appUtils;
     private static Utils utils;
@@ -261,6 +261,8 @@ public class DashboardActivity extends AppCompatActivity implements
         textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         Config.intSelectedMenu = Config.intDashboardScreen;
         goToDashboard();
+        //to refresh
+        refreshDashboardData();
     }
 
     private void menuClients() {

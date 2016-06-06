@@ -656,6 +656,12 @@ public class AppUtils {
 
         Query q5 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q4);
 
+        try {
+            Utils.log(q5.get(), " Q1 ");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         storageService.findDocsByQueryOrderBy(Config.collectionActivity, q5, 1000, 0,
                 "activity_date", 1,
                 new App42CallBack() {

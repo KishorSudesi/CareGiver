@@ -15,6 +15,7 @@
     <string name="header_task_details">Task Details</string>
     <string name="user_ratings">Overall User Ratings</string>
     <string name="done">Done</string>
+    <string name="close">Close</string>
     <string name="feedback">Feedback</string>
     <string name="clients">Clients</string>
 
