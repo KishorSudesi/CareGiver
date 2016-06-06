@@ -19,11 +19,11 @@ import android.widget.TextView;
 
 import com.hdfc.app42service.App42GCMController;
 import com.hdfc.app42service.App42GCMService;
+import com.hdfc.caregiver.fragments.ActivityFragment;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.caregiver.fragments.MileStoneFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
-import com.hdfc.caregiver.fragments.SimpleActivityFragment;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
@@ -437,8 +437,8 @@ public class DashboardActivity extends AppCompatActivity implements
                 utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet));
 
             if (Config.intSelectedMenu == Config.intDashboardScreen) {
-                SimpleActivityFragment.activityModels = Config.activityModels;
-                SimpleActivityFragment.mAdapter.notifyDataSetChanged();
+                ActivityFragment.activityModels = Config.activityModels;
+                ActivityFragment.mAdapter.notifyDataSetChanged();
             }
 
             if (Config.intSelectedMenu == Config.intMileStoneScreen) {

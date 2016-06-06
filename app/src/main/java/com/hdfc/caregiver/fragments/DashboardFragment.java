@@ -155,7 +155,7 @@ public class DashboardFragment extends Fragment {
 
         textView.setText(strDate);
 /*
-        SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
+        ActivityFragment fragment = ActivityFragment.newInstance();
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frameLayoutDashboard, fragment);
         transaction.addToBackStack(null);
@@ -180,14 +180,14 @@ public class DashboardFragment extends Fragment {
                 buttonActivity.setBackgroundResource(R.drawable.one_side_border);
                 buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
 
-                SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
+                ActivityFragment fragment = ActivityFragment.newInstance();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frameLayoutDashboard, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
 
-                SimpleActivityFragment.activityModels = Config.activityModels;
-                SimpleActivityFragment.mAdapter.notifyDataSetChanged();
+                ActivityFragment.activityModels = Config.activityModels;
+                ActivityFragment.mAdapter.notifyDataSetChanged();
             }
 
             if (iPosition == 1) {

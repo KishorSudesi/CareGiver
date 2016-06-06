@@ -5,18 +5,18 @@ package com.hdfc.adapters;
  */
 
 
-        import java.util.HashMap;
-        import java.util.List;
+import android.content.Context;
+import android.graphics.Typeface;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.TextView;
 
-        import android.content.Context;
-        import android.graphics.Typeface;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.BaseExpandableListAdapter;
-        import android.widget.TextView;
+import com.hdfc.caregiver.R;
 
-        import com.hdfc.caregiver.R;
+import java.util.HashMap;
+import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 

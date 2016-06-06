@@ -30,7 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 
-public class SimpleActivityFragment extends Fragment implements SlideAndDragListView.OnListItemLongClickListener,
+public class ActivityFragment extends Fragment implements SlideAndDragListView.OnListItemLongClickListener,
         SlideAndDragListView.OnDragListener, SlideAndDragListView.OnSlideListener,
          SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnListItemClickListener,
         SlideAndDragListView.OnItemDeleteListener {
@@ -130,8 +130,8 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
     };
     private Menu mMenu;
 
-    static SimpleActivityFragment newInstance() {
-        return new SimpleActivityFragment();
+    static ActivityFragment newInstance() {
+        return new ActivityFragment();
     }
 
     @Override
