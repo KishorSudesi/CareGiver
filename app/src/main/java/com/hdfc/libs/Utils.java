@@ -99,7 +99,7 @@ public class Utils {
 
     static {
         System.loadLibrary("stringGen");
-        log("Loaded 0", "NDK");
+        //log("Loaded 0", "NDK");
     }
 
     public Utils(Context context) {
@@ -118,7 +118,7 @@ public class Utils {
     public static native String getString();
 
     public static String getStringJni() {
-        log("Loaded 1", "NDK");
+        //log("Loaded 1", "NDK");
         //return "KaEO19Fc";
         return getString();
     }
