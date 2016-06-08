@@ -12,22 +12,68 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/milestoneName"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/header_gradient"
+                android:gravity="center"
+                android:padding="@dimen/padding_general"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
             <LinearLayout
-                android:id="@+id/linearLayout"
+                android:id="@+id/linearLayoutDialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_general"
                 android:orientation="vertical"
                 android:padding="@dimen/padding_general" />
 
-            <Button
-                android:id="@+id/dialogButtonOK"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/button_success"
-                android:text="@string/submit" />
+                android:gravity="center_horizontal"
+                android:padding="@dimen/padding_general">
+
+                <Button
+                    android:id="@+id/dialogButtonOK"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/margin_general"
+                    android:layout_marginTop="15dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_success"
+                    android:text="@string/submit"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/buttonDone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/margin_general"
+                    android:layout_marginTop="15dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_success"
+                    android:text="@string/close"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/buttonCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/margin_general"
+                    android:layout_marginTop="15dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_white"
+                    android:text="@string/cancel"
+                    android:visibility="visible" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

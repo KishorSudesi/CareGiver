@@ -12,10 +12,13 @@ import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.Utils;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -29,7 +32,8 @@ public class DashboardFragment extends Fragment {
     public static String strStartDate, strEndDate;
     private Button buttonActivity, buttonTask;
     private TextView textView;
-    //private AppUtils appUtils;
+    private Utils utils;
+    private AppUtils appUtils;
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
@@ -47,6 +51,51 @@ public class DashboardFragment extends Fragment {
             //String _strDate = Utils.writeFormatDateDB.format(date);
 
             textView.setText(Utils.writeFormatDate.format(date));
+
+
+            //
+            if (utils.isConnectingToInternet()) {
+
+                DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
+
+                Config.dependentIds.clear();
+                Config.strActivityIds.clear();
+                Config.customerIds.clear();
+
+                Config.dependentIdsAdded.clear();
+                Config.customerIdsAdded.clear();
+
+                Config.activityModels.clear();
+                Config.dependentModels.clear();
+                Config.customerModels.clear();
+
+                //Config.clientModels.clear();
+
+                Config.feedBackModels.clear();
+                Config.milestoneModels.clear();
+
+                Calendar calendar = Calendar.getInstance();
+
+          /*  int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH); // Note: zero based!
+            int day = calendar.get(Calendar.DAY_OF_MONTH);*/
+
+                //Date date = calendar.getTime();
+
+                DashboardFragment.strEndDate = strDate + "T23:59:59.999+0000";
+                DashboardFragment.strStartDate = strDate + "T00:00:00.000+0000";
+
+                DashboardFragment.strDate = Utils.writeFormatDate.format(date);
+
+                Config.intSelectedMenu = Config.intDashboardScreen;
+
+                appUtils.fetchActivities();
+
+            } else {
+                utils.toast(2, 2, getString(R.string.warning_internet));
+            }
+
+            //
         }
 
         @Override
@@ -75,7 +124,8 @@ public class DashboardFragment extends Fragment {
         buttonActivity = (Button) view.findViewById(R.id.buttonActivity);
         buttonTask = (Button) view.findViewById(R.id.buttonTask);
 
-        //appUtils = new AppUtils(getActivity());
+        appUtils = new AppUtils(getActivity());
+        utils = new Utils(getActivity());
 
         buttonActivity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +155,7 @@ public class DashboardFragment extends Fragment {
 
         textView.setText(strDate);
 /*
-        SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
+        ActivityFragment fragment = ActivityFragment.newInstance();
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frameLayoutDashboard, fragment);
         transaction.addToBackStack(null);
@@ -130,14 +180,14 @@ public class DashboardFragment extends Fragment {
                 buttonActivity.setBackgroundResource(R.drawable.one_side_border);
                 buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
 
-                SimpleActivityFragment fragment = SimpleActivityFragment.newInstance();
+                ActivityFragment fragment = ActivityFragment.newInstance();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frameLayoutDashboard, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
 
-                SimpleActivityFragment.activityModels = Config.activityModels;
-                SimpleActivityFragment.mAdapter.notifyDataSetChanged();
+                ActivityFragment.activityModels = Config.activityModels;
+                ActivityFragment.mAdapter.notifyDataSetChanged();
             }
 
             if (iPosition == 1) {

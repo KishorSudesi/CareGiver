@@ -30,7 +30,6 @@ public class NotificationAdapter extends BaseAdapter {
     private MultiBitmapLoader multiBitmapLoader;
 
     public NotificationAdapter(Context ctxt, ArrayList<NotificationModel> d) {
-        System.out.println("Ullu");
         _context = ctxt;
         adapterNotificationModels = d;
         utils = new Utils(ctxt);
@@ -83,14 +82,14 @@ public class NotificationAdapter extends BaseAdapter {
 
             String strId = adapterNotificationModels.get(position).getStrCreatedByID();
 
-            String strName = "";
+            String strName = "", strMess = "";
 
-            viewHolder.textViewText.setText(adapterNotificationModels.get(position).getStrMessage());
+            strMess = adapterNotificationModels.get(position).getStrMessage();
 
-            System.out.println("Sudesi Infotech Pvt Ltd 1 years : "+adapterNotificationModels.get(position).getStrMessage());
+            if (strMess.length() > 120)
+                strMess = strMess.substring(0, 118) + "..";
 
-            if (strName.length() > 20)
-                strName = adapterNotificationModels.get(position).getStrMessage().substring(0, 18) + "..";
+            viewHolder.textViewText.setText(strMess);
 
             if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("provider")) {
                 strName = Config.providerModel.getStrName();

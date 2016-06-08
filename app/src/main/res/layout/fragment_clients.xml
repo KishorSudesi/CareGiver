@@ -4,8 +4,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#EEEEEE">
+        android:layout_height="wrap_content">
 
         <include
             android:id="@+id/include_header_clients"

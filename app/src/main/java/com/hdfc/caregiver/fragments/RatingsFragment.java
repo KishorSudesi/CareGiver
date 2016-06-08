@@ -89,7 +89,7 @@ public class RatingsFragment extends Fragment {
         utils = new Utils(getActivity());
         intWhichScreen = Config.intRatingsScreen;
 
-        //if(Config.myProfileModel.getStrName()!=null)
+        //if(Config.providerModel.getStrName()!=null)
             textViewName.setText(Config.providerModel.getStrName());
 
         backgroundThreadHandler = new BackgroundThreadHandler();
@@ -103,7 +103,7 @@ public class RatingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), MyProfileActivity.class);
-                intent.putExtra("WHICH_SCREEN", intWhichScreen);
+                //intent.putExtra("WHICH_SCREEN", intWhichScreen);
                 startActivity(intent);
             }
         });
@@ -128,7 +128,7 @@ public class RatingsFragment extends Fragment {
             layout.addView(imageView);
         }
 
-        Utils.log(String.valueOf(i + " ! " + j), " R ");
+        //Utils.log(String.valueOf(i + " ! " + j), " R ");
 
         for (k = i; k < 5; k++) {
 
@@ -142,7 +142,7 @@ public class RatingsFragment extends Fragment {
             layout.addView(imageView);
         }
 
-        Utils.log(String.valueOf(i + " ! " + k), " R ");
+        //Utils.log(String.valueOf(i + " ! " + k), " R ");
 
         ratingsAdapter = new RatingsAdapter(getContext(), Config.feedBackModels);
         listratings.setAdapter(ratingsAdapter);

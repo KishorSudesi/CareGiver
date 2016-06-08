@@ -12,11 +12,13 @@
     <color name="colorHeaderGradientStart">#96d4ce</color>
     <color name="colorHeaderGradientEnd">#6fb6c4</color>
 
-    <color name="polygonViewCircleStrokeColor">#ff59a9ff</color>
-    <color name="polygonViewCircleBackground">#90e5f8ff</color>
+    <color name="polygonViewCircleStrokeColor">#6fb6c4</color>
+    <color name="polygonViewCircleBackground">#96d4ce</color>
 
     <color name="cyanButtonSignOut">#00BCD4</color>
     <color name="background">#EEEEEE</color>
+    <color name="colorGrey">#cccccc</color>
+    <color name="colorInactive">#999999</color>
     <color name="color_common">#4DB6AC</color>
 
     <color name="colorRed">#F44336</color>

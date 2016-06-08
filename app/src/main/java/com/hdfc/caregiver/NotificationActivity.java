@@ -1,27 +1,21 @@
 package com.hdfc.caregiver;
 
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hdfc.adapters.NotificationAdapter;
 import com.hdfc.app42service.StorageService;
-import com.hdfc.caregiver.fragments.RatingsFragment;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
-import com.shephertz.app42.paas.sdk.android.event.IAMService;
-import com.shephertz.app42.paas.sdk.android.imageProcessor.Image;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
 import java.util.ArrayList;
@@ -30,6 +24,7 @@ public class NotificationActivity extends AppCompatActivity {
 
     private static NotificationAdapter notificationAdapter;
     private static ProgressDialog progressDialog;
+    private static RelativeLayout loadingPanel;
     private ListView listViewActivities;
     private Utils utils;
     private ImageButton backButton;
@@ -44,17 +39,31 @@ public class NotificationActivity extends AppCompatActivity {
         listViewActivities.setEmptyView(emptyTextView);
         utils = new Utils(NotificationActivity.this);
         backButton = (ImageButton) findViewById(R.id.backButton);
+        loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RatingsFragment fragment = RatingsFragment.newInstance();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.add(R.id.frameLayout, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                goBack();
             }
         });
+
+        notificationAdapter = new NotificationAdapter(NotificationActivity.this, Config.notificationModels);
+        listViewActivities.setAdapter(notificationAdapter);
+
         loadNotifications();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        goBack();
+    }
+
+    private void goBack() {
+        Config.intSelectedMenu = Config.intRatingsScreen;
+        Intent intent = new Intent(NotificationActivity.this, DashboardActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -65,23 +74,20 @@ public class NotificationActivity extends AppCompatActivity {
 
     private void refreshNotifications() {
         //if (listViewActivities != null) {
-            notificationAdapter = new NotificationAdapter(NotificationActivity.this, Config.notificationModels);
-            listViewActivities.setAdapter(notificationAdapter);
+        notificationAdapter.notifyDataSetChanged();
         //}
+    }
 
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
+    public void hideLoader() {
+        refreshNotifications();
+        loadingPanel.setVisibility(View.GONE);
     }
 
     public void loadNotifications() {
 
-        progressDialog = new ProgressDialog(NotificationActivity.this);
-
-        progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
         if (utils.isConnectingToInternet()) {
+
+            loadingPanel.setVisibility(View.VISIBLE);
 
             StorageService storageService = new StorageService(NotificationActivity.this);
 
@@ -103,7 +109,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                             if (storage != null) {
 
-                                Utils.log(storage.toString(), "not ");
+                                //Utils.log(storage.toString(), "not ");
 
                                 if (storage.getJsonDocList().size() > 0) {
 
@@ -117,7 +123,7 @@ public class NotificationActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-                            refreshNotifications();
+                            hideLoader();
                         }
 
                         @Override
@@ -127,7 +133,7 @@ public class NotificationActivity extends AppCompatActivity {
                         @Override
                         public void onFindDocFailed(App42Exception ex) {
 
-                            refreshNotifications();
+                            hideLoader();
 
                            /* if (ex != null) {
                                 try {
@@ -153,7 +159,7 @@ public class NotificationActivity extends AppCompatActivity {
                     });
 
         } else {
-            refreshNotifications();
+            hideLoader();
         }
     }
 }

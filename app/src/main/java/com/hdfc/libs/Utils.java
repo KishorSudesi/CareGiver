@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +59,7 @@ import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -99,7 +101,7 @@ public class Utils {
 
     static {
         System.loadLibrary("stringGen");
-        log("Loaded 0", "NDK");
+        //log("Loaded 0", "NDK");
     }
 
     public Utils(Context context) {
@@ -118,7 +120,7 @@ public class Utils {
     public static native String getString();
 
     public static String getStringJni() {
-        log("Loaded 1", "NDK");
+        //log("Loaded 1", "NDK");
         //return "KaEO19Fc";
         return getString();
     }
@@ -590,8 +592,11 @@ public class Utils {
             options.inJustDecodeBounds = false;
             options.inDither = false;
 
-            reqWidth = options.outWidth;
-            reqHeight = options.outHeight;
+          /*  reqWidth = options.outWidth;
+            reqHeight = options.outHeight;*/
+
+            log(String.valueOf(reqWidth), " WIDTH ");
+            log(String.valueOf(reqHeight), " HEIGHT ");
 
             bmp = createScaledBitmap(BitmapFactory.decodeFile(strPath), reqWidth,
                     reqHeight);
@@ -1204,6 +1209,45 @@ public class Utils {
         }
 
         return original;
+    }
+
+    public ArrayList<View> getViewsByTag(ViewGroup root, String tag) {
+        ArrayList<View> views = new ArrayList<View>();
+        final int childCount = root.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = root.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                views.addAll(getViewsByTag((ViewGroup) child, tag));
+            }
+
+            final Object tagObj = child.getTag();
+            if (tagObj != null && tagObj.equals(tag)) {
+                views.add(child);
+            }
+        }
+        return views;
+    }
+
+    public ArrayList<String> getEditTextValueByTag(ViewGroup root, String tag) {
+        ArrayList<String> strValues = new ArrayList<>();
+        final int childCount = root.getChildCount();
+
+        for (int i = 0; i < childCount; i++) {
+
+            final View child = root.getChildAt(i);
+
+            if (child instanceof EditText) {
+                final Object tagObj = child.getTag();
+                if (tagObj != null && tagObj.equals(tag)) {
+                    strValues.add(((EditText) child).getText().toString().trim());
+                }
+            } else {
+                if (child instanceof LinearLayout) {
+                    strValues.addAll(getEditTextValueByTag((ViewGroup) child, tag));
+                }
+            }
+        }
+        return strValues;
     }
 
     public String formatDate(String strDate){

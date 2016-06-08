@@ -15,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hdfc.caregiver.CreatingTaskActivity;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
@@ -149,17 +148,10 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
         context = getActivity();
 
         ImageButton add = (ImageButton) view.findViewById(R.id.add_button);
+        add.setVisibility(View.GONE);
 
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
 
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreatingTaskActivity.class);
-                Config.intSelectedMenu = Config.intDashboardScreen;
-                startActivity(intent);
-            }
-        });
 
         SlideAndDragListView mListView = (SlideAndDragListView) view.findViewById(R.id.listViewEdit);
 
@@ -190,12 +182,12 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
                 .setIcon(getActivity().getResources().getDrawable(R.drawable.pen))
                 .build());
 
-        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
+        /*mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setText("Done")
                 .setTextColor(Color.WHITE)
                 .setTextSize((int) getResources().getDimension(R.dimen.txt_size))
-                .build());
+                .build());*/
 
        /* mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
@@ -292,7 +284,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
                         }
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
-                        if (activityModel != null) {
+                       /* if (activityModel != null) {
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModel);
 
@@ -301,7 +293,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
                                 intent.putExtras(args);
                                 startActivity(intent);
                             }
-                        }
+                        }*/
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
 
@@ -389,6 +381,27 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
 
     @Override
     public void onListItemClick(View v, int position) {
-    }
+        int iPosition = 0;
 
+        if (milestoneModels != null && milestoneModels.get(position) != null &&
+                milestoneModels.get(position).getStrActivityId() != null) {
+            iPosition = Config.strActivityIds.indexOf(milestoneModels.get(position).getStrActivityId());
+        }
+
+        ActivityModel activityModel = null;
+
+        if (iPosition > -1)
+            activityModel = Config.activityModels.get(iPosition);
+
+        if (activityModel != null) {
+            Bundle args = new Bundle();
+            args.putSerializable("ACTIVITY", activityModel);
+
+            if (!activityModel.getStrActivityStatus().equalsIgnoreCase("completed")) {
+                Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                intent.putExtras(args);
+                startActivity(intent);
+            }
+        }
+    }
 }

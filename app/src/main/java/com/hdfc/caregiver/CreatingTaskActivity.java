@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -44,6 +45,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
     private static String valDateTime, valTitle, valSearch, strServiceName;
     private static StorageService storageService;
+    private static RelativeLayout loadingPanel;
     private Spinner dependentlist;
     private boolean isClicked = false;
     private View focusView = null;
@@ -54,7 +56,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private AppUtils appUtils;
     private EditText editTextTitle, dateAnd;
     private JSONObject jsonObject;
-
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
@@ -76,6 +77,10 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
     };
 
+   /* public static void hideLoader() {
+        loadingPanel.setVisibility(View.GONE);
+    }*/
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creating_task);
@@ -84,22 +89,18 @@ public class CreatingTaskActivity extends AppCompatActivity {
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
         inputSearchServices = (AutoCompleteTextView)findViewById(R.id.inputSearchServices);
         dependentlist = (Spinner) findViewById(R.id.spindependentList);
+        loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);
         progressDialog = new ProgressDialog(CreatingTaskActivity.this);
         storageService = new StorageService(CreatingTaskActivity.this);
 
-        ArrayAdapter<String> adapter;
-        adapter = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.servicelist);
-
-        inputSearchServices.setThreshold(1);//will start working from first character
-        inputSearchServices.setAdapter(adapter);
-
         dependentlist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                strSelectedDependent = Config.strDependentNames.get(position);
+                if (Config.strDependentNames.size() > 0)
+                    strSelectedDependent = Config.strDependentNames.get(position);
             }
 
             @Override
@@ -114,9 +115,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             backImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
-                    Config.intSelectedMenu = Config.intDashboardScreen;
-                    startActivity(intent);
+                    goBack();
                 }
             });
         }
@@ -132,13 +131,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
             }
         });
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.strCustomerNames);
-        //Getting the instance of AutoCompleteTextView
-        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
-        inputSearch.setThreshold(1);//will start working from first character
-        inputSearch.setAdapter(arrayAdapter);//setting the adapter data into the AutoCompleteTextView*/
-
-
         inputSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -151,9 +143,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                 int iPosition = Config.strCustomerNames.indexOf(valSearch.trim());
 
-                if (iPosition > -1) {
+                if (iPosition > -1 && Config.clientNameModels.size() > 0) {
                     names.clear();
-                    names = Config.clientNames.get(iPosition).getStrDependeneNames();
+                    names = Config.clientNameModels.get(iPosition).getStrDependentNames();
                 }
 
                 ArrayAdapter<String> adapter1 = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, names);
@@ -240,9 +232,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                     if (iServicePosition > -1) {
 
-                                        progressDialog.setMessage(getString(R.string.loading));
-                                        progressDialog.setCancelable(false);
-                                        progressDialog.show();
+                                        loadingPanel.setVisibility(View.VISIBLE);
 
                                         uploadData(serviceModel, dependentModel);
 
@@ -267,6 +257,39 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
             });
         }
+
+        //
+       /* if (utils.isConnectingToInternet()) {
+
+            loadingPanel.setVisibility(View.VISIBLE);
+
+            Config.dependentIds.clear();
+            Config.customerIds.clear();
+            Config.clientModels.clear();
+
+            Config.intSelectedMenu = Config.intClientScreen;
+
+            appUtils.fetchClients(3);
+
+        } else {
+            utils.toast(2, 2, getString(R.string.warning_internet));
+        }*/
+    }
+
+    private void refreshServiceAdapter() {
+        ArrayAdapter<String> adapter;
+        adapter = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.servicelist);
+
+        inputSearchServices.setThreshold(1);//will start working from first character
+        inputSearchServices.setAdapter(adapter);
+    }
+
+    private void refreshCustomerAdapter() {
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.strCustomerNames);
+        //Getting the instance of AutoCompleteTextView
+        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
+        inputSearch.setThreshold(1);//will start working from first character
+        inputSearch.setAdapter(arrayAdapter);//setting the adapter data into the AutoCompleteTextView*/
     }
 
     @Override
@@ -283,6 +306,10 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             Storage storage = (Storage) o;
 
                             ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
+
+                            Config.strServcieIds.clear();
+                            Config.serviceModels.clear();
+                            Config.servicelist.clear();
 
                             for (int i = 0; i < jsonDocList.size(); i++) {
 
@@ -335,12 +362,10 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
 
     private void refreshServices() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(CreatingTaskActivity.this,
-                android.R.layout.select_dialog_item, Config.servicelist);
-        //Getting the instance of AutoCompleteTextView
-        //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
-        inputSearchServices.setThreshold(1);//will start working from first character
-        inputSearchServices.setAdapter(adapter);
+
+        refreshServiceAdapter();
+        refreshCustomerAdapter();
+
     }
 
     private void uploadData(ServiceModel serviceModel, DependentModel dependentModel) {
@@ -460,6 +485,15 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             jsonObjectField.put("child_field", utils.intToJsonArray(fieldModel.getiChildfieldID()));
                     }
 
+
+                    //
+                    if (fieldModel.getiArrayCount() > 0) {
+                        jsonObjectField.put("array_fields", fieldModel.getiArrayCount());
+                        jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.getStrArrayType()));
+                        jsonObjectField.put("array_data", utils.stringToJsonArray(fieldModel.getStrArrayType()));
+                    }
+                    //
+
                     jsonArrayFields.put(jsonObjectField);
 
                     jsonObjectMilestone.put("fields", jsonArrayFields);
@@ -487,21 +521,18 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     //fetchService(serviceModel, dependentModel);
                                     insertNotification();
                                 } else {
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
+                                    loadingPanel.setVisibility(View.GONE);
                                     isClicked = false;
                                     utils.toast(2, 2, getString(R.string.error));
                                 }
                             } else {
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
+                                loadingPanel.setVisibility(View.GONE);
                                 isClicked = false;
                                 utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
+                            loadingPanel.setVisibility(View.GONE);
                             isClicked = false;
                             utils.toast(2, 2, getString(R.string.error));
                         }
@@ -518,8 +549,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     @Override
                     public void onInsertionFailed(App42Exception ex) {
                         isClicked = false;
-                        if (progressDialog.isShowing())
-                            progressDialog.dismiss();
+                        loadingPanel.setVisibility(View.GONE);
                         try {
                             if (ex != null) {
                                 JSONObject jsonObject = new JSONObject(ex.getMessage());
@@ -723,6 +753,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                         @Override
                         public void onException(Exception ex) {
+                            Utils.log(ex.getMessage(), " STRING ");
                             strAlert = getString(R.string.no_push_actiity_added);
                             goToActivityList(strAlert);
                         }
@@ -740,12 +771,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         Intent newIntent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
 
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
+        loadingPanel.setVisibility(View.GONE);
 
         Config.intSelectedMenu = Config.intDashboardScreen;
         utils.toast(2, 2, strAlert);
-
+        newIntent.putExtra("LOAD", true);
         startActivity(newIntent);
         finish();
 
@@ -837,9 +867,21 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     });
         } else {
             strAlert = getString(R.string.no_push_actiity_added);
-
             goToActivityList(strAlert);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        goBack();
+    }
+
+    private void goBack() {
+        Intent intent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
+        Config.intSelectedMenu = Config.intDashboardScreen;
+        startActivity(intent);
+        finish();
     }
 
 }

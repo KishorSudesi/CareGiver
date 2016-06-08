@@ -6,7 +6,7 @@ import com.hdfc.caregiver.BuildConfig;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ClientModel;
-import com.hdfc.models.ClientName;
+import com.hdfc.models.ClientNameModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
@@ -65,7 +65,7 @@ public class Config {
     public static int intMileStoneScreen = 4;
     public static int intScreenWidth = 0;
     public static int intScreenHeight = 0;
-    public static int intNotificationScreen = 2;
+    //public static int intCreateTaskScreen = 5;
     //public static ArrayList<FileModel> fileModels = new ArrayList<>();
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
     public static ArrayList<MilestoneViewModel> milestoneModels = new ArrayList<>();
@@ -88,7 +88,7 @@ public class Config {
     public static ArrayList<String> strNotificationIds = new ArrayList<>();
 
 
-    public static ArrayList<ClientName> clientNames = new ArrayList<>();
+    public static ArrayList<ClientNameModel> clientNameModels = new ArrayList<>();
     public static boolean boolIsLoggedIn = false;
     public static double iRatings = 0;
     public static int iRatingCount = 0;
@@ -103,5 +103,5 @@ public class Config {
 
     public enum ActivityStatus {NEW, OPEN, INPROCESS, COMPLETED}
 
-    public enum MilestoneStatus {INACTIVE, OPEN, INPROCESS, COMPLETED, REOPENED}
+    public enum MilestoneStatus {INACTIVE, OPENED, INPROCESS, COMPLETED, REOPENED, PENDING}
 }

@@ -3,13 +3,13 @@ package com.hdfc.caregiver;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -58,13 +60,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class FeatureActivity extends AppCompatActivity implements Serializable{
+public class FeatureActivity extends AppCompatActivity {
 
     public static int IMAGE_COUNT = 0;
     private static String strImageName = "";
@@ -72,7 +74,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     private static StorageService storageService;
     private static ArrayList<ImageModel> arrayListImageModel = new ArrayList<>();
     private static Handler backgroundThreadHandler;
-    private static ProgressDialog mProgress = null;
+    //private static ProgressDialog mProgress = null;
     private static String strAlert;
     private static JSONObject jsonObject;
     private static ActivityModel act;
@@ -81,24 +83,33 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
     private static Dialog dialog;
+    private static RelativeLayout loadingPanel;
+    private static boolean bLoad;
+    private static boolean bViewLoaded;
     private final Context context = this;
     private Utils utils;
-    private ProgressDialog progressDialog;
+    //private ProgressDialog progressDialog;
     private Point p;
     private JSONArray jsonArrayImagesAdded;
+    private TextView textViewName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_features);
-        //listFeatures = new ArrayList<>();
-        ImageView attach = (ImageView) findViewById(R.id.imgAttachHeaderTaskDetail);
+
+        //ImageView attach = (ImageView) findViewById(R.id.imgAttachHeaderTaskDetail);
         ImageView imgLogoHeaderTaskDetail = (ImageView) findViewById(R.id.imgLogoHeaderTaskDetail);
         Button done = (Button) findViewById(R.id.buttonVegetibleDone);
         ImageView back = (ImageView) findViewById(R.id.imgBackHeaderTaskDetail);
         LinearLayout linearLayoutAttach = (LinearLayout) findViewById(R.id.linearLayout);
 
+        TextView textViewActivityName = (TextView) findViewById(R.id.txtActivityName);
+        TextView textViewTime = (TextView) findViewById(R.id.txtActivityTime);
+
+        loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
         layout = (LinearLayout) findViewById(R.id.linear);
+        bLoad = false;
 
         IMAGE_COUNT = 0;
         MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(FeatureActivity.this);
@@ -106,7 +117,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         TextView dependentName = (TextView) findViewById(R.id.textViewHeaderTaskDetail);
 
         jsonArrayImagesAdded = new JSONArray();
-
         arrayListImageModel.clear();
         bitmaps.clear();
 
@@ -125,8 +135,24 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             strDependentMail = Config.customerModels.get(iPositionCustomer).getStrEmail();
 
+            if (name.length() > 20)
+                name = name.substring(0, 18) + "..";
+
             if (dependentName != null) {
                 dependentName.setText(name);
+            }
+
+            String strActivityName = act.getStrActivityName();
+
+            if (strActivityName.length() > 20)
+                strActivityName = strActivityName.substring(0, 18) + "..";
+
+            if (textViewActivityName != null) {
+                textViewActivityName.setText(strActivityName);
+            }
+
+            if (textViewTime != null) {
+                textViewTime.setText(utils.formatDate(act.getStrActivityDate()));
             }
 
             File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrDependentID()));
@@ -144,8 +170,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
             e.printStackTrace();
         }
 
-        mProgress = new ProgressDialog(FeatureActivity.this);
-        progressDialog = new ProgressDialog(FeatureActivity.this);
         storageService = new StorageService(FeatureActivity.this);
 
         if (done != null) {
@@ -154,10 +178,15 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 public void onClick(View v) {
                     IMAGE_COUNT = 0;
 
-                    if (arrayListImageModel.size() > 0)
-                        uploadImage();
-                    else
-                        utils.toast(2, 2, "Select a Image");
+                    if (arrayListImageModel.size() > 0) {
+
+                        if (utils.isConnectingToInternet()) {
+                            loadingPanel.setVisibility(View.VISIBLE);
+                            uploadImage();
+                        } else {
+                            utils.toast(2, 2, getString(R.string.warning_internet));
+                        }
+                    } else utils.toast(2, 2, "Select a Image");
                 }
             });
         }
@@ -187,300 +216,14 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 }
             });
         }
-        //TextView textViewLabel = (TextView) findViewById(R.id.textViewLabel);
 
-        final ActivityModel activityModel = act;
+        bViewLoaded = false;
 
-        try {
+        loadingPanel.setVisibility(View.VISIBLE);
 
-            // if (textViewLabel != null)
-            //    textViewLabel.append(activityModel.getStrServiceName());
-
-            final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.milestoneLayout);
-
-            for (final MilestoneModel milestoneModel : activityModel.getMilestoneModels()) {
-
-                TextView textViewName = new TextView(FeatureActivity.this);
-                textViewName.setTextAppearance(this, R.style.MilestoneStyle);
-                textViewName.setText(milestoneModel.getStrMilestoneName());
-                textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
-                textViewName.setPadding(10, 10, 10, 10);
-                textViewName.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_success));
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 30, 1);
-                params.setMargins(10, 10, 10, 10);
-                textViewName.setTag(milestoneModel);
-
-                textViewName.setLayoutParams(params);
-
-                if (linearLayout != null) {
-                    linearLayout.addView(textViewName);
-                }
-
-                textViewName.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        MilestoneModel milestoneModel = (MilestoneModel) v.getTag();
-
-                        int i = 0;
-
-                        View view = getLayoutInflater().inflate(R.layout.dialog_view, null, false);
-
-                        final LinearLayout layout = (LinearLayout) view.findViewById(R.id.linearLayout);
-
-                        Button button = (Button) view.findViewById(R.id.dialogButtonOK);
-                        button.setTag(milestoneModel.getiMilestoneId());
-
-                        for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
-
-                            final FieldModel finalFieldModel = fieldModel;
-
-                            i++;
-
-                            LinearLayout linearLayout1 = new LinearLayout(context);
-                            linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
-
-                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                            layoutParams.setMargins(10, 10, 10, 10);
-                            linearLayout1.setLayoutParams(layoutParams);
-
-                            TextView textView = new TextView(context);
-                            textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
-                            textView.setText(fieldModel.getStrFieldLabel());
-
-                            linearLayout1.addView(textView);
-
-                            if (fieldModel.getStrFieldType().equalsIgnoreCase("text")
-                                    || fieldModel.getStrFieldType().equalsIgnoreCase("number")
-                                    || fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
-                                    || fieldModel.getStrFieldType().equalsIgnoreCase("date")
-                                    || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
-
-                                final EditText editText = new EditText(context);
-
-                                editText.setId(fieldModel.getiFieldID());
-                                editText.setTag(fieldModel.isFieldRequired());
-                                editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-                                editText.setText(fieldModel.getStrFieldData());
-
-                                if (fieldModel.isFieldView())
-                                    editText.setEnabled(false);
-
-                                if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
-                                    editText.setInputType(1);
-
-                                if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))
-                                    editText.setInputType(1);
-
-                                //todo check type
-                                try {
-                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
-                                            || fieldModel.getStrFieldType().equalsIgnoreCase("date")
-                                            || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
-
-                                        editText.setInputType(1);
-
-                                        final SlideDateTimeListener listener = new SlideDateTimeListener() {
-
-                                            @Override
-                                            public void onDateTimeSet(Date date) {
-                                                // selectedDateTime = date.getDate()+"-"+date.getMonth()+"-"+date.getYear()+" "+
-                                                // date.getTime();
-                                                // Do something with the date. This Date object contains
-                                                // the date and time that the user has selected.
-
-                                                String strDate = "";
-
-                                                if (finalFieldModel.getStrFieldType().equalsIgnoreCase("datetime"))
-                                                    strDate = Utils.writeFormat.format(date);
-
-                                                if (finalFieldModel.getStrFieldType().equalsIgnoreCase("time"))
-                                                    strDate = Utils.writeFormatTime.format(date);
-
-                                                if (finalFieldModel.getStrFieldType().equalsIgnoreCase("date"))
-                                                    strDate = Utils.writeFormatDate.format(date);
-                                           /*
-                                            _strDate = Utils.readFormat.format(date);
-                                            dateAnd.setText(strDate);*/
-                                                editText.setText(strDate);
-                                            }
-
-                                            @Override
-                                            public void onDateTimeCancel() {
-                                                // Overriding onDateTimeCancel() is optional.
-                                            }
-
-                                        };
-
-                                        editText.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                new SlideDateTimePicker.Builder(getSupportFragmentManager())
-                                                        .setListener(listener)
-                                                        .setInitialDate(new Date())
-                                                        .build()
-                                                        .show();
-                                            }
-                                        });
-
-                                        linearLayout1.addView(editText);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            if (fieldModel.getStrFieldType().equalsIgnoreCase("radio")
-                                    || fieldModel.getStrFieldType().equalsIgnoreCase("dropdown")) {
-
-                                final Spinner spinner = new Spinner(context);
-
-                                spinner.setId(fieldModel.getiFieldID());
-                                spinner.setTag(fieldModel.isFieldRequired());
-                                spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-                                //spinner.setText(fieldModel.getStrFieldData());
-
-                                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.select_dialog_item, fieldModel.getStrFieldValues());
-
-                                spinner.setAdapter(adapter);
-
-
-                                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                    @Override
-                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                                        try {
-
-                                            if (finalFieldModel.isChild()) {
-
-                                                for (int i = 0; i < finalFieldModel.getiChildfieldID().length; i++) {
-
-                                                    if (finalFieldModel.getStrChildType()[i].equalsIgnoreCase("text")) {
-
-                                                        EditText editText = (EditText) layout.findViewById(finalFieldModel.getiChildfieldID()[i]);
-
-                                                        String strValue = editText.getText().toString().trim();
-
-                                                        if (finalFieldModel.getStrChildCondition()[i].equalsIgnoreCase("equals")) {
-
-                                                            if (strValue.equalsIgnoreCase(finalFieldModel.getStrChildValue()[i])) {
-                                                                //editText.setVisibility(View.VISIBLE);
-                                                                editText.setEnabled(true);
-                                                            } else {
-                                                                editText.setEnabled(false);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onNothingSelected(AdapterView<?> parent) {
-                                    }
-                                });
-
-
-                                linearLayout1.addView(spinner);
-                            }
-
-                            if (fieldModel.getStrFieldType().equalsIgnoreCase("array")) {
-
-                                final LinearLayout linearLayoutArray = new LinearLayout(context);
-                                linearLayoutArray.setOrientation(LinearLayout.HORIZONTAL);
-
-                                LinearLayout.LayoutParams layoutArrayParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                layoutArrayParams.setMargins(10, 10, 10, 10);
-                                linearLayoutArray.setLayoutParams(layoutArrayParams);
-
-
-                                for (int j = 0; j < finalFieldModel.getiArrayCount(); j++) {
-
-                                    final EditText editTextArray = new EditText(context);
-
-                                    //editTextArray.setId(fieldModel.getiFieldID());
-                                    //editTextArray.setTag(fieldModel.isFieldRequired());
-                                    editTextArray.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-                                    //editTextArray.setText(fieldModel.);
-
-                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
-                                        editTextArray.setInputType(1);
-
-                                    linearLayoutArray.addView(editTextArray);
-
-                                    Button buttonAdd = new Button(context);
-                                    buttonAdd.setBackgroundDrawable(getResources().getDrawable(R.drawable.add_icon));
-                                    buttonAdd.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-
-                                            try {
-                                                //
-                                                for (int j = 0; j < finalFieldModel.getiArrayCount(); j++) {
-
-                                                    final EditText editTextArray = new EditText(context);
-
-                                                    //editTextArray.setId(fieldModel.getiFieldID());
-                                                    //editTextArray.setTag(fieldModel.isFieldRequired());
-                                                    editTextArray.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-                                                    //editTextArray.setText(fieldModel.);
-
-                                                    if (finalFieldModel.getStrFieldType().equalsIgnoreCase("text"))
-                                                        editTextArray.setInputType(1);
-
-                                                    linearLayoutArray.addView(editTextArray);
-                                                }
-                                                //
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-
-                                        }
-                                    });
-
-                                }
-
-
-                                linearLayout1.addView(linearLayoutArray);
-                            }
-
-                            layout.addView(linearLayout1);
-
-                        }
-
-                        button.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                int id = (int) v.getTag();
-                                traverseEditTexts(layout, id);
-                            }
-                        });
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setTitle(milestoneModel.getStrMilestoneName());
-                        builder.setView(view);
-                        dialog = builder.create();
-
-                        dialog.show();
-
-                    }
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //
-        for (ImageModel imageModel : act.getImageModels()) {
-            if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                bitmaps.add(utils.getBitmapFromFile(imageModel.getStrImageName(), Config.intWidth, Config.intHeight));
-                IMAGE_COUNT++;
-            }
-        }
-        //
+        backgroundThreadHandler = new BackgroundThreadHandler();
+        Thread backgroundThreadImages = new BackgroundThreadImages();
+        backgroundThreadImages.start();
     }
 
     private void goBack() {
@@ -489,19 +232,31 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         IMAGE_COUNT = 0;
         Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
         Config.intSelectedMenu = Config.intDashboardScreen;
+        intent.putExtra("LOAD", bLoad);
         startActivity(intent);
         finish();
     }
 
-    private void traverseEditTexts(ViewGroup v, int iMileStoneId) {
+    private void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
 
         boolean b = true;
 
         try {
 
+            Calendar calendar = Calendar.getInstance();
+
             for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
 
                 if (milestoneModel.getiMilestoneId() == iMileStoneId) {
+
+                    Date date = calendar.getTime();
+                    milestoneModel.setStrMilestoneDate(utils.convertDateToString(date));
+
+                    //if(iFlag==1)
+                    //milestoneModel.setStrMilestoneStatus("opened");
+
+                    if (iFlag == 2)
+                        milestoneModel.setStrMilestoneStatus("completed");
 
                     for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
 
@@ -514,12 +269,23 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                             EditText editText = (EditText) v.findViewById(fieldModel.getiFieldID());
 
-                            boolean b1 = (Boolean) editText.getTag();
+                            boolean b1 = (Boolean) editText.getTag(R.id.one);
                             String data = editText.getText().toString().trim();
 
                             if (editText.isEnabled()) {
                                 if (b1 && !data.equalsIgnoreCase("")) {
                                     fieldModel.setStrFieldData(data);
+
+                                    if ((milestoneModel.isReschedule() || !milestoneModel.isReschedule())
+                                            && milestoneModel.getStrMilestoneScheduledDate() != null
+                                            && (!milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")
+                                            || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase(""))
+                                            && fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                            ) {
+                                        String strDate = (String) editText.getTag(R.id.two);
+                                        milestoneModel.setStrMilestoneScheduledDate(strDate);
+                                        milestoneModel.setReschedule(true);
+                                    }
                                 } else {
                                     editText.setError(context.getString(R.string.error_field_required));
                                     b = false;
@@ -550,6 +316,38 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                         //array
                         if (fieldModel.getStrFieldType().equalsIgnoreCase("array")) {
 
+                            ArrayList<String> strMedicineNames = utils.getEditTextValueByTag(viewGroup, "medicine_name");
+                            ArrayList<String> strMedicineQty = utils.getEditTextValueByTag(viewGroup, "medicine_qty");
+
+                            int j = 0;
+
+                            if (strMedicineNames.size() > 0) {
+
+                                JSONObject jsonObject = new JSONObject();
+
+                                JSONArray jsonArray = new JSONArray();
+
+                                for (int i = 0; i < strMedicineNames.size(); i++) {
+
+                                    if (!strMedicineNames.get(i).equalsIgnoreCase("") && !strMedicineQty.get(i).equalsIgnoreCase("")) {
+                                        j++;
+                                        JSONObject jsonObjectMedicine = new JSONObject();
+
+                                        jsonObjectMedicine.put("medicine_name", strMedicineNames.get(i));
+                                        jsonObjectMedicine.put("medicine_qty", Integer.parseInt(strMedicineQty.get(i)));
+
+                                        jsonArray.put(jsonObjectMedicine);
+                                    }
+                                }
+                                jsonObject.put("array_data", jsonArray);
+
+                                fieldModel.setStrArrayData(jsonObject.toString());
+                            }
+
+                            if (j <= 0) {
+                                b = false;
+                                utils.toast(2, 2, getString(R.string.error_medicines));
+                            }
                         }
                         //
                     }
@@ -561,31 +359,28 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
         if (b) {
 
-            utils.toast(1, 1, getString(R.string.milestone_updated));
-
-            dialog.dismiss();
-
-            uploadJson();
-
-            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
-
+           /* for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
                 for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
-
                     Utils.log(fieldModel.getStrFieldLabel() + " ~ " + fieldModel.getStrFieldData(), " DATA ");
-
                 }
-            }
-        }
+            }*/
 
+            //dialog.dismiss();
+            uploadJson();
+        }
     }
 
     private void updateMileStones(JSONObject jsonToUpdate) {
 
-        progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
         if (utils.isConnectingToInternet()) {
+
+            dialog.dismiss();
+
+            loadingPanel.setVisibility(View.VISIBLE);
+
+            bLoad = true;
+
+            Utils.log(jsonToUpdate.toString(), " JSON ");
 
             storageService.updateDocs(jsonToUpdate,
                     act.getStrActivityID(),
@@ -597,18 +392,47 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                         @Override
                         public void onException(Exception e) {
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
+                            loadingPanel.setVisibility(View.GONE);
                             utils.toast(2, 2, getString(R.string.warning_internet));
                         }
                     });
         } else {
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }
 
+    private void updateImages() {
+
+        if (utils.isConnectingToInternet()) {
+
+            JSONObject jsonToUpdate = null;
+
+            try {
+                jsonToUpdate = new JSONObject();
+                jsonToUpdate.put("images", jsonArrayImagesAdded);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            storageService.updateDocs(jsonToUpdate,
+                    act.getStrActivityID(),
+                    Config.collectionActivity, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            goToActivityList(getString(R.string.image_upload));
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                            loadingPanel.setVisibility(View.GONE);
+                            utils.toast(2, 2, getString(R.string.warning_internet));
+                        }
+                    });
+        } else {
+            loadingPanel.setVisibility(View.GONE);
+            utils.toast(2, 2, getString(R.string.warning_internet));
+        }
+    }
 
     // The method that displays the popup.
     private void showStatusPopup(final Activity context, Point p) {
@@ -634,24 +458,8 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
         // Displaying the popup at the specified location, + offsets.
         changeStatusPopUp.showAtLocation(layout, Gravity.NO_GRAVITY, p.x + OFFSET_X, p.y + OFFSET_Y);
-        //   imageAttach = (ImageView)layout.findViewById(R.id.imageView2);
         ImageView imageCamera = (ImageView) layout.findViewById(R.id.imageView);
         ImageView imageGallery = (ImageView) layout.findViewById(R.id.imageView2);
-       /* imageAttach.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-               *//* Intent i = new Intent(Action.ACTION_MULTIPLE_PICK);
-                startActivityForResult(i, RESULT_GALLERY_IMAGE);*//*
-                Intent intent = new Intent();
-                intent.setType("image*//*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"),2);
-
-            }
-        });*/
-
-
 
 
         imageCamera.setOnClickListener(new View.OnClickListener() {
@@ -672,11 +480,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 strImageName = strName + ".jpeg";
 
                 utils.selectImage(strImageName, null, FeatureActivity.this, false);
-
-                //  Intent intent = new Intent();
-                // intent.setType("image/*");
-                //  intent.setAction(Intent.ACTION_CAMERA_BUTTON);
-                //  startActivityForResult(Intent.createChooser(intent, "Select Picture"),0);
             }
         });
 
@@ -698,7 +501,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 strImageName = strName + ".jpeg";
 
                 utils.selectImage(strImageName, null, FeatureActivity.this, false);
-
             }
         });
     }
@@ -711,7 +513,9 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
         // Get the x, y location and store it in the location[] array
         // location[0] = x, location[1] = y.
-        attach.getLocationOnScreen(location);
+        if (attach != null) {
+            attach.getLocationOnScreen(location);
+        }
 
         //Initialize the Point with x, and y positions
         p = new Point();
@@ -725,32 +529,23 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
         if (resultCode == Activity.RESULT_OK) { //&& data != null
             try {
-                //Utils.toast(1, 1, "Getting Image...");
 
-                mProgress.setMessage(getString(R.string.loading));
-                mProgress.setCancelable(false);
-                mProgress.show();
+                loadingPanel.setVisibility(View.VISIBLE);
                 switch (requestCode) {
                     case Config.START_CAMERA_REQUEST_CODE:
 
                         backgroundThreadHandler = new BackgroundThreadHandler();
                         strImageName = Utils.customerImageUri.getPath();
-                        Utils.log(strImageName, " IMSGR ");
                         Thread backgroundThreadCamera = new BackgroundThreadCamera();
                         backgroundThreadCamera.start();
                         break;
 
                     case Config.START_GALLERY_REQUEST_CODE:
                         backgroundThreadHandler = new BackgroundThreadHandler();
-                        // strCustomerImgName = Utils.customerImageUri.getPath();
-                       // if (intent.getData() != null) {
-                        //    uri = intent.getData();
 
                         imagePaths.clear();
 
                         String[] all_path = intent.getStringArrayExtra("all_path");
-
-                        //Utils.log(String.valueOf(all_path.length), "size");
 
                         if(all_path.length+IMAGE_COUNT>4){
 
@@ -768,15 +563,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                             backgroundThread.start();
 
                            break;
-
-                        /*backgroundThreadHandler = new BackgroundThreadHandler();
-                        // strCustomerImgName = Utils.customerImageUri.getPath();
-                        if (intent.getData() != null) {
-                            uri = intent.getData();
-                            Thread backgroundThread = new BackgroundThread();
-                            backgroundThread.start();
-                        }
-                        break;*/
                 }
 
             } catch (Exception e) {
@@ -787,25 +573,23 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
     private void uploadImage() {
 
-        try {
+        if (arrayListImageModel.size() > 0) {
 
-            progressDialog.setMessage("Uploading...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+            bLoad = true;
 
-            if (utils.isConnectingToInternet()) {
+            final ImageModel imageModel = arrayListImageModel.get(0);
 
-                for (final ImageModel imageModel : arrayListImageModel) {
+            UploadService uploadService = new UploadService(this);
 
-                    UploadService uploadService = new UploadService(this);
-
-                    uploadService.uploadImageCommon(imageModel.getStrImageName(),
-                            imageModel.getStrImageDesc(), imageModel.getStrImageDesc(),
-                            Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
-                            new App42CallBack() {
-                                public void onSuccess(Object response) {
+            uploadService.uploadImageCommon(imageModel.getStrImagePath(),
+                    imageModel.getStrImageDesc(), imageModel.getStrImageDesc(),
+                    Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
+                    new App42CallBack() {
+                        public void onSuccess(Object response) {
 
                             if (response != null) {
+
+                                //Utils.log(response.toString(), " Success ");
 
                                 Upload upload = (Upload) response;
                                 ArrayList<Upload.File> fileList = upload.getFileList();
@@ -818,11 +602,9 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                                     try {
 
-                                        jsonObjectImages.put("image_name", imageModel.getStrImageDesc());
-                                        //Log.e("Image URL : ", file.getUrl());
+                                        jsonObjectImages.put("image_name", imageModel.getStrImageName());
                                         jsonObjectImages.put("image_url", file.getUrl());
                                         jsonObjectImages.put("image_description", imageModel.getStrImageDesc());
-                                        //Log.e("Time of image : ", imageModel.getStrImageTime());
                                         jsonObjectImages.put("image_taken", imageModel.getStrImageTime());
 
                                         jsonArrayImagesAdded.put(jsonObjectImages);
@@ -830,7 +612,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                         arrayListImageModel.remove(imageModel);
 
                                         if (arrayListImageModel.size() <= 0) {
-                                            goToActivityList(getString(R.string.image_upload));
+                                            updateImages();
                                         } else {
                                             uploadImage();
                                         }
@@ -841,14 +623,14 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                                     }
 
                                 } else {
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
-                                    uploadImage();
-                                    //   utils.toast(2, 2, ((Upload) response).getStrResponse());
+                                    if (arrayListImageModel.size() <= 0) {
+                                        updateImages();
+                                    } else {
+                                        uploadImage();
+                                    }
                                 }
                             } else {
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
+                                loadingPanel.setVisibility(View.GONE);
                                 utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                         }
@@ -856,33 +638,24 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                         @Override
                         public void onException(Exception e) {
 
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
+                            loadingPanel.setVisibility(View.GONE);
 
                             if (e != null) {
-                                //Utils.log(e.toString(), "response");
-                                utils.toast(2, 2, getString(R.string.error));
-                                //uploadImage();
+                                Utils.log(e.getMessage(), " Failure ");
+                                if (arrayListImageModel.size() <= 0) {
+                                    updateImages();
+                                } else {
+                                    uploadImage();
+                        }
                             } else {
                                 utils.toast(2, 2, getString(R.string.warning_internet));
                             }
-                        }
-                    });
                 }
-
-            } else {
-                if (progressDialog.isShowing())
-                    progressDialog.dismiss();
-                utils.toast(2, 2, getString(R.string.warning_internet));
+                    });
+        } else {
+            if (arrayListImageModel.size() <= 0) {
+                updateImages();
             }
-
-        }catch (Exception e){
-            e.printStackTrace();
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
-
-          //  uploadImage();
-            utils.toast(2, 2, getString(R.string.error));
         }
     }
 
@@ -939,8 +712,16 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                             jsonObjectField.put("child_condition", utils.stringToJsonArray(fieldModel.getStrChildCondition()));
 
                         if (fieldModel.getiChildfieldID() != null && fieldModel.getiChildfieldID().length > 0)
-                            jsonObjectField.put("values", utils.intToJsonArray(fieldModel.getiChildfieldID()));
+                            jsonObjectField.put("child_field", utils.intToJsonArray(fieldModel.getiChildfieldID()));
                     }
+
+                    //
+                    if (fieldModel.getiArrayCount() > 0) {
+                        jsonObjectField.put("array_fields", fieldModel.getiArrayCount());
+                        jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.getStrArrayType()));
+                        jsonObjectField.put("array_data", fieldModel.getStrArrayData());
+                    }
+                    //
 
                     jsonArrayFields.put(jsonObjectField);
 
@@ -991,7 +772,6 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         goBack();
     }
 
@@ -1015,7 +795,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
 
-                Utils.log(" 2 " + String.valueOf(i), " IN ");
+                //Utils.log(" 2 " + String.valueOf(i), " IN ");
 
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1136,16 +916,614 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
     private void goToActivityList(String strAlert) {
 
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
+        loadingPanel.setVisibility(View.GONE);
 
         //utils.toast(2, 2, getString(R.string.milestone_updated));
 
         utils.toast(2, 2, strAlert);
 
+        reloadMilestones();
+
         /*Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
         Config.intSelectedMenu = Config.intDashboardScreen;
         startActivity(intent);*/
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+
+        if (!bViewLoaded) {
+
+            bViewLoaded = true;
+
+            reloadMilestones();
+        }
+    }
+
+    private void reloadMilestones() {
+
+        final ActivityModel activityModel = act;
+
+        try {
+            // if (textViewLabel != null)
+            //    textViewLabel.append(activityModel.getStrServiceName());
+
+            final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.milestoneLayout);
+
+            linearLayout.removeAllViews();
+
+            Drawable drawable = null;
+
+            for (final MilestoneModel milestoneModel : activityModel.getMilestoneModels()) {
+
+                textViewName = new TextView(FeatureActivity.this);
+                textViewName.setTextAppearance(this, R.style.MilestoneStyle);
+                textViewName.setText(milestoneModel.getStrMilestoneName());
+                textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
+                textViewName.setPadding(10, 10, 10, 10);
+                textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 30, 1);
+                params.setMargins(10, 10, 10, 10);
+                textViewName.setTag(milestoneModel);
+                //textViewName.setId(milestoneModel.getiMilestoneId());
+
+                if (milestoneModel.getStrMilestoneScheduledDate() != null && !milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")) {
+
+                    String strDate = milestoneModel.getStrMilestoneScheduledDate();
+
+                    Calendar calendar = Calendar.getInstance();
+
+                    Date date = null;
+                    String strdateCopy;
+                    Date milestoneDate = null;
+
+                    try {
+                        strdateCopy = Utils.readFormat.format(calendar.getTime());
+                        date = Utils.readFormat.parse(strdateCopy);
+                        milestoneDate = utils.convertStringToDate(strDate);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (date != null && milestoneDate != null) {
+
+                        if (milestoneDate.before(date) && !milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed"))
+                            milestoneModel.setStrMilestoneStatus("pending");
+                        else {
+                            if (milestoneDate.after(date) && !milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed"))
+                                milestoneModel.setStrMilestoneStatus("inprocess");
+                        }
+                    } else milestoneModel.setStrMilestoneStatus("opened");
+                }
+
+                final String strMilestoneStatus = milestoneModel.getStrMilestoneStatus();
+
+                Drawable drawableBg = null;
+
+                if (strMilestoneStatus.equalsIgnoreCase("completed")) {
+                    drawable = getResources().getDrawable(R.mipmap.done);
+                    drawableBg = getResources().getDrawable(R.drawable.button_success);
+                }
+
+                if (strMilestoneStatus.equalsIgnoreCase("pending")) {
+                    drawable = getResources().getDrawable(R.mipmap.error);
+                    drawableBg = getResources().getDrawable(R.drawable.button_error);
+                }
+
+                if (strMilestoneStatus.equalsIgnoreCase("opened")
+                        || milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("reopened")) {
+                    drawable = getResources().getDrawable(R.mipmap.star_white);
+                    drawableBg = getResources().getDrawable(R.drawable.button_open);
+                }
+
+                if (strMilestoneStatus.equalsIgnoreCase("inactive")) {
+                    drawable = getResources().getDrawable(R.mipmap.star_grey);
+                    drawableBg = getResources().getDrawable(R.drawable.button_inactive);
+                }
+
+                if (strMilestoneStatus.equalsIgnoreCase("inprocess")) {
+                    drawable = getResources().getDrawable(R.mipmap.star_gold);
+                    drawableBg = getResources().getDrawable(R.drawable.button_grey);
+                }
+
+                if (drawable != null)
+                    textViewName.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+
+                if (drawableBg != null) {
+                    textViewName.setBackgroundDrawable(drawableBg);
+                }
+
+                textViewName.setLayoutParams(params);
+
+                if (linearLayout != null) {
+                    linearLayout.addView(textViewName);
+                }
+
+                textViewName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (!strMilestoneStatus.equalsIgnoreCase("completed")) {
+
+                            final MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
+
+                            //int i = 0;
+
+                            View view = getLayoutInflater().inflate(R.layout.dialog_view, null, false);
+
+                            final LinearLayout layoutDialog = (LinearLayout) view.findViewById(R.id.linearLayoutDialog);
+
+                            Button button = (Button) view.findViewById(R.id.dialogButtonOK);
+                            Button buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
+                            Button buttonDone = (Button) view.findViewById(R.id.buttonDone);
+                            button.setTag(milestoneModelObject.getiMilestoneId());
+                            buttonDone.setTag(milestoneModelObject.getiMilestoneId());
+
+                            TextView milestoneName = (TextView) view.findViewById(R.id.milestoneName);
+                            milestoneName.setText(milestoneModelObject.getStrMilestoneName());
+
+                            if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")) {
+                                button.setText(getString(R.string.update));
+                                buttonDone.setVisibility(View.VISIBLE);
+                            }
+
+                            if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")
+                                    && milestoneModelObject.getStrMilestoneScheduledDate() != null
+                                    && !milestoneModelObject.getStrMilestoneScheduledDate().equalsIgnoreCase("")) {
+                                button.setText(getString(R.string.reschedule));
+                            }
+
+                            for (FieldModel fieldModel : milestoneModelObject.getFieldModels()) {
+
+                                final FieldModel finalFieldModel = fieldModel;
+
+                                //i++;
+
+                                LinearLayout linearLayout1 = new LinearLayout(context);
+                                linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
+
+                                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                layoutParams.setMargins(10, 10, 10, 10);
+                                linearLayout1.setLayoutParams(layoutParams);
+
+                                TextView textView = new TextView(context);
+                                textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 3));
+                                textView.setText(fieldModel.getStrFieldLabel());
+
+                                linearLayout1.addView(textView);
+
+                                if (fieldModel.getStrFieldType().equalsIgnoreCase("text")
+                                        || fieldModel.getStrFieldType().equalsIgnoreCase("number")
+                                        || fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                        || fieldModel.getStrFieldType().equalsIgnoreCase("date")
+                                        || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+
+                                    final EditText editText = new EditText(context);
+
+                                    editText.setId(fieldModel.getiFieldID());
+                                    editText.setTag(R.id.one, fieldModel.isFieldRequired());
+                                    editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                                    editText.setText(fieldModel.getStrFieldData());
+
+                                    if (fieldModel.isFieldView())
+                                        editText.setEnabled(false);
+
+                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
+                                        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+
+                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))
+                                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                                    try {
+                                        if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                                || fieldModel.getStrFieldType().equalsIgnoreCase("date")
+                                                || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+
+                                            //editText.setInputType(InputType.TYPE_CLASS_DATETIME);
+
+                                            final SlideDateTimeListener listener = new SlideDateTimeListener() {
+
+                                                @Override
+                                                public void onDateTimeSet(Date date) {
+                                                    // selectedDateTime = date.getDate()+"-"+date.getMonth()+"-"+date.getYear()+" "+
+                                                    // date.getTime();
+                                                    // Do something with the date. This Date object contains
+                                                    // the date and time that the user has selected.
+
+                                                    String strDate = "";
+
+                                                    if (finalFieldModel.getStrFieldType().equalsIgnoreCase("datetime"))
+                                                        strDate = Utils.writeFormat.format(date);
+
+                                                    if (finalFieldModel.getStrFieldType().equalsIgnoreCase("time"))
+                                                        strDate = Utils.writeFormatTime.format(date);
+
+                                                    if (finalFieldModel.getStrFieldType().equalsIgnoreCase("date"))
+                                                        strDate = Utils.writeFormatDate.format(date);
+
+                                                    editText.setTag(R.id.two, Utils.readFormat.format(date));
+                                                    editText.setText(strDate);
+                                                }
+
+                                                @Override
+                                                public void onDateTimeCancel() {
+                                                    // Overriding onDateTimeCancel() is optional.
+                                                }
+
+                                            };
+
+                                            editText.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    new SlideDateTimePicker.Builder(getSupportFragmentManager())
+                                                            .setListener(listener)
+                                                            .setInitialDate(new Date())
+                                                            .build()
+                                                            .show();
+                                                }
+                                            });
+                                        }
+                                        linearLayout1.addView(editText);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                if (fieldModel.getStrFieldType().equalsIgnoreCase("radio")
+                                        || fieldModel.getStrFieldType().equalsIgnoreCase("dropdown")) {
+
+                                    final Spinner spinner = new Spinner(context);
+
+                                    spinner.setId(fieldModel.getiFieldID());
+                                    spinner.setTag(fieldModel.isFieldRequired());
+                                    spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                                    //spinner.setText(fieldModel.getStrFieldData());
+
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.select_dialog_item, fieldModel.getStrFieldValues());
+
+                                    spinner.setAdapter(adapter);
+
+                                    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                        @Override
+                                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                                            try {
+
+                                                if (finalFieldModel.isChild()) {
+
+                                                    for (int i = 0; i < finalFieldModel.getiChildfieldID().length; i++) {
+
+                                                        if (finalFieldModel.getStrChildType()[i].equalsIgnoreCase("text")) {
+
+                                                            EditText editTextChild = (EditText) layoutDialog.findViewById(finalFieldModel.getiChildfieldID()[i]);
+
+                                                            if (editTextChild != null) {
+
+                                                                String strValue = spinner.getSelectedItem().toString();
+
+                                                                if (finalFieldModel.getStrChildCondition()[i].equalsIgnoreCase("equals")) {
+
+                                                                    if (strValue.equalsIgnoreCase(finalFieldModel.getStrChildValue()[i])) {
+                                                                        //editText.setVisibility(View.VISIBLE);
+                                                                        editTextChild.setEnabled(true);
+                                                                        break;
+                                                                    } else {
+                                                                        editTextChild.setEnabled(false);
+                                                                    }
+                                                                } else
+                                                                    editTextChild.setEnabled(false);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onNothingSelected(AdapterView<?> parent) {
+                                        }
+                                    });
+
+                                    if (fieldModel.getStrFieldData() != null && !fieldModel.getStrFieldData().equalsIgnoreCase("")) {
+
+                                        int iSelected = adapter.getPosition(fieldModel.getStrFieldData());
+                                        spinner.setSelection(iSelected);
+                                    }
+
+                                    linearLayout1.addView(spinner);
+                                }
+
+                                if (fieldModel.getStrFieldType().equalsIgnoreCase("array")) {
+
+                                    final LinearLayout linearLayoutParent = new LinearLayout(context);
+                                    linearLayoutParent.setOrientation(LinearLayout.VERTICAL);
+                                    linearLayoutParent.setTag(R.id.linearparent);
+
+                                    LinearLayout.LayoutParams layoutParentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    layoutParentParams.setMargins(10, 10, 10, 10);
+                                    linearLayoutParent.setLayoutParams(layoutParentParams);
+
+                                    //
+                                    try {
+
+                                        JSONObject jsonObjectMedicines = new JSONObject(fieldModel.getStrArrayData());
+
+                                        JSONArray jsonArrayMedicines = jsonObjectMedicines.getJSONArray("array_data");
+
+                                        for (int i = 0; i < jsonArrayMedicines.length(); i++) {
+
+                                            JSONObject jsonObjectMedicine =
+                                                    jsonArrayMedicines.getJSONObject(i);
+
+                                            final LinearLayout linearLayoutArrayExist = new LinearLayout(context);
+                                            linearLayoutArrayExist.setOrientation(LinearLayout.HORIZONTAL);
+                                            //linearLayoutArrayExist.setId(R.id.actionBarNotification);
+
+                                            LinearLayout.LayoutParams layoutArrayExistParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            layoutArrayExistParams.setMargins(10, 10, 10, 10);
+                                            linearLayoutArrayExist.setLayoutParams(layoutArrayExistParams);
+
+
+                                            EditText editMedicineName = new EditText(context);
+                                            editMedicineName.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                                            editMedicineName.setHint(getString(R.string.medicine_name));
+                                            editMedicineName.setTag("medicine_name");
+                                            editMedicineName.setInputType(InputType.TYPE_CLASS_TEXT);
+                                            editMedicineName.setText(jsonObjectMedicine.getString("medicine_name"));
+                                            linearLayoutArrayExist.addView(editMedicineName);
+
+                                            EditText editMedicineQty = new EditText(context);
+                                            editMedicineQty.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                                            editMedicineQty.setHint(getString(R.string.qunatity));
+                                            editMedicineQty.setTag("medicine_qty");
+                                            editMedicineQty.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                            editMedicineQty.setText(String.valueOf(jsonObjectMedicine.getInt("medicine_qty")));
+                                            linearLayoutArrayExist.addView(editMedicineQty);
+
+
+                                            //
+                                            Button buttonDel = new Button(context);
+                                            buttonDel.setText("X");
+                                            //buttonDel.setTextColor(get);
+                                            //buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
+                                            buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
+                                            buttonDel.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+
+                                                    try {
+                                                        LinearLayout linearLayout = (LinearLayout) v.getParent();
+                                                        linearLayout.removeAllViews();
+
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            });
+                                            linearLayoutArrayExist.addView(buttonDel);
+
+                                            linearLayoutParent.addView(linearLayoutArrayExist);
+                                            ///
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    //
+
+                                    final LinearLayout linearLayoutArray = new LinearLayout(context);
+                                    linearLayoutArray.setOrientation(LinearLayout.HORIZONTAL);
+
+                                    LinearLayout.LayoutParams layoutArrayParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    layoutArrayParams.setMargins(10, 10, 10, 10);
+                                    linearLayoutArray.setLayoutParams(layoutArrayParams);
+
+
+                                    for (int j = 0; j < finalFieldModel.getiArrayCount(); j++) {
+
+                                        EditText editTextArray = new EditText(context);
+
+                                        if (j == 0) {
+                                            editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                                            editTextArray.setHint(getString(R.string.medicine_name));
+                                            editTextArray.setTag("medicine_name");
+                                            editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
+                                        }
+
+                                        if (j == 1) {
+                                            editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                                            editTextArray.setHint(getString(R.string.qunatity));
+                                            editTextArray.setTag("medicine_qty");
+                                            editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                        }
+
+                                           /* if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
+
+
+                                            if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))*/
+
+
+                                        linearLayoutArray.addView(editTextArray);
+                                    }
+
+                                    Button buttonAdd = new Button(context);
+                                    buttonAdd.setBackgroundDrawable(getResources().getDrawable(R.drawable.add_icon));
+                                    buttonAdd.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
+                                    buttonAdd.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+
+                                            try {
+
+                                                final LinearLayout linearLayoutArrayInner = new LinearLayout(context);
+                                                linearLayoutArrayInner.setOrientation(LinearLayout.HORIZONTAL);
+
+                                                LinearLayout.LayoutParams layoutArrayInnerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                                layoutArrayInnerParams.setMargins(10, 10, 10, 10);
+                                                linearLayoutArrayInner.setLayoutParams(layoutArrayInnerParams);
+
+                                                for (int j = 0; j < finalFieldModel.getiArrayCount(); j++) {
+
+                                                    EditText editTextArray = new EditText(context);
+
+                                                    if (j == 0) {
+                                                        editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                                                        editTextArray.setHint(getString(R.string.medicine_name));
+                                                        editTextArray.setTag("medicine_name");
+                                                        editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
+                                                    }
+
+                                                    if (j == 1) {
+                                                        editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                                                        editTextArray.setHint(getString(R.string.qunatity));
+                                                        editTextArray.setTag("medicine_qty");
+                                                        editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                                    }
+
+                                                        /*if (finalFieldModel.getStrFieldType().equalsIgnoreCase("text"))
+
+
+                                                        if (finalFieldModel.getStrFieldType().equalsIgnoreCase("number"))*/
+
+
+                                                    linearLayoutArrayInner.addView(editTextArray);
+                                                }
+
+                                                //
+                                                Button buttonDel = new Button(context);
+                                                buttonDel.setText("X");
+                                                //buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
+                                                buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
+                                                buttonDel.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+
+                                                        try {
+                                                            LinearLayout linearLayout = (LinearLayout) v.getParent();
+                                                            linearLayout.removeAllViews();
+
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
+
+                                                linearLayoutArrayInner.addView(buttonDel);
+                                                ///
+
+                                                linearLayoutParent.addView(linearLayoutArrayInner);
+                                                //
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+
+                                    linearLayoutArray.addView(buttonAdd);
+
+                                    linearLayoutParent.addView(linearLayoutArray);
+
+                                    linearLayout1.addView(linearLayoutParent);
+                                }
+                                layoutDialog.addView(linearLayout1);
+                            }
+
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    int id = (int) v.getTag();
+                                    LinearLayout linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                                    traverseEditTexts(layoutDialog, id, linearLayout, 1);
+
+                                    //
+                                       /* TextView textViewNameMs = (TextView) linearLayout.findViewById(milestoneModelObject.getiMilestoneId());
+
+                                        Drawable drawableBg = null, drawable=null;
+
+                                        if (strMilestoneStatus.equalsIgnoreCase("completed")){
+                                            drawable = getResources().getDrawable(R.mipmap.done);
+                                            drawableBg = getResources().getDrawable(R.drawable.button_success);
+                                        }
+
+                                        if (strMilestoneStatus.equalsIgnoreCase("pending")) {
+                                            drawable = getResources().getDrawable(R.mipmap.error);
+                                            drawableBg = getResources().getDrawable(R.drawable.button_error);
+                                        }
+
+                                        if (strMilestoneStatus.equalsIgnoreCase("opened")
+                                                || milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("reopened")) {
+                                            drawable = getResources().getDrawable(R.mipmap.star_white);
+                                            drawableBg = getResources().getDrawable(R.drawable.button_open);
+                                        }
+
+                                        if (strMilestoneStatus.equalsIgnoreCase("inactive")) {
+                                            drawable = getResources().getDrawable(R.mipmap.star_grey);
+                                            drawableBg = getResources().getDrawable(R.drawable.button_inactive);
+                                        }
+
+                                        if (strMilestoneStatus.equalsIgnoreCase("inprocess")) {
+                                            drawable = getResources().getDrawable(R.mipmap.star_gold);
+                                            drawableBg = getResources().getDrawable(R.drawable.button_grey);
+                                        }
+
+                                        if (drawable != null)
+                                            textViewNameMs.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+
+                                        if (drawableBg != null){
+                                            textViewNameMs.setBackgroundDrawable(drawableBg);
+                                        }*/
+                                    //
+                                }
+                            });
+
+                            buttonDone.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    int id = (int) v.getTag();
+                                    LinearLayout linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                                    traverseEditTexts(layoutDialog, id, linearLayout, 2);
+
+
+                                    //
+                                       /* TextView textViewNameMs = (TextView) linearLayout.findViewById(milestoneModelObject.getiMilestoneId());
+
+                                        Drawable drawableBg, drawable;
+
+                                        drawable = getResources().getDrawable(R.mipmap.done);
+                                        drawableBg = getResources().getDrawable(R.drawable.button_success);
+
+
+                                        textViewNameMs.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+                                        textViewNameMs.setBackgroundDrawable(drawableBg);*/
+
+                                    //
+                                }
+                            });
+
+                            buttonCancel.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setView(view);
+                            dialog = builder.create();
+
+                            dialog.show();
+
+                        }
+                    }
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private class BackgroundThreadHandler extends Handler {
@@ -1154,7 +1532,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
             addImages();
 
-            mProgress.dismiss();
+            loadingPanel.setVisibility(View.GONE);
         }
     }
 
@@ -1163,25 +1541,20 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
         public void run() {
 
             try {
-                //System.out.println("URI IS : " + uri);
-               // if (uri != null) {
                 for(int i=0;i<imagePaths.size();i++) {
                     Calendar calendar = new GregorianCalendar();
-                    String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
+                    String strTime = String.valueOf(calendar.getTimeInMillis());
+                    String strFileName = strTime + ".jpeg";
                     File galleryFile = utils.createFileInternalImage(strFileName);
                     strImageName = galleryFile.getAbsolutePath();
                     Date date = new Date();
 
-                    ImageModel imageModel = new ImageModel(strImageName, "", galleryFile.getName(), utils.convertDateToString(date));
+                    ImageModel imageModel = new ImageModel(strFileName, "", strTime, utils.convertDateToString(date), galleryFile.getAbsolutePath());
                     arrayListImageModel.add(imageModel);
 
                     utils.copyFile(new File(imagePaths.get(i)), galleryFile);
-
                     //
                     utils.compressImageFromPath(strImageName, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-                    //
-
-                    //bitmap = utils.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight);
 
                     bitmaps.add(utils.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight));
 
@@ -1203,7 +1576,7 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
 
                     utils.compressImageFromPath(strImageName, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
                     Date date = new Date();
-                    ImageModel imageModel = new ImageModel(strImageName, "", strName, utils.convertDateToString(date));
+                    ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), strImageName);
                     arrayListImageModel.add(imageModel);
                     bitmaps.add(utils.getBitmapFromFile(strImageName, Config.intWidth, Config.intHeight));
                 }
@@ -1225,6 +1598,35 @@ public class FeatureActivity extends AppCompatActivity implements Serializable{
                 }*/
                  IMAGE_COUNT++;
 
+            } catch (Exception | OutOfMemoryError e) {
+                e.printStackTrace();
+            }
+            backgroundThreadHandler.sendEmptyMessage(0);
+        }
+    }
+
+    private class BackgroundThreadImages extends Thread {
+        @Override
+        public void run() {
+            try {
+                //
+
+                JSONObject jsonObjectImages = new JSONObject();
+
+                for (ImageModel imageModel : act.getImageModels()) {
+                    if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                        bitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        IMAGE_COUNT++;
+
+                        jsonObjectImages.put("image_name", imageModel.getStrImageName());
+                        jsonObjectImages.put("image_url", imageModel.getStrImageUrl());
+                        jsonObjectImages.put("image_description", imageModel.getStrImageDesc());
+                        jsonObjectImages.put("image_taken", imageModel.getStrImageTime());
+
+                        jsonArrayImagesAdded.put(jsonObjectImages);
+                    }
+                }
+                //
             } catch (Exception | OutOfMemoryError e) {
                 e.printStackTrace();
             }

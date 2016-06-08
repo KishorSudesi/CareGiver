@@ -2,10 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="1">
+    android:orientation="vertical">
 
-    <include xmlns:android="http://schemas.android.com/apk/res/android"
+    <include
         android:id="@+id/includeHeaderCreatingTasks"
         layout="@layout/header_creating_task"
         android:layout_width="match_parent"
@@ -19,8 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_horizontal_margin">
 
         <TextView
@@ -28,7 +25,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:text="@string/clientName"
+            android:paddingLeft="@dimen/padding_general"
+            android:paddingRight="@dimen/padding_general"
+            android:text="@string/clientNameModel"
             android:textColor="@android:color/secondary_text_dark"
             android:textSize="@dimen/label_text"
            />
@@ -37,7 +36,9 @@
             android:id="@+id/inputSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textVisiblePassword"/>
+            android:inputType="textVisiblePassword"
+            android:paddingLeft="@dimen/padding_general"
+            android:paddingRight="@dimen/padding_general" />
         <requestFocus/>
 
         <TextView
@@ -45,6 +46,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/padding_general"
+            android:paddingRight="@dimen/padding_general"
             android:text="@string/dependentName"
             android:textColor="@android:color/secondary_text_dark"
             android:textSize="@dimen/label_text" />
@@ -54,19 +57,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_general"
-            android:padding="@dimen/padding_general">
+            android:padding="10dp"
+            android:paddingLeft="@dimen/padding_general"
+            android:paddingRight="@dimen/padding_general">
 
         </Spinner>
-       <!-- <ListView
-            android:id="@+id/list_view_search"
-            android:layout_width="fill_parent"
-            android:layout_height="80dp" />-->
 
         <TextView
             android:id="@+id/textViewServices"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/padding_general"
+            android:paddingRight="@dimen/padding_general"
             android:text="@string/services"
             android:textColor="@android:color/secondary_text_dark"
             android:textSize="@dimen/label_text"
@@ -77,7 +80,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:inputType="text" />
+            android:inputType="text"
+            android:paddingLeft="@dimen/padding_general"
+            android:paddingRight="@dimen/padding_general" />
         <!--  <requestFocus/>-->
 
 
@@ -86,6 +91,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/padding_general"
+            android:paddingRight="@dimen/padding_general"
             android:text="@string/title"
             android:textColor="@android:color/secondary_text_dark"
             android:textSize="@dimen/label_text"
@@ -94,13 +101,16 @@
         <EditText
             android:id="@+id/editTextTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_general"
+            android:paddingRight="@dimen/padding_general" />
 
 
         <EditText
             android:id="@+id/editDob"
             android:layout_width="match_parent"
             android:layout_height="45dp"
+            android:layout_marginBottom="@dimen/margin_general"
             android:layout_marginTop="25dp"
             android:drawableLeft="@drawable/activity_icon_32"
             android:drawablePadding="10dp"
@@ -109,7 +119,19 @@
             android:inputType="textPersonName"
             android:padding="10dp" />
 
+        <RelativeLayout
+            android:id="@+id/loadingPanel"
+            style="@style/GenericProgressBackground"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:visibility="gone">
+
+            <ProgressBar style="@style/GenericProgressIndicator" />
+        </RelativeLayout>
+
+
     </LinearLayout>
 
     </ScrollView>
+
 </LinearLayout>

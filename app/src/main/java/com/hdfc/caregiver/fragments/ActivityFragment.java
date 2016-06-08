@@ -30,7 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 
-public class SimpleActivityFragment extends Fragment implements SlideAndDragListView.OnListItemLongClickListener,
+public class ActivityFragment extends Fragment implements SlideAndDragListView.OnListItemLongClickListener,
         SlideAndDragListView.OnDragListener, SlideAndDragListView.OnSlideListener,
          SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnListItemClickListener,
         SlideAndDragListView.OnItemDeleteListener {
@@ -130,8 +130,8 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
     };
     private Menu mMenu;
 
-    static SimpleActivityFragment newInstance() {
-        return new SimpleActivityFragment();
+    static ActivityFragment newInstance() {
+        return new ActivityFragment();
     }
 
     @Override
@@ -153,6 +153,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
         context = getActivity();
 
         ImageButton add = (ImageButton) view.findViewById(R.id.add_button);
+        add.setVisibility(View.VISIBLE);
 
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
 
@@ -304,7 +305,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                         }
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:
-                        if (activityModels.size() > 0) {
+                      /*  if (activityModels.size() > 0) {
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
 
@@ -317,7 +318,7 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
                             } else {
                                 utils.toast(2, 2, "Activity is Closed");
                             }
-                        }
+                        }*/
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
 
@@ -398,5 +399,19 @@ public class SimpleActivityFragment extends Fragment implements SlideAndDragList
 
     @Override
     public void onListItemClick(View v, int position) {
+        if (activityModels.size() > 0) {
+            Bundle args = new Bundle();
+            args.putSerializable("ACTIVITY", activityModels.get(position));
+
+            if (!activityModels.get(position).getStrActivityStatus().equalsIgnoreCase("completed")) {
+                ActivityModel obj = activityModels.get(position);
+                Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                args.putSerializable("ACTIVITY", obj);
+                intent.putExtras(args);
+                startActivity(intent);
+            } else {
+                utils.toast(2, 2, "Activity is Closed");
+            }
+        }
     }
 }
