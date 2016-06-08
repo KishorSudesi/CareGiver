@@ -1,6 +1,5 @@
 package com.hdfc.caregiver;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -51,7 +50,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private View focusView = null;
     private AutoCompleteTextView inputSearch, inputSearchServices;
     private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate, strSelectedDependent;
-    private ProgressDialog progressDialog;
+    //private ProgressDialog progressDialog;
     private Utils utils;
     private AppUtils appUtils;
     private EditText editTextTitle, dateAnd;
@@ -93,7 +92,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);
-        progressDialog = new ProgressDialog(CreatingTaskActivity.this);
+        //progressDialog = new ProgressDialog(CreatingTaskActivity.this);
         storageService = new StorageService(CreatingTaskActivity.this);
 
         dependentlist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -519,6 +518,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     //   strInsertedDocumentId = response.getJsonDocList().get(0).getDocId();
                                     //   iUpdateFlag = iActivityCreated;
                                     //fetchService(serviceModel, dependentModel);
+
+                                    appUtils.createActivityModel(
+                                            response.getJsonDocList().get(0).getDocId(),
+                                            response.getJsonDocList().get(0).getJsonDoc()
+                                    );
+                                    //
+
                                     insertNotification();
                                 } else {
                                     loadingPanel.setVisibility(View.GONE);
@@ -831,6 +837,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                         public void onDocumentInserted(Storage response) {
                             try {
                                 if (response.isResponseSuccess()) {
+                                    Utils.log(" 1 ", " Notify ");
                                     sendPushToProvider();
                                 } else {
                                     strAlert = getString(R.string.no_push_actiity_added);

@@ -17,9 +17,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="TwoWayView">
-        <item name="android:orientation">horizontal</item>
-    </style>
+    <!--  <style name="TwoWayView">
+          <item name="android:orientation">horizontal</item>
+      </style>-->
 
     <style name="MilestoneStyle" parent="@android:style/Widget.TextView">
         <item name="android:textAppearance">@android:style/TextAppearance.Medium</item>

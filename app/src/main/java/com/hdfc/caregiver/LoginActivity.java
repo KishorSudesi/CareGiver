@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                         R.drawable.bg_blue, Config.intScreenWidth, Config.intScreenHeight));
             }
 
-            // CrashLogger.getInstance().init(LoginActivity.this);
+            //CrashLogger.getInstance().init(LoginActivity.this);
         } catch (Exception | OutOfMemoryError e) {
             e.printStackTrace();
         }

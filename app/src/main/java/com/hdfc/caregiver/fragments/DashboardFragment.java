@@ -18,7 +18,6 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.Utils;
 
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -74,7 +73,7 @@ public class DashboardFragment extends Fragment {
                 Config.feedBackModels.clear();
                 Config.milestoneModels.clear();
 
-                Calendar calendar = Calendar.getInstance();
+                // Calendar calendar = Calendar.getInstance();
 
           /*  int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH); // Note: zero based!

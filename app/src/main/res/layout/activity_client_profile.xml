@@ -35,7 +35,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
-                android:hint="@string/hintAge"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -53,7 +52,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
-                android:hint="@string/diabetic"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                  />
 
@@ -71,7 +69,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
-                android:hint="@string/premium"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -88,7 +85,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
-                android:hint="@string/pune"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -118,9 +114,8 @@
                 android:id="@+id/editTextMobileNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="@string/hintMobNo"
                 android:layout_marginLeft="5dp"
+                android:layout_marginTop="12dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                />
             </LinearLayout>

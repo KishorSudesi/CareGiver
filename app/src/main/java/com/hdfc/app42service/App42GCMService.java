@@ -25,15 +25,12 @@ import java.io.IOException;
 public class App42GCMService extends IntentService {
 
 
-    public static final String DisplayMessageAction = "com.example.app42sample.DisplayMessage";
+    public static final String DisplayMessageAction = "com.hdfc.caregiver.DashboardActivity";
     public static final String ExtraMessage = "message";
     private static final String App42GeoTag = "app42_geoBase";
     private static final String Alert = "alert";
-    public static GoogleCloudMessaging gcm = null;
-    // public static final String ExtraMessage = "message";
-    static int msgCount = 0;
-    private final String title = "NewZeal";
-    private NotificationManager mNotificationManager = null;
+    private static GoogleCloudMessaging gcm = null;
+    private static int msgCount = 0;
 
     public App42GCMService() {
         super("GcmIntentService");
@@ -88,8 +85,6 @@ public class App42GCMService extends IntentService {
             final JSONObject json = new JSONObject(message);
             final String geoBaseType = json.optString(App42GeoTag, null);
 
-            //Log.e("HDFC", message);
-
             final String alertMessage = json.optString(Alert, null);
 
             /*if (geoBaseType == null) {
@@ -98,19 +93,16 @@ public class App42GCMService extends IntentService {
 
             if (alertMessage != null) {
                 showNotification(json.getString("alert"), intent);
-                //Log.e("HDFC", "1");
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            //Log.e("HDFC", "2");
             showNotification(message, intent);
         }
     }
 
     private void sendNotification(String msg) {
-        //check wth vinay
         long when = System.currentTimeMillis();
-        this.mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Intent notificationIntent;
 
@@ -121,10 +113,10 @@ public class App42GCMService extends IntentService {
         notificationIntent.setFlags(603979776);//603979776 Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        //
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
-        mBuilder.setSmallIcon(R.mipmap.ic_launcher).setContentTitle(title).setContentText(msg).setWhen(when).setNumber(++msgCount).setAutoCancel(true)
+        mBuilder.setSmallIcon(R.mipmap.ic_launcher).setContentTitle(getString(R.string.app_name)).
+                setContentText(msg).setWhen(when).setNumber(++msgCount).setAutoCancel(true)
                 .setDefaults(1).setDefaults(2)
                 .setLights(Notification.DEFAULT_LIGHTS, 5000, 5000)
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
@@ -132,7 +124,7 @@ public class App42GCMService extends IntentService {
 
         mBuilder.setContentIntent(contentIntent);
 
-        this.mNotificationManager.notify(1, mBuilder.build());
+        mNotificationManager.notify(1, mBuilder.build());
     }
 
     /**

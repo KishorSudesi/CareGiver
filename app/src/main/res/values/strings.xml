@@ -5,7 +5,6 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="update">Update</string>
-
     <string name="action_settings">Settings</string>
     <string name="menu_tasks">My Tasks</string>
     <string name="menu_clients">Clients</string>
@@ -21,7 +20,6 @@
 
     <string name="email">Email</string>
     <string name="take_me_in">Take Me In</string>
-    <string name="am_new_here">I am New Here</string>
     <string name="password">Password</string>
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
@@ -32,37 +30,26 @@
     <string name="error_confirm_password">Invalid Confirm Password</string>
     <string name="error_invalid_email">Invalid Email</string>
     <string name="error_invalid_contact_no">Invalid Contact Number</string>
-    <string name="error_invalid_age">Invalid Age</string>
-    <string name="email_exists">Email Id Already Exists!!!</string>
     <string name="error_field_required">This Field is Required</string>
     <string name="error">Something went wrong. Try Again!!!</string>
-    <string name="enter_captcha">Valid Captcha required</string>
-    <string name="error_same_password">New and Old Password cannot be same</string>
-    <string name="verify_identity_password">Verifying…</string>
 
+    <string name="error_same_password">New and Old Password cannot be same</string>
     <string name="process_login">Authenticating…</string>
     <string name="success_login">Login Success…</string>
     <string name="invalid_credentials">Invalid Credentials</string>
-
 
     <string name="warning_profile_pic">Profile Picture Needed</string>
     <string name="warning_internet">Please check your internet connection and try again</string>
     <string name="warning_internet_alert">No internet connection …</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="GPSAlertDialogTitle">GPS Title</string>
     <string name="GPSAlertDialogMessage">GPS is searching</string>
 
     <string name="age">Age</string>
-    <string name="hintAge">57</string>
     <string name="health_condition">Health Condition</string>
-    <string name="diabetic">Diabetic</string>
     <string name="notes_text">Notes</string>
-    <string name="premium">Premium</string>
     <string name="address">Address</string>
-    <string name="pune">Pune</string>
     <string name="mobNo">Mobile Number</string>
-    <string name="hintMobNo">+91 9975351693</string>
     <string name="map">Map</string>
     <string name="getDirection">Get Direction</string>
 
@@ -73,54 +60,33 @@
     <string name="dateAndTime">Date and Time</string>
 
     <string name="hintPwd">*****</string>
-
     <string name="name">Name</string>
-    <string name="hintName">Carla</string>
     <string name="place">Place</string>
     <string name="signOut">SIGN OUT</string>
 
-    <string name="done_button">DONE</string>
+    <string name="done_button">Done</string>
     <string name="upload_button">Upload</string>
     <string name="noFeatures">No Features</string>
 
-    <string name="age_val">59</string>
     <string name="yrs"> Yrs</string>
-    <string name="high_bp">High BP</string>
     <string name="separator">  |  </string>
-    <string name="lisbon">Lisbon, Portugal</string>
 
     <string name="attachments">View Attachments</string>
     <string name="noClients">No Clients</string>
 
     <string name="noFeedbacks">No Feedbacks</string>
-    <string name="mercedes">Mercedes</string>
 
-    <string name="emailHint">abc@gmail.com</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
 
     <string name="noActivities">No Information Available for Selected Date</string>
 
-    <string name="timeHint">7 am</string>
-    <string name="taskSubject">Take me to Temple</string>
-    <string name="taskMessage">Here is your message</string>
-
-    <string name="txtFeedback">This app is very helpful. You made my routine sophisticated.</string>
-
-    <string name="william">Wilhelm Maybach</string>
-
-    <string name="vegetableName">Cauliflower</string>
-
-    <string name="barackObama">Barack Obama</string>
-
-    <string name="vegetableTime">9.10 am</string>
     <string name="features">Features</string>
 
     <string name="loading">Loading..</string>
     <string name="uploading_image">Uploading image..</string>
     <string name="update_profile_image">Profile picture updated</string>
     <string name="error_load_images">Error Loading Data. Try Again!!!</string>
-
 
     <!--Common Strings-->
 
@@ -140,17 +106,12 @@
     <string name="at">at</string>
 
     <!--Info/App Specific Strings-->
-    <string name="account_success_message">Good job. We all are set to care for your seniors. Go to your Dashboard to see how</string>
-    <string name="add_dependent">Add Dependent</string>
-    <string name="myself">Myself</string>
-    <string name="loved_one">A Loved One</string>
-    <string name="who_needs_care">Who Needs Care?</string>
-    <string name="your_details">Your Details</string>
+
+    <string name="enter_captcha">Valid Captcha required</string>
+    <string name="verify_identity_password">Verifying…</string>
+
     <string name="your_details_saved">Your Details Saved</string>
     <string name="dependents">Dependents</string>
-    <string name="number">9874560123</string>
-    <string name="gurunathan">Mr.Gurunathan</string>
-    <string name="string_email">abc@xyz.com</string>
     <string name="search_contacts">Search from Contacts</string>
     <string name="dependent_name">Dependent Name</string>
     <string name="dependent_details">Dependent Details</string>

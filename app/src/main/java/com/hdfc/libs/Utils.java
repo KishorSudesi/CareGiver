@@ -1,6 +1,7 @@
 package com.hdfc.libs;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -572,6 +573,38 @@ public class Utils {
         return key;
     }*/
 
+    public static void cancelNotification(int notifyId) {
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager nMgr = (NotificationManager) _ctxt.getSystemService(ns);
+        nMgr.cancel(notifyId);
+    }
+
+   /* public String getMonthLastDate(String strFromDate) {
+
+        String strLastDateMonth = "";
+
+        Date today = null;
+        try {
+            today = readFormatDate.parse(strFromDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(today);
+
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.DATE, -1);
+
+        Date lastDayOfMonth = calendar.getTime();
+
+        strLastDateMonth = dateFormat.format(lastDayOfMonth) + "T23:59:59.999+0000";
+        log(strLastDateMonth, "LAST DATE ");
+
+        return strLastDateMonth;
+    }*/
+
     //
     public boolean compressImageFromPath(String strPath, int reqWidth, int reqHeight, int iQuality) {
 
@@ -633,32 +666,6 @@ public class Utils {
 
         return b;
     }
-
-   /* public String getMonthLastDate(String strFromDate) {
-
-        String strLastDateMonth = "";
-
-        Date today = null;
-        try {
-            today = readFormatDate.parse(strFromDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(today);
-
-        calendar.add(Calendar.MONTH, 1);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.add(Calendar.DATE, -1);
-
-        Date lastDayOfMonth = calendar.getTime();
-
-        strLastDateMonth = dateFormat.format(lastDayOfMonth) + "T23:59:59.999+0000";
-        log(strLastDateMonth, "LAST DATE ");
-
-        return strLastDateMonth;
-    }*/
 
     public void createNotificationModel(String strDocumentId, String strDocument) {
         try {

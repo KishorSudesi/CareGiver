@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+    android:orientation="vertical">
 
      <LinearLayout
                 android:id="@+id/linearlayoutClient"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/header_border">
+         android:background="@drawable/header_border"
+         android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/imageClients"
@@ -23,51 +22,48 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_margin="10dp">
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textViewName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
+                        android:text=""
                         android:textSize="20sp"
-                        android:text=""/>
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:layout_marginTop="7dp"
+                        android:orientation="horizontal"
                         android:weightSum="1">
                         <TextView
                             android:id="@+id/textViewClient_age"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
-                            android:text="@string/age_val"/>
+                            android:textSize="15sp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
-                            android:text="@string/yrs"/>
+                            android:text="@string/yrs"
+                            android:textSize="15sp" />
                         <TextView
                             android:id="@+id/textViewClient_problem"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
-                            android:text="@string/high_bp"/>
+                            android:textSize="15sp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
-                            android:text="@string/separator"/>
+                            android:text="@string/separator"
+                            android:textSize="15sp" />
                         <TextView
                             android:id="@+id/textViewPremium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
-                            android:text="@string/premium"/>
+                            android:textSize="15sp" />
                     </LinearLayout>
 
                     <TextView
@@ -75,8 +71,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="7dp"
-                        android:textSize="15sp"
-                        android:text="@string/lisbon"/>
+                        android:textSize="15sp" />
                 </LinearLayout>
 
             </LinearLayout>

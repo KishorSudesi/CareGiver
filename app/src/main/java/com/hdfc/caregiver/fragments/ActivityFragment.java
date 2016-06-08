@@ -6,12 +6,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -145,6 +145,17 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_simple_activity, container, false);
 
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+       /* fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });*/
+
+        //
+
         initMenu();
         //progressDialog = new ProgressDialog(getActivity());
         utils = new Utils(getActivity());
@@ -152,12 +163,11 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
 
         context = getActivity();
 
-        ImageButton add = (ImageButton) view.findViewById(R.id.add_button);
-        add.setVisibility(View.VISIBLE);
+        fab.setVisibility(View.VISIBLE);
 
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
 
-        add.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CreatingTaskActivity.class);

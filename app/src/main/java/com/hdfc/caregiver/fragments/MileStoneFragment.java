@@ -147,7 +147,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
 
         context = getActivity();
 
-        ImageButton add = (ImageButton) view.findViewById(R.id.add_button);
+        ImageButton add = (ImageButton) view.findViewById(R.id.fab);
         add.setVisibility(View.GONE);
 
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);

@@ -120,6 +120,9 @@ public class DashboardActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_tasks);
 
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
+
         try {
             appUtils = new AppUtils(DashboardActivity.this);
             utils = new Utils(DashboardActivity.this);
@@ -197,7 +200,8 @@ public class DashboardActivity extends AppCompatActivity implements
                 menuFeedback();
             }
 
-            App42API.setLoggedInUser(Config.providerModel.getStrEmail());
+            if (Config.providerModel != null)
+                App42API.setLoggedInUser(Config.providerModel.getStrEmail());
 
             //App42Log.setDebug(true);
 
@@ -396,7 +400,8 @@ public class DashboardActivity extends AppCompatActivity implements
 
             Config.intSelectedMenu = Config.intDashboardScreen;
 
-            appUtils.fetchActivities();
+            if (Config.providerModel != null)
+                appUtils.fetchActivities();
 
         } else {
             utils.toast(2, 2, getString(R.string.warning_internet));

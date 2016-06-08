@@ -79,7 +79,8 @@ public class AppUtils {
             Config.boolIsLoggedIn = false;
 
             //Config.fileModels.clear();
-            CareGiver.dbCon.deleteFiles();
+            if (CareGiver.dbCon != null)
+                CareGiver.dbCon.deleteFiles();
 
             SharedPreferences.Editor editor = _ctxt.getSharedPreferences(Config.strPreferenceName,
                     Context.MODE_PRIVATE).edit();
@@ -2050,7 +2051,7 @@ public class AppUtils {
             }
 
             storageService.findDocsByQueryOrderBy(Config.collectionActivity, q8, 1000, 0,
-                    "activity_date", 1,
+                    "milestones.scheduled_date", 1,
                     new App42CallBack() {
 
                         @Override

@@ -113,7 +113,6 @@
         android:layout_marginRight="@dimen/edit_text_margin"
         android:background="@drawable/button_back_trans"
         android:gravity="center"
-        android:text="@string/am_new_here"
         android:visibility="invisible" />
 
 </RelativeLayout>

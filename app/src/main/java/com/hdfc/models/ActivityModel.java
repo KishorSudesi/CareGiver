@@ -112,6 +112,14 @@ public class ActivityModel implements Serializable {
         this.milestoneModels.add(milestoneModel);
     }
 
+    public void removeMilestoneModel(MilestoneModel milestoneModel) {
+        this.milestoneModels.remove(milestoneModel);
+    }
+
+    public void clearMilestoneModel() {
+        this.milestoneModels.clear();
+    }
+
     public String getStrActivityID() {
         return strActivityID;
     }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -232,7 +233,7 @@ public class FeatureActivity extends AppCompatActivity {
         IMAGE_COUNT = 0;
         Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
         Config.intSelectedMenu = Config.intDashboardScreen;
-        intent.putExtra("LOAD", bLoad);
+        //intent.putExtra("LOAD", bLoad);
         startActivity(intent);
         finish();
     }
@@ -244,6 +245,10 @@ public class FeatureActivity extends AppCompatActivity {
         try {
 
             Calendar calendar = Calendar.getInstance();
+
+            int iPosition = Config.strActivityIds.indexOf(act.getStrActivityID());
+
+            Config.activityModels.get(iPosition).clearMilestoneModel();
 
             for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
 
@@ -352,6 +357,13 @@ public class FeatureActivity extends AppCompatActivity {
                         //
                     }
                 }
+
+                //
+                if (iPosition > -1) {
+                    //Config.activityModels.get(iPosition).removeMilestoneModel(milestoneModel);
+                    Config.activityModels.get(iPosition).setMilestoneModel(milestoneModel);
+                }
+                //
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -365,7 +377,6 @@ public class FeatureActivity extends AppCompatActivity {
                 }
             }*/
 
-            //dialog.dismiss();
             uploadJson();
         }
     }
@@ -451,7 +462,7 @@ public class FeatureActivity extends AppCompatActivity {
 
         // Some offset to align the popup a bit to the left, and a bit down, relative to button's position.
         int OFFSET_X = -20;
-        int OFFSET_Y = 95;
+        int OFFSET_Y = 115;
 
         //Clear the default translucent background
         changeStatusPopUp.setBackgroundDrawable(new BitmapDrawable());
@@ -732,6 +743,8 @@ public class FeatureActivity extends AppCompatActivity {
             ////////////////////
 
             jsonObjectMileStone.put("milestones", jsonArrayMilestones);
+
+            //
             jsonObjectMileStone.put("status", "inprocess");
 
             Date date = new Date();
@@ -1288,8 +1301,8 @@ public class FeatureActivity extends AppCompatActivity {
                                             //
                                             Button buttonDel = new Button(context);
                                             buttonDel.setText("X");
-                                            //buttonDel.setTextColor(get);
-                                            //buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
+                                            buttonDel.setTextColor(Color.BLACK);
+                                            buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
                                             buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
                                             buttonDel.setOnClickListener(new View.OnClickListener() {
                                                 @Override
@@ -1396,7 +1409,8 @@ public class FeatureActivity extends AppCompatActivity {
                                                 //
                                                 Button buttonDel = new Button(context);
                                                 buttonDel.setText("X");
-                                                //buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
+                                                buttonDel.setTextColor(Color.BLACK);
+                                                buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
                                                 buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
                                                 buttonDel.setOnClickListener(new View.OnClickListener() {
                                                     @Override
@@ -1439,44 +1453,6 @@ public class FeatureActivity extends AppCompatActivity {
                                     LinearLayout linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
                                     traverseEditTexts(layoutDialog, id, linearLayout, 1);
 
-                                    //
-                                       /* TextView textViewNameMs = (TextView) linearLayout.findViewById(milestoneModelObject.getiMilestoneId());
-
-                                        Drawable drawableBg = null, drawable=null;
-
-                                        if (strMilestoneStatus.equalsIgnoreCase("completed")){
-                                            drawable = getResources().getDrawable(R.mipmap.done);
-                                            drawableBg = getResources().getDrawable(R.drawable.button_success);
-                                        }
-
-                                        if (strMilestoneStatus.equalsIgnoreCase("pending")) {
-                                            drawable = getResources().getDrawable(R.mipmap.error);
-                                            drawableBg = getResources().getDrawable(R.drawable.button_error);
-                                        }
-
-                                        if (strMilestoneStatus.equalsIgnoreCase("opened")
-                                                || milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("reopened")) {
-                                            drawable = getResources().getDrawable(R.mipmap.star_white);
-                                            drawableBg = getResources().getDrawable(R.drawable.button_open);
-                                        }
-
-                                        if (strMilestoneStatus.equalsIgnoreCase("inactive")) {
-                                            drawable = getResources().getDrawable(R.mipmap.star_grey);
-                                            drawableBg = getResources().getDrawable(R.drawable.button_inactive);
-                                        }
-
-                                        if (strMilestoneStatus.equalsIgnoreCase("inprocess")) {
-                                            drawable = getResources().getDrawable(R.mipmap.star_gold);
-                                            drawableBg = getResources().getDrawable(R.drawable.button_grey);
-                                        }
-
-                                        if (drawable != null)
-                                            textViewNameMs.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
-
-                                        if (drawableBg != null){
-                                            textViewNameMs.setBackgroundDrawable(drawableBg);
-                                        }*/
-                                    //
                                 }
                             });
 
@@ -1486,21 +1462,6 @@ public class FeatureActivity extends AppCompatActivity {
                                     int id = (int) v.getTag();
                                     LinearLayout linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
                                     traverseEditTexts(layoutDialog, id, linearLayout, 2);
-
-
-                                    //
-                                       /* TextView textViewNameMs = (TextView) linearLayout.findViewById(milestoneModelObject.getiMilestoneId());
-
-                                        Drawable drawableBg, drawable;
-
-                                        drawable = getResources().getDrawable(R.mipmap.done);
-                                        drawableBg = getResources().getDrawable(R.drawable.button_success);
-
-
-                                        textViewNameMs.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
-                                        textViewNameMs.setBackgroundDrawable(drawableBg);*/
-
-                                    //
                                 }
                             });
 
