@@ -61,6 +61,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -817,7 +819,7 @@ public class Utils {
         }
     }
 
-    /*public boolean isEmailValid(String email) {
+    public boolean isEmailValid(String email) {
         boolean b;
 
         b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
@@ -830,7 +832,7 @@ public class Utils {
         }
 
         return b;
-    }*/
+    }
 
 
    /* public String getUUID() {

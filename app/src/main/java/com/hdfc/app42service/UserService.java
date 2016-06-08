@@ -140,6 +140,11 @@ public class UserService/* implements
         asyncService.createUser(userName, password, email, roleList, app42CallBack);
     }
 
+    public void resetUserPassword(String userName, App42CallBack app42CallBack) {
+        //utils.showProgress(true, formView, progressView);
+        asyncService.resetUserPassword(userName, app42CallBack);
+    }
+
     /*@Override
     public void onCreationFailed(App42Exception exception) {
         utils.createAlertDialog(exception.getMessage());

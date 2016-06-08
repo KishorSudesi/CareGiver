@@ -33,8 +33,9 @@
     <string name="email_exists">Email Id Already Exists!!!</string>
     <string name="error_field_required">This Field is Required</string>
     <string name="error">Something went wrong. Try Again!!!</string>
-
+    <string name="enter_captcha">Valid Captcha required</string>
     <string name="error_same_password">New and Old Password cannot be same</string>
+    <string name="verify_identity_password">Verifying…</string>
 
     <string name="process_login">Authenticating…</string>
     <string name="success_login">Login Success…</string>

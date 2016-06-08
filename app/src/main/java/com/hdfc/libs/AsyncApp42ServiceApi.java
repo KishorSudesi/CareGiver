@@ -252,6 +252,34 @@ public class AsyncApp42ServiceApi {
         }.start();
     }
 
+    public void resetUserPassword(final String userName, final App42CallBack callBack) {
+
+        final Handler callerThreadHandler = new Handler();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final Object response = userService.resetUserPassword(userName);
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSuccess(response);
+                        }
+                    });
+                } catch (final App42Exception ex) {
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callBack != null) {
+                                callBack.onException(ex);
+                            }
+                        }
+                    });
+
+                }
+            }
+        }.start();
+    }
 
     public void getUser(final String name, final App42CallBack callBack) {
         final Handler callerThreadHandler = new Handler();

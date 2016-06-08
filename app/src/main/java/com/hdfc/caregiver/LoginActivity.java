@@ -4,14 +4,19 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UserService;
@@ -21,6 +26,7 @@ import com.hdfc.dbconfig.DbCon;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.Utils;
+import com.hdfc.views.CheckView;
 import com.scottyab.aescrypt.AESCrypt;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
@@ -37,9 +43,15 @@ public class LoginActivity extends AppCompatActivity {
     private static ProgressDialog progressDialog;
     private AppUtils appUtils;
     private RelativeLayout relLayout;
-    private EditText editEmail, editPassword;
+    private EditText editEmail, editPassword,edittextCaptcha,forgotpassUsername;
+    private CheckView checkView;
+    private ImageButton reloadCaptcha;
+    private TextView forgotpass;
     private RelativeLayout layoutLogin;
     private SharedPreferences sharedPreferences;
+    private char[] res = new char[4];
+    private String email;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         layoutLogin = (RelativeLayout) findViewById(R.id.layoutLogin);
         editEmail = (EditText) findViewById(R.id.editEmail);
         editPassword = (EditText) findViewById(R.id.editPassword);
+        forgotpass = (TextView)findViewById(R.id.id_forgot);
         utils = new Utils(LoginActivity.this);
         appUtils = new AppUtils(LoginActivity.this);
 
@@ -94,6 +107,12 @@ public class LoginActivity extends AppCompatActivity {
                         getResources().getDrawable(R.drawable.edit_text_blue), editEmail);
             }
         });
+        forgotpass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showForgotPassword();
+            }
+        });
 
         CrashLogger.getInstance().init(LoginActivity.this);
 
@@ -101,6 +120,103 @@ public class LoginActivity extends AppCompatActivity {
         //CareGiver.dbCon.open();
 
     }
+
+    private void showForgotPassword(){
+
+        LayoutInflater layoutInflater = LayoutInflater.from(LoginActivity.this);
+        View dialogView = layoutInflater.inflate(R.layout.forgot_password_custom_dialog,null);
+
+        edittextCaptcha = (EditText)dialogView.findViewById(R.id.editTextCaptcha);
+        forgotpassUsername = (EditText)dialogView.findViewById(R.id.editTextUserName);
+        checkView = (CheckView) dialogView.findViewById(R.id.checkview2);
+        reloadCaptcha = (ImageButton) dialogView.findViewById(R.id.reloadCaptcha);
+
+        res = checkView.getValidataAndSetImage();
+
+        reloadCaptcha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                res = checkView.getValidataAndSetImage();
+            }
+        });
+
+        // Create the dialog (without showing)
+        final AlertDialog d = new AlertDialog.Builder(this).setTitle("Forgot Password?")
+                .setPositiveButton("OK", null)
+                .setNegativeButton("CANCEL", null).setView(dialogView).create();
+
+        d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        d.show();
+        d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // get user input and set it to result
+
+                String scheck = new String(res);
+                String string = edittextCaptcha.getText().toString();
+                boolean b = string.equals(scheck);
+
+                email = forgotpassUsername.getText().toString();
+
+                if (TextUtils.isEmpty(email)) {
+
+                    utils.toast(2, 2, getString(R.string.error_invalid_email));
+
+                } else if (!utils.isEmailValid(email)) {
+
+                    utils.toast(2, 2, getString(R.string.error_invalid_email));
+
+                } else if (!b) {
+
+                    utils.toast(2, 2, getString(R.string.enter_captcha));
+
+                } else {
+
+                    resetPassword(email);
+                    d.dismiss();
+                }
+            }
+        });
+    }
+
+    private void resetPassword(String userEmail){
+
+        if (utils.isConnectingToInternet()) {
+
+            progressDialog.setMessage(getString(R.string.verify_identity_password));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
+            UserService userService = new UserService(LoginActivity.this);
+
+
+            userService.resetUserPassword(userEmail, new App42CallBack() {
+                @Override
+                public void onSuccess(Object o) {
+                    progressDialog.dismiss();
+                    utils.toast(1, 1, "New password has been sent to your E-mail id");
+                }
+
+                @Override
+                public void onException(Exception e) {
+                    progressDialog.dismiss();
+                    try {
+                        JSONObject jsonObject = new JSONObject(e.getMessage());
+                        JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
+                        String strMess = jsonObjectError.getString("details");
+
+                        utils.toast(2, 2, strMess);
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            });
+
+        } else utils.toast(2, 2, getString(R.string.warning_internet));
+
+    }
+
 
     private void showPasswordfield() {
         if (relLayout.getVisibility() == View.GONE) {

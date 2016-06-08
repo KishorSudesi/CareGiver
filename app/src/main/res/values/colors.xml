@@ -20,4 +20,5 @@
     <color name="color_common">#4DB6AC</color>
 
     <color name="colorRed">#F44336</color>
+    <color name="red">#FF0000</color>
 </resources>
