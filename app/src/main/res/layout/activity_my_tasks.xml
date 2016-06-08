@@ -1,64 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="2">
+    android:fitsSystemWindows="true">
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.97"/>
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <RelativeLayout
-        android:id="@+id/loadingPanel"
-        style="@style/GenericProgressBackground"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:padding="5dp"
-        android:visibility="gone">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <ProgressBar style="@style/GenericProgressIndicator" />
-    </RelativeLayout>
+    </android.support.design.widget.AppBarLayout>
+
 
     <LinearLayout
-        android:id="@+id/pnd_net_error"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/colorRed"
-        android:gravity="center_vertical|center_horizontal"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="2">
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="32dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginTop="3dp"
-            android:src="@drawable/dashboard_notifications" />
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.97" />
 
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/margin_general"
-            android:padding="@dimen/padding_general"
-            android:text="@string/warning_internet_alert"
-            android:textColor="@color/colorWhite"
-            android:textStyle="bold" />
+        <RelativeLayout
+            android:id="@+id/loadingPanel"
+            style="@style/GenericProgressBackground"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:padding="5dp"
+            android:visibility="gone">
+
+            <ProgressBar style="@style/GenericProgressIndicator" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/pnd_net_error"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/colorRed"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="32dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="left"
+                android:layout_marginTop="3dp"
+                android:src="@drawable/dashboard_notifications" />
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_general"
+                android:padding="@dimen/padding_general"
+                android:text="@string/warning_internet_alert"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <include
+            android:id="@+id/include_dashboard_footer"
+            layout="@layout/dashboard_footer_menu"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_weight="0.03" />
 
     </LinearLayout>
 
-    <include
-        android:id="@+id/include_dashboard_footer"
-        layout="@layout/dashboard_footer_menu"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-       android:layout_weight="0.03"/>
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
