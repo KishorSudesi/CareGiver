@@ -2,7 +2,6 @@ package com.hdfc.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -13,24 +12,25 @@ import android.widget.ImageView;
 import java.util.Random;
 
 /**
- * åŠŸèƒ½ï¼šè‡ªå®šä¹‰éªŒè¯�ç �å®žçŽ°ç±»
+ * Created by Admin on 09-06-2016.
  */
 public class CheckView extends ImageView {
     //éš�æœºç”Ÿæˆ�æ‰€æœ‰çš„æ•°ç»„
-    final char[] charContent = new char[]{'0', '1', '2', '3', '4', '5', '6',
+    final char[] charContent = new char[]{ '0', '1', '2', '3', '4', '5', '6',
             '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
-            'X', 'Y', 'Z'};
+            'X', 'Y', 'Z' };
     //éªŒè¯�ç �å›¾ç‰‡
     private Bitmap bitmap = null;
 
-    //æž„é€ å‡½æ•°  
+    //æž„é€ å‡½æ•°
     public CheckView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas)
+    {
         Paint paint = new Paint();
         if (bitmap != null) {
             canvas.drawBitmap(bitmap, 0, 0, paint);
@@ -44,37 +44,30 @@ public class CheckView extends ImageView {
 
     /**
      * å¾—åˆ°éªŒè¯�ç �ï¼›è®¾ç½®å›¾ç‰‡
-     *
      * @return ç”Ÿæˆ�çš„éªŒè¯�ç �ä¸­çš„æ•°å­—
      */
     public char[] getValidataAndSetImage() {
-        //äº§ç”Ÿéš�æœºæ•°  
-        char[] strRes = generageRadom(charContent);
-        //ä¼ éš�æœºä¸²å’Œéš�æœºæ•°  
-        bitmap = generateValidate(charContent, strRes);
-        //åˆ·æ–°  
+        //äº§ç”Ÿéš�æœºæ•°
+        char [] strRes = generageRadom(charContent);
+        //ä¼ éš�æœºä¸²å’Œéš�æœºæ•°
+        bitmap = generateValidate(charContent,strRes);
+        //åˆ·æ–°
         invalidate();
 
         return strRes;
     }
 
-    /**
-     * ç»˜åˆ¶éªŒè¯�ç �å¹¶è¿”å›ž
-     *
-     * @param strContent
-     * @param strRes
-     * @return
-     */
-    private Bitmap generateValidate(char[] charContent, char[] charRes) {
-        int width = 180, height = 100;
+
+    private Bitmap generateValidate(char[] charContent,char [] charRes) {
+        int width = 180,height = 100;
 
         int isRes = isStrContent(charContent);
         if (isRes == 0) {
             return null;
         }
 
-        //åˆ›å»ºå›¾ç‰‡å’Œç”»å¸ƒ  
-        Bitmap sourceBitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+        //åˆ›å»ºå›¾ç‰‡å’Œç”»å¸ƒ
+        Bitmap sourceBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(sourceBitmap);
         canvas.drawColor(Color.WHITE);
         Paint numPaint = new Paint();
@@ -82,44 +75,44 @@ public class CheckView extends ImageView {
         numPaint.setFakeBoldText(true);
         numPaint.setColor(Color.BLACK);
 
-        //è®¾ç½®æ¯�ä¸ªå­—  
-        canvas.drawText(charRes[0] + "", 10, height * 3 / 4, numPaint);
+        //è®¾ç½®æ¯�ä¸ªå­—
+        canvas.drawText(charRes[0]+"", 10, height * 3 / 4, numPaint);
         Matrix mMatrix = new Matrix();
-        mMatrix.setRotate((float) Math.random() * 25);
+        mMatrix.setRotate((float)Math.random()*25);
         canvas.setMatrix(mMatrix);
 
-        canvas.drawText(charRes[1] + "", 40, height * 3 / 4, numPaint);
-        mMatrix.setRotate((float) Math.random() * 25);
+        canvas.drawText(charRes[1]+"", 40, height * 3 / 4, numPaint);
+        mMatrix.setRotate((float)Math.random()*25);
         canvas.setMatrix(mMatrix);
 
-        canvas.drawText(charRes[2] + "", 70, height * 3 / 4 - 10, numPaint);
-        mMatrix.setRotate((float) Math.random() * 25);
+        canvas.drawText(charRes[2]+"", 70, height * 3 / 4 - 10, numPaint);
+        mMatrix.setRotate((float)Math.random()*25);
         canvas.setMatrix(mMatrix);
 
-        canvas.drawText(charRes[3] + "", 100, height * 3 / 4 - 15, numPaint);
-        mMatrix.setRotate((float) Math.random() * 25);
+        canvas.drawText(charRes[3]+"", 100, height * 3 / 4 - 15, numPaint);
+        mMatrix.setRotate((float)Math.random()*25);
         canvas.setMatrix(mMatrix);
 
-        //è®¾ç½®ç»˜åˆ¶å¹²æ‰°çš„ç”»ç¬”  
+        //è®¾ç½®ç»˜åˆ¶å¹²æ‰°çš„ç”»ç¬”
         Paint interferencePaint = new Paint();
         interferencePaint.setAntiAlias(true);
         interferencePaint.setStrokeWidth(4);
         interferencePaint.setColor(Color.BLACK);
-        interferencePaint.setStyle(Paint.Style.FILL);    //è®¾ç½®paintçš„style  
+        interferencePaint.setStyle(Paint.Style.FILL);    //è®¾ç½®paintçš„style
 
-        //ç»˜åˆ¶ç›´çº¿  
+        //ç»˜åˆ¶ç›´çº¿
        /* int [] line;
-        for(int i = 0; i < 2; i ++)  
-            {  
+        for(int i = 0; i < 2; i ++)
+            {
             line = CheckGetUtil.getLine(height, width);
-            canvas.drawLine(line[0], line[1], line[2], line[3],interferencePaint);  
-            }  
-        // ç»˜åˆ¶å°�åœ†ç‚¹  
-        int [] point;  
-        for(int i = 0; i < 100; i++)   
-            {  
+            canvas.drawLine(line[0], line[1], line[2], line[3],interferencePaint);
+            }
+        // ç»˜åˆ¶å°�åœ†ç‚¹
+        int [] point;
+        for(int i = 0; i < 100; i++)
+            {
             point= CheckGetUtil.getPoint(height, width);
-            canvas.drawCircle(point[0], point[1], 1, interferencePaint);  
+            canvas.drawCircle(point[0], point[1], 1, interferencePaint);
             }  */
 
         canvas.save();
@@ -134,17 +127,12 @@ public class CheckView extends ImageView {
         }
     }
 
-    /**
-     * ä»ŽæŒ‡å®šæ•°ç»„ä¸­éš�æœºå�–å‡º4ä¸ªå­—ç¬¦(æ•°ç»„)
-     *
-     * @param strContent
-     * @return
-     */
-    private char[] generageRadom(char[] charContent) {
+
+    private char[] generageRadom(char[] charContent){
         char[] cha = new char[4];
-        // éš�æœºä¸²çš„ä¸ªæ•°  
+        // éš�æœºä¸²çš„ä¸ªæ•°
         int count = charContent.length;
-        // ç”Ÿæˆ�4ä¸ªéš�æœºæ•°  
+        // ç”Ÿæˆ�4ä¸ªéš�æœºæ•°
         Random random = new Random();
         int randomResFirst = random.nextInt(count);
         int randomResSecond = random.nextInt(count);
@@ -160,15 +148,14 @@ public class CheckView extends ImageView {
 
     /**
      * ä»ŽæŒ‡å®šæ•°ç»„ä¸­éš�æœºå�–å‡º4ä¸ªå­—ç¬¦(å­—ç¬¦ä¸²)
-     *
      * @param strContent
      * @return
      */
-    private String generageRadomStr(String[] strContent) {
+    private String generageRadomStr(String[] strContent){
         StringBuilder str = new StringBuilder();
-        // éš�æœºä¸²çš„ä¸ªæ•°  
+        // éš�æœºä¸²çš„ä¸ªæ•°
         int count = strContent.length;
-        // ç”Ÿæˆ�4ä¸ªéš�æœºæ•°  
+        // ç”Ÿæˆ�4ä¸ªéš�æœºæ•°
         Random random = new Random();
         int randomResFirst = random.nextInt(count);
         int randomResSecond = random.nextInt(count);
@@ -185,9 +172,12 @@ public class CheckView extends ImageView {
     /**
      * ç»™å®šèŒƒå›´èŽ·å¾—éš�æœºé¢œè‰²ï¼Œæœªä½¿ç”¨
      *
-     * @param rc 0-255
-     * @param gc 0-255
-     * @param bc 0-255
+     * @param rc
+     *            0-255
+     * @param gc
+     *            0-255
+     * @param bc
+     *            0-255
      * @return colorValue é¢œè‰²å€¼ï¼Œä½¿ç”¨setColor(colorValue)
      */
     public int getRandColor(int rc, int gc, int bc) {
@@ -203,4 +193,4 @@ public class CheckView extends ImageView {
         int b = bc + random.nextInt(bc);
         return Color.rgb(r, g, b);
     }
-}  
+}
