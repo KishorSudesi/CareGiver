@@ -91,6 +91,7 @@
     <!--Common Strings-->
 
     <string name="milestones">Services Involved in &#160;</string>
+    <string name="milestone">Milestone</string>
     <string name="edit">Edit</string>
     <string name="string_continue">Continue</string>
     <string name="create_password">Create a Password</string>
@@ -104,6 +105,7 @@
     <string name="activity_list">List</string>
     <string name="logout">Logout</string>
     <string name="at">at</string>
+    <string name="new_text">New</string>
 
     <!--Info/App Specific Strings-->
 
@@ -143,6 +145,8 @@
     <string name="to">&#160;for&#160;</string>
     <string name="activities">Activities</string>
     <string name="tasks">Tasks</string>
+    <string name="hyphen">-</string>
+    <string name="scheduled_to"></string>
 
     <!--Mislestone Related-->
     <string name="medicine_name">Medicine Name</string>

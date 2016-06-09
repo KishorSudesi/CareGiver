@@ -44,8 +44,11 @@ public class DashboardFragment extends Fragment {
 
             strDate = Utils.writeFormatDateDB.format(date);
 
-            strEndDate = strDate + "T23:59:59.999Z";
-            strStartDate = strDate + "T00:00:00.000Z";
+            /*strEndDate = Utils.readFormat.format(strDate + "T23:59:59.999Z");
+            strStartDate = Utils.readFormat.format(strDate + "T00:00:00.000Z");*/
+
+            strEndDate = utils.convertDateToStringQuery(utils.convertStringToDate(strDate + "T23:59:59.999Z"));
+            strStartDate = utils.convertDateToStringQuery(utils.convertStringToDate(strDate + "T00:00:00.000Z"));
 
             //String _strDate = Utils.writeFormatDateDB.format(date);
 

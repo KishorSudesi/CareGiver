@@ -38,6 +38,7 @@ import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
@@ -247,6 +248,8 @@ public class FeatureActivity extends AppCompatActivity {
 
             Calendar calendar = Calendar.getInstance();
 
+            String strScheduledDate = "";
+
             int iPosition = Config.strActivityIds.indexOf(act.getStrActivityID());
 
             Config.activityModels.get(iPosition).clearMilestoneModel();
@@ -254,6 +257,8 @@ public class FeatureActivity extends AppCompatActivity {
             for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
 
                 if (milestoneModel.getiMilestoneId() == iMileStoneId) {
+
+                    strScheduledDate = "";
 
                     Date date = calendar.getTime();
                     milestoneModel.setStrMilestoneDate(utils.convertDateToString(date));
@@ -288,9 +293,16 @@ public class FeatureActivity extends AppCompatActivity {
                                             || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase(""))
                                             && fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
                                             ) {
+
+                                        if (milestoneModel.getStrMilestoneScheduledDate() != null
+                                                && !milestoneModel.getStrMilestoneScheduledDate().
+                                                equalsIgnoreCase(""))
+                                            milestoneModel.setReschedule(true);
+
                                         String strDate = (String) editText.getTag(R.id.two);
-                                        milestoneModel.setStrMilestoneScheduledDate(strDate);
-                                        milestoneModel.setReschedule(true);
+                                        milestoneModel.setStrMilestoneScheduledDate(strDate); //todo check possiblity for diff TZ
+
+                                        strScheduledDate = strDate;
                                     }
                                 } else {
                                     editText.setError(context.getString(R.string.error_field_required));
@@ -355,8 +367,41 @@ public class FeatureActivity extends AppCompatActivity {
                                 utils.toast(2, 2, getString(R.string.error_medicines));
                             }
                         }
-                        //
                     }
+
+                    //
+                    String strDate = milestoneModel.getStrMilestoneDate();
+
+                    strPushMessage = Config.providerModel.getStrName()
+                            + getString(R.string.has_updated)
+                            + getString(R.string.activity)
+                            + getString(R.string.space)
+                            + act.getStrActivityName()
+                            + getString(R.string.hyphen)
+                            + getString(R.string.milestone)
+                            + getString(R.string.space)
+                            + milestoneModel.getStrMilestoneName();
+
+
+                    if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
+                        strPushMessage = getString(R.string.scheduled_to) + strScheduledDate;
+                    }
+
+                    jsonObject = new JSONObject();
+
+                    try {
+
+                        jsonObject.put("created_by", Config.providerModel.getStrProviderId());
+                        jsonObject.put("time", strDate);
+                        jsonObject.put("user_type", "dependent");
+                        jsonObject.put("user_id", act.getStrDependentID());
+                        jsonObject.put("activity_id", act.getStrActivityID());//todo add to care taker
+                        jsonObject.put("created_by_type", "provider");
+                        jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //
                 }
 
                 //
@@ -372,11 +417,11 @@ public class FeatureActivity extends AppCompatActivity {
 
         if (b) {
 
-           /* for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
+            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
                 for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
                     Utils.log(fieldModel.getStrFieldLabel() + " ~ " + fieldModel.getStrFieldData(), " DATA ");
                 }
-            }*/
+            }
 
             uploadJson();
         }
@@ -463,7 +508,7 @@ public class FeatureActivity extends AppCompatActivity {
 
         // Some offset to align the popup a bit to the left, and a bit down, relative to button's position.
         int OFFSET_X = -20;
-        int OFFSET_Y = 115;
+        int OFFSET_Y = 155;
 
         //Clear the default translucent background
         changeStatusPopUp.setBackgroundDrawable(new BitmapDrawable());
@@ -745,28 +790,7 @@ public class FeatureActivity extends AppCompatActivity {
 
             jsonObjectMileStone.put("milestones", jsonArrayMilestones);
 
-            //
             jsonObjectMileStone.put("status", "inprocess");
-
-            Date date = new Date();
-            String strDate = utils.convertDateToString(date);
-
-            strPushMessage = Config.providerModel.getStrName() + getString(R.string.has_updated) +
-                    act.getStrActivityName() + getString(R.string.on) + strDate;
-
-            jsonObject = new JSONObject();
-
-            try {
-
-                jsonObject.put("created_by", Config.providerModel.getStrProviderId());
-                jsonObject.put("time", strDate);
-                jsonObject.put("user_type", "dependent");
-                jsonObject.put("user_id", act.getStrDependentID());
-                jsonObject.put("created_by_type", "provider");
-                jsonObject.put("notification_message", strPushMessage);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
             updateMileStones(jsonObjectMileStone);
 
@@ -901,7 +925,7 @@ public class FeatureActivity extends AppCompatActivity {
 
             PushNotificationService pushNotificationService = new PushNotificationService(FeatureActivity.this);
 
-            pushNotificationService.sendPushToUser(strDependentMail, strPushMessage,
+            pushNotificationService.sendPushToUser(strDependentMail, jsonObject.toString(),
                     new App42CallBack() {
 
                         @Override
@@ -976,7 +1000,7 @@ public class FeatureActivity extends AppCompatActivity {
                 textViewName.setTextAppearance(this, R.style.MilestoneStyle);
                 textViewName.setText(milestoneModel.getStrMilestoneName());
                 textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
-                textViewName.setPadding(10, 10, 10, 10);
+                textViewName.setPadding(20, 45, 0, 0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
                 }
@@ -1033,7 +1057,7 @@ public class FeatureActivity extends AppCompatActivity {
                 if (strMilestoneStatus.equalsIgnoreCase("opened")
                         || milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("reopened")) {
                     drawable = getResources().getDrawable(R.mipmap.star_white);
-                    drawableBg = getResources().getDrawable(R.drawable.button_open);
+                    drawableBg = getResources().getDrawable(R.drawable.button_orange);
                 }
 
                 if (strMilestoneStatus.equalsIgnoreCase("inactive")) {
@@ -1043,11 +1067,14 @@ public class FeatureActivity extends AppCompatActivity {
 
                 if (strMilestoneStatus.equalsIgnoreCase("inprocess")) {
                     drawable = getResources().getDrawable(R.mipmap.star_gold);
-                    drawableBg = getResources().getDrawable(R.drawable.button_grey);
+                    drawableBg = getResources().getDrawable(R.drawable.button_orange);
                 }
 
-                if (drawable != null)
+                if (drawable != null) {
                     textViewName.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+                    textViewName.setCompoundDrawablePadding(20);
+                }
+
 
                 if (drawableBg != null) {
                     textViewName.setBackgroundDrawable(drawableBg);
@@ -1063,9 +1090,9 @@ public class FeatureActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                        if (!strMilestoneStatus.equalsIgnoreCase("completed")) {
+                        final MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
 
-                            final MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
+                        if (!milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed")) {
 
                             //int i = 0;
 

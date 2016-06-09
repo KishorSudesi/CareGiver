@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hdfc.caregiver.CreatingTaskActivity;
@@ -70,6 +71,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                 cvh.textSubject = (TextView) convertView.findViewById(R.id.task_subject);
                 cvh.textTime = (TextView) convertView.findViewById(R.id.task_time);
                 cvh.imagePerson = (ImageView) convertView.findViewById(R.id.imagePerson);
+                cvh.linearLayout = (LinearLayout) convertView.findViewById(R.id.llFirst);
                 convertView.setTag(cvh);
 
             } else {
@@ -96,15 +98,28 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
 
                 cvh.textTime.setText(utils.formatDate(activityModel.getStrActivityDate()));
 
-                if (!activityModel.getStrActivityStatus().equalsIgnoreCase("completed")) {
-                    cvh.imageTiming.setBackgroundResource(R.drawable.circle);
-                    cvh.imageTiming.setText(utils.formatDateTime(activityModel.getStrActivityDate()));
-                    cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.gray_holo_dark));
-                }else{
+                if (activityModel.getStrActivityStatus().equalsIgnoreCase("completed")) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.done);
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorWhite));
                     cvh.imageTiming.setText("");
+                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
                 }
+
+                if (activityModel.getStrActivityStatus().equalsIgnoreCase("new")
+                        || activityModel.getStrActivityStatus().equalsIgnoreCase("open")) {
+                    cvh.imageTiming.setBackgroundResource(R.drawable.circle);
+                    cvh.imageTiming.setText(context.getString(R.string.new_text));
+                    cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorRed));
+                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorGrey));
+                }
+
+                if (activityModel.getStrActivityStatus().equalsIgnoreCase("inprocess")) {
+                    cvh.imageTiming.setBackgroundResource(R.drawable.circle);
+                    cvh.imageTiming.setText(utils.formatDateTime(activityModel.getStrActivityDate()));
+                    cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorAccent));
+                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorOrange));
+                }
+
 
                 //Utils.log(activityModel.getStrDependentID(), " IMG ");
 
@@ -126,6 +141,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
             ImageView imagePerson;
             TextView textMessage;
             TextView textTime;
+            LinearLayout linearLayout;
         }
     };
     private Menu mMenu;
@@ -221,12 +237,12 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                 .setIcon(getActivity().getResources().getDrawable(R.drawable.pen))
                 .build());
 
-        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
+        /*mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setText("Done")
                 .setTextColor(Color.WHITE)
                 .setTextSize((int) getResources().getDimension(R.dimen.txt_size))
-                .build());
+                .build());*/
 
        /* mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))

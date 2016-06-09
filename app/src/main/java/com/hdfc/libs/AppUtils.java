@@ -199,7 +199,7 @@ public class AppUtils {
                                     //System.out.println("NACHIKET : "+(o!=null));
                                     if (o != null) {
 
-                                        Utils.log(o.toString(), " MESS 1");
+                                        //Utils.log(o.toString(), " MESS 1");
 
                                         Storage storage = (Storage) o;
 
@@ -296,7 +296,7 @@ public class AppUtils {
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    fetchDependents(iFlag);
+                                    //fetchDependents(iFlag);
                                 }
                             }
 
@@ -2063,7 +2063,7 @@ public class AppUtils {
 
                                     Storage storage = (Storage) o;
 
-                                    Utils.log(storage.toString(), " MS ");
+                                    //Utils.log(storage.toString(), " MS ");
 
                                     ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
 
