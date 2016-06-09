@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -233,7 +234,7 @@ public class FeatureActivity extends AppCompatActivity {
         IMAGE_COUNT = 0;
         Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
         Config.intSelectedMenu = Config.intDashboardScreen;
-        //intent.putExtra("LOAD", bLoad);
+        intent.putExtra("LOAD", bLoad);
         startActivity(intent);
         finish();
     }
@@ -976,7 +977,9 @@ public class FeatureActivity extends AppCompatActivity {
                 textViewName.setText(milestoneModel.getStrMilestoneName());
                 textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
                 textViewName.setPadding(10, 10, 10, 10);
-                textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                }
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 30, 1);
                 params.setMargins(10, 10, 10, 10);
                 textViewName.setTag(milestoneModel);
@@ -1001,6 +1004,8 @@ public class FeatureActivity extends AppCompatActivity {
                     }
 
                     if (date != null && milestoneDate != null) {
+
+                        //Utils.log(String.valueOf(date + " ! " + milestoneDate), " NOW ");
 
                         if (milestoneDate.before(date) && !milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed"))
                             milestoneModel.setStrMilestoneStatus("pending");

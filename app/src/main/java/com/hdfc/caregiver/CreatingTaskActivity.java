@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -519,11 +520,34 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     //   iUpdateFlag = iActivityCreated;
                                     //fetchService(serviceModel, dependentModel);
 
-                                    appUtils.createActivityModel(
-                                            response.getJsonDocList().get(0).getDocId(),
-                                            response.getJsonDocList().get(0).getJsonDoc()
-                                    );
                                     //
+
+                                    Calendar calendar = Calendar.getInstance();
+
+                                    Date startDate = null, endDate = null;
+                                    String strStartDateCopy, strEndDateCopy;
+                                    Date activityDate = null;
+
+                                    try {
+                                        strEndDateCopy = Utils.writeFormatDateDB.format(calendar.getTime()) + "T23:59:59.999Z";
+                                        strStartDateCopy = Utils.writeFormatDateDB.format(calendar.getTime()) + "T00:00:00.000Z";
+                                        activityDate = utils.convertStringToDate(_strDate);
+
+                                        endDate = utils.convertStringToDate(strEndDateCopy);
+                                        startDate = utils.convertStringToDate(strStartDateCopy);
+
+                                        Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED ");
+
+                                        if (activityDate.before(endDate) && activityDate.after(startDate)) {
+                                            appUtils.createActivityModel(
+                                                    response.getJsonDocList().get(0).getDocId(),
+                                                    response.getJsonDocList().get(0).getJsonDoc()
+                                            );
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
 
                                     insertNotification();
                                 } else {
@@ -781,7 +805,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         Config.intSelectedMenu = Config.intDashboardScreen;
         utils.toast(2, 2, strAlert);
-        newIntent.putExtra("LOAD", true);
+        //newIntent.putExtra("CREATED", true);
         startActivity(newIntent);
         finish();
 

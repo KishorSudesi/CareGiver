@@ -210,10 +210,17 @@ public class DashboardActivity extends AppCompatActivity implements
 
             Bundle bundle = getIntent().getExtras();
 
-            boolean b = false;
+            boolean b = false, bCreated = false;
 
-            if (bundle != null)
+            if (bundle != null) {
                 b = bundle.getBoolean("LOAD");
+                //b = bundle.getBoolean("CREATED");
+            }
+
+            /*if(bCreated){
+                Snackbar.make(, getString(R.string.activity_added), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }*/
 
             if (b) {
 
@@ -393,8 +400,8 @@ public class DashboardActivity extends AppCompatActivity implements
 
             Date date = calendar.getTime();
 
-            DashboardFragment.strEndDate = Utils.writeFormatDateDB.format(date) + "T23:59:59.999+0000";
-            DashboardFragment.strStartDate = Utils.writeFormatDateDB.format(date) + "T00:00:00.000+0000";
+            DashboardFragment.strEndDate = Utils.writeFormatDateDB.format(date) + "T23:59:59.999Z";
+            DashboardFragment.strStartDate = Utils.writeFormatDateDB.format(date) + "T00:00:00.000Z";
 
             DashboardFragment.strDate = Utils.writeFormatDate.format(date);
 

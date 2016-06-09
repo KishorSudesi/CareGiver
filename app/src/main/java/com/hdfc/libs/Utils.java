@@ -76,7 +76,7 @@ public class Utils {
     public static final Locale locale = Locale.ENGLISH;
 
     public final static SimpleDateFormat readFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale);
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale);
 
     public final static SimpleDateFormat writeFormat = new
             SimpleDateFormat("kk:mm dd MMM yyyy", locale);
@@ -748,14 +748,14 @@ public class Utils {
     }
 
     //load image from url
-    public void loadImageFromWeb(String strFileName, String strFileUrl) {
+    void loadImageFromWeb(String strFileName, String strFileUrl) {
 
         strFileName = replaceSpace(strFileName.trim());
         strFileUrl = replaceSpace(strFileUrl.trim());
 
         File fileImage = createFileInternal("images/" + strFileName);
 
-        log(strFileName + " ~ " + strFileUrl, " paths ");
+        log(strFileName + " ~ " + strFileUrl, " PATHS ");
 
         if (fileImage.length() <= 0) {
 
