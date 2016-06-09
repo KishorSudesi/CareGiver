@@ -141,13 +141,13 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Create the dialog (without showing)
-        final AlertDialog d = new AlertDialog.Builder(this).setTitle("Forgot Password?")
+        final AlertDialog alertdialog = new AlertDialog.Builder(this).setTitle("Forgot Password?")
                 .setPositiveButton("OK", null)
                 .setNegativeButton("CANCEL", null).setView(dialogView).create();
 
-        d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        d.show();
-        d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+        alertdialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        alertdialog.show();
+        alertdialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -174,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
 
                     resetPassword(email);
-                    d.dismiss();
+                    alertdialog.dismiss();
                 }
             }
         });
