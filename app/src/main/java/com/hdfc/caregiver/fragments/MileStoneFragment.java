@@ -98,7 +98,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
 
                 cvh.textTime.setText(utils.formatDate(milestoneModels.get(position).getStrMilestoneDate()));
 
-                if (!milestoneModels.get(position).getStrMileStoneStatus().equalsIgnoreCase("completed")) {
+                if (milestoneModels.get(position).getStrMileStoneStatus().equalsIgnoreCase("completed")) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(utils.formatDateTime(milestoneModels.get(position).getStrMilestoneDate()));
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.gray_holo_dark));

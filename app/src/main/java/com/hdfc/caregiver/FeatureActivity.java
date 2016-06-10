@@ -1072,7 +1072,7 @@ public class FeatureActivity extends AppCompatActivity {
 
                 if (drawable != null) {
                     textViewName.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
-                    textViewName.setCompoundDrawablePadding(20);
+                    textViewName.setCompoundDrawablePadding(30);
                 }
 
 
@@ -1092,7 +1092,10 @@ public class FeatureActivity extends AppCompatActivity {
 
                         final MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
 
-                        if (!milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed")) {
+                        boolean bEnabled = true;
+
+                        if (milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed"))
+                            bEnabled = false;
 
                             //int i = 0;
 
@@ -1103,16 +1106,24 @@ public class FeatureActivity extends AppCompatActivity {
                             Button button = (Button) view.findViewById(R.id.dialogButtonOK);
                             Button buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
                             Button buttonDone = (Button) view.findViewById(R.id.buttonDone);
+
                             button.setTag(milestoneModelObject.getiMilestoneId());
                             buttonDone.setTag(milestoneModelObject.getiMilestoneId());
+
+                        if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")) {
+                            button.setText(getString(R.string.update));
+                            buttonDone.setVisibility(View.VISIBLE);
+                        }
+
+                        if (!bEnabled) {
+                            button.setVisibility(View.GONE);
+                            buttonDone.setVisibility(View.GONE);
+                        }
 
                             TextView milestoneName = (TextView) view.findViewById(R.id.milestoneName);
                             milestoneName.setText(milestoneModelObject.getStrMilestoneName());
 
-                            if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")) {
-                                button.setText(getString(R.string.update));
-                                buttonDone.setVisibility(View.VISIBLE);
-                            }
+
 
                             if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")
                                     && milestoneModelObject.getStrMilestoneScheduledDate() != null
@@ -1210,6 +1221,9 @@ public class FeatureActivity extends AppCompatActivity {
                                                 }
                                             });
                                         }
+
+                                        editText.setEnabled(bEnabled);
+
                                         linearLayout1.addView(editText);
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -1279,6 +1293,8 @@ public class FeatureActivity extends AppCompatActivity {
                                         spinner.setSelection(iSelected);
                                     }
 
+                                    spinner.setEnabled(bEnabled);
+
                                     linearLayout1.addView(spinner);
                                 }
 
@@ -1319,6 +1335,7 @@ public class FeatureActivity extends AppCompatActivity {
                                             editMedicineName.setTag("medicine_name");
                                             editMedicineName.setInputType(InputType.TYPE_CLASS_TEXT);
                                             editMedicineName.setText(jsonObjectMedicine.getString("medicine_name"));
+                                            editMedicineName.setEnabled(bEnabled);
                                             linearLayoutArrayExist.addView(editMedicineName);
 
                                             EditText editMedicineQty = new EditText(context);
@@ -1327,6 +1344,7 @@ public class FeatureActivity extends AppCompatActivity {
                                             editMedicineQty.setTag("medicine_qty");
                                             editMedicineQty.setInputType(InputType.TYPE_CLASS_NUMBER);
                                             editMedicineQty.setText(String.valueOf(jsonObjectMedicine.getInt("medicine_qty")));
+                                            editMedicineQty.setEnabled(bEnabled);
                                             linearLayoutArrayExist.addView(editMedicineQty);
 
 
@@ -1334,6 +1352,7 @@ public class FeatureActivity extends AppCompatActivity {
                                             Button buttonDel = new Button(context);
                                             buttonDel.setText("X");
                                             buttonDel.setTextColor(Color.BLACK);
+                                            buttonDel.setEnabled(bEnabled);
                                             buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
                                             buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
                                             buttonDel.setOnClickListener(new View.OnClickListener() {
@@ -1391,9 +1410,12 @@ public class FeatureActivity extends AppCompatActivity {
 
                                             if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))*/
 
+                                        editTextArray.setEnabled(bEnabled);
 
                                         linearLayoutArray.addView(editTextArray);
                                     }
+
+                                    final boolean finalBEnabled = bEnabled;
 
                                     Button buttonAdd = new Button(context);
                                     buttonAdd.setBackgroundDrawable(getResources().getDrawable(R.drawable.add_icon));
@@ -1434,7 +1456,7 @@ public class FeatureActivity extends AppCompatActivity {
 
                                                         if (finalFieldModel.getStrFieldType().equalsIgnoreCase("number"))*/
 
-
+                                                    editTextArray.setEnabled(finalBEnabled);
                                                     linearLayoutArrayInner.addView(editTextArray);
                                                 }
 
@@ -1442,6 +1464,7 @@ public class FeatureActivity extends AppCompatActivity {
                                                 Button buttonDel = new Button(context);
                                                 buttonDel.setText("X");
                                                 buttonDel.setTextColor(Color.BLACK);
+                                                buttonDel.setEnabled(finalBEnabled);
                                                 buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
                                                 buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
                                                 buttonDel.setOnClickListener(new View.OnClickListener() {
@@ -1510,7 +1533,7 @@ public class FeatureActivity extends AppCompatActivity {
 
                             dialog.show();
 
-                        }
+                        //}
                     }
                 });
             }
