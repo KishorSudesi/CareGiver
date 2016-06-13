@@ -17,6 +17,7 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_margin="15dp"
+                    android:background="@mipmap/account_type"
                     android:padding="@dimen/padding_general" />
 
                 <LinearLayout

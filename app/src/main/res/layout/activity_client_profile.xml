@@ -34,7 +34,8 @@
                 android:id="@+id/editTextAge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="10dp"
+                android:drawableLeft="@mipmap/age"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -51,7 +52,8 @@
                 android:id="@+id/editTextHealthCondition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="10dp"
+                android:drawableLeft="@mipmap/health"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                  />
 
@@ -68,7 +70,8 @@
                 android:id="@+id/editTextAccountType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="10dp"
+                android:drawableLeft="@mipmap/account_type"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -84,7 +87,8 @@
                 android:id="@+id/editTextAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="10dp"
+                android:drawableLeft="@mipmap/location"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 

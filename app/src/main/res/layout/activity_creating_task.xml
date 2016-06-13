@@ -14,123 +14,127 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/activity_horizontal_margin">
-
-        <TextView
-            android:id="@+id/textViewClientName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:paddingLeft="@dimen/padding_general"
-            android:paddingRight="@dimen/padding_general"
-            android:text="@string/clientNameModel"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="@dimen/label_text"
-           />
-
-        <AutoCompleteTextView
-            android:id="@+id/inputSearch"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textVisiblePassword"
-            android:paddingLeft="@dimen/padding_general"
-            android:paddingRight="@dimen/padding_general" />
-        <requestFocus/>
+            android:orientation="vertical"
+            android:paddingTop="@dimen/activity_horizontal_margin">
 
-        <TextView
-            android:id="@+id/textViewDependentName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:paddingLeft="@dimen/padding_general"
-            android:paddingRight="@dimen/padding_general"
-            android:text="@string/dependentName"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="@dimen/label_text" />
+            <TextView
+                android:id="@+id/textViewClientName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:paddingLeft="@dimen/padding_general"
+                android:paddingRight="@dimen/padding_general"
+                android:text="@string/clientNameModel"
+                android:textColor="@android:color/secondary_text_dark"
+                android:textSize="@dimen/label_text"
+                />
 
-        <Spinner
-            android:id="@+id/spindependentList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_general"
-            android:padding="10dp"
-            android:paddingLeft="@dimen/padding_general"
-            android:paddingRight="@dimen/padding_general">
+            <AutoCompleteTextView
+                android:id="@+id/inputSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textVisiblePassword"
+                android:drawableLeft="@mipmap/client_name"
+                android:drawableRight="@mipmap/plus_simple_add_client_name"
+                android:paddingLeft="@dimen/padding_general"
+                android:paddingRight="@dimen/padding_general" />
+            <requestFocus/>
 
-        </Spinner>
+            <TextView
+                android:id="@+id/textViewDependentName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:paddingLeft="@dimen/padding_general"
+                android:paddingRight="@dimen/padding_general"
+                android:text="@string/dependentName"
+                android:textColor="@android:color/secondary_text_dark"
+                android:textSize="@dimen/label_text" />
 
-        <TextView
-            android:id="@+id/textViewServices"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:paddingLeft="@dimen/padding_general"
-            android:paddingRight="@dimen/padding_general"
-            android:text="@string/services"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="@dimen/label_text"
-            />
+            <Spinner
+                android:id="@+id/spindependentList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_general"
+                android:padding="10dp"
+                android:paddingLeft="@dimen/padding_general"
+                android:paddingRight="@dimen/padding_general">
 
-        <AutoCompleteTextView
-            android:id="@+id/inputSearchServices"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:inputType="text"
-            android:paddingLeft="@dimen/padding_general"
-            android:paddingRight="@dimen/padding_general" />
-        <!--  <requestFocus/>-->
+            </Spinner>
 
+            <TextView
+                android:id="@+id/textViewServices"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:paddingLeft="@dimen/padding_general"
+                android:paddingRight="@dimen/padding_general"
+                android:text="@string/services"
+                android:textColor="@android:color/secondary_text_dark"
+                android:textSize="@dimen/label_text"
+                />
 
-        <TextView
-            android:id="@+id/textViewTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:paddingLeft="@dimen/padding_general"
-            android:paddingRight="@dimen/padding_general"
-            android:text="@string/title"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="@dimen/label_text"
-            />
-
-        <EditText
-            android:id="@+id/editTextTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/padding_general"
-            android:paddingRight="@dimen/padding_general" />
-
-
-        <EditText
-            android:id="@+id/editDob"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_marginBottom="@dimen/margin_general"
-            android:layout_marginTop="25dp"
-            android:drawableLeft="@drawable/activity_icon_32"
-            android:drawablePadding="10dp"
-            android:focusableInTouchMode="false"
-            android:hint="@string/dateAndTime"
-            android:inputType="textPersonName"
-            android:padding="10dp" />
-
-        <RelativeLayout
-            android:id="@+id/loadingPanel"
-            style="@style/GenericProgressBackground"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:visibility="gone">
-
-            <ProgressBar style="@style/GenericProgressIndicator" />
-        </RelativeLayout>
+            <AutoCompleteTextView
+                android:id="@+id/inputSearchServices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:inputType="text"
+                android:paddingLeft="@dimen/padding_general"
+                android:drawableLeft="@mipmap/service_giver_agent_icon"
+                android:paddingRight="@dimen/padding_general" />
+            <!--  <requestFocus/>-->
 
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:paddingLeft="@dimen/padding_general"
+                android:paddingRight="@dimen/padding_general"
+                android:text="@string/title"
+                android:textColor="@android:color/secondary_text_dark"
+                android:textSize="@dimen/label_text"
+                />
+
+            <EditText
+                android:id="@+id/editTextTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/padding_general"
+                android:paddingRight="@dimen/padding_general"
+                android:drawableLeft="@mipmap/add_note"/>
+
+
+            <EditText
+                android:id="@+id/editDob"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="@dimen/margin_general"
+                android:layout_marginTop="25dp"
+                android:drawableLeft="@drawable/activity_icon_32"
+                android:drawablePadding="10dp"
+                android:focusableInTouchMode="false"
+                android:hint="@string/dateAndTime"
+                android:inputType="textPersonName"
+                android:padding="10dp" />
+
+            <RelativeLayout
+                android:id="@+id/loadingPanel"
+                style="@style/GenericProgressBackground"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:visibility="gone">
+
+                <ProgressBar style="@style/GenericProgressIndicator" />
+            </RelativeLayout>
+
+
+        </LinearLayout>
 
     </ScrollView>
 

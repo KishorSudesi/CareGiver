@@ -28,4 +28,9 @@
     <color name="colorRed">#EF5350</color>
     <color name="red">#FF0000</color>
     <color name="blue">#2196f3</color>
+    <color name="new_blue">#2196f3</color>
+
+    <color name="font_blue">#3B9FF4</color>
+
+
 </resources>

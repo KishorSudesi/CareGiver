@@ -12,6 +12,11 @@
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_alignParentTop="true"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/include_header_clients"
+            android:background="@drawable/colorful_textview"/>
 
         <TextView
             android:id="@android:id/empty"
