@@ -2,14 +2,35 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/app_header">
+
+    <RelativeLayout
+        android:id="@+id/toplayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center">
+        <!--  <ImageButton
+              android:id="@+id/buttonBack"
+              android:layout_width="25dp"
+              android:layout_height="25dp"
+              android:layout_marginLeft="10dp"
+              android:layout_marginTop="20dp"
+              android:background="@mipmap/back_arrow"
+              android:visibility="gone" />-->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/logo" />
+
+    </RelativeLayout>
 
     <include
         android:id="@+id/include_header_my_tasks"
         layout="@layout/feature_list_header"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentTop="true"
+        android:layout_height="60dp"
+        android:layout_below="@+id/toplayout"
         />
 
     <LinearLayout
@@ -20,6 +41,10 @@
         android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/blue"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -33,6 +58,7 @@
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
+                android:textColor="@color/blue"
                 android:gravity="center_horizontal"
                 android:padding="@dimen/padding_general"
                 android:textStyle="bold" />
@@ -102,7 +128,7 @@
                 android:layout_height="40dp"
                 android:layout_margin="@dimen/margin_general"
                 android:layout_weight="1"
-                android:background="@color/color_common"
+                android:background="@color/blue"
                 android:gravity="center"
                 android:text="@string/upload_button"
                 android:textColor="@color/colorWhite" />

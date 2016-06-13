@@ -1,19 +1,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/app_header">
+
+    <RelativeLayout
+        android:id="@+id/toplayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center">
+        <!--  <ImageButton
+              android:id="@+id/buttonBack"
+              android:layout_width="25dp"
+              android:layout_height="25dp"
+              android:layout_marginLeft="10dp"
+              android:layout_marginTop="20dp"
+              android:background="@mipmap/back_arrow"
+              android:visibility="gone" />-->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/logo" />
+
+    </RelativeLayout>
+
 
     <include
         android:id="@+id/include_header_my_tasks"
         layout="@layout/header_my_tasks"
         android:layout_width="match_parent"
-        android:layout_height="70dp" />
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/blue"/>
 
     <LinearLayout
         android:id="@+id/dashboardlinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/header_gradient"
+        android:background="@color/colorWhite"
         android:orientation="horizontal">
 
         <Button
@@ -23,6 +50,7 @@
             android:layout_weight="1"
             android:background="@drawable/one_side_border"
             android:text="@string/activities"
+            android:textColor="@color/blue"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <Button
@@ -31,6 +59,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/tasks"
+            android:textColor="@color/blue"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="65dp"
-    android:background="@color/color_common"
+    android:layout_height="60dp"
+    android:background="@color/colorWhite"
     android:gravity="center">
 
     <LinearLayout
@@ -19,19 +19,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@mipmap/attach_file_not_active" />
+            android:src="@mipmap/attachment" />
 
-        <TextView
+       <!--<TextView
             android:id="@+id/textViewAttach"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
             android:text="Click to Attach"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@color/colorWhite" />-->
 
     </LinearLayout>
 
-    <ImageView
+    <!--<ImageView
         android:id="@+id/imgBackHeaderTaskDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,15 +41,15 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:src="@mipmap/back" />
+        android:src="@mipmap/back" />-->
 
     <ImageView
         android:id="@+id/imgLogoHeaderTaskDetail"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="11dp"
-        android:layout_marginStart="11dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
         android:layout_toEndOf="@+id/imgBackHeaderTaskDetail"
         android:layout_toRightOf="@+id/imgBackHeaderTaskDetail" />
 
@@ -63,7 +63,7 @@
         android:layout_toEndOf="@+id/imgLogoHeaderTaskDetail"
         android:layout_toRightOf="@+id/imgLogoHeaderTaskDetail"
         android:gravity="center"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/blue"
         android:textSize="20dp" />
 
 </RelativeLayout>
