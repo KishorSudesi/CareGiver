@@ -282,7 +282,7 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
 
         ActivityModel activityModel = null;
 
-        if (iPosition > -1)
+        if (iPosition > -1 && iPosition <= Config.activityModels.size())
             activityModel = Config.activityModels.get(iPosition);
 
         switch (direction) {

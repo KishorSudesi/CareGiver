@@ -14,7 +14,6 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -71,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(LoginActivity.this);
 
-        try {
+      /*  try {
             ImageView imgBg = (ImageView) findViewById(R.id.imageBg);
             if (imgBg != null) {
                 imgBg.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
@@ -82,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception | OutOfMemoryError e) {
             e.printStackTrace();
         }
-
+*/
 
         editEmail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        editPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+     /*   editPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 showPasswordfield();
@@ -104,9 +103,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 utils.traverseEditTexts(layoutLogin, getResources().getDrawable(R.drawable.edit_text),
-                        getResources().getDrawable(R.drawable.edit_text_blue), editEmail);
+                        getResources().getDrawable(R.drawable.edit_text_blcue), editEmail);
             }
-        });
+        });*/
+
         forgotpass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -254,8 +254,8 @@ public class LoginActivity extends AppCompatActivity {
 
         showPasswordfield();
 
-        utils.setEditTextDrawable(editEmail, getResources().getDrawable(R.drawable.edit_text));
-        utils.setEditTextDrawable(editPassword, getResources().getDrawable(R.drawable.edit_text));
+     /*   utils.setEditTextDrawable(editEmail, getResources().getDrawable(R.drawable.edit_text));
+        utils.setEditTextDrawable(editPassword, getResources().getDrawable(R.drawable.edit_text));*/
 
         if (relLayout.getVisibility() == View.VISIBLE) {
 
