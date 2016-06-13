@@ -1045,7 +1045,7 @@ public class FeatureActivity extends AppCompatActivity {
                 Drawable drawableBg = null;
 
                 if (strMilestoneStatus.equalsIgnoreCase("completed")) {
-                    drawable = getResources().getDrawable(R.mipmap.done);
+                    drawable = getResources().getDrawable(R.mipmap.tick);
                     drawableBg = getResources().getDrawable(R.drawable.button_success);
                 }
 

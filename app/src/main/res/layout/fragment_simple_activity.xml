@@ -18,13 +18,13 @@
       android:layout_height="match_parent"
       android:clickable="true" />
 
-  <android.support.design.widget.FloatingActionButton
+  <ImageButton
       android:id="@+id/fab"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="bottom|end"
       android:layout_margin="@dimen/fab_margin"
       android:background="@drawable/circle_float"
-      android:src="@drawable/add_icon" />
+      android:src="@mipmap/add_icon" />
 
 </FrameLayout>

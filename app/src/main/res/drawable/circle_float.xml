@@ -5,8 +5,8 @@
     <solid android:color="@color/polygonViewCircleStrokeColor" />
 
     <size
-        android:width="@dimen/slv_item_height"
-        android:height="@dimen/slv_item_height" />
+        android:width="55dp"
+        android:height="55dp" />
 
     <stroke
         android:width="@dimen/polygonViewStrokeWidth"

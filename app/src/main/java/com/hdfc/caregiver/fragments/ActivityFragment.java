@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -117,7 +118,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(utils.formatDateTime(activityModel.getStrActivityDate()));
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorAccent));
-                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorOrange));
+                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorWhite));
                 }
 
 
@@ -161,7 +162,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_simple_activity, container, false);
 
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        ImageButton fab = (ImageButton) view.findViewById(R.id.fab);
        /* fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

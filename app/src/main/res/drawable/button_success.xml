@@ -43,17 +43,17 @@
         <layer-list>
             <item android:right="5dp" android:top="5dp">
                 <shape>
-                    <corners android:radius="3dp" />
-                    <solid android:color="#D6D6D6" />
+                    <corners android:radius="55dp" />
+                    <solid android:color="#ffffff" />
 
                 </shape>
             </item>
-            <item android:bottom="2dp" android:left="2dp">
+            <item android:bottom="0dp" android:left="0dp">
                 <shape>
-                    <gradient android:angle="180" android:endColor="@color/colorHeaderGradientEnd" android:startColor="@color/colorHeaderGradientStart" />
-                    <stroke android:width="3dp" android:color="#BABABA" />
-                    <corners android:radius="6dp" />
-                    <padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />
+                    <gradient android:angle="270" android:endColor="@color/blue" android:startColor="#2196f3" />
+                    <stroke android:width="1dp" android:color="#BABABA" />
+                    <corners android:radius="55dp" />
+                    <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp" />
                 </shape>
             </item>
         </layer-list>
