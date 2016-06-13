@@ -14,28 +14,28 @@
         android:layout_marginTop="10dp">
 
         <com.hdfc.views.RoundedImageView
-            android:id="@+id/img"
+            android:id="@+id/person"
             android:layout_width="50dp"
             android:layout_height="50dp"
             />
 
         <TextView
-            android:id="@+id/name"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:layout_toRightOf="@+id/img"
+            android:layout_toRightOf="@+id/person"
             android:textColor="@color/colorWhite"
             android:textSize="25sp"/>
 
         <ImageView
+            android:id="@+id/imageView3"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="15dp"
-            android:background="@drawable/signoff"
-            android:id="@+id/imageView3" />
+            android:background="@drawable/signoff" />
 
         <TextView
             android:id="@+id/txtUserRatings"
@@ -46,24 +46,8 @@
             android:text="@string/user_ratings"
             android:textColor="@color/colorWhite"/>
 
-        <LinearLayout
-            android:id="@+id/linearLayoutRatings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txtUserRatings"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal">
 
-        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/notificationButton"
-            android:layout_width="30sp"
-            android:layout_height="30sp"
-            android:background="@drawable/desktop_notification"
-            android:layout_alignTop="@+id/txtUserRatings"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 

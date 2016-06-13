@@ -62,7 +62,7 @@
     <string name="dateAndTime">Date and Time</string>
 
     <string name="hintPwd">*****</string>
-    <string name="name">Name</string>
+    <string name="name">Name of service giver</string>
     <string name="place">Place</string>
     <string name="signOut">SIGN OUT</string>
 

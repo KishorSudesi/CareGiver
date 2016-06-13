@@ -59,6 +59,7 @@ public class RatingsAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.rating_item, null);
             viewHolder = new ViewHolder();
             viewHolder.feedback = (TextView) convertView.findViewById(R.id.txtMessage);
+            viewHolder.time = (TextView) convertView.findViewById(R.id.txtTime);
             viewHolder.image = (ImageView) convertView.findViewById(R.id.imageViewRatingsItem);
             viewHolder.smily = (ImageView)convertView.findViewById(R.id.imageViewRatingsSmily);
             convertView.setTag(viewHolder);
@@ -71,6 +72,7 @@ public class RatingsAdapter extends BaseAdapter {
             FeedBackModel feedBackModel = data1.get(position);
 
             viewHolder.feedback.setText(feedBackModel.getStrFeedBackMessage());
+            viewHolder.time.setText(Utils.writeFormat.format(utils.convertStringToDate(feedBackModel.getStrFeedBackTime())));
 
             if (feedBackModel.getIntFeedBackRating()== 1){
                 viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.mipmap.rate_icon_2));
@@ -97,7 +99,7 @@ public class RatingsAdapter extends BaseAdapter {
         return convertView;
     }
     public class ViewHolder{
-        TextView feedback;
+        TextView feedback, time;
         ImageView image,smily;
     }
 }

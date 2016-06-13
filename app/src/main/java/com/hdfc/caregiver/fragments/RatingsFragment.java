@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -72,6 +73,7 @@ public class RatingsFragment extends Fragment {
         listratings = (ListView) view.findViewById(R.id.listViewRatings);
         textViewName = (TextView) view.findViewById(R.id.name);
         textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
+        Button logout = (Button) view.findViewById(R.id.buttonlogout);
 
         ImageButton notification = (ImageButton)view.findViewById(R.id.notificationButton);
         notification.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +101,7 @@ public class RatingsFragment extends Fragment {
 
         myprofile = (RelativeLayout) view.findViewById(R.id.relativelayoutRatings);
 
-        myprofile.setOnClickListener(new View.OnClickListener() {
+        logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), MyProfileActivity.class);
@@ -136,7 +138,7 @@ public class RatingsFragment extends Fragment {
 
             imageView.setPadding(0, 0, 10, 0);
             imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-                    R.mipmap.stars_white));
+                    R.mipmap.star_grey));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             layout.addView(imageView);
