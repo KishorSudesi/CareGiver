@@ -7,21 +7,24 @@
     <RelativeLayout
         android:id="@+id/toplayout"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:background="@color/blue"
-        android:gravity="center">
-        <!--  <ImageButton
-              android:id="@+id/buttonBack"
-              android:layout_width="25dp"
-              android:layout_height="25dp"
-              android:layout_marginLeft="10dp"
-              android:layout_marginTop="20dp"
-              android:background="@mipmap/back_arrow"
-              android:visibility="gone" />-->
+        >
+       <!-- <ImageButton
+            android:id="@+id/buttonBack"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/backarrow"
+            android:visibility="visible" />-->
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="130dp"
-            android:background="@drawable/logo" />
+            android:layout_height="120dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/logo"
+            android:foregroundGravity="center"/>
 
     </RelativeLayout>
 

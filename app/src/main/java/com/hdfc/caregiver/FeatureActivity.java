@@ -29,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -107,7 +108,7 @@ public class FeatureActivity extends AppCompatActivity {
         Button done = (Button) findViewById(R.id.buttonVegetibleDone);
         ImageView back = (ImageView) findViewById(R.id.imgBackHeaderTaskDetail);
         LinearLayout linearLayoutAttach = (LinearLayout) findViewById(R.id.linearLayout);
-
+        ImageButton cancel = (ImageButton) findViewById(R.id.buttonBack);
         TextView textViewActivityName = (TextView) findViewById(R.id.txtActivityName);
         TextView textViewTime = (TextView) findViewById(R.id.txtActivityTime);
 
@@ -115,6 +116,12 @@ public class FeatureActivity extends AppCompatActivity {
         layout = (LinearLayout) findViewById(R.id.linear);
         bLoad = false;
 
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goBack();
+            }
+        });
         IMAGE_COUNT = 0;
         MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(FeatureActivity.this);
 
@@ -1043,7 +1050,7 @@ public class FeatureActivity extends AppCompatActivity {
                 textViewName.setTextAppearance(this, R.style.MilestoneStyle);
                 textViewName.setText(milestoneModel.getStrMilestoneName());
                 textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
-                textViewName.setPadding(20, 45, 0, 0);
+                textViewName.setPadding(25, 45, 0, 0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
                 }
@@ -1114,7 +1121,7 @@ public class FeatureActivity extends AppCompatActivity {
                 }
 
                 if (drawable != null) {
-                    textViewName.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+                    textViewName.setCompoundDrawablesWithIntrinsicBounds(drawable, null,null , null);
                     textViewName.setCompoundDrawablePadding(30);
                 }
 

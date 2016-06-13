@@ -21,7 +21,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:alpha="0.5"
+        android:alpha="0.8"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="@dimen/margin_general"
         android:layout_marginRight="@dimen/margin_general"

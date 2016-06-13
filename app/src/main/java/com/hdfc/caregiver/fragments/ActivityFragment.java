@@ -103,7 +103,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                     cvh.imageTiming.setBackgroundResource(R.drawable.done);
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorWhite));
                     cvh.imageTiming.setText("");
-                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+//                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
                 }
 
                 if (activityModel.getStrActivityStatus().equalsIgnoreCase("new")
@@ -111,7 +111,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(context.getString(R.string.new_text));
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorRed));
-                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorGrey));
+//                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorGrey));
                 }
 
                 if (activityModel.getStrActivityStatus().equalsIgnoreCase("inprocess")) {

@@ -16,12 +16,17 @@
                 android:id="@+id/milestoneName"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="@drawable/header_gradient"
+                android:background="@color/colorWhite"
                 android:gravity="center"
                 android:padding="@dimen/padding_general"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/blue"
                 android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/blue"/>
 
             <LinearLayout
                 android:id="@+id/linearLayoutDialog"
@@ -45,6 +50,7 @@
                     android:layout_margin="@dimen/margin_general"
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
+                    android:textColor="@color/colorWhite"
                     android:background="@color/blue"
                     android:text="@string/submit"
                     android:visibility="visible" />
@@ -57,6 +63,7 @@
                     android:layout_margin="@dimen/margin_general"
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
+                    android:textColor="@color/colorWhite"
                     android:background="@color/blue"
                     android:text="@string/close"
                     android:visibility="gone" />
@@ -69,7 +76,8 @@
                     android:layout_margin="@dimen/margin_general"
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
-                    android:background="@drawable/button_white"
+                    android:textColor="@color/colorWhite"
+                    android:background="#000000"
                     android:text="@string/cancel"
                     android:visibility="visible" />
 
