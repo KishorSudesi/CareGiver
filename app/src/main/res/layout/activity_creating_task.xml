@@ -38,7 +38,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@mipmap/client_name"
-                android:drawableRight="@mipmap/plus_simple_add_client_name"
                 android:inputType="textVisiblePassword"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general" />
@@ -115,10 +114,10 @@
                 android:id="@+id/editDob"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginBottom="@dimen/margin_general"
-                android:layout_marginTop="25dp"
-                android:drawableLeft="@drawable/activity_icon_32"
-                android:drawablePadding="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@mipmap/calender_date_picked"
+                android:drawablePadding="20dp"
                 android:focusableInTouchMode="false"
                 android:hint="@string/dateAndTime"
                 android:inputType="textPersonName"
@@ -126,7 +125,7 @@
 
             <Button
                 android:id="@+id/textViewDoneHeaderCreatingTask"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
