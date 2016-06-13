@@ -1,38 +1,25 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/app_header">
-
-        <include
-            android:id="@+id/toplayout"
-            layout="@layout/header_logout">
-
-        </include>
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/textViewFeedback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toplayout"
+            android:layout_below="@+id/include_ratings_header"
             android:layout_centerHorizontal="true"
             android:padding="10dp"
             android:text="@string/feedback"
             android:textColor="@color/colorPrimary"
             android:textSize="24sp" />
 
-        <ImageButton
-            android:id="@+id/notificationButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/toplayout"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="7dp"
-            android:background="@drawable/desktop_notification" />
+
         <ImageView
             android:id="@+id/imageViewLine"
             android:layout_width="match_parent"
@@ -42,41 +29,60 @@
             android:padding="15dp" />
 
         <LinearLayout
-            android:id="@+id/linearLayoutUserRatings"
+            android:id="@+id/linearLayoutRatings"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="140dp"
             android:layout_below="@id/imageViewLine"
             android:orientation="horizontal"
             android:weightSum="2">
 
             <com.hdfc.views.RoundedImageView
-                android:id="@+id/img"
+                android:id="@+id/person_icon"
                 android:layout_width="0dp"
-                android:layout_height="80dp"
-                android:layout_weight="0.5"
+                android:layout_height="100dp"
+                android:layout_weight="0.7"
+                android:background="@drawable/person_icon"
                 android:paddingTop="12dp" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.5"
+                android:layout_weight="1.3"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/userrating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:paddingLeft="35dp"
                     android:text="User Ratings" />
 
                 <LinearLayout
-                    android:id="@+id/linearLayoutRatings"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"></LinearLayout>
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/star_gold" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/star_gold" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/star_gold" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/star_gold" />
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="7dp"
@@ -99,13 +105,11 @@
             android:id="@+id/listViewRatings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/linearLayoutUserRatings"
-            android:layout_margin="10dp"
-            android:dividerHeight="2dp">
+            android:layout_below="@+id/linearLayoutRatings"
+            android:layout_margin="10dp">
 
         </ListView>
 
     </RelativeLayout>
 
-
-</FrameLayout>
+</LinearLayout>

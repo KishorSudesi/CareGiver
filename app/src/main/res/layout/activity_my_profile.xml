@@ -29,16 +29,16 @@
                 android:paddingTop="@dimen/activity_horizontal_margin">
 
                 <ImageView
-                    android:id="@+id/imgEmail"
+                    android:id="@+id/imgPerson"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_above="@+id/editTextName"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:src="@mipmap/mail" />
+                    android:src="@drawable/person_icon" />
 
                 <TextView
-                    android:id="@+id/textViewEmail"
+                    android:id="@+id/textViewName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/textViewMobile"
@@ -52,46 +52,13 @@
                     android:id="@+id/editTextName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/textViewEmail"
-                    android:layout_alignStart="@+id/textViewEmail"
-                    android:layout_below="@+id/textViewEmail"
+                    android:layout_alignLeft="@+id/textViewName"
+                    android:layout_alignStart="@+id/textViewName"
+                    android:layout_below="@+id/textViewName"
                     android:layout_marginTop="7dp"
                     android:background="@color/background"
                     android:inputType="textEmailAddress" />
 
-                <ImageView
-                    android:id="@+id/imgMobile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@+id/editTextMobile"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:src="@mipmap/call"
-                    />
-
-                <TextView
-                    android:id="@+id/textViewMobile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/editTextName"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
-                    android:layout_toRightOf="@+id/imgMobile"
-                    android:text="@string/mobNo"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/secondary_text_dark" />
-
-                <EditText
-                    android:id="@+id/editTextMobile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/textViewEmail"
-                    android:layout_alignStart="@+id/textViewEmail"
-                    android:layout_below="@+id/textViewMobile"
-                    android:layout_marginTop="7dp"
-                    android:background="@color/background"
-                    android:inputType="phone"
-                    android:maxLength="10" />
 
                 <ImageView
                     android:id="@+id/imgPlace"
@@ -100,8 +67,7 @@
                     android:layout_above="@+id/editTextPlace"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:src="@mipmap/location"
-                   />
+                    android:src="@mipmap/location" />
 
                 <TextView
                     android:id="@+id/textViewPlace"
@@ -125,6 +91,39 @@
                     android:layout_marginTop="7dp"
                     android:background="@color/background"
                     android:inputType="text" />
+                <ImageView
+                    android:id="@+id/imgMobile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/editTextMobile"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:src="@mipmap/call" />
+
+                <TextView
+                    android:id="@+id/textViewMobile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/editTextName"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:layout_toRightOf="@+id/imgMobile"
+                    android:text="@string/mobNo"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/secondary_text_dark" />
+
+                <EditText
+                    android:id="@+id/editTextMobile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/textViewName"
+                    android:layout_alignStart="@+id/textViewName"
+                    android:layout_below="@+id/textViewMobile"
+                    android:layout_marginTop="7dp"
+                    android:background="@color/background"
+                    android:inputType="phone"
+                    android:maxLength="10" />
+
 
             </RelativeLayout>
 

@@ -2,10 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/app_header"
     android:orientation="vertical">
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/actionBarNotification"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -14,13 +14,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:background="@mipmap/back"
-            />
+
 
         <TextView
             android:id="@+id/textViewMyProfileEmail"
@@ -34,20 +28,24 @@
             android:textColor="@android:color/white" />
 
     </LinearLayout>
+-->    <include
+    android:id="@+id/header"
+    layout="@layout/header_common">
 
+</include>
     <ListView
         android:id="@+id/listViewActivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/loadingPanel"
-        android:layout_below="@+id/actionBarNotification" />
+        android:layout_below="@+id/header" />
 
     <TextView
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/loadingPanel"
-        android:layout_below="@+id/actionBarNotification"
+        android:layout_below="@+id/header"
         android:gravity="center"
         android:text="@string/no_notifications"
         android:visibility="visible" />

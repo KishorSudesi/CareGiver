@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,7 +27,7 @@ public class NotificationActivity extends AppCompatActivity {
     private static RelativeLayout loadingPanel;
     private ListView listViewActivities;
     private Utils utils;
-    private ImageButton backButton;
+    private Button backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class NotificationActivity extends AppCompatActivity {
         TextView emptyTextView = (TextView) findViewById(android.R.id.empty);
         listViewActivities.setEmptyView(emptyTextView);
         utils = new Utils(NotificationActivity.this);
-        backButton = (ImageButton) findViewById(R.id.backButton);
+        backButton = (Button) findViewById(R.id.buttonBack);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
         backButton.setOnClickListener(new View.OnClickListener() {

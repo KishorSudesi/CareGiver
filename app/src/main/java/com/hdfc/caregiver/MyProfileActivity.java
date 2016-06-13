@@ -11,8 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +22,6 @@ import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.Utils;
-import com.hdfc.services.GPSTracker;
 import com.hdfc.views.RoundedImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
@@ -59,20 +56,21 @@ public class MyProfileActivity extends AppCompatActivity {
     private static boolean isImageChanged=false;
     public TextView email;
     ImageView backbutton, edit, imageplace;
-    EditText phone, place, textViewName;
+    EditText phone, place;
+    TextView textViewName;
     int Flag = 0;
     private ProgressDialog progressDialog;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_profile);
-        textViewName = (EditText)findViewById(R.id.editTextName);
-        phone = (EditText)findViewById(R.id.editTextMobile);
-        place = (EditText)findViewById(R.id.editTextPlace);
-        profileImage = (RoundedImageView) findViewById(R.id.imageMyProfile);
-        imageplace = (ImageView)findViewById(R.id.imgPlace);
-        email = (TextView)findViewById(R.id.textViewMyProfileEmail);
+        setContentView(R.layout.my_profile);
+        textViewName = (TextView) findViewById(R.id.textCaregiverName);
+        phone = (EditText) findViewById(R.id.input_mobile);
+        place = (EditText) findViewById(R.id.input_place);
+        profileImage = (RoundedImageView) findViewById(R.id.person_icon);
+
+        email = (TextView) findViewById(R.id.input_email);
         Button signOut = (Button) findViewById(R.id.signOut);
 
         //Bundle b = getIntent().getExtras();
@@ -90,8 +88,7 @@ public class MyProfileActivity extends AppCompatActivity {
                         + ".jpeg", null, MyProfileActivity.this, true);
             }
         });
-
-        imageplace.setOnClickListener(new View.OnClickListener() {
+       /* imageplace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 GPSTracker gpsTracker = new GPSTracker(MyProfileActivity.this);
@@ -104,7 +101,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 }
             }
         });
-
+*/
         if (signOut != null) {
             signOut.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -142,9 +139,9 @@ public class MyProfileActivity extends AppCompatActivity {
         place.setFocusableInTouchMode(false);
         place.clearFocus();
 
-        edit = (ImageView)findViewById(R.id.imgPen);
+        //  edit = (ImageView)findViewById(R.id.imgPen);
 
-        edit.setOnClickListener(new View.OnClickListener() {
+        /*edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -266,8 +263,8 @@ public class MyProfileActivity extends AppCompatActivity {
                 }
             }
         });
-
-        backbutton = (ImageView)findViewById(R.id.imgBackArrow);
+*/
+       /* backbutton = (ImageView)findViewById(R.id.imgBackArrow);
 
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,7 +272,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 goBack();
             }
         });
-
+*/
         if(Config.providerModel!=null) {
             email.setText(Config.providerModel.getStrEmail());
             phone.setText(Config.providerModel.getStrContacts());
