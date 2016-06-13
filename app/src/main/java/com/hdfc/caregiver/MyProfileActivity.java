@@ -11,6 +11,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -58,6 +60,7 @@ public class MyProfileActivity extends AppCompatActivity {
     ImageView backbutton, edit, imageplace;
     EditText phone, place, name;
     TextView textViewName;
+    Button buttonContinue;
     int Flag = 0;
     private ProgressDialog progressDialog;
 
@@ -72,7 +75,9 @@ public class MyProfileActivity extends AppCompatActivity {
         profileImage = (RoundedImageView) findViewById(R.id.person_icon);
 
         email = (TextView) findViewById(R.id.input_email);
-        Button signOut = (Button) findViewById(R.id.signOut);
+        Button signOut = (Button) findViewById(R.id.buttonLogOut);
+        buttonContinue = (Button) findViewById(R.id.buttonContinue);
+
 
         //Bundle b = getIntent().getExtras();
         //intWhichScreen = b.getInt("WHICH_SCREEN", Config.intRatingsScreen);
@@ -142,7 +147,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
         //  edit = (ImageView)findViewById(R.id.imgPen);
 
-        /*edit.setOnClickListener(new View.OnClickListener() {
+        buttonContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -264,7 +269,6 @@ public class MyProfileActivity extends AppCompatActivity {
                 }
             }
         });
-*/
        /* backbutton = (ImageView)findViewById(R.id.imgBackArrow);
 
         backbutton.setOnClickListener(new View.OnClickListener() {

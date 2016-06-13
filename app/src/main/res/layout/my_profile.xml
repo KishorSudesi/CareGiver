@@ -6,11 +6,18 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+        android:background="@drawable/app_header"
+        android:orientation="vertical">
 
+        <include
+            android:id="@+id/toplayout1"
+            layout="@layout/header_logout">
+
+        </include>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
 
         <TextView
             android:id="@+id/textViewFeedback"
@@ -36,54 +43,21 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_below="@id/imageViewLine"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        android:orientation="vertical">
 
         <com.hdfc.views.RoundedImageView
             android:id="@+id/person_icon"
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="0.7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:paddingTop="12dp"
             android:src="@drawable/person_icon" />
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/userrating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="35dp"
-                android:text="User Ratings" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/star_gold" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/star_gold" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/star_gold" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/star_gold" />
-            </LinearLayout>
 
             <TextView
                 android:id="@+id/textCaregiverName"
@@ -106,7 +80,7 @@
             android:id="@+id/input_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/person_icon"
+            android:drawableLeft="@drawable/clientname"
             android:drawablePadding="@dimen/activity_horizontal_margin"
             android:hint="Name of Service Giver"
             android:paddingLeft="@dimen/activity_horizontal_margin" />
@@ -124,7 +98,7 @@
             android:id="@+id/input_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@mipmap/email"
+            android:drawableLeft="@drawable/email"
             android:drawablePadding="@dimen/activity_horizontal_margin"
             android:hint="Email of Service Giver"
             android:paddingLeft="@dimen/activity_horizontal_margin" />
@@ -142,7 +116,7 @@
             android:id="@+id/input_place"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@mipmap/location"
+            android:drawableLeft="@drawable/location"
             android:drawablePadding="@dimen/activity_horizontal_margin"
             android:hint="Place"
             android:paddingLeft="@dimen/activity_horizontal_margin" />
@@ -160,7 +134,7 @@
             android:id="@+id/input_mobile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@mipmap/call"
+            android:drawableLeft="@drawable/contact"
             android:drawablePadding="@dimen/activity_horizontal_margin"
             android:hint="Mobile"
             android:paddingLeft="@dimen/activity_horizontal_margin" />
