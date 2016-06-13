@@ -91,7 +91,7 @@ public class RatingsFragment extends Fragment {
         utils = new Utils(getActivity());
         intWhichScreen = Config.intRatingsScreen;
 
-        //if(Config.providerModel.getStrName()!=null)
+        if (Config.providerModel.getStrName() != null)
             textViewName.setText(Config.providerModel.getStrName());
 
         backgroundThreadHandler = new BackgroundThreadHandler();

@@ -7,11 +7,28 @@
         android:layout_height="match_parent"
         android:background="@drawable/app_header">
 
-        <include
+        <RelativeLayout
             android:id="@+id/toplayout"
-            layout="@layout/header_logout">
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@color/blue">
+            <!-- <ImageButton
+                 android:id="@+id/buttonBack"
+                 android:layout_width="25dp"
+                 android:layout_height="25dp"
+                 android:layout_marginLeft="10dp"
+                 android:layout_marginTop="20dp"
+                 android:background="@drawable/backarrow"
+                 android:visibility="visible" />-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:background="@color/blue"
+                android:src="@drawable/logo1" />
 
-        </include>
+        </RelativeLayout>
+
 
         <TextView
             android:id="@+id/textViewFeedback"
@@ -28,11 +45,23 @@
             android:id="@+id/notificationButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/toplayout"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/desktop_notification" />
+
+        <Button
+            android:id="@+id/buttonlogout"
+            android:layout_width="30dp"
+            android:layout_height="25dp"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/toplayout"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="7dp"
-            android:background="@drawable/desktop_notification" />
+            android:layout_marginTop="10dp"
+            android:background="@drawable/account_type"
+            android:textAllCaps="false"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
         <ImageView
             android:id="@+id/imageViewLine"
             android:layout_width="match_parent"
