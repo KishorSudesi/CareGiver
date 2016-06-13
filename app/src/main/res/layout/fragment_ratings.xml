@@ -19,9 +19,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/include_ratings_header"
+            android:layout_centerHorizontal="true"
             android:padding="10dp"
             android:text="@string/feedback"
-            android:textSize="15sp" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp" />
 
 
         <ImageView
@@ -29,8 +31,19 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_below="@+id/textViewFeedback"
-            android:background="#E0E0E0"
+            android:background="@color/color_common"
             android:padding="15dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:layout_below="@id/imageViewLine">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/person_icon" />
+        </LinearLayout>
 
         <TextView
             android:id="@android:id/empty"

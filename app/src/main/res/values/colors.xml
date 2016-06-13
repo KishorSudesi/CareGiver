@@ -2,8 +2,11 @@
 <resources>
 
 
-    <color name="colorPrimary">#66a6b2</color>
-    <color name="colorPrimaryDark">#3d7f8d</color>
+    <color name="colorPrimary">#2196f3</color>
+    <color name="colorPrimaryDark">#046abc</color>
+    <color name="highlight">#ff2c55</color>
+    <color name="Calenderbackground">#222222</color>
+
     <color name="colorAccent">#292929</color>
     <color name="colorAccentDark">#181818</color>
     <color name="colorWhite">#ffffff</color>
