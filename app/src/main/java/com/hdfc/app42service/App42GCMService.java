@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.libs.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,8 +89,15 @@ public class App42GCMService extends IntentService {
 
             if (jsonObject.has("created_by")) {
 
-                String strMessage = jsonObject.getString(App42GCMService.ExtraMessage)
-                        + " " + jsonObject.getString("time");
+                String strMessage = null;
+                try {
+                    strMessage = jsonObject.getString(App42GCMService.ExtraMessage)
+                            + "\n" +
+                            " Created On: " + Utils.writeFormat.format(Utils.readFormat.parse(jsonObject.getString("time")));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 showNotification(strMessage, intent);
 
             } else {

@@ -420,17 +420,19 @@ public class FeatureActivity extends AppCompatActivity {
                     }
 
                     //
-                    String strDate = milestoneModel.getStrMilestoneDate();
+                    //String strDate = milestoneModel.getStrMilestoneDate();
 
                     strPushMessage = Config.providerModel.getStrName()
                             + getString(R.string.has_updated)
-                            + getString(R.string.activity)
+                          /*  + getString(R.string.activity)
+                            + getString(R.string.space)*/
                             + getString(R.string.space)
                             + act.getStrActivityName()
                             + getString(R.string.hyphen)
-                            + getString(R.string.milestone)
+                           /* + getString(R.string.milestone)*/
                             + getString(R.string.space)
                             + milestoneModel.getStrMilestoneName();
+
 
 
                     if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
@@ -441,8 +443,12 @@ public class FeatureActivity extends AppCompatActivity {
 
                     try {
 
+                        String strDateNow = "";
+                        Date dateNow = calendar.getTime();
+                        strDateNow = utils.convertDateToString(dateNow);
+
                         jsonObject.put("created_by", Config.providerModel.getStrProviderId());
-                        jsonObject.put("time", strDate);
+                        jsonObject.put("time", strDateNow);
                         jsonObject.put("user_type", "dependent");
                         jsonObject.put("user_id", act.getStrDependentID());
                         jsonObject.put("activity_id", act.getStrActivityID());//todo add to care taker

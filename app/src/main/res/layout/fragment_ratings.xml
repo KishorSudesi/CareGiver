@@ -130,7 +130,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/linearLayoutUserRatings"
             android:layout_margin="10dp"
-            android:dividerHeight="2dp">
+            android:divider="@color/blue"
+            android:dividerHeight="1dp">
 
         </ListView>
 
