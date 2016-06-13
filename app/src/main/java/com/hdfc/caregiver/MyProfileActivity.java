@@ -56,7 +56,7 @@ public class MyProfileActivity extends AppCompatActivity {
     private static boolean isImageChanged=false;
     public TextView email;
     ImageView backbutton, edit, imageplace;
-    EditText phone, place;
+    EditText phone, place, name;
     TextView textViewName;
     int Flag = 0;
     private ProgressDialog progressDialog;
@@ -66,6 +66,7 @@ public class MyProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_profile);
         textViewName = (TextView) findViewById(R.id.textCaregiverName);
+        name = (EditText) findViewById(R.id.input_name);
         phone = (EditText) findViewById(R.id.input_mobile);
         place = (EditText) findViewById(R.id.input_place);
         profileImage = (RoundedImageView) findViewById(R.id.person_icon);
@@ -127,9 +128,9 @@ public class MyProfileActivity extends AppCompatActivity {
         }
 
         //TODO set in xml
-        textViewName.setEnabled(false);
-        textViewName.setFocusableInTouchMode(false);
-        textViewName.clearFocus();
+        name.setEnabled(false);
+        name.setFocusableInTouchMode(false);
+        name.clearFocus();
 
         phone.setEnabled(false);
         phone.setFocusableInTouchMode(false);
@@ -278,6 +279,7 @@ public class MyProfileActivity extends AppCompatActivity {
             phone.setText(Config.providerModel.getStrContacts());
             place.setText(Config.providerModel.getStrAddress());
             textViewName.setText(Config.providerModel.getStrName());
+            name.setText(Config.providerModel.getStrName());
         }
     }
 

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -12,7 +16,6 @@
             android:id="@+id/textViewFeedback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/include_ratings_header"
             android:layout_centerHorizontal="true"
             android:padding="10dp"
             android:text="@string/feedback"
@@ -41,7 +44,6 @@
             android:layout_width="0dp"
             android:layout_height="80dp"
             android:layout_weight="0.7"
-            android:background="@drawable/circle_float"
             android:paddingTop="12dp"
             android:src="@drawable/person_icon" />
 
@@ -198,3 +200,4 @@
         android:textColor="@color/colorWhite" />
 
 </LinearLayout>
+</ScrollView>
