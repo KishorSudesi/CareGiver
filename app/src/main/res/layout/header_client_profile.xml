@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/button_white">
+    android:layout_height="350dp"
+    android:background="@drawable/app_bg">
+
+
     <include
         android:id="@+id/include_header_clients"
         layout="@layout/newzeal_header"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="100dp"
         android:layout_alignParentTop="true"/>
-    <ImageView
+
+    <include
+        android:id="@+id/includeHeaderClients"
+        layout="@layout/header_client_details"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_below="@+id/include_header_clients"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/includeHeaderClients"
+        android:background="@drawable/colorful_textview"/>
+   <!-- <ImageView
         android:id="@+id/imgBackArrow"
         android:layout_width="24dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-      android:layout_below="@+id/include_header_clients"
+      android:layout_below="@+id/includeHeaderClients"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/edit_text_margin"
-        android:src="@mipmap/back" />
+        android:src="@mipmap/back" />-->
 
     <ImageView
         android:id="@+id/imgPen"
@@ -34,7 +49,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imgPen"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/includeHeaderClients"
         android:orientation="vertical">
 
         <ImageView

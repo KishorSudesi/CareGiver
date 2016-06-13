@@ -4,14 +4,38 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/app_bg">
+
+        <RelativeLayout
+            android:id="@+id/toplayout"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@color/blue"
+            >
+            <!--<ImageButton
+                android:id="@+id/buttonBack"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/backarrow"
+                android:visibility="visible" />-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:background="@color/blue"
+                android:src="@drawable/logo1"/>
+
+        </RelativeLayout>
 
         <include
             android:id="@+id/include_header_clients"
             layout="@layout/header_clients"
             android:layout_width="match_parent"
             android:layout_height="65dp"
-            android:layout_alignParentTop="true"/>
+            android:layout_below="@+id/toplayout"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"

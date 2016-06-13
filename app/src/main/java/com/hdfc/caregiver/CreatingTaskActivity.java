@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -91,6 +92,14 @@ public class CreatingTaskActivity extends AppCompatActivity {
         inputSearchServices = (AutoCompleteTextView)findViewById(R.id.inputSearchServices);
         dependentlist = (Spinner) findViewById(R.id.spindependentList);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
+
+        ImageButton back = (ImageButton) findViewById(R.id.button1Back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goBack();
+            }
+        });
 
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);

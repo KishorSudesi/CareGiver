@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.hdfc.adapters.ClientAdapter;
@@ -71,6 +72,8 @@ public class ClientFragment extends Fragment {
         listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
         expListView.setAdapter(listAdapter);
         expListView.setEmptyView(textViewEmpty);
+
+
 
        /* ImageButton add = (ImageButton) view.findViewById(R.id.add_button);
 

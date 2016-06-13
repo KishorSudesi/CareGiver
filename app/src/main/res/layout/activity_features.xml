@@ -28,13 +28,20 @@
 
     </RelativeLayout>
 
+
     <include
         android:id="@+id/include_header_my_tasks"
         layout="@layout/feature_list_header"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="70dp"
         android:layout_below="@+id/toplayout"
         />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/include_header_my_tasks"
+        android:background="@drawable/colorful_textview"/>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -44,10 +51,7 @@
         android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/blue"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"

@@ -33,13 +33,12 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="7dp"
             android:background="@drawable/desktop_notification" />
-        <ImageView
+        <TextView
             android:id="@+id/imageViewLine"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="1dp"
             android:layout_below="@+id/textViewFeedback"
-            android:background="@color/color_common"
-            android:padding="15dp" />
+            android:background="@drawable/colorful_textview"/>
 
         <LinearLayout
             android:id="@+id/linearLayoutUserRatings"
