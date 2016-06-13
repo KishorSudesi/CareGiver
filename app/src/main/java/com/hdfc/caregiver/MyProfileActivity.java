@@ -537,7 +537,7 @@ public class MyProfileActivity extends AppCompatActivity {
         goBack();
     }
 
-    public class BackgroundThreadHandler extends Handler {
+    private class BackgroundThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
 
@@ -593,6 +593,7 @@ public class MyProfileActivity extends AppCompatActivity {
                     strCustomerImgName = galleryFile.getAbsolutePath();
                     InputStream is = getContentResolver().openInputStream(uri);
                     utils.copyInputStreamToFile(is, galleryFile);
+                    utils.compressImageFromPath(strCustomerImgName, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
                     bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
                     isImageChanged = true;
                 }
@@ -608,6 +609,7 @@ public class MyProfileActivity extends AppCompatActivity {
         public void run() {
             try {
                 if (strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("")) {
+                    utils.compressImageFromPath(strCustomerImgName, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
                     bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
                     isImageChanged = true;
                 }

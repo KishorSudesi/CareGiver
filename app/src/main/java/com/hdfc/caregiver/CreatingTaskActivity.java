@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.config.Config;
@@ -35,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -98,8 +100,10 @@ public class CreatingTaskActivity extends AppCompatActivity {
         dependentlist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (Config.strDependentNames.size() > 0)
-                    strSelectedDependent = Config.strDependentNames.get(position);
+                if (Config.strDependentNames.size() > 0) {
+                    String strName = (String) parent.getAdapter().getItem(position);
+                    strSelectedDependent = Config.strDependentNames.get(Config.strDependentNames.indexOf(strName));
+                } else strSelectedDependent = "";
             }
 
             @Override
@@ -428,27 +432,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                 JSONArray jsonArrayFields = new JSONArray();
 
-                strPushMessage = Config.providerModel.getStrName() + getString(R.string.has_created) +
-                        serviceModel.getStrServiceName() + getString(R.string.to) +
-                        dependentModel.getStrName() +
-                        getString(R.string.on) + strDate;
-
-                jsonObject = new JSONObject();
-
-                try {
-                    Date date = new Date();
-                    String strDate = utils.convertDateToString(date);
-
-                    jsonObject.put("created_by", Config.providerModel.getStrProviderId());
-                    jsonObject.put("time", strDate);
-                    jsonObject.put("user_type", "dependent");
-                    jsonObject.put("user_id", dependentModel.getStrDependentID());
-                    jsonObject.put("created_by_type", "provider");
-                    jsonObject.put("notification_message", strPushMessage);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
                 for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
 
@@ -484,14 +467,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             jsonObjectField.put("child_field", utils.intToJsonArray(fieldModel.getiChildfieldID()));
                     }
 
-
-                    //
                     if (fieldModel.getiArrayCount() > 0) {
                         jsonObjectField.put("array_fields", fieldModel.getiArrayCount());
                         jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.getStrArrayType()));
-                        jsonObjectField.put("array_data", utils.stringToJsonArray(fieldModel.getStrArrayType()));
+                        jsonObjectField.put("array_data", fieldModel.getStrArrayData());
                     }
-                    //
 
                     jsonArrayFields.put(jsonObjectField);
 
@@ -515,14 +495,61 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             if (response != null) {
 
                                 if (response.getJsonDocList().size() > 0) {
-                                    //   strInsertedDocumentId = response.getJsonDocList().get(0).getDocId();
+                                    String strInsertedDocumentId = response.getJsonDocList().get(0).getDocId();
                                     //   iUpdateFlag = iActivityCreated;
                                     //fetchService(serviceModel, dependentModel);
 
-                                    appUtils.createActivityModel(
-                                            response.getJsonDocList().get(0).getDocId(),
-                                            response.getJsonDocList().get(0).getJsonDoc()
-                                    );
+                                    //
+
+                                    Calendar calendar = Calendar.getInstance();
+
+                                    Date startDate = null, endDate = null;
+                                    String strStartDateCopy, strEndDateCopy;
+                                    Date activityDate = null;
+
+                                    try {
+                                        Date dateNow = calendar.getTime();
+                                        strEndDateCopy = Utils.writeFormatDateDB.format(dateNow) + "T23:59:59.999Z";
+                                        strStartDateCopy = Utils.writeFormatDateDB.format(dateNow) + "T00:00:00.000Z";
+                                        activityDate = utils.convertStringToDate(_strDate);
+
+                                        endDate = utils.convertStringToDate(strEndDateCopy);
+                                        startDate = utils.convertStringToDate(strStartDateCopy);
+
+                                        Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED ");
+
+                                        if (activityDate.before(endDate) && activityDate.after(startDate)) {
+                                            appUtils.createActivityModel(
+                                                    response.getJsonDocList().get(0).getDocId(),
+                                                    response.getJsonDocList().get(0).getJsonDoc()
+                                            );
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    //
+                                    strPushMessage = Config.providerModel.getStrName() + getString(R.string.has_created) +
+                                            serviceModel.getStrServiceName() + getString(R.string.to) +
+                                            dependentModel.getStrName() +
+                                            getString(R.string.on) + strDate;
+
+                                    jsonObject = new JSONObject();
+
+                                    try {
+
+                                        jsonObject.put("created_by", Config.providerModel.getStrProviderId());
+                                        jsonObject.put("time", strDate);
+                                        jsonObject.put("user_type", "dependent");
+                                        jsonObject.put("user_id", dependentModel.getStrDependentID());
+                                        jsonObject.put("activity_id", strInsertedDocumentId);//todo add to care taker
+                                        jsonObject.put("created_by_type", "provider");
+                                        jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                     //
 
                                     insertNotification();
@@ -743,7 +770,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
             PushNotificationService pushNotificationService =
                     new PushNotificationService(CreatingTaskActivity.this);
 
-            pushNotificationService.sendPushToUser(strSelectedCustomer, strPushMessage,
+            //strPushMessage
+
+            pushNotificationService.sendPushToUser(strSelectedCustomer, jsonObject.toString(),
                     new App42CallBack() {
 
                         @Override
@@ -781,7 +810,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         Config.intSelectedMenu = Config.intDashboardScreen;
         utils.toast(2, 2, strAlert);
-        newIntent.putExtra("LOAD", true);
+        //newIntent.putExtra("CREATED", true);
         startActivity(newIntent);
         finish();
 

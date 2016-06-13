@@ -44,8 +44,11 @@ public class DashboardFragment extends Fragment {
 
             strDate = Utils.writeFormatDateDB.format(date);
 
-            strEndDate = strDate + "T23:59:59.999+0000";
-            strStartDate = strDate + "T00:00:00.000+0000";
+            /*strEndDate = Utils.readFormat.format(strDate + "T23:59:59.999Z");
+            strStartDate = Utils.readFormat.format(strDate + "T00:00:00.000Z");*/
+
+            strEndDate = utils.convertDateToStringQuery(utils.convertStringToDate(strDate + "T23:59:59.999Z"));
+            strStartDate = utils.convertDateToStringQuery(utils.convertStringToDate(strDate + "T00:00:00.000Z"));
 
             //String _strDate = Utils.writeFormatDateDB.format(date);
 
@@ -80,11 +83,11 @@ public class DashboardFragment extends Fragment {
             int day = calendar.get(Calendar.DAY_OF_MONTH);*/
 
                 //Date date = calendar.getTime();
+/*
+                strEndDate = strDate + "T23:59:59.999Z";
+                strStartDate = strDate + "T00:00:00.000Z";*/
 
-                DashboardFragment.strEndDate = strDate + "T23:59:59.999+0000";
-                DashboardFragment.strStartDate = strDate + "T00:00:00.000+0000";
-
-                DashboardFragment.strDate = Utils.writeFormatDate.format(date);
+                strDate = Utils.writeFormatDate.format(date);
 
                 Config.intSelectedMenu = Config.intDashboardScreen;
 

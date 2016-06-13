@@ -13,12 +13,11 @@
         />
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/buttonVegetibleDone"
         android:layout_below="@+id/include_header_my_tasks"
         android:layout_marginBottom="10dp"
-
         android:orientation="vertical">
 
         <LinearLayout
@@ -78,21 +77,37 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/milestoneLayout">
+
+            <Button
+                android:id="@+id/buttonClose"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_margin="@dimen/margin_general"
+                android:layout_weight="1"
+                android:background="@color/color_common"
+                android:gravity="center"
+                android:text="@string/close"
+                android:textColor="@color/colorWhite"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/buttonVegetibleDone"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_margin="@dimen/margin_general"
+                android:layout_weight="1"
+                android:background="@color/color_common"
+                android:gravity="center"
+                android:text="@string/upload_button"
+                android:textColor="@color/colorWhite" />
+        </LinearLayout>
+
     </LinearLayout>
-
-
-    <Button
-        android:id="@+id/buttonVegetibleDone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/color_common"
-        android:gravity="center"
-        android:text="@string/upload_button"
-        android:textColor="@color/colorWhite"
-        />
 
 </RelativeLayout>

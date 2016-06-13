@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hdfc.app42service.App42GCMService;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
@@ -76,7 +77,10 @@ public class Utils {
     public static final Locale locale = Locale.ENGLISH;
 
     public final static SimpleDateFormat readFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale);
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale);
+
+    public final static SimpleDateFormat queryFormat =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale);
 
     public final static SimpleDateFormat writeFormat = new
             SimpleDateFormat("kk:mm dd MMM yyyy", locale);
@@ -116,6 +120,7 @@ public class Utils {
         Config.intScreenHeight = metrics.heightPixels;
 
         readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        //queryFormat.setTimeZone(TimeZone.getDefault());
     }
 
     public static native String getString();
@@ -675,7 +680,7 @@ public class Utils {
             if (jsonObjectProvider.has("notification_message")) {
 
                 NotificationModel notificationModel = new NotificationModel(
-                        jsonObjectProvider.getString("notification_message"),
+                        jsonObjectProvider.getString(App42GCMService.ExtraMessage),
                         jsonObjectProvider.getString("time"),
                         jsonObjectProvider.getString("user_type"),
                         jsonObjectProvider.getString("created_by_type"),
@@ -722,10 +727,10 @@ public class Utils {
             Toast toast = new Toast(_ctxt);
             toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
 
-            if (duration == 2)
+            //if (duration == 2)
                 toast.setDuration(Toast.LENGTH_LONG);
-            else
-                toast.setDuration(Toast.LENGTH_SHORT);
+           /* else
+                toast.setDuration(Toast.LENGTH_SHORT);*/
 
             toast.setView(layout);
             toast.show();
@@ -748,14 +753,14 @@ public class Utils {
     }
 
     //load image from url
-    public void loadImageFromWeb(String strFileName, String strFileUrl) {
+    void loadImageFromWeb(String strFileName, String strFileUrl) {
 
         strFileName = replaceSpace(strFileName.trim());
         strFileUrl = replaceSpace(strFileUrl.trim());
 
         File fileImage = createFileInternal("images/" + strFileName);
 
-        log(strFileName + " ~ " + strFileUrl, " paths ");
+        log(strFileName + " ~ " + strFileUrl, " PATHS ");
 
         if (fileImage.length() <= 0) {
 
@@ -900,7 +905,21 @@ public class Utils {
             e.printStackTrace();
         }
 
-        Log.i("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
+        //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
+        return date; //
+    }
+
+    public String convertDateToStringQuery(Date dtDate) {
+
+        String date = null;
+
+        try {
+            date = queryFormat.format(dtDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
         return date; //
     }
 
@@ -908,8 +927,9 @@ public class Utils {
 
         Date date = null;
         try {
+            //log("erro r", String.valueOf(strDate));
             date = readFormat.parse(strDate);
-            Log.i("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
+            //log("error", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -83,12 +83,13 @@ public class ClientFragment extends Fragment {
             }
         });*/
 
+        prepareListData();
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        prepareListData();
     }
 }

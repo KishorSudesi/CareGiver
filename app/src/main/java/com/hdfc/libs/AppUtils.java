@@ -222,7 +222,7 @@ public class AppUtils {
                                     else
                                         DashboardActivity.refreshClientsData();
                                 } catch (Exception e) {
-                                    DashboardActivity.refreshClientsData();
+                                    e.printStackTrace();
                                 }
                             }
 
@@ -296,7 +296,7 @@ public class AppUtils {
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    fetchDependents(iFlag);
+                                    //fetchDependents(iFlag);
                                 }
                             }
 
@@ -414,9 +414,10 @@ public class AppUtils {
 
                     if (Config.clientNameModels.size() > 0) {
                         int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
-                        if (iPosition > -1)
+                        if (iPosition > -1) {
                             Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
-                        Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                            Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                        }
                     }
                 }
 
@@ -476,9 +477,10 @@ public class AppUtils {
                     //
                     if (Config.clientNameModels.size() > 0) {
                         int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
-                        if (iPosition > -1)
+                        if (iPosition > -1) {
                             Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
-                        Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                            Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                        }
                     }
                 }
             }
@@ -1942,7 +1944,7 @@ public class AppUtils {
                                         }
                                     }
                                 }
-                                //Utils.log(" 0 ", " MESS ");
+                                Utils.log(" 0 ", " MESS ");
                                 fetchCustomers(iFlag);
                             } catch (Exception e1) {
                                 e1.printStackTrace();
@@ -2062,7 +2064,7 @@ public class AppUtils {
 
                                     Storage storage = (Storage) o;
 
-                                    Utils.log(storage.toString(), " MS ");
+                                    //Utils.log(storage.toString(), " MS ");
 
                                     ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
 

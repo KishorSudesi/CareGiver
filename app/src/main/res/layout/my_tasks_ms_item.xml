@@ -31,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_general"
+            android:textColor="@color/colorWhite"
             android:textSize="14sp" />
 
         <TextView
@@ -39,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:padding="@dimen/padding_general"
+            android:textColor="@color/colorWhite"
             android:textSize="15sp"
             android:textStyle="bold" />
 
@@ -48,8 +50,6 @@
         android:id="@+id/imagePerson"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
         android:layout_margin="@dimen/margin_general"
         android:layout_weight="0.5" />
 

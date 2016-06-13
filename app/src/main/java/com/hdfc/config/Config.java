@@ -49,7 +49,7 @@ public class Config {
     public static final int START_GALLERY_REQUEST_CODE = 2;
     public static final int CACHE_EXPIRE = 1;//In Minutes
     public static final int intWidth = 300, intHeight = 300;
-    public static final int intCompressWidth = 600, intCompressHeight = 600, iQuality = 60;
+    public static final int intCompressWidth = 240, intCompressHeight = 240, iQuality = 60;
     /* public static final String[] weekNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};*/
      public static final String[] months = {"January", "February", "March", "April", "May", "June",
              "July", "August", "September", "October", "November", "December"};
