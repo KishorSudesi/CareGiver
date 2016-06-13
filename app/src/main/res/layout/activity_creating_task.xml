@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/app_bg"
     android:orientation="vertical">
 
     <include
@@ -36,9 +37,9 @@
                 android:id="@+id/inputSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textVisiblePassword"
                 android:drawableLeft="@mipmap/client_name"
                 android:drawableRight="@mipmap/plus_simple_add_client_name"
+                android:inputType="textVisiblePassword"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general" />
             <requestFocus/>
@@ -82,9 +83,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:drawableLeft="@mipmap/service_giver_agent_icon"
                 android:inputType="text"
                 android:paddingLeft="@dimen/padding_general"
-                android:drawableLeft="@mipmap/service_giver_agent_icon"
                 android:paddingRight="@dimen/padding_general" />
             <!--  <requestFocus/>-->
 
@@ -105,9 +106,9 @@
                 android:id="@+id/editTextTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableLeft="@mipmap/add_note"
                 android:paddingLeft="@dimen/padding_general"
-                android:paddingRight="@dimen/padding_general"
-                android:drawableLeft="@mipmap/add_note"/>
+                android:paddingRight="@dimen/padding_general" />
 
 
             <EditText
@@ -122,6 +123,19 @@
                 android:hint="@string/dateAndTime"
                 android:inputType="textPersonName"
                 android:padding="10dp" />
+
+            <Button
+                android:id="@+id/textViewDoneHeaderCreatingTask"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_success"
+                android:gravity="center"
+                android:text="@string/done"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colorWhite" />
 
             <RelativeLayout
                 android:id="@+id/loadingPanel"

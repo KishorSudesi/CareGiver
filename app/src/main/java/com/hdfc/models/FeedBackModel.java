@@ -14,25 +14,44 @@ public class FeedBackModel implements Serializable {
     private String strFeedBackTime;
     private String strFeedBackByUrl;
 
-    public FeedBackModel(String strFeedBackMessage, String strFeedBackBy, int intFeedBackRating, boolean bFeedBackReport, String strFeedBackTime, String strFeedBackByUrl) {
+    public FeedBackModel(String strFeedBackMessage, String strFeedBackBy, int intFeedBackRating, String strFeedBackTime, String strFeedBackByUrl) {
         this.strFeedBackMessage = strFeedBackMessage;
         this.strFeedBackBy = strFeedBackBy;
         this.intFeedBackRating = intFeedBackRating;
-        this.bFeedBackReport = bFeedBackReport;
         this.strFeedBackTime = strFeedBackTime;
         this.strFeedBackByUrl = strFeedBackByUrl;
+    }
+
+    public boolean isbFeedBackReport() {
+        return bFeedBackReport;
+    }
+
+    public void setbFeedBackReport(boolean bFeedBackReport) {
+        this.bFeedBackReport = bFeedBackReport;
     }
 
     public String getStrFeedBackMessage() {
         return strFeedBackMessage;
     }
 
+    public void setStrFeedBackMessage(String strFeedBackMessage) {
+        this.strFeedBackMessage = strFeedBackMessage;
+    }
+
     public String getStrFeedBackBy() {
         return strFeedBackBy;
     }
 
+    public void setStrFeedBackBy(String strFeedBackBy) {
+        this.strFeedBackBy = strFeedBackBy;
+    }
+
     public int getIntFeedBackRating() {
         return intFeedBackRating;
+    }
+
+    public void setIntFeedBackRating(int intFeedBackRating) {
+        this.intFeedBackRating = intFeedBackRating;
     }
 
     public boolean getBoolFeedBackReport() {
@@ -43,7 +62,15 @@ public class FeedBackModel implements Serializable {
         return strFeedBackByUrl;
     }
 
+    public void setStrFeedBackByUrl(String strFeedBackByUrl) {
+        this.strFeedBackByUrl = strFeedBackByUrl;
+    }
+
     public String getStrFeedBackTime() {
         return strFeedBackTime;
+    }
+
+    public void setStrFeedBackTime(String strFeedBackTime) {
+        this.strFeedBackTime = strFeedBackTime;
     }
 }

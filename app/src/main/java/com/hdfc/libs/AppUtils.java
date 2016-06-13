@@ -468,7 +468,7 @@ public class AppUtils {
                         int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
                         if (iPosition > -1) {
                             int iPosition1 = Config.dependentIdsAdded.indexOf(strDocumentId);
-                            if (iPosition1 > -1) {
+                            if (iPosition1 > -1 && iPosition <= Config.clientModels.size()) {
                                 DependentModel dependentModel = Config.dependentModels.get(iPosition1);
                                 Config.clientModels.get(iPosition).setDependentModel(dependentModel);
                             }
@@ -909,9 +909,23 @@ public class AppUtils {
                                         jsonObjectFeedback.getString("feedback_message"),
                                         jsonObjectFeedback.getString("feedback_by"),
                                         jsonObjectFeedback.getInt("feedback_rating"),
-                                        jsonObjectFeedback.getBoolean("feedback_report"),
                                         jsonObjectFeedback.getString("feedback_time"),
                                         jsonObjectFeedback.getString("feedback_by_type"));
+
+                                try {
+                                    feedBackModel.setbFeedBackReport(jsonObjectFeedback.getBoolean("feedback_report"));
+                                } catch (Exception e) {
+                                    try {
+                                        String strTemp = jsonObjectFeedback.getString("feedback_report");
+                                        boolean b = false;
+                                        if (strTemp.equalsIgnoreCase("1"))
+                                            b = true;
+
+                                        feedBackModel.setbFeedBackReport(b);
+                                    } catch (Exception e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
 
                                 if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("customer")) {
                                     if (!Config.customerIds.contains(jsonObjectFeedback.getString("feedback_by")))
@@ -1295,9 +1309,23 @@ public class AppUtils {
                                         jsonObjectFeedback.getString("feedback_message"),
                                         jsonObjectFeedback.getString("feedback_by"),
                                         jsonObjectFeedback.getInt("feedback_rating"),
-                                        jsonObjectFeedback.getBoolean("feedback_report"),
                                         jsonObjectFeedback.getString("feedback_time"),
                                         jsonObjectFeedback.getString("feedback_by_type"));
+
+                                try {
+                                    feedBackModel.setbFeedBackReport(jsonObjectFeedback.getBoolean("feedback_report"));
+                                } catch (Exception e) {
+                                    try {
+                                        String strTemp = jsonObjectFeedback.getString("feedback_report");
+                                        boolean b = false;
+                                        if (strTemp.equalsIgnoreCase("1"))
+                                            b = true;
+
+                                        feedBackModel.setbFeedBackReport(b);
+                                    } catch (Exception e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
 
                                 if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("customer")) {
                                     if (!Config.customerIds.contains(jsonObjectFeedback.getString("feedback_by")))

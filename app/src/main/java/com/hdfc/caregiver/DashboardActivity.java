@@ -227,7 +227,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 if (Config.intSelectedMenu == Config.intDashboardScreen) {
                     loadingPanel.setVisibility(View.VISIBLE);
 
-                    mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+                    mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task));
                     textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
                     gotoSimpleActivity();
@@ -235,7 +235,7 @@ public class DashboardActivity extends AppCompatActivity implements
             } else {
                 if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
-                    mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+                    mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task));
                     textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
                     goToDashboard();
@@ -260,7 +260,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void menuClientsLoad() {
         setMenu();
-        clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
+        clients.setImageDrawable(getResources().getDrawable(R.mipmap.client));
         textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         //Config.intSelectedMenu = 0;
         goToClients();
@@ -268,7 +268,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void menuDashboard() {
         setMenu();
-        mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks_blue));
+        mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task));
         textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         Config.intSelectedMenu = Config.intDashboardScreen;
         goToDashboard();
@@ -278,7 +278,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void menuClients() {
         setMenu();
-        clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients_blue));
+        clients.setImageDrawable(getResources().getDrawable(R.mipmap.client));
         textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         //Config.intSelectedMenu = 0;
         goToClients();
@@ -286,7 +286,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void menuFeedback() {
         setMenu();
-        feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_blue));
+        feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback));
         textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         //Config.intSelectedMenu = Config.intRatingsScreen;
         gotoFeedback();
@@ -357,9 +357,9 @@ public class DashboardActivity extends AppCompatActivity implements
     }
 
     private void setMenu() {
-        mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_tasks));
-        clients.setImageDrawable(getResources().getDrawable(R.mipmap.clients));
-        feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback));
+        mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task_inactive));
+        clients.setImageDrawable(getResources().getDrawable(R.mipmap.client_inactive));
+        feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_inactive));
 
         textViewTasks.setTextColor(getResources().getColor(R.color.colorAccentDark));
         textViewClients.setTextColor(getResources().getColor(R.color.colorAccentDark));

@@ -8,11 +8,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
@@ -157,7 +157,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             }
         });
 
-        TextView createtaskDone = (TextView) findViewById(R.id.textViewDoneHeaderCreatingTask);
+        Button createtaskDone = (Button) findViewById(R.id.textViewDoneHeaderCreatingTask);
 
         if (createtaskDone != null) {
             createtaskDone.setOnClickListener(new View.OnClickListener() {
