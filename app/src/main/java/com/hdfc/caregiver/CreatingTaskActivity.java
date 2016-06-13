@@ -505,6 +505,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                     Date startDate = null, endDate = null;
                                     String strStartDateCopy, strEndDateCopy;
+                                    String strDateNow = "";
                                     Date activityDate = null;
 
                                     try {
@@ -515,6 +516,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                         endDate = utils.convertStringToDate(strEndDateCopy);
                                         startDate = utils.convertStringToDate(strStartDateCopy);
+                                        strDateNow = utils.convertDateToString(dateNow);
 
                                         Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED ");
 
@@ -540,7 +542,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     try {
 
                                         jsonObject.put("created_by", Config.providerModel.getStrProviderId());
-                                        jsonObject.put("time", strDate);
+                                        jsonObject.put("time", strDateNow);
                                         jsonObject.put("user_type", "dependent");
                                         jsonObject.put("user_id", dependentModel.getStrDependentID());
                                         jsonObject.put("activity_id", strInsertedDocumentId);//todo add to care taker

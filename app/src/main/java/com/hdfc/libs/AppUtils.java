@@ -408,7 +408,8 @@ public class AppUtils {
                 if (iFlag == 2) {
                     if (Config.clientModels.size() > 0) {
                         int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
-                        if (iPosition > -1)
+
+                        if (iPosition > -1 && iPosition < Config.customerIdsAdded.size())//todo check
                             Config.clientModels.get(iPosition).setDependentModel(dependentModel);
                     }
 

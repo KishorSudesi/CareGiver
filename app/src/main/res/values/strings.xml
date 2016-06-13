@@ -37,6 +37,7 @@
     <string name="process_login">Authenticating…</string>
     <string name="success_login">Login Success…</string>
     <string name="invalid_credentials">Invalid Credentials</string>
+    <string name="invalid_date">Select a Feature Date</string>
 
     <string name="warning_profile_pic">Profile Picture Needed</string>
     <string name="warning_internet">Please check your internet connection and try again</string>

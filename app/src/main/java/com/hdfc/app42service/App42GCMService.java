@@ -89,7 +89,7 @@ public class App42GCMService extends IntentService {
             if (jsonObject.has("created_by")) {
 
                 String strMessage = jsonObject.getString(App42GCMService.ExtraMessage)
-                        + jsonObject.getString("time");
+                        + " " + jsonObject.getString("time");
                 showNotification(strMessage, intent);
 
             } else {
