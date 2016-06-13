@@ -7,7 +7,7 @@
         android:id="@+id/include_header_my_tasks"
         layout="@layout/header_my_tasks"
         android:layout_width="match_parent"
-        android:layout_height="60dp" />
+        android:layout_height="70dp" />
 
     <LinearLayout
         android:id="@+id/dashboardlinearLayout"

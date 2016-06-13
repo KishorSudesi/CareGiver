@@ -1056,7 +1056,7 @@ public class FeatureActivity extends AppCompatActivity {
 
                 if (strMilestoneStatus.equalsIgnoreCase("opened")
                         || milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("reopened")) {
-                    drawable = getResources().getDrawable(R.mipmap.star_white);
+                    drawable = getResources().getDrawable(R.mipmap.star_grey);
                     drawableBg = getResources().getDrawable(R.drawable.button_orange);
                 }
 

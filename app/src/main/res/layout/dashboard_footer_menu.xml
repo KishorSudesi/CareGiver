@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="96dp"
     android:background="@color/colorWhite"
     android:orientation="vertical">
 
@@ -22,7 +22,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_back_trans"
                 android:padding="@dimen/padding_general"
-                android:src="@mipmap/my_tasks" />
+                android:src="@mipmap/my_task_inactive" />
 
             <ImageView
                 android:id="@+id/buttonClients"
@@ -32,7 +32,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_back_trans"
                 android:padding="@dimen/padding_general"
-                android:src="@mipmap/clients" />
+                android:src="@mipmap/client_inactive" />
 
             <ImageView
                 android:id="@+id/buttonFeedback"
@@ -42,7 +42,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_back_trans"
                 android:padding="@dimen/padding_general"
-                android:src="@mipmap/feedback" />
+                android:src="@mipmap/feedback_inactive" />
 
         </TableRow>
 

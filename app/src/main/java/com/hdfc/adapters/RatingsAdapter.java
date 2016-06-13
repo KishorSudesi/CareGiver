@@ -73,7 +73,7 @@ public class RatingsAdapter extends BaseAdapter {
             viewHolder.feedback.setText(feedBackModel.getStrFeedBackMessage());
 
             if (feedBackModel.getIntFeedBackRating()== 1){
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.mipmap.rate_icon_4));
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.mipmap.rate_icon_2));
             }else if(feedBackModel.getIntFeedBackRating()== 2)
             {
                 viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.smiley_icon));
@@ -82,7 +82,7 @@ public class RatingsAdapter extends BaseAdapter {
             }else if (feedBackModel.getIntFeedBackRating()== 4){
                 viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.rate_icon_2));
             }else {
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.rate_icon_1));
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.smiley_icon));
             }
             File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(feedBackModel.getStrFeedBackBy()));
 
