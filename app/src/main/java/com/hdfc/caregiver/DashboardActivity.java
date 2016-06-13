@@ -403,8 +403,13 @@ public class DashboardActivity extends AppCompatActivity implements
            /* DashboardFragment.strEndDate = utils.convertDateToStringQuery(utils.convertStringToDate(Utils.writeFormatDateDB.format(date) + "T23:59:59.999Z"));
             DashboardFragment.strStartDate = utils.convertDateToStringQuery(utils.convertStringToDate(Utils.writeFormatDateDB.format(date) + "T00:00:00.000Z"));*/
 
-            DashboardFragment.strEndDate = Utils.writeFormatDateDB.format(date) + "T05:29:59.999";
-            DashboardFragment.strStartDate = Utils.writeFormatDateDB.format(date) + "T05:30:00.000Z";
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            Date prevDate = cal.getTime();
+
+            DashboardFragment.strEndDate = Utils.writeFormatDateDB.format(date) + "T05:29:59.999Z";
+            DashboardFragment.strStartDate = Utils.writeFormatDateDB.format(prevDate) + "T05:30:00.000Z";
 
             DashboardFragment.strDate = Utils.writeFormatDate.format(date);
 
