@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/toplayout"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="100dp"
         android:background="@color/blue"
         >
        <!-- <ImageButton
@@ -20,11 +20,10 @@
             android:visibility="visible" />-->
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="120dp"
-            android:layout_alignParentTop="true"
+            android:layout_height="100dp"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/logo"
-            android:foregroundGravity="center"/>
+            android:background="@color/blue"
+            android:src="@drawable/logo1"/>
 
     </RelativeLayout>
 

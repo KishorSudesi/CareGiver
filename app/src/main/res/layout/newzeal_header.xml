@@ -3,12 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="150dp">
 
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="30dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/backarrow"
+        android:onClick="backToSelection"
+        android:textAllCaps="false"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="wrap_content"
-        android:layout_height="130dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
         android:background="@color/blue"
-        android:src="@drawable/logo" />
+        android:src="@drawable/logo1" />
 
 </RelativeLayout>
