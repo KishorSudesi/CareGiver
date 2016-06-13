@@ -3,7 +3,7 @@
     android:id="@+id/layoutLogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/app_bg">
+    android:background="@drawable/app_header">
 
     <include
         android:id="@+id/include"
@@ -11,17 +11,17 @@
         />
 
 
-    <ImageView
-        android:id="@+id/imageBg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY" />
+    <!--  <ImageView
+          android:id="@+id/imageBg"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentRight="true"
+          android:layout_alignParentTop="true"
+          android:adjustViewBounds="true"
+          android:scaleType="fitXY" />-->
 
-    <com.hdfc.views.RoundedImageView
+    <!--<com.hdfc.views.RoundedImageView
         android:id="@+id/imageButtonCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dp"
-        android:background="@mipmap/ic_launcher" />
+        android:background="@mipmap/ic_launcher" />-->
 
     <EditText
         android:id="@+id/editEmail"
@@ -40,8 +40,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="@dimen/edit_text_margin"
         android:layout_marginRight="@dimen/edit_text_margin"
-        android:background="@drawable/edit_text"
-        android:drawableLeft="@drawable/mail_icon"
+        android:drawableLeft="@drawable/mail_icon_32"
         android:drawablePadding="10dp"
         android:ems="10"
         android:hint="@string/email"
@@ -58,7 +57,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:gravity="center_horizontal"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <EditText
             android:id="@+id/editPassword"
@@ -67,8 +66,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:background="@drawable/edit_text"
-            android:drawableLeft="@mipmap/pass_icon"
+            android:drawableLeft="@drawable/password"
             android:drawablePadding="10dp"
             android:ems="10"
             android:hint="@string/hintPwd"

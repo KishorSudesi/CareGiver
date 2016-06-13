@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="100dp"
     android:orientation="vertical">
 
     <Button
@@ -14,28 +14,15 @@
         android:background="@drawable/backarrow"
         android:onClick="backToSelection"
         android:textAllCaps="false"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:background="@color/blue"
         android:src="@drawable/logo1" />
-
-    <TextView
-        android:id="@+id/header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/logo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:layout_weight="2"
-        android:padding="@dimen/text_padding"
-        android:text="@string/welcome"
-        android:textColor="@color/blue"
-        android:textSize="28sp" />
 
 
 </RelativeLayout>

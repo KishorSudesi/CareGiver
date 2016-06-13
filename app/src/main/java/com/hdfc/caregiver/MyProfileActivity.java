@@ -60,7 +60,7 @@ public class MyProfileActivity extends AppCompatActivity {
     ImageView backbutton, edit, imageplace;
     EditText phone, place, name;
     TextView textViewName;
-    Button buttonContinue;
+    Button buttonContinue, buttonBack;
     int Flag = 0;
     private ProgressDialog progressDialog;
 
@@ -68,7 +68,7 @@ public class MyProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_profile);
-        textViewName = (TextView) findViewById(R.id.textCaregiverName);
+        // textViewName = (TextView) findViewById(R.id.textCaregiverName);
         name = (EditText) findViewById(R.id.input_name);
         phone = (EditText) findViewById(R.id.input_mobile);
         place = (EditText) findViewById(R.id.input_place);
@@ -77,7 +77,14 @@ public class MyProfileActivity extends AppCompatActivity {
         email = (TextView) findViewById(R.id.input_email);
         Button signOut = (Button) findViewById(R.id.buttonLogOut);
         buttonContinue = (Button) findViewById(R.id.buttonContinue);
+        buttonBack = (Button) findViewById(R.id.buttonBack);
 
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goBack();
+            }
+        });
 
         //Bundle b = getIntent().getExtras();
         //intWhichScreen = b.getInt("WHICH_SCREEN", Config.intRatingsScreen);
@@ -108,7 +115,7 @@ public class MyProfileActivity extends AppCompatActivity {
             }
         });
 */
-        if (signOut != null) {
+
             signOut.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -130,7 +137,7 @@ public class MyProfileActivity extends AppCompatActivity {
                     builder.show();
                 }
             });
-        }
+
 
         //TODO set in xml
         name.setEnabled(false);
@@ -151,20 +158,20 @@ public class MyProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                textViewName.setError(null);
+                name.setError(null);
                 phone.setError(null);
 
                 boolean cancel = false;
                 View focusView = null;
 
                 if (Flag == 0) {
+                    buttonContinue.setText("Save Settings");
+                    // edit.setImageResource(R.mipmap.done);
 
-                    edit.setImageResource(R.mipmap.done);
-
-                    textViewName.setEnabled(true);
-                    textViewName.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-                    textViewName.setFocusableInTouchMode(true);
-                    textViewName.requestFocus();
+                    name.setEnabled(true);
+                    name.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                    name.setFocusableInTouchMode(true);
+                    name.requestFocus();
 
                     phone.setEnabled(true);
                     phone.setInputType(InputType.TYPE_CLASS_PHONE);
@@ -178,18 +185,19 @@ public class MyProfileActivity extends AppCompatActivity {
 
                 } else if (Flag == 1) {
 
-                    textViewName.setError(null);
+                    buttonContinue.setText("Edit Settings");
+                    name.setError(null);
                     phone.setError(null);
                     place.setError(null);
 
-                    String strName = textViewName.getText().toString().trim();
+                    String strName = name.getText().toString().trim();
                     String strPhone= phone.getText().toString().trim();
                     String strPlace= place.getText().toString().trim();
                     //Toast.makeText(MyProfileActivity.this,"Data updated Successfully",Toast.LENGTH_LONG).show();
 
                     if (TextUtils.isEmpty(strName)) {
-                        textViewName.setError(getString(R.string.error_field_required));
-                        focusView = textViewName;
+                        name.setError(getString(R.string.error_field_required));
+                        focusView = name;
                         cancel = true;
                     }
 
@@ -241,14 +249,14 @@ public class MyProfileActivity extends AppCompatActivity {
 
                                 Config.providerModel.setStrContacts(phone.getText().toString());
                                 Config.providerModel.setStrAddress(place.getText().toString());
-                                Config.providerModel.setStrName(textViewName.getText().toString());
+                                Config.providerModel.setStrName(name.getText().toString());
 
-                                edit.setImageResource(R.mipmap.edit);
+                                // edit.setImageResource(R.mipmap.edit);
                                 Flag = 0;
 
-                                textViewName.setEnabled(false);
-                                textViewName.setFocusableInTouchMode(false);
-                                textViewName.clearFocus();
+                                name.setEnabled(false);
+                                name.setFocusableInTouchMode(false);
+                                name.clearFocus();
 
                                 phone.setEnabled(false);
                                 phone.setFocusableInTouchMode(false);
@@ -282,7 +290,7 @@ public class MyProfileActivity extends AppCompatActivity {
             email.setText(Config.providerModel.getStrEmail());
             phone.setText(Config.providerModel.getStrContacts());
             place.setText(Config.providerModel.getStrAddress());
-            textViewName.setText(Config.providerModel.getStrName());
+            //textViewName.setText(Config.providerModel.getStrName());
             name.setText(Config.providerModel.getStrName());
         }
     }

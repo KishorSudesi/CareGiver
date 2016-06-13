@@ -268,11 +268,11 @@ public class FeatureActivity extends AppCompatActivity {
 
                 iIndex++;
 
-                if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
-                    strActivityStatus = "completed";
-                }
-
                 if (milestoneModel.getiMilestoneId() == iMileStoneId) {
+
+                    if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
+                        strActivityStatus = "completed";
+                    }
 
                     strScheduledDate = "";
 
@@ -1226,6 +1226,8 @@ public class FeatureActivity extends AppCompatActivity {
                                         if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
                                                 || fieldModel.getStrFieldType().equalsIgnoreCase("date")
                                                 || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+
+                                            editText.setCompoundDrawables(getResources().getDrawable(R.drawable.date), null, null, null);
 
                                             //editText.setInputType(InputType.TYPE_CLASS_DATETIME);
 
