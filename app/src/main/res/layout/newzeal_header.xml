@@ -1,38 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/new_blue">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ALWAYS THERE TO TAKE CARE"
-        android:id="@+id/textView4"
-        android:layout_gravity="center_horizontal"
-        android:textColor="#fff"
-        android:layout_below="@+id/imageView4"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="New Zeal"
-        android:id="@+id/textView3"
-        android:layout_gravity="center_horizontal"
-        android:textColor="#fff"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="33dp" />
+    android:layout_height="150dp"
+    android:background="@drawable/app_header_blue">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageView4"
-        android:src="@drawable/ic_launcher"
-        android:layout_alignTop="@+id/textView3"
-        android:layout_alignLeft="@+id/textView4"
-        android:layout_alignStart="@+id/textView4" />
+        android:src="@drawable/logo"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
