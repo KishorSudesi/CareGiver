@@ -89,6 +89,7 @@ public class FeatureActivity extends AppCompatActivity {
     private static RelativeLayout loadingPanel;
     private static boolean bLoad;
     private static boolean bViewLoaded;
+    private static String strActivityStatus = "inprocess";
     private final Context context = this;
     private Utils utils;
     //private ProgressDialog progressDialog;
@@ -254,7 +255,15 @@ public class FeatureActivity extends AppCompatActivity {
 
             Config.activityModels.get(iPosition).clearMilestoneModel();
 
+            int iIndex = 0;
+
             for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
+
+                iIndex++;
+
+                if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
+                    strActivityStatus = "completed";
+                }
 
                 if (milestoneModel.getiMilestoneId() == iMileStoneId) {
 
@@ -824,7 +833,7 @@ public class FeatureActivity extends AppCompatActivity {
 
             jsonObjectMileStone.put("milestones", jsonArrayMilestones);
 
-            jsonObjectMileStone.put("status", "inprocess");
+            jsonObjectMileStone.put("status", strActivityStatus);
 
             updateMileStones(jsonObjectMileStone);
 
