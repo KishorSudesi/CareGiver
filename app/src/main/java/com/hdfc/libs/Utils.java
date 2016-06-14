@@ -677,7 +677,7 @@ public class Utils {
 
             JSONObject jsonObjectProvider = new JSONObject(strDocument);
 
-            if (jsonObjectProvider.has("notification_message")) {
+            if (jsonObjectProvider.has("message")) {
 
                 NotificationModel notificationModel = new NotificationModel(
                         jsonObjectProvider.getString(App42GCMService.ExtraMessage),
