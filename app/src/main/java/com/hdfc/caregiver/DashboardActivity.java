@@ -30,7 +30,6 @@ import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
 import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42API;
-import com.shephertz.app42.paas.sdk.android.imageProcessor.Image;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -47,6 +46,7 @@ public class DashboardActivity extends AppCompatActivity implements
     private static AppUtils appUtils;
     private static Utils utils;
     private static AppCompatActivity appCompatActivity;
+
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

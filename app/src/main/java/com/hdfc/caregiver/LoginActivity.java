@@ -31,22 +31,22 @@ import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
+import com.shephertz.app42.paas.sdk.android.user.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class LoginActivity extends AppCompatActivity {
 
-    public static Utils utils;
+    private static Utils utils;
     private static String userName;
     private static ProgressDialog progressDialog;
     private AppUtils appUtils;
     private RelativeLayout relLayout;
     private EditText editEmail, editPassword,edittextCaptcha,forgotpassUsername;
     private CheckView checkView;
-    private ImageButton reloadCaptcha;
-    private TextView forgotpass;
-    private RelativeLayout layoutLogin;
     private SharedPreferences sharedPreferences;
     private char[] res = new char[4];
     private String email;
@@ -58,10 +58,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         relLayout = (RelativeLayout) findViewById(R.id.relativePass);
-        layoutLogin = (RelativeLayout) findViewById(R.id.layoutLogin);
+        //RelativeLayout layoutLogin = (RelativeLayout) findViewById(R.id.layoutLogin);
         editEmail = (EditText) findViewById(R.id.editEmail);
         editPassword = (EditText) findViewById(R.id.editPassword);
-        forgotpass = (TextView)findViewById(R.id.id_forgot);
+        TextView forgotpass = (TextView) findViewById(R.id.id_forgot);
         utils = new Utils(LoginActivity.this);
         appUtils = new AppUtils(LoginActivity.this);
 
@@ -107,12 +107,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });*/
 
-        forgotpass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showForgotPassword();
-            }
-        });
+        if (forgotpass != null) {
+            forgotpass.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showForgotPassword();
+                }
+            });
+        }
 
         CrashLogger.getInstance().init(LoginActivity.this);
 
@@ -129,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
         edittextCaptcha = (EditText)dialogView.findViewById(R.id.editTextCaptcha);
         forgotpassUsername = (EditText)dialogView.findViewById(R.id.editTextUserName);
         checkView = (CheckView) dialogView.findViewById(R.id.checkview2);
-        reloadCaptcha = (ImageButton) dialogView.findViewById(R.id.reloadCaptcha);
+        ImageButton reloadCaptcha = (ImageButton) dialogView.findViewById(R.id.reloadCaptcha);
 
         res = checkView.getValidataAndSetImage();
 
@@ -194,21 +196,30 @@ public class LoginActivity extends AppCompatActivity {
             userService.resetUserPassword(userEmail, new App42CallBack() {
                 @Override
                 public void onSuccess(Object o) {
-                    progressDialog.dismiss();
-                    utils.toast(1, 1, "New password has been sent to your E-mail id");
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
+                    if (o != null) {
+                        utils.toast(1, 1, getString(R.string.resetted_password));
+                    } else {
+                        utils.toast(1, 1, getString(R.string.warning_internet));
+                    }
                 }
 
                 @Override
                 public void onException(Exception e) {
-                    progressDialog.dismiss();
-                    try {
-                        JSONObject jsonObject = new JSONObject(e.getMessage());
-                        JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
-                        String strMess = jsonObjectError.getString("details");
-
-                        utils.toast(2, 2, strMess);
-                    } catch (JSONException e1) {
-                        e1.printStackTrace();
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
+                    if (e != null) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(e.getMessage());
+                            JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
+                            String strMess = jsonObjectError.getString("details");
+                            utils.toast(2, 2, strMess);
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    } else {
+                        utils.toast(1, 1, getString(R.string.warning_internet));
                     }
                 }
             });
@@ -292,74 +303,81 @@ public class LoginActivity extends AppCompatActivity {
                         progressDialog.show();
                     }
 
-                    UserService userService = new UserService(LoginActivity.this);
+                    verifyLogin(password);
 
-                    userService.authenticate(userName, password, new App42CallBack() {
-                        @Override
-                        public void onSuccess(Object o) {
-
-                            if(o != null){
-
-                                Config.dependentIds.clear();
-                                Config.strActivityIds.clear();
-                                Config.customerIds.clear();
-
-                                Config.dependentIdsAdded.clear();
-                                Config.customerIdsAdded.clear();
-
-                                Config.feedBackModels.clear();
-                                //Config.fileModels.clear();
-                                CareGiver.dbCon.deleteFiles();
-
-                                Config.activityModels.clear();
-                                Config.customerModels.clear();
-                                Config.dependentModels.clear();
-                                Config.clientModels.clear();
-
-                                /*User user = (User)o;
-
-                                ArrayList<String> roleList = user.getRoleList();*/
-
-                                //todo check rolelist
-                                //roleList.size()>0 && roleList.get(0).equalsIgnoreCase("provider")
-                                if (true) {
-                                    fetchProviders(progressDialog, userName);
-                                } else {
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
-                                    utils.toast(2, 2, getString(R.string.invalid_credentials));
-                                }
-
-                            }else {
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
-                                utils.toast(2, 2, getString(R.string.warning_internet));
-                            }
-                        }
-
-                        @Override
-                        public void onException(Exception e) {
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
-                            try {
-                                if (e != null) {
-                                    JSONObject jsonObject = new JSONObject(e.getMessage());
-                                    JSONObject jsonObjectError = jsonObject.
-                                            getJSONObject("app42Fault");
-                                    String strMess = jsonObjectError.getString("details");
-
-                                    utils.toast(2, 2, strMess);
-                                } else
-                                    utils.toast(2, 2, getString(R.string.warning_internet));
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                                utils.toast(2, 2, getString(R.string.warning_internet));
-                            }
-                        }
-                    });
                 } else utils.toast(2, 2, getString(R.string.warning_internet));
             }
         } //
+    }
+
+    private void verifyLogin(String strPassword) {
+        UserService userService = new UserService(LoginActivity.this);
+
+        userService.authenticate(userName, strPassword, new App42CallBack() {
+            @Override
+            public void onSuccess(Object o) {
+
+                if (o != null) {
+
+                    Config.dependentIds.clear();
+                    Config.strActivityIds.clear();
+                    Config.customerIds.clear();
+
+                    Config.dependentIdsAdded.clear();
+                    Config.customerIdsAdded.clear();
+
+                    Config.feedBackModels.clear();
+                    //Config.fileModels.clear();
+                    CareGiver.dbCon.deleteFiles();
+
+                    Config.activityModels.clear();
+                    Config.customerModels.clear();
+                    Config.dependentModels.clear();
+                    Config.clientModels.clear();
+
+                    User user = (User) o;
+
+                    ArrayList<String> roleList = user.getRoleList();
+
+                    Utils.log(String.valueOf(roleList.size()), " ROLES ");
+
+                    //todo check rolelist
+                    //roleList.size()>0 && roleList.get(0).equalsIgnoreCase("provider")
+                    if (true) {
+                        fetchProviders(progressDialog, userName);
+                    } else {
+                        if (progressDialog.isShowing())
+                            progressDialog.dismiss();
+                        utils.toast(2, 2, getString(R.string.invalid_credentials));
+                    }
+
+                } else {
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
+                    utils.toast(2, 2, getString(R.string.warning_internet));
+                }
+            }
+
+            @Override
+            public void onException(Exception e) {
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
+                try {
+                    if (e != null) {
+                        JSONObject jsonObject = new JSONObject(e.getMessage());
+                        JSONObject jsonObjectError = jsonObject.
+                                getJSONObject("app42Fault");
+                        String strMess = jsonObjectError.getString("details");
+
+                        utils.toast(2, 2, strMess);
+                    } else
+                        utils.toast(2, 2, getString(R.string.warning_internet));
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                    utils.toast(2, 2, getString(R.string.warning_internet));
+                }
+            }
+        });
     }
 
     private void fetchProviders(final ProgressDialog progressDialog, final String strUserName) {
@@ -440,7 +458,7 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra("LOAD", true);
         Config.intSelectedMenu = Config.intDashboardScreen;
         startActivity(intent);
-        //((Activity) _ctxt).finish();
+        finish();
     }
 
 

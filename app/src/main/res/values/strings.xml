@@ -18,9 +18,7 @@
     <string name="feedback">Feedback</string>
     <string name="clients">Clients</string>
     <string name="clientdetails">Client Details</string>
-
     <string name="welcome">Welcome</string>
-
     <string name="email">Email</string>
     <string name="take_me_in">Take Me In</string>
     <string name="password">Password</string>
@@ -112,10 +110,8 @@
     <string name="new_text">New</string>
 
     <!--Info/App Specific Strings-->
-
     <string name="enter_captcha">Valid Captcha required</string>
     <string name="verify_identity_password">Verifying…</string>
-
     <string name="your_details_saved">Your Details Saved</string>
     <string name="dependents">Dependents</string>
     <string name="search_contacts">Search from Contacts</string>
@@ -150,7 +146,8 @@
     <string name="activities">Activities</string>
     <string name="tasks">Tasks</string>
     <string name="hyphen">-</string>
-    <string name="scheduled_to"></string>
+    <string name="scheduled_to">Scheduled To</string>
+    <string name="resetted_password">New password has been sent to your E-mail id</string>
 
     <!--Mislestone Related-->
     <string name="medicine_name">Medicine Name</string>
