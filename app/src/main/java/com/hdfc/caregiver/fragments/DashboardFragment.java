@@ -19,7 +19,6 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.Utils;
 
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -46,27 +45,11 @@ public class DashboardFragment extends Fragment {
 
             strDate = Utils.writeFormatDateDB.format(date);
 
-            /*strEndDate = Utils.readFormat.format(strDate + "T23:59:59.999Z");
-            strStartDate = Utils.readFormat.format(strDate + "T00:00:00.000Z");*/
-
-            //strEndDate = utils.convertDateToStringQuery(utils.convertStringToDate(strDate + "TT05:29:59.999Z"));//23:59:59.999
-            //strStartDate = utils.convertDateToStringQuery(utils.convertStringToDate(strDate + "T00:00:00.000Z"));
-
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            cal.add(Calendar.DAY_OF_MONTH, -1);
-            Date prevDate = cal.getTime();
-
-            strEndDate = strDate + "T05:29:59.999Z";
-            strStartDate = Utils.writeFormatDateDB.format(prevDate) + "T05:30:00.000Z";
-
-
-            //String _strDate = Utils.writeFormatDateDB.format(date);
+            strEndDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T23:59:59.999"));
+            strStartDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T00:00:00.000"));
 
             textView.setText(Utils.writeFormatDate.format(date));
 
-
-            //
             if (utils.isConnectingToInternet()) {
 
                 DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);

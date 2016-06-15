@@ -40,7 +40,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="@dimen/edit_text_margin"
         android:layout_marginRight="@dimen/edit_text_margin"
-        android:drawableLeft="@drawable/mail_icon_32"
+        android:drawableLeft="@drawable/email"
         android:drawablePadding="10dp"
         android:ems="10"
         android:hint="@string/email"

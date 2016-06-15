@@ -75,7 +75,7 @@
             android:id="@+id/input_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/clientname"
+            android:drawableLeft="@drawable/client_name"
             android:drawablePadding="@dimen/activity_horizontal_margin"
             android:hint="Name of Service Giver"
             android:paddingLeft="@dimen/activity_horizontal_margin" />

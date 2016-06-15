@@ -224,19 +224,19 @@ public class MileStoneFragment extends Fragment implements SlideAndDragListView.
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
-                .setIcon(getResources().getDrawable(R.mipmap.map))
+                .setIcon(getResources().getDrawable(R.mipmap.location_action))
                 .build());
 
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
-                .setIcon(getResources().getDrawable(R.mipmap.message))
+                .setIcon(getResources().getDrawable(R.mipmap.message_action))
                 .build());
 
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
-                .setIcon(getResources().getDrawable(R.mipmap.call1))
+                .setIcon(getResources().getDrawable(R.mipmap.call_action))
                 .build());
 
        /* mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)

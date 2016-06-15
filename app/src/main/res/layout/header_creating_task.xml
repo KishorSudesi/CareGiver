@@ -26,8 +26,7 @@
         android:layout_gravity="start|center"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_weight="0.2"
-        android:src="@mipmap/arrow_left" />
+        android:layout_weight="0.2" />
 
     <TextView
         android:id="@+id/textViewHeaderCreatingTask"
