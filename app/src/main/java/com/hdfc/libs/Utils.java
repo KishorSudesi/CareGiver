@@ -68,6 +68,8 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// import android.app.NotificationManager;
+
 
 /**
  * Created by balamurugan@adstringo.in on 23-12-2015.
@@ -677,7 +679,7 @@ public class Utils {
 
             JSONObject jsonObjectProvider = new JSONObject(strDocument);
 
-            if (jsonObjectProvider.has("message")) {
+            if (jsonObjectProvider.has(App42GCMService.ExtraMessage)) {
 
                 NotificationModel notificationModel = new NotificationModel(
                         jsonObjectProvider.getString(App42GCMService.ExtraMessage),
