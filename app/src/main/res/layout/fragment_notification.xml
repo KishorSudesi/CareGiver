@@ -6,10 +6,10 @@
     android:orientation="vertical">
 
     <include
-    android:id="@+id/header"
-    layout="@layout/header_common">
+        android:id="@+id/header"
+        layout="@layout/header_common">
 
-</include>
+    </include>
     <ListView
         android:id="@+id/listViewActivity"
         android:layout_width="match_parent"

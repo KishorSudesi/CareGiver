@@ -31,12 +31,12 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(path: ':slideDateTimePicker')
     apt 'com.github.hotchemi:permissionsdispatcher-processor:2.0.7'
+
     compile 'com.yydcdut.sdlv:sdlv:0.4.1@aar'
     compile 'com.scottyab:aescrypt:0.0.1'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:support-v4:23.4.0'
-    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:appcompat-v7:24.0.0-alpha2'
+    compile 'com.android.support:support-v4:24.0.0-alpha2'
+    compile 'com.android.support:design:24.0.0-alpha2'
     compile 'com.google.android.gms:play-services-gcm:9.0.2'
     compile 'com.github.hotchemi:permissionsdispatcher:2.0.7'
-
 }

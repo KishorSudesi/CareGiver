@@ -1,6 +1,12 @@
 package com.hdfc.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,13 +89,37 @@ public class NotificationAdapter extends BaseAdapter {
             String strId = adapterNotificationModels.get(position).getStrCreatedByID();
 
             String strName = "", strMess = "";
+          //  String readMore = " READ MORE..";
+
+            TextView textReadMore = (TextView)convertView.findViewById(R.id.textReadMore);
 
             strMess = adapterNotificationModels.get(position).getStrMessage();
 
-            if (strMess.length() > 120)
-                strMess = strMess.substring(0, 118) + "..";
+            final String strMessage = strMess;
 
+            if (strMess.length() > 90) {
+                strMess = strMess.substring(0, 90);
+                textReadMore.setVisibility(View.VISIBLE);
+            }else {
+                textReadMore.setVisibility(View.INVISIBLE);
+                textReadMore.setEnabled(false);
+            }
             viewHolder.textViewText.setText(strMess);
+
+            textReadMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+                    builder.setTitle("Notification");
+                    builder.setMessage(strMessage);
+                    builder.setPositiveButton(_context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    builder.show();
+                }
+            });
 
             if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("provider")) {
                 strName = Config.providerModel.getStrName();

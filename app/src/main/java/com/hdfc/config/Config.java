@@ -60,7 +60,8 @@ public class Config {
     //Login specific //User Specific clear at logout or whenever needed
     public final static String strCustomerImageName = "provider_image";
     public static int intClientScreen = 2;
-    public static int intRatingsScreen = 3;
+    public static int intRatingsScreen = 4;
+    public static int intNotificationScreen = 3;
     public static int intDashboardScreen = 1;
     public static int intMileStoneScreen = 4;
     public static int intScreenWidth = 0;

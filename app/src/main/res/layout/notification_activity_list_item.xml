@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/activityList"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="75dp"
         android:layout_gravity="center_horizontal"
         android:background="@color/colorWhite"
         android:orientation="horizontal">
@@ -16,7 +16,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/border_right_blue">
 
             <ImageView
                 android:id="@+id/roundedImageView"
@@ -24,6 +25,7 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/margin_general"
+                android:background="@mipmap/ic_launcher"
                 android:padding="@dimen/padding_general" />
 
         </LinearLayout>
@@ -39,7 +41,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:paddingLeft="13dp"
+                android:textStyle="bold"
                 android:textColor="#333333" />
+
+            <TextView
+                android:id="@+id/textReadMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="13dp"
+                android:text="@string/read_more"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimaryDark"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -52,6 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="13dp"
+                    android:textStyle="bold"
                     android:textColor="@color/colorPrimaryDark" />
 
                 <TextView
@@ -59,7 +73,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
-                    android:textColor="#333333" />
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    />
 
             </LinearLayout>
 
