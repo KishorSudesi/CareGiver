@@ -683,6 +683,9 @@ public class Utils {
                         jsonObjectProvider.getString("user_id"),
                         jsonObjectProvider.getString("created_by"), strDocumentId);
 
+                if(jsonObjectProvider.has("activity_id"))
+                    notificationModel.setStrActivityId(jsonObjectProvider.getString("activity_id"));
+
                 if (jsonObjectProvider.getString("created_by_type").equalsIgnoreCase("customer")) {
                     if (!Config.customerIdsAdded.contains(jsonObjectProvider.getString("created_by")))
                         Config.customerIds.add(jsonObjectProvider.getString("created_by"));

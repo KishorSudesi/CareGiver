@@ -2,54 +2,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="@drawable/app_header">
 
+        <include
+            android:id="@+id/header"
+            layout="@layout/header_login"
+            />
         <RelativeLayout
-            android:id="@+id/toplayout"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@color/blue">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_centerHorizontal="true"
-                android:background="@color/blue"
-                android:src="@drawable/logo1" />
-
-        </RelativeLayout>
+            android:layout_height="match_parent"
+            >
 
 
         <TextView
             android:id="@+id/textViewFeedback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toplayout"
             android:layout_centerHorizontal="true"
             android:padding="10dp"
             android:text="@string/feedback"
             android:textColor="@color/colorPrimary"
             android:textSize="24sp" />
 
-        <ImageButton
-            android:id="@+id/notificationButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/toplayout"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/desktop_notification" />
-
         <Button
             android:id="@+id/buttonlogout"
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/toplayout"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/account_type"
@@ -129,6 +112,6 @@
         </ListView>
 
     </RelativeLayout>
-
+    </LinearLayout>
 
 </FrameLayout>

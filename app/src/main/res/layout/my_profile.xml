@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,8 +11,17 @@
             android:id="@+id/header"
             layout="@layout/header_common"
             android:layout_width="match_parent"
-            android:layout_height="100dp"></include>
+            android:layout_height="100dp">
+        </include>
 
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,6 +48,7 @@
             android:padding="1dp" />
     </RelativeLayout>
 
+
     <LinearLayout
         android:id="@+id/linearLayoutRatings"
         android:layout_width="match_parent"
@@ -65,6 +73,24 @@
     </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
+        android:id="@+id/input_layout_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="7dp">
+
+        <EditText
+            android:id="@+id/input_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/email"
+            android:drawablePadding="@dimen/activity_horizontal_margin"
+            android:hint="Email of Service Giver"
+            android:paddingLeft="@dimen/activity_horizontal_margin" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
         android:id="@+id/input_layout_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,24 +108,7 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_layout_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="7dp">
 
-        <EditText
-            android:id="@+id/input_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/email"
-            android:drawablePadding="@dimen/activity_horizontal_margin"
-            android:editable="false"
-            android:hint="Email of Service Giver"
-            android:paddingLeft="@dimen/activity_horizontal_margin" />
-
-    </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/input_layout_place"
@@ -166,6 +175,7 @@
         android:text="Log Out"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
-</ScrollView>

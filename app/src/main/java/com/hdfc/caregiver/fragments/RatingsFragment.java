@@ -75,15 +75,6 @@ public class RatingsFragment extends Fragment {
         textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
         Button logout = (Button) view.findViewById(R.id.buttonlogout);
 
-        ImageButton notification = (ImageButton)view.findViewById(R.id.notificationButton);
-        notification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), NotificationActivity.class);
-                startActivity(intent);
-            }
-        });
-
         layout = (LinearLayout) view.findViewById(R.id.linearLayoutRatings);
 
         imageProfilePic = (RoundedImageView)view.findViewById(R.id.img);

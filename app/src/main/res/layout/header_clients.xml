@@ -15,7 +15,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="15dp"
         android:layout_weight="2"
-     android:layout_below="@+id/include_header_clients"
+        android:layout_below="@+id/include_header_clients"
         android:padding="@dimen/text_padding"
         android:text="@string/clients"
         android:textColor="@color/new_blue"

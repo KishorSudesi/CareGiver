@@ -2,6 +2,7 @@ package com.hdfc.caregiver.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,12 +17,16 @@ import android.widget.TextView;
 
 import com.hdfc.adapters.NotificationAdapter;
 import com.hdfc.app42service.StorageService;
+import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
+import com.hdfc.models.ActivityModel;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -69,6 +74,7 @@ public class NotificationFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                findActivities(Config.notificationModels.get(position).getStrActivityId());
             }
         });
 
@@ -166,4 +172,76 @@ public class NotificationFragment extends Fragment {
         notificationAdapter.notifyDataSetChanged();
     }
 
+    public void findActivities(String strActivityId){
+
+      //  System.out.println("Here is activity id : "+strActivityId);
+
+        int iPosition = Config.strActivityIds.indexOf(strActivityId);
+        /*for(int i =0 ; i<Config.strActivityIds.size(); i++) {
+            System.out.println("Rushikesh Mohan Belavalekar : " + Config.strActivityIds);
+        }*/
+
+        //System.out.println("Here is positin : "+iPosition);
+
+        ActivityModel activityModel;
+
+        if(iPosition>-1) {
+            activityModel = Config.activityModels.get(iPosition);
+
+            Bundle args = new Bundle();
+            //
+            Intent intent = new Intent(getActivity(), FeatureActivity.class);
+            args.putSerializable("ACTIVITY", activityModel);
+            intent.putExtras(args);
+            startActivity(intent);
+        }else {
+            /*StorageService storageService = new StorageService(getContext());
+
+            storageService.findDocsByKeyValue(Config.collectionNotification, "activity_id",
+                    Config.activityModels.get(iPosition).getStrActivityID(), new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                        @Override
+                        public void onDocumentInserted(Storage response) {
+
+                        }
+
+                        @Override
+                        public void onUpdateDocSuccess(Storage response) {
+
+                        }
+
+                        @Override
+                        public void onFindDocSuccess(Storage storage) throws JSONException {
+
+                            if (storage != null) {
+
+                                if (storage.getJsonDocList().size() > 0) {
+
+                                    ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
+
+                               *//* for (int i = 0; i < jsonDocList.size(); i++) {
+                                    utils.createNotificationModel(jsonDocList.get(i).getDocId(), jsonDocList.get(i).getJsonDoc());
+
+
+                                }*//*
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onInsertionFailed(App42Exception ex) {
+
+                        }
+
+                        @Override
+                        public void onFindDocFailed(App42Exception ex) {
+
+                        }
+
+                        @Override
+                        public void onUpdateDocFailed(App42Exception ex) {
+
+                        }
+                    });*/
+        }
+    }
 }

@@ -4,7 +4,7 @@
     android:layout_height="100dp"
     android:background="@color/blue">
 
-    <ImageButton
+    <Button
         android:id="@+id/button1Back"
         android:layout_width="30dp"
         android:layout_height="25dp"

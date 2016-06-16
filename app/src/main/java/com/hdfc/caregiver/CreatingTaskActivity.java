@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
@@ -56,6 +58,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private AppUtils appUtils;
     private EditText editTextTitle, dateAnd;
     private JSONObject jsonObject;
+    Button back;
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
@@ -91,15 +94,14 @@ public class CreatingTaskActivity extends AppCompatActivity {
         dependentlist = (Spinner) findViewById(R.id.spindependentList);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
-        Button back = (Button) findViewById(R.id.buttonBack);
-        if (back != null) {
-            back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    goBack();
-                }
-            });
-        }
+        back = (Button) findViewById(R.id.button1Back);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goBack();
+            }
+        });
 
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);
@@ -122,7 +124,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         });
 
 
-      /*  ImageView backImage = (ImageView) findViewById(R.id.buttonBack);
+        Button backImage = (Button) findViewById(R.id.buttonBack);
         if (backImage != null) {
             backImage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -130,7 +132,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     goBack();
                 }
             });
-        }*/
+        }
 
         dateAnd.setOnClickListener(new View.OnClickListener() {
             @Override

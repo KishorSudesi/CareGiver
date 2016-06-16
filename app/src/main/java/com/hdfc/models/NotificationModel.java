@@ -9,6 +9,7 @@ public class NotificationModel {
     private String strDateTime = "";
     private String strUserType;
     private String strCreatedByType;
+    private String strActivityId;
 
     private String strUserID;
     private String strCreatedByID;
@@ -24,6 +25,14 @@ public class NotificationModel {
         this.strUserID = strUserID;
         this.strCreatedByID = strCreatedByID;
         this.strNotificationID = strNotificationID;
+    }
+
+    public String getStrActivityId() {
+        return strActivityId;
+    }
+
+    public void setStrActivityId(String strActivityId) {
+        this.strActivityId = strActivityId;
     }
 
     public String getStrMessage() {
