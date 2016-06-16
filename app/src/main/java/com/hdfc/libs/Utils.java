@@ -76,25 +76,20 @@ import java.util.regex.Pattern;
  */
 public class Utils {
 
-    public static final Locale locale = Locale.ENGLISH;
+    private static final Locale locale = Locale.ENGLISH;
 
     public final static SimpleDateFormat readFormat =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale);
-
-    public final static SimpleDateFormat queryFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
-
     public final static SimpleDateFormat writeFormat = new
             SimpleDateFormat("kk:mm dd MMM yyyy", locale);
-
     public final static SimpleDateFormat writeFormatDate = new
             SimpleDateFormat("dd-MMM-yyyy", locale);
-
     public final static SimpleDateFormat writeFormatDateDB = new
             SimpleDateFormat("yyyy-MM-dd", locale);
-
     public final static SimpleDateFormat writeFormatTime = new
             SimpleDateFormat("kk:mm", locale); // aa
+    private final static SimpleDateFormat queryFormat =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
 
   /*  public final static SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd", Config.locale);*/
@@ -102,7 +97,6 @@ public class Utils {
    /* public final static SimpleDateFormat readFormatDate =
             new SimpleDateFormat("yyyy-MM-dd", Config.locale);
 */
-
     public static Uri customerImageUri;
     private static Context _ctxt;
 

@@ -1047,7 +1047,9 @@ public class FeatureActivity extends AppCompatActivity {
 
             final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.milestoneLayout);
 
-            linearLayout.removeAllViews();
+            if (linearLayout != null) {
+                linearLayout.removeAllViews();
+            }
 
             Drawable drawable = null;
 
@@ -1236,7 +1238,7 @@ public class FeatureActivity extends AppCompatActivity {
                                                 || fieldModel.getStrFieldType().equalsIgnoreCase("date")
                                                 || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
 
-                                            editText.setCompoundDrawables(getResources().getDrawable(R.drawable.date), null, null, null);
+                                            editText.setCompoundDrawables(getResources().getDrawable(R.drawable.calender_date_picked), null, null, null);
 
                                             //editText.setInputType(InputType.TYPE_CLASS_DATETIME);
 

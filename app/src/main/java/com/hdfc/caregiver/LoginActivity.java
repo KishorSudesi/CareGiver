@@ -10,11 +10,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hdfc.app42service.StorageService;
@@ -44,12 +41,13 @@ public class LoginActivity extends AppCompatActivity {
     private static String userName;
     private static ProgressDialog progressDialog;
     private AppUtils appUtils;
-    private RelativeLayout relLayout;
+    //private RelativeLayout relLayout;
     private EditText editEmail, editPassword,edittextCaptcha,forgotpassUsername;
     private CheckView checkView;
     private SharedPreferences sharedPreferences;
     private char[] res = new char[4];
     private String email;
+    private AlertDialog alertdialog;
 
 
     @Override
@@ -57,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        relLayout = (RelativeLayout) findViewById(R.id.relativePass);
+        //relLayout = (RelativeLayout) findViewById(R.id.relativePass);
         //RelativeLayout layoutLogin = (RelativeLayout) findViewById(R.id.layoutLogin);
         editEmail = (EditText) findViewById(R.id.editEmail);
         editPassword = (EditText) findViewById(R.id.editPassword);
@@ -86,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         editEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPasswordfield();
+                //showPasswordfield();
             }
         });
 
@@ -143,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Create the dialog (without showing)
-        final AlertDialog alertdialog = new AlertDialog.Builder(this).setTitle("Forgot Password?")
+        alertdialog = new AlertDialog.Builder(this).setTitle("Forgot Password?")
                 .setPositiveButton("OK", null)
                 .setNegativeButton("CANCEL", null).setView(dialogView).create();
 
@@ -174,9 +172,7 @@ public class LoginActivity extends AppCompatActivity {
                     utils.toast(2, 2, getString(R.string.enter_captcha));
 
                 } else {
-
                     resetPassword(email);
-                    alertdialog.dismiss();
                 }
             }
         });
@@ -190,46 +186,52 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            UserService userService = new UserService(LoginActivity.this);
-
-
-            userService.resetUserPassword(userEmail, new App42CallBack() {
-                @Override
-                public void onSuccess(Object o) {
-                    if (progressDialog.isShowing())
-                        progressDialog.dismiss();
-                    if (o != null) {
-                        utils.toast(1, 1, getString(R.string.resetted_password));
-                    } else {
-                        utils.toast(1, 1, getString(R.string.warning_internet));
-                    }
-                }
-
-                @Override
-                public void onException(Exception e) {
-                    if (progressDialog.isShowing())
-                        progressDialog.dismiss();
-                    if (e != null) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(e.getMessage());
-                            JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
-                            String strMess = jsonObjectError.getString("details");
-                            utils.toast(2, 2, strMess);
-                        } catch (JSONException e1) {
-                            e1.printStackTrace();
-                        }
-                    } else {
-                        utils.toast(1, 1, getString(R.string.warning_internet));
-                    }
-                }
-            });
+            fetchProviders(progressDialog, userEmail, 2);
 
         } else utils.toast(2, 2, getString(R.string.warning_internet));
 
     }
 
+    private void resetPasswordApp42(String userEmail) {
 
-    private void showPasswordfield() {
+        UserService userService = new UserService(LoginActivity.this);
+
+        userService.resetUserPassword(userEmail, new App42CallBack() {
+            @Override
+            public void onSuccess(Object o) {
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
+                if (o != null) {
+                    alertdialog.dismiss();
+
+                    utils.toast(1, 1, getString(R.string.resetted_password));
+                } else {
+                    utils.toast(1, 1, getString(R.string.warning_internet));
+                }
+            }
+
+            @Override
+            public void onException(Exception e) {
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
+                if (e != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(e.getMessage());
+                        JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
+                        String strMess = jsonObjectError.getString("details");
+                        utils.toast(2, 2, strMess);
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                } else {
+                    utils.toast(1, 1, getString(R.string.warning_internet));
+                }
+            }
+        });
+    }
+
+
+    /*private void showPasswordfield() {
         if (relLayout.getVisibility() == View.GONE) {
             relLayout.setVisibility(View.VISIBLE);
             try {
@@ -246,7 +248,7 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -263,12 +265,12 @@ public class LoginActivity extends AppCompatActivity {
 
     public void validateLogin(View v) {
 
-        showPasswordfield();
+        //showPasswordfield();
 
      /*   utils.setEditTextDrawable(editEmail, getResources().getDrawable(R.drawable.edit_text));
         utils.setEditTextDrawable(editPassword, getResources().getDrawable(R.drawable.edit_text));*/
 
-        if (relLayout.getVisibility() == View.VISIBLE) {
+        //if (relLayout.getVisibility() == View.VISIBLE) {
 
             editEmail.setError(null);
             editPassword.setError(null);
@@ -307,7 +309,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 } else utils.toast(2, 2, getString(R.string.warning_internet));
             }
-        } //
+        //} //
     }
 
     private void verifyLogin(String strPassword) {
@@ -344,7 +346,7 @@ public class LoginActivity extends AppCompatActivity {
                     //todo check rolelist
                     //roleList.size()>0 && roleList.get(0).equalsIgnoreCase("provider")
                     if (true) {
-                        fetchProviders(progressDialog, userName);
+                        fetchProviders(progressDialog, userName, 1);
                     } else {
                         if (progressDialog.isShowing())
                             progressDialog.dismiss();
@@ -380,13 +382,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchProviders(final ProgressDialog progressDialog, final String strUserName) {
+    private void fetchProviders(final ProgressDialog progressDialog, final String strUserName, final int iFlag) {
 
         if (utils.isConnectingToInternet()) {
 
             StorageService storageService = new StorageService(LoginActivity.this);
 
-            Query q1 = QueryBuilder.build("provider_email", strUserName, QueryBuilder.
+            Query q1 = QueryBuilder.build("provider_email", strUserName.toLowerCase(), QueryBuilder.
                     Operator.EQUALS);
 
             storageService.findDocsByQueryOrderBy(Config.collectionProvider, q1, 1, 0,
@@ -394,11 +396,12 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Object o) {
                             try {
-                                if (o != null) {
 
                                     Storage storage = (Storage) o;
 
-                                    if (storage.getJsonDocList().size() > 0) {
+                                if (storage.isResponseSuccess() && storage.getJsonDocList().size() > 0) {
+
+                                    if (iFlag == 1) {
 
                                         Storage.JSONDocument jsonDocument = storage.getJsonDocList().
                                                 get(0);
@@ -412,22 +415,24 @@ public class LoginActivity extends AppCompatActivity {
                                         appUtils.createProviderModel(strDocument, _strProviderId);
                                         //Config.providerModel.setStrProviderId(_strProviderId);
                                         goToDashboard();
+                                    } else {
+                                        resetPasswordApp42(strUserName);
+                                    }
 
                                     } else {
                                         if (progressDialog.isShowing())
                                             progressDialog.dismiss();
-                                        utils.toast(2, 2, getString(R.string.invalid_credentials));
-                                    }
 
-                                } else {
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
-                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                    if (iFlag == 1)
+                                        utils.toast(2, 2, getString(R.string.invalid_credentials));
+                                    else
+                                        utils.toast(2, 2, getString(R.string.error_invalid_email));
                                 }
                             } catch (Exception e1) {
                                 e1.printStackTrace();
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
+                                utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                         }
 
@@ -438,7 +443,10 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 if (e != null) {
                                     Utils.log(e.getMessage(), " Failure ");
-                                    utils.toast(2, 2, getString(R.string.invalid_credentials));
+                                    if (iFlag == 1)
+                                        utils.toast(2, 2, getString(R.string.invalid_credentials));
+                                    else
+                                        utils.toast(2, 2, getString(R.string.error_invalid_email));
                                 } else {
                                     utils.toast(2, 2, getString(R.string.warning_internet));
                                 }

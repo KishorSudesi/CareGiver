@@ -32,6 +32,7 @@ public class ActivityModel implements Serializable {
     private String strActivityProviderStatus;
 
     private boolean bActivityOverdue;
+    private int iActivityDisplayFlag;
 
     private ArrayList<ImageModel> imageModels = new ArrayList<>();
     private ArrayList<VideoModel> videoModels = new ArrayList<>();
@@ -66,6 +67,14 @@ public class ActivityModel implements Serializable {
         this.imageModels = imageModels;
         this.videoModels = videoModels;
         this.feedBackModels = feedBackModels;
+    }
+
+    public int getiActivityDisplayFlag() {
+        return iActivityDisplayFlag;
+    }
+
+    public void setiActivityDisplayFlag(int iActivityDisplayFlag) {
+        this.iActivityDisplayFlag = iActivityDisplayFlag;
     }
 
     public String getStrActivityProviderMessage() {

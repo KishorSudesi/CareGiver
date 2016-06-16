@@ -82,6 +82,8 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
 
                 ActivityModel activityModel = activityModels.get(position);
 
+                int iDisplayFlag = activityModel.getiActivityDisplayFlag();
+
                 String strMessage = activityModel.getStrActivityDesc();
 
                 if (strMessage != null && strMessage.length() > 20)

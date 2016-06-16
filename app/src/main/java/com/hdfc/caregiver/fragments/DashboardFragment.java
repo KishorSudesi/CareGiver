@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,7 +29,7 @@ public class DashboardFragment extends Fragment {
 
     public static String strDate;
     public static String strStartDate, strEndDate;
-    private Button buttonActivity, buttonTask;
+    //private Button buttonActivity, buttonTask;
     private TextView textView;
     private Utils utils;
     private AppUtils appUtils;
@@ -116,14 +115,14 @@ public class DashboardFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
-
+/*
         buttonActivity = (Button) view.findViewById(R.id.buttonActivity);
-        buttonTask = (Button) view.findViewById(R.id.buttonTask);
+        buttonTask = (Button) view.findViewById(R.id.buttonTask);*/
 
         appUtils = new AppUtils(getActivity());
         utils = new Utils(getActivity());
 
-        buttonActivity.setOnClickListener(new View.OnClickListener() {
+      /*  buttonActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buttonClicked(0);
@@ -135,7 +134,7 @@ public class DashboardFragment extends Fragment {
             public void onClick(View v) {
                 buttonClicked(1);
             }
-        });
+        });*/
 
         textView = (TextView) view.findViewById(R.id.textViewDate);
         ImageView calender = (ImageView) view.findViewById(R.id.calendar);
@@ -178,15 +177,15 @@ public class DashboardFragment extends Fragment {
 
         try {
 
-            buttonActivity.setBackgroundResource(R.drawable.button_back_trans);
-            buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorAccentDark));
+          /*  buttonActivity.setBackgroundResource(R.drawable.button_back_trans);
+            buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorAccentDark));*/
 
-            buttonTask.setBackgroundResource(R.drawable.button_back_trans);
-            buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorAccentDark));
+           /* buttonTask.setBackgroundResource(R.drawable.button_back_trans);
+            buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorAccentDark));*/
 
             if (iPosition == 0) {
-                buttonActivity.setBackgroundResource(R.drawable.one_side_border);
-                buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+               /* buttonActivity.setBackgroundResource(R.drawable.one_side_border);
+                buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));*/
 
                 ActivityFragment fragment = ActivityFragment.newInstance();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -199,8 +198,8 @@ public class DashboardFragment extends Fragment {
             }
 
             if (iPosition == 1) {
-                buttonTask.setBackgroundResource(R.drawable.one_side_border);
-                buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+                /*buttonTask.setBackgroundResource(R.drawable.one_side_border);
+                buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));*/
 
                 MileStoneFragment fragment = MileStoneFragment.newInstance();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();

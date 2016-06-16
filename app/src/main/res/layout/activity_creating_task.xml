@@ -5,18 +5,14 @@
     android:background="@drawable/app_header"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/includeHeaderCreatingTasks"
-        layout="@layout/header_common"
-         />
 
     <TextView
         android:id="@+id/textViewHeaderCreatingTask"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:text="@string/header_creating_task"
         android:layout_gravity="center_horizontal"
         android:paddingTop="10dp"
+        android:text="@string/header_creating_task"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/new_blue" />
 
@@ -51,7 +47,8 @@
                 android:id="@+id/inputSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@mipmap/client_name"
+                android:drawableLeft="@drawable/client_name"
+                android:drawablePadding="@dimen/padding_general"
                 android:inputType="textVisiblePassword"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general" />
@@ -96,7 +93,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
-                android:drawableLeft="@mipmap/service_giver_agent_icon"
+                android:drawableLeft="@drawable/service_giver_agent_icon"
+                android:drawablePadding="@dimen/padding_general"
                 android:inputType="text"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general" />
@@ -119,7 +117,8 @@
                 android:id="@+id/editTextTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@mipmap/add_note"
+                android:drawableLeft="@drawable/add_note"
+                android:drawablePadding="@dimen/padding_general"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general" />
 
@@ -130,8 +129,8 @@
                 android:layout_height="45dp"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="20dp"
-                android:drawableLeft="@mipmap/calender_date_picked"
-                android:drawablePadding="20dp"
+                android:drawableLeft="@drawable/calender_date_picked"
+                android:drawablePadding="@dimen/padding_general"
                 android:focusableInTouchMode="false"
                 android:hint="@string/dateAndTime"
                 android:inputType="textPersonName"

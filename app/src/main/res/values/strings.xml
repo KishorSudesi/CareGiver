@@ -9,7 +9,7 @@
     <string name="menu_tasks">My Tasks</string>
     <string name="menu_clients">Clients</string>
     <string name="menu_feedback">Feedback</string>
-    <string name="my_tasks">My Task</string>
+    <string name="my_tasks">My Tasks</string>
     <string name="header_creating_task">Creating Task</string>
     <string name="header_task_details">Task Details</string>
     <string name="user_ratings">Overall User Ratings</string>

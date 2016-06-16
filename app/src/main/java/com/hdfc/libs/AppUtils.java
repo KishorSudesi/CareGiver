@@ -42,6 +42,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -52,6 +53,8 @@ public class AppUtils {
     private static StorageService storageService;
     //private static ProgressDialog progressDialog;
     private static Utils utils;
+
+    private static Date startDate, endDate;
 
     private static SharedPreferences sharedPreferences;
 
@@ -67,6 +70,23 @@ public class AppUtils {
                 Context.MODE_PRIVATE);
 
         strProviderId = sharedPreferences.getString("PROVIDER_ID", "");
+
+        Calendar calendar = Calendar.getInstance();
+
+        String strStartDateCopy, strEndDateCopy;
+
+        try {
+            Date dateNow = calendar.getTime();
+            strEndDateCopy = Utils.writeFormatDateDB.format(dateNow) + "T23:59:59.999Z";
+            strStartDateCopy = Utils.writeFormatDateDB.format(dateNow) + "T00:00:00.000Z";
+
+            endDate = utils.convertStringToDate(strEndDateCopy);
+            startDate = utils.convertStringToDate(strStartDateCopy);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ///
     }
 
     public static void logout() {
@@ -409,13 +429,13 @@ public class AppUtils {
                     if (Config.clientModels.size() > 0) {
                         int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
 
-                        if (iPosition > -1 && iPosition < Config.customerIdsAdded.size())//todo check
+                        if (iPosition > -1 && iPosition < Config.clientModels.size())//todo check
                             Config.clientModels.get(iPosition).setDependentModel(dependentModel);
                     }
 
                     if (Config.clientNameModels.size() > 0) {
                         int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
-                        if (iPosition > -1) {
+                        if (iPosition > -1 && iPosition < Config.clientNameModels.size()) {
                             Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
                             Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
                         }
@@ -596,24 +616,7 @@ public class AppUtils {
 
     public void fetchActivities() {
 
-        /*Calendar calendar = Calendar.getInstance();
 
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH) + 1; // Note: zero based!
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        String strDay = String.valueOf(day);
-        String strMonth = String.valueOf(month);
-
-        if (day <= 9)
-            strDay = String.valueOf("0" + day);
-
-        if (month <= 9)
-            strMonth = String.valueOf("0" + month);*/
-
-        //Utils.log(DashboardFragment.strStartDate + " ~ " + DashboardFragment.strEndDate, " Date ");
-
-        //////////////////////////////////
         /*String strUpdatedDate="";
 
         if (DbCon.isDbOpened) {
@@ -658,16 +661,34 @@ public class AppUtils {
 
         Query q4 = QueryBuilder.compoundOperator(q2, QueryBuilder.Operator.AND, q3);
 
-        Query q5 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q4);
+        Query q7 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strEndDate, QueryBuilder.
+                Operator.LESS_THAN_EQUALTO);
+
+        Query q8 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strStartDate, QueryBuilder.
+                Operator.GREATER_THAN_EQUALTO);
+
+        Query q9 = QueryBuilder.compoundOperator(q7, QueryBuilder.Operator.AND, q8);
+
+        Query q5 = QueryBuilder.compoundOperator(q4, QueryBuilder.Operator.OR, q9);
+
+        Query q6 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q5);
+
+        Query q10 = QueryBuilder.build("milestones.status", Config.MilestoneStatus.COMPLETED, QueryBuilder.
+                Operator.NOT_EQUALS);
+
+       /* Query q7 = QueryBuilder.build("_id",  Config.strActivityIds, QueryBuilder.
+                Operator.INLIST);*/
+
+        Query q11 = QueryBuilder.compoundOperator(q10, QueryBuilder.Operator.AND, q6);
 
         try {
-            Utils.log(q5.get(), " Q1 ");
+            Utils.log(q11.get(), " QUERY ");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        storageService.findDocsByQueryOrderBy(Config.collectionActivity, q5, 1000, 0,
-                "activity_date", 1,
+        storageService.findDocsByQueryOrderBy(Config.collectionActivity, q11, 3000, 0,
+                "milestones.scheduled_date", 1,
                 new App42CallBack() {
 
                     @Override
@@ -688,13 +709,13 @@ public class AppUtils {
                                 createActivityModel(strDocumentId, strActivities);
                             }
                         }
-                        fetchMileStone();
+                        fetchCustomers(1);
                     }
 
                     @Override
                     public void onException(Exception ex) {
                         Utils.log(ex.getMessage(), " f1 ");
-                        fetchMileStone();
+                        fetchCustomers(1);
                     }
         });
     }
@@ -744,6 +765,8 @@ public class AppUtils {
 
             if (jsonObject.has("dependent_id")) {
 
+                boolean bActivity = false, bMilestone = false;
+
                 if (!Config.strActivityIds.contains(strDocumentId)) {
 
                     Config.strActivityIds.add(strDocumentId);
@@ -767,8 +790,23 @@ public class AppUtils {
                     activityModel.setStrServcieID(jsonObject.getString("service_id"));
                     activityModel.setStrServiceName(jsonObject.getString("service_name"));
 
-                    if (jsonObject.has("activity_date"))
+                    if (jsonObject.has("activity_date")) {
                         activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
+
+                        /////////
+                        try {
+
+                            Date activityDate = utils.convertStringToDate(activityModel.getStrActivityDate());
+                            if (activityDate.before(endDate) && activityDate.after(startDate))
+                                bActivity = true;
+
+                            Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED 0");
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    /////////
 
                     activityModel.setStrActivityDoneDate(jsonObject.
                             getString("activity_done_date"));
@@ -998,9 +1036,24 @@ public class AppUtils {
                                 }
                             }
 
-                            if (jsonObjectMilestone.has("scheduled_date"))
+                            if (jsonObjectMilestone.has("scheduled_date")) {
                                 milestoneModel.setStrMilestoneScheduledDate(jsonObjectMilestone.
                                         getString("scheduled_date"));
+
+                                try {
+
+                                    Date activityDate = utils.convertStringToDate(jsonObjectMilestone.
+                                            getString("scheduled_date"));
+                                    if (activityDate.before(endDate) && activityDate.after(startDate))
+                                        bMilestone = true;
+
+                                    Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED 1 ");
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
 
                             if (jsonObjectMilestone.has("fields")) {
 
@@ -1120,6 +1173,19 @@ public class AppUtils {
                                     milestoneModel.setFieldModel(fieldModel);
                                 }
                             }
+
+                            int iTemp = 0;
+
+                            if (bActivity)
+                                iTemp = 1;
+
+                            if (bMilestone)
+                                iTemp = 2;
+
+                            if (bActivity && bMilestone)
+                                iTemp = 3;
+
+                            activityModel.setiActivityDisplayFlag(iTemp);
                             activityModel.setMilestoneModel(milestoneModel);
                         }
                     }

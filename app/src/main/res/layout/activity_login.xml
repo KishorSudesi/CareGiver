@@ -7,117 +7,67 @@
 
     <include
         android:id="@+id/include"
-        layout="@layout/header_login"
-        />
-
-
-    <!--  <ImageView
-          android:id="@+id/imageBg"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:layout_alignParentEnd="true"
-          android:layout_alignParentRight="true"
-          android:layout_alignParentTop="true"
-          android:adjustViewBounds="true"
-          android:scaleType="fitXY" />-->
-
-    <!--<com.hdfc.views.RoundedImageView
-        android:id="@+id/imageButtonCamera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        android:background="@mipmap/ic_launcher" />-->
+        layout="@layout/header_login" />
 
     <EditText
-        android:id="@+id/editEmail"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_above="@+id/relativePass"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="@dimen/edit_text_margin"
-        android:layout_marginRight="@dimen/edit_text_margin"
-        android:drawableLeft="@drawable/email"
-        android:drawablePadding="10dp"
-        android:ems="10"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
-        android:padding="10dp" />
-
-    <RelativeLayout
-        android:id="@+id/relativePass"
+            android:id="@+id/editPassword"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_above="@+id/button"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:gravity="center_horizontal"
-        android:visibility="visible">
-
-        <EditText
-            android:id="@+id/editPassword"
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:drawableLeft="@drawable/password"
             android:drawablePadding="10dp"
+        android:drawableStart="@drawable/password"
             android:ems="10"
             android:hint="@string/hintPwd"
             android:inputType="textPassword"
-            android:padding="5dp"
-            android:paddingRight="40dp"
+        android:padding="@dimen/padding_general"
             android:singleLine="true" />
 
-         <TextView
-             android:id="@+id/id_forgot"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_alignBottom="@+id/editPassword"
-             android:layout_alignRight="@+id/editPassword"
-             android:layout_alignTop="@+id/editPassword"
-             android:layout_marginLeft="4dp"
-             android:layout_marginRight="4dp"
-             android:gravity=""
-             android:padding="5dp"
-             android:text="@string/forgot" />
 
-    </RelativeLayout>
-
+    <Button
+        android:id="@+id/id_forgot"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/margin_general"
+        android:background="@drawable/round_button"
+        android:gravity="center"
+        android:text="@string/forgot"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:visibility="visible" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_above="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="@dimen/edit_text_margin"
-        android:layout_marginRight="@dimen/edit_text_margin"
+        android:layout_above="@+id/id_forgot"
+        android:layout_margin="@dimen/margin_general"
         android:background="@drawable/button_white_blue_border"
         android:onClick="validateLogin"
-        android:paddingTop="5dp"
         android:text="@string/take_me_in"
-        android:textColor="@color/colorDarkBlue"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        android:textColor="@color/colorDarkBlue" />
 
-    <Button
-        android:id="@+id/textView"
+    <EditText
+        android:id="@+id/editEmail"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="@dimen/edit_text_margin"
-        android:layout_marginRight="@dimen/edit_text_margin"
-        android:background="@drawable/button_back_trans"
-        android:gravity="center"
-        android:visibility="invisible" />
+        android:layout_height="45dp"
+        android:layout_above="@+id/editPassword"
+        android:layout_alignLeft="@+id/button"
+        android:layout_alignStart="@+id/button"
+        android:layout_marginBottom="14dp"
+        android:drawableLeft="@drawable/email"
+        android:drawablePadding="10dp"
+        android:drawableStart="@drawable/email"
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        android:padding="@dimen/padding_general" />
 
 </RelativeLayout>
