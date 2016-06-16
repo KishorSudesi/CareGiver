@@ -29,7 +29,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -82,7 +81,7 @@ public class FeatureActivity extends AppCompatActivity {
     private static String strAlert;
     private static JSONObject jsonObject;
     private static ActivityModel act;
-    private static LinearLayout layout;
+    private static LinearLayout layout, dialoglayout;
     private static String strName, strPushMessage, strDependentMail;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
@@ -114,6 +113,8 @@ public class FeatureActivity extends AppCompatActivity {
 
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
         layout = (LinearLayout) findViewById(R.id.linear);
+        dialoglayout = (LinearLayout) findViewById(R.id.dialogLinear);
+
         bLoad = false;
 
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -1159,9 +1160,11 @@ public class FeatureActivity extends AppCompatActivity {
 
                             final LinearLayout layoutDialog = (LinearLayout) view.findViewById(R.id.linearLayoutDialog);
 
+
                             Button button = (Button) view.findViewById(R.id.dialogButtonOK);
                             Button buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
                             Button buttonDone = (Button) view.findViewById(R.id.buttonDone);
+                        Button buttonUpload = (Button) view.findViewById(R.id.dialogButtonUpload);
 
                             button.setTag(milestoneModelObject.getiMilestoneId());
                             buttonDone.setTag(milestoneModelObject.getiMilestoneId());

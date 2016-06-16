@@ -11,7 +11,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
@@ -122,7 +121,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         });
 
 
-        ImageView backImage = (ImageView) findViewById(R.id.imgBackCreatingTaskDetail);
+        /*ImageView backImage = (ImageView) findViewById(R.id.imgBackCreatingTaskDetail);
         if (backImage != null) {
             backImage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -131,7 +130,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 }
             });
         }
-
+*/
         dateAnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

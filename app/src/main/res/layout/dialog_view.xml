@@ -50,9 +50,9 @@
                     android:layout_margin="@dimen/margin_general"
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
-                    android:textColor="@color/colorWhite"
                     android:background="@color/blue"
                     android:text="@string/submit"
+                    android:textColor="@color/colorWhite"
                     android:visibility="visible" />
 
                 <Button
@@ -63,9 +63,9 @@
                     android:layout_margin="@dimen/margin_general"
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
-                    android:textColor="@color/colorWhite"
                     android:background="@color/blue"
                     android:text="@string/close"
+                    android:textColor="@color/colorWhite"
                     android:visibility="gone" />
 
                 <Button
@@ -76,12 +76,33 @@
                     android:layout_margin="@dimen/margin_general"
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
-                    android:textColor="@color/colorWhite"
                     android:background="#000000"
                     android:text="@string/cancel"
+                    android:textColor="@color/colorWhite"
                     android:visibility="visible" />
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/dialogButtonUpload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/margin_general"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:background="@color/blue"
+                android:text="Upload"
+                android:textColor="@color/colorWhite"
+                android:visibility="visible" />
+
+            <include
+                android:id="@+id/include_footer_task_dialog"
+                layout="@layout/dialog_view_attach"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginTop="15dp" />
+
 
         </LinearLayout>
 
