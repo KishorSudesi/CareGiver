@@ -35,6 +35,15 @@
                 android:src="@mipmap/client_inactive" />
 
             <ImageView
+                android:id="@+id/buttonNotification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:src="@mipmap/notification"
+                android:padding="5dp"/>
+
+            <ImageView
                 android:id="@+id/buttonFeedback"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,7 +51,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_back_trans"
                 android:padding="@dimen/padding_general"
-                android:src="@mipmap/feedback_inactive" />
+                android:src="@mipmap/my_account" />
 
         </TableRow>
 
@@ -68,6 +77,16 @@
                 android:gravity="center"
                 android:text="@string/menu_clients"
                 android:textSize="9sp" />
+
+            <TextView
+                android:id="@+id/textViewNotification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/menu_notification"
+                android:textSize="9sp"
+                />
 
             <TextView
                 android:id="@+id/textViewFeedback"

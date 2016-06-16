@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -263,19 +262,19 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)-30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
-                .setIcon(getResources().getDrawable(R.mipmap.map))
+                .setIcon(getResources().getDrawable(R.mipmap.location_action))
                 .build());
 
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
-                .setIcon(getResources().getDrawable(R.mipmap.message))
+                .setIcon(getResources().getDrawable(R.mipmap.message_action))
                 .build());
 
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)-30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
-                .setIcon(getResources().getDrawable(R.mipmap.call1))
+                .setIcon(getResources().getDrawable(R.mipmap.call_action))
                 .build());
 
        /* mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)

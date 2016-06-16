@@ -43,14 +43,13 @@
         android:layout_below="@+id/include_header_clients"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/edit_text_margin"
-        android:src="@mipmap/edit"
         android:visibility="invisible" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_below="@+id/includeHeaderClients"
+        android:layout_marginTop="20dp"
         android:orientation="vertical">
 
         <ImageView

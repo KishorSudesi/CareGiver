@@ -5,30 +5,7 @@
     android:background="@drawable/app_header"
     android:orientation="vertical">
 
-    <!--<LinearLayout
-        android:id="@+id/actionBarNotification"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/header_gradient"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-
-
-        <TextView
-            android:id="@+id/textViewMyProfileEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:gravity="center_vertical"
-            android:padding="@dimen/padding_general"
-            android:text="@string/menu_notification"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/white" />
-
-    </LinearLayout>
--->    <include
+    <include
     android:id="@+id/header"
     layout="@layout/header_common">
 

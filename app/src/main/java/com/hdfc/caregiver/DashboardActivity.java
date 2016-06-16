@@ -23,6 +23,7 @@ import com.hdfc.caregiver.fragments.ActivityFragment;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.caregiver.fragments.MileStoneFragment;
+import com.hdfc.caregiver.fragments.NotificationFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
@@ -45,6 +46,7 @@ public class DashboardActivity extends AppCompatActivity implements
     private static AppUtils appUtils;
     private static Utils utils;
     private static AppCompatActivity appCompatActivity;
+
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -69,8 +71,8 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private LinearLayout net_error_layout;
     private NetworkStateReceiver networkStateReceiver;
-    private ImageView mytask, clients, feedback;
-    private TextView textViewTasks, textViewClients, textViewFeedback;
+    private ImageView mytask, clients, feedback, notification;
+    private TextView textViewTasks, textViewClients, textViewFeedback, textViewNotification;
 
     public static void gotoSimpleActivityMenu() {
 
@@ -130,6 +132,7 @@ public class DashboardActivity extends AppCompatActivity implements
             mytask = (ImageView) findViewById(R.id.buttonMyTasks);
             clients = (ImageView) findViewById(R.id.buttonClients);
             feedback = (ImageView) findViewById(R.id.buttonFeedback);
+            notification = (ImageView) findViewById(R.id.buttonNotification);
 
             loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
             threadHandler = new ThreadHandler();
@@ -137,6 +140,7 @@ public class DashboardActivity extends AppCompatActivity implements
             textViewTasks = (TextView) findViewById(R.id.textViewTasks);
             textViewClients = (TextView) findViewById(R.id.textViewClients);
             textViewFeedback = (TextView) findViewById(R.id.textViewFeedback);
+            textViewNotification = (TextView) findViewById(R.id.textViewNotification);
 
             net_error_layout = (LinearLayout) findViewById(R.id.pnd_net_error);
 
@@ -175,6 +179,20 @@ public class DashboardActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View v) {
                     menuClientsLoad();
+                }
+            });
+
+            notification.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    menuNotification();
+                }
+            });
+
+            textViewNotification.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    menuNotification();
                 }
             });
 
@@ -258,12 +276,29 @@ public class DashboardActivity extends AppCompatActivity implements
         transaction.commit();
     }
 
+    private void goToNotification(){
+        Config.intSelectedMenu = Config.intNotificationScreen;
+        NotificationFragment fragment = NotificationFragment.newInstance();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frameLayout,fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
     private void menuClientsLoad() {
         setMenu();
         clients.setImageDrawable(getResources().getDrawable(R.mipmap.client));
         textViewClients.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         //Config.intSelectedMenu = 0;
         goToClients();
+    }
+
+    private void menuNotification() {
+        setMenu();
+        notification.setImageDrawable(getResources().getDrawable(R.mipmap.notification_active));
+        textViewNotification.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        goToNotification();
     }
 
     private void menuDashboard() {
@@ -286,7 +321,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void menuFeedback() {
         setMenu();
-        feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback));
+        feedback.setImageDrawable(getResources().getDrawable(R.mipmap.my_account_active));
         textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         //Config.intSelectedMenu = Config.intRatingsScreen;
         gotoFeedback();
@@ -359,11 +394,13 @@ public class DashboardActivity extends AppCompatActivity implements
     private void setMenu() {
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task_inactive));
         clients.setImageDrawable(getResources().getDrawable(R.mipmap.client_inactive));
-        feedback.setImageDrawable(getResources().getDrawable(R.mipmap.feedback_inactive));
+        feedback.setImageDrawable(getResources().getDrawable(R.mipmap.my_account));
+        notification.setImageDrawable(getResources().getDrawable(R.mipmap.notification));
 
         textViewTasks.setTextColor(getResources().getColor(R.color.colorAccentDark));
         textViewClients.setTextColor(getResources().getColor(R.color.colorAccentDark));
         textViewFeedback.setTextColor(getResources().getColor(R.color.colorAccentDark));
+        textViewNotification.setTextColor(getResources().getColor(R.color.colorAccentDark));
     }
 
     @Override
@@ -400,16 +437,16 @@ public class DashboardActivity extends AppCompatActivity implements
 
             Date date = calendar.getTime();
 
-           /* DashboardFragment.strEndDate = utils.convertDateToStringQuery(utils.convertStringToDate(Utils.writeFormatDateDB.format(date) + "T23:59:59.999Z"));
-            DashboardFragment.strStartDate = utils.convertDateToStringQuery(utils.convertStringToDate(Utils.writeFormatDateDB.format(date) + "T00:00:00.000Z"));*/
-
-            Calendar cal = Calendar.getInstance();
+          /*  Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             cal.add(Calendar.DAY_OF_MONTH, -1);
-            Date prevDate = cal.getTime();
+            Date prevDate = cal.getTime();*/
 
-            DashboardFragment.strEndDate = Utils.writeFormatDateDB.format(date) + "T05:29:59.999Z";
-            DashboardFragment.strStartDate = Utils.writeFormatDateDB.format(prevDate) + "T05:30:00.000Z";
+            String strDate = Utils.writeFormatDateDB.format(date);
+
+            DashboardFragment.strEndDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T23:59:59.999"));
+            DashboardFragment.strStartDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T00:00:00.000"));
+
 
             DashboardFragment.strDate = Utils.writeFormatDate.format(date);
 

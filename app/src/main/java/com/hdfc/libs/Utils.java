@@ -82,7 +82,7 @@ public class Utils {
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale);
 
     public final static SimpleDateFormat queryFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale);
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
 
     public final static SimpleDateFormat writeFormat = new
             SimpleDateFormat("kk:mm dd MMM yyyy", locale);
@@ -122,7 +122,7 @@ public class Utils {
         Config.intScreenHeight = metrics.heightPixels;
 
         readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        //queryFormat.setTimeZone(TimeZone.getDefault());
+        queryFormat.setTimeZone(TimeZone.getDefault());
     }
 
     public static native String getString();
@@ -916,7 +916,21 @@ public class Utils {
         String date = null;
 
         try {
-            date = queryFormat.format(dtDate);
+            date = readFormat.format(dtDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
+        return date; //
+    }
+
+    public Date convertStringToDateQuery(String strDate) {
+
+        Date date = null;
+
+        try {
+            date = queryFormat.parse(strDate);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -931,7 +945,7 @@ public class Utils {
         try {
             //log("erro r", String.valueOf(strDate));
             date = readFormat.parse(strDate);
-            //log("error", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
+            log("error", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/llStatusChangePopup"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/llStatusChangePopup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_common">
+    android:background="@color/color_common"
+    android:orientation="vertical">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/color_common"
+        android:orientation="horizontal"
         android:weightSum="2">
 
         <ImageView
+            android:id="@+id/imageView"
             android:layout_width="0dp"
             android:layout_height="75dp"
-            android:src="@mipmap/camera"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_marginLeft="24dp"
             android:layout_marginStart="24dp"
-            android:id="@+id/imageView"
-            android:layout_weight="1"/>
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_weight="1"
+            android:src="@mipmap/camera" />
 
         <ImageView
+            android:id="@+id/imageView2"
             android:layout_width="0dp"
             android:layout_height="75dp"
-            android:src="@mipmap/gallery"
-            android:id="@+id/imageView2"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:src="@drawable/gallery" />
 
     </LinearLayout>
 
@@ -43,20 +43,20 @@
         <TextView
              android:layout_width="0dp"
              android:layout_height="35dp"
-             android:text="@string/camera"
-             android:textColor="@color/colorWhite"
-             android:gravity="center"
              android:layout_marginLeft="24dp"
              android:layout_marginStart="24dp"
-             android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/camera"
+            android:textColor="@color/colorWhite" />
 
         <TextView
              android:layout_width="0dp"
              android:layout_height="35dp"
-             android:text="@string/gallery"
-             android:textColor="@color/colorWhite"
+            android:layout_weight="1"
              android:gravity="center"
-             android:layout_weight="1"/>
+            android:text="@string/gallery"
+            android:textColor="@color/colorWhite" />
 
     </LinearLayout>
 

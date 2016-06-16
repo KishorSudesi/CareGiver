@@ -18,6 +18,7 @@
     <color name="polygonViewCircleStrokeColor">#6fb6c4</color>
     <color name="polygonViewCircleBackground">#96d4ce</color>
 
+    <color name="colorDarkBlue">#046abc</color>
     <color name="cyanButtonSignOut">#00BCD4</color>
     <color name="background">#EEEEEE</color>
     <color name="colorGrey">#BDBDBD</color>

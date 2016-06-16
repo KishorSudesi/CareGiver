@@ -40,7 +40,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="@dimen/edit_text_margin"
         android:layout_marginRight="@dimen/edit_text_margin"
-        android:drawableLeft="@drawable/mail_icon_32"
+        android:drawableLeft="@drawable/email"
         android:drawablePadding="10dp"
         android:ems="10"
         android:hint="@string/email"
@@ -100,10 +100,11 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="@dimen/edit_text_margin"
         android:layout_marginRight="@dimen/edit_text_margin"
-        android:background="@drawable/button_white"
+        android:background="@drawable/button_white_blue_border"
         android:onClick="validateLogin"
         android:paddingTop="5dp"
         android:text="@string/take_me_in"
+        android:textColor="@color/colorDarkBlue"
         android:textAllCaps="false" />
 
     <Button

@@ -1106,7 +1106,7 @@ public class FeatureActivity extends AppCompatActivity {
                 }
 
                 if (strMilestoneStatus.equalsIgnoreCase("pending")) {
-                    drawable = getResources().getDrawable(R.mipmap.error);
+                    drawable = getResources().getDrawable(R.drawable.error);
                     drawableBg = getResources().getDrawable(R.drawable.button_error);
                 }
 
