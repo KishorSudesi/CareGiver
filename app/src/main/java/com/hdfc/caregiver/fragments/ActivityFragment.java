@@ -104,7 +104,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                     cvh.imageTiming.setBackgroundResource(R.drawable.done);
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorWhite));
                     cvh.imageTiming.setText("");
-//                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
                 }
 
                 if (activityModel.getStrActivityStatus().equalsIgnoreCase("new")

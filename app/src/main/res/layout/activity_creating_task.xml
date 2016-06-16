@@ -5,6 +5,10 @@
     android:background="@drawable/app_header"
     android:orientation="vertical">
 
+    <include
+        android:id="@+id/includeHeaderCreatingTasks"
+        layout="@layout/header_common" />
+
 
     <TextView
         android:id="@+id/textViewHeaderCreatingTask"
