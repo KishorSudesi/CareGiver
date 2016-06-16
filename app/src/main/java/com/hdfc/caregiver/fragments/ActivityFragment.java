@@ -70,6 +70,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                 cvh.textMessage = (TextView) convertView.findViewById(R.id.task_message);
                 cvh.textSubject = (TextView) convertView.findViewById(R.id.task_subject);
                 cvh.textTime = (TextView) convertView.findViewById(R.id.task_time);
+                cvh.textViewWhat = (TextView) convertView.findViewById(R.id.textViewWhat);
                 cvh.imagePerson = (ImageView) convertView.findViewById(R.id.imagePerson);
                 cvh.linearLayout = (LinearLayout) convertView.findViewById(R.id.llFirst);
                 convertView.setTag(cvh);
@@ -83,6 +84,16 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                 ActivityModel activityModel = activityModels.get(position);
 
                 int iDisplayFlag = activityModel.getiActivityDisplayFlag();
+
+                if (iDisplayFlag == 1)
+                    cvh.textViewWhat.setText(context.getString(R.string.activity));
+
+                if (iDisplayFlag == 2)
+                    cvh.textViewWhat.setText(context.getString(R.string.task));
+
+                if (iDisplayFlag == 3)
+                    cvh.textViewWhat.setText(context.getString(R.string.activity));
+
 
                 String strMessage = activityModel.getStrActivityDesc();
 
@@ -104,7 +115,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                     cvh.imageTiming.setBackgroundResource(R.drawable.done);
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorWhite));
                     cvh.imageTiming.setText("");
-                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+                    cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.status_closed));
                 }
 
                 if (activityModel.getStrActivityStatus().equalsIgnoreCase("new")
@@ -112,14 +123,14 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(context.getString(R.string.new_text));
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorRed));
-//                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorGrey));
+                    cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.status_new));
                 }
 
                 if (activityModel.getStrActivityStatus().equalsIgnoreCase("inprocess")) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(utils.formatDateTime(activityModel.getStrActivityDate()));
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorAccent));
-                    cvh.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorWhite));
+                    cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.status_process));
                 }
 
 
@@ -143,6 +154,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
             ImageView imagePerson;
             TextView textMessage;
             TextView textTime;
+            TextView textViewWhat;
             LinearLayout linearLayout;
         }
     };
@@ -235,7 +247,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
         //swipe right
 
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img))
-                .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
+                .setBackground(getActivity().getResources().getDrawable(R.color.blue))
                 .setIcon(getActivity().getResources().getDrawable(R.drawable.pen))
                 .build());
 
@@ -262,19 +274,19 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
         //swipe left
 
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)-30)
-                .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
+                .setBackground(getActivity().getResources().getDrawable(R.color.blue))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
                 .setIcon(getResources().getDrawable(R.mipmap.location_action))
                 .build());
 
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
-                .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
+                .setBackground(getActivity().getResources().getDrawable(R.color.blue))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
                 .setIcon(getResources().getDrawable(R.mipmap.message_action))
                 .build());
 
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)-30)
-                .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
+                .setBackground(getActivity().getResources().getDrawable(R.color.blue))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
                 .setIcon(getResources().getDrawable(R.mipmap.call_action))
                 .build());
@@ -321,15 +333,12 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
 
-                            if (!activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("completed")) {
-                                ActivityModel obj = activityModels.get(itemPosition);
-                                Intent intent = new Intent(getActivity(), FeatureActivity.class);
-                                args.putSerializable("ACTIVITY", obj);
-                                intent.putExtras(args);
-                                startActivity(intent);
-                            } else {
-                                utils.toast(2, 2, "Activity is Closed");
-                            }
+                            ActivityModel obj = activityModels.get(itemPosition);
+                            Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                            args.putSerializable("ACTIVITY", obj);
+                            intent.putExtras(args);
+                            startActivity(intent);
+
                         }
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:

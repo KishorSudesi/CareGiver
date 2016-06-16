@@ -15,10 +15,6 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
 
-    <permission
-        android:name="com.hdfc.caregiver.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"

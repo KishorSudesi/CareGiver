@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/margin_general"
@@ -25,8 +26,9 @@
         android:layout_marginLeft="@dimen/margin_general"
         android:layout_marginRight="@dimen/margin_general"
         android:layout_weight="2"
-        android:alpha="0.4"
-        android:orientation="vertical">
+        android:alpha="0.8"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_general">
 
         <TextView
             android:id="@+id/task_subject"
@@ -55,20 +57,20 @@
             android:weightSum="1">
 
             <TextView
+                android:id="@+id/textViewWhat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.8"
+                android:layout_weight="0.4"
                 />
 
-        <TextView
-            android:id="@+id/task_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:padding="@dimen/padding_general"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            />
+            <TextView
+                android:id="@+id/task_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6"
+                android:padding="@dimen/padding_general"
+                android:textColor="#000000"
+                android:textSize="14sp" />
 
         </LinearLayout>
 

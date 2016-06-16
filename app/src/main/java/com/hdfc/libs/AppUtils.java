@@ -1042,12 +1042,16 @@ public class AppUtils {
 
                                 try {
 
-                                    Date activityDate = utils.convertStringToDate(jsonObjectMilestone.
-                                            getString("scheduled_date"));
-                                    if (activityDate.before(endDate) && activityDate.after(startDate))
-                                        bMilestone = true;
+                                    if (!jsonObjectMilestone.
+                                            getString("scheduled_date").equalsIgnoreCase("")) {
+                                        Date activityDate = utils.convertStringToDate(jsonObjectMilestone.
+                                                getString("scheduled_date"));
 
-                                    Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED 1 ");
+                                        if (activityDate.before(endDate) && activityDate.after(startDate))
+                                            bMilestone = true;
+
+                                        Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED 1 ");
+                                    }
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
