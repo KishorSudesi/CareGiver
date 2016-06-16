@@ -7,9 +7,18 @@
 
     <include
         android:id="@+id/includeHeaderCreatingTasks"
-        layout="@layout/header_creating_task"
-        android:layout_width="match_parent"
-        android:layout_height="150dp" />
+        layout="@layout/header_common"
+         />
+
+    <TextView
+        android:id="@+id/textViewHeaderCreatingTask"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="@string/header_creating_task"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/new_blue" />
 
     <TextView
         android:layout_width="match_parent"

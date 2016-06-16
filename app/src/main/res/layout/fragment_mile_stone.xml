@@ -20,7 +20,8 @@
             android:id="@+id/listViewEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"></com.yydcdut.sdlv.SlideAndDragListView>
+            android:clickable="true">
+        </com.yydcdut.sdlv.SlideAndDragListView>
 
 
     </RelativeLayout>

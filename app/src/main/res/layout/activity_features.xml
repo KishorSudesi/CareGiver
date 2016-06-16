@@ -1,53 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@drawable/app_bg">
 
-    <RelativeLayout
-        android:id="@+id/toplayout"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@color/blue"
-        >
-        <ImageButton
-              android:id="@+id/buttonBack"
-              android:layout_width="25dp"
-              android:layout_height="25dp"
-              android:layout_marginLeft="10dp"
-              android:layout_marginTop="20dp"
-              android:background="@drawable/backarrow"
-              android:visibility="visible" />
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:background="@color/blue"
-            android:src="@drawable/logo1"/>
-
-    </RelativeLayout>
-
+    <include
+        android:id="@+id/header"
+        layout="@layout/header_common"
+        />
 
     <include
         android:id="@+id/include_header_my_tasks"
         layout="@layout/feature_list_header"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:layout_below="@+id/toplayout"
         />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/include_header_my_tasks"
         android:background="@drawable/colorful_textview"/>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/include_header_my_tasks"
         android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
@@ -113,9 +92,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/milestoneLayout">
+          >
 
             <Button
                 android:id="@+id/buttonClose"
@@ -145,4 +122,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

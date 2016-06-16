@@ -1,54 +1,28 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/app_header">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/app_bg">
-
-        <RelativeLayout
-            android:id="@+id/toplayout"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@color/blue"
-            >
-            <!--<ImageButton
-                android:id="@+id/buttonBack"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/backarrow"
-                android:visibility="visible" />-->
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_centerHorizontal="true"
-                android:background="@color/blue"
-                android:src="@drawable/logo1"/>
-
-        </RelativeLayout>
+        <include
+            layout="@layout/header_login"
+            />
 
         <include
             android:id="@+id/include_header_clients"
             layout="@layout/header_clients"
             android:layout_width="match_parent"
             android:layout_height="65dp"
-            android:layout_below="@+id/toplayout"/>
+            />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/include_header_clients"
             android:background="@drawable/colorful_textview"/>
 
         <TextView
             android:id="@android:id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignTop="@+id/listExp"
             android:gravity="center"
             android:text="@string/noClients"
             android:visibility="gone" />
@@ -57,8 +31,6 @@
             android:id="@+id/listExp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/include_header_clients"/>
+            />
 
-    </RelativeLayout>
-
-</FrameLayout>
+</LinearLayout>

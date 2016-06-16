@@ -6,8 +6,8 @@
     android:orientation="vertical">
 
     <include
-    android:id="@+id/header"
-    layout="@layout/header_common">
+        android:id="@+id/header"
+        layout="@layout/header_common">
 
 </include>
     <ListView

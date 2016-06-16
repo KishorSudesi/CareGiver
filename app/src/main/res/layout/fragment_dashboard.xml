@@ -2,31 +2,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/app_bg">
+    android:background="@drawable/app_header">
 
-    <RelativeLayout
-        android:id="@+id/toplayout"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@color/blue"
-        >
-       <!-- <ImageButton
-            android:id="@+id/buttonBack"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/backarrow"
-            android:visibility="visible" />-->
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:background="@color/blue"
-            android:src="@drawable/logo1"/>
-
-    </RelativeLayout>
-
+    <include
+        android:id="@+id/header"
+        layout="@layout/header_login"/>
 
     <include
         android:id="@+id/include_header_my_tasks"

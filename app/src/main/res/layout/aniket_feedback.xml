@@ -8,6 +8,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <include
+            android:id="@+id/include_ratings_header"
+            layout="@layout/ratings_header" />
+
         <TextView
             android:id="@+id/textViewFeedback"
             android:layout_width="wrap_content"
