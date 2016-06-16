@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -63,6 +64,13 @@ public class NotificationFragment extends Fragment {
 
         notificationAdapter = new NotificationAdapter(getActivity(), Config.notificationModels);
         listViewActivities.setAdapter(notificationAdapter);
+
+        listViewActivities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
 
         loadNotifications();
 
