@@ -7,13 +7,17 @@ public class FileModel {
 
     private String strFileName;
     private String strFileUrl;
-    private String strImageType;
+    private String strFileType;
     private String strUrlMd5;
+    private String strFileUploadTime;
+    private String strFileDescription;
 
-    public FileModel(String strFileName, String strFileUrl, String strImageType) {
+    public FileModel(String strFileName, String strFileUrl, String strFileType, String strFileUploadTime, String strFileDescription) {
         this.strFileName = strFileName;
         this.strFileUrl = strFileUrl;
-        this.strImageType = strImageType;
+        this.strFileType = strFileType;
+        this.strFileUploadTime = strFileUploadTime;
+        this.strFileDescription = strFileDescription;
     }
 
     public String getStrUrlMd5() {
@@ -40,11 +44,27 @@ public class FileModel {
         this.strFileUrl = strFileUrl;
     }
 
-    public String getStrImageType() {
-        return strImageType;
+    public String getstrFileType() {
+        return strFileType;
     }
 
-    public void setStrImageType(String strImageType) {
-        this.strImageType = strImageType;
+    public void setstrFileType(String strFileType) {
+        this.strFileType = strFileType;
+    }
+
+    public String getStrFileUploadTime() {
+        return strFileUploadTime;
+    }
+
+    public void setStrFileUploadTime(String strFileUploadTime) {
+        this.strFileUploadTime = strFileUploadTime;
+    }
+
+    public String getStrFileDescription() {
+        return strFileDescription;
+    }
+
+    public void setStrFileDescription(String strFileDescription) {
+        this.strFileDescription = strFileDescription;
     }
 }

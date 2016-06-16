@@ -17,6 +17,17 @@ public class MilestoneModel implements Serializable {
     private boolean isVisible;
     private boolean isReschedule;
     private ArrayList<FieldModel> fieldModels = new ArrayList<>();
+    private ArrayList<FileModel> fileModels = new ArrayList<>();
+
+    public ArrayList<FileModel> getFileModels() {
+        return fileModels;
+    }
+
+    public void setFileModels(ArrayList<FileModel> fileModels) {
+        this.fileModels = fileModels;
+    }
+
+
 
     public boolean isReschedule() {
         return isReschedule;
