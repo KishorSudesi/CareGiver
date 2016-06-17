@@ -25,7 +25,6 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/margin_general"
-                android:background="@mipmap/ic_launcher"
                 android:padding="@dimen/padding_general" />
 
         </LinearLayout>

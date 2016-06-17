@@ -4,18 +4,41 @@
     android:layout_height="wrap_content"
     android:background="#EEEEEE">
 
-    <include
+    <!--<include
         android:id="@+id/includeHeaderClients"
         layout="@layout/header_clients"
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"/>-->
+    <RelativeLayout
+        android:id="@+id/header_clients"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@color/colorWhite">
+        <TextView
+            android:id="@+id/textViewClients"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/clients"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imageViewLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/header_clients"
+        android:background="@drawable/colorful_textview"
+        android:padding="15dp" />
 
     <ListView
         android:id="@+id/listViewClientsActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/includeHeaderClients"/>
+        android:layout_below="@+id/imageViewLine"/>
 
     <include
         android:id="@+id/includeDashboardFooter"

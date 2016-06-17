@@ -41,9 +41,9 @@
         <ImageView
             android:id="@+id/imageViewLine"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="1dp"
             android:layout_below="@+id/textViewFeedback"
-            android:background="@color/color_common"
+            android:background="@drawable/colorful_textview"
             android:padding="15dp" />
 
         <LinearLayout
@@ -69,8 +69,8 @@
 
                 <TextView
                     android:id="@+id/userrating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:paddingLeft="35dp"
                     android:text="User Ratings" />
 
@@ -78,7 +78,9 @@
                     android:id="@+id/linearLayoutRatings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"></LinearLayout>
+                    android:orientation="horizontal">
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/name"

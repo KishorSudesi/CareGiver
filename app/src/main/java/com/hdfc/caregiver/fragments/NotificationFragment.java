@@ -35,7 +35,7 @@ public class NotificationFragment extends Fragment {
 
     private static NotificationAdapter notificationAdapter;
     private static ProgressDialog progressDialog;
-    private static RelativeLayout loadingPanel;
+  //  private static RelativeLayout loadingPanel;
     private ListView listViewActivities;
     private Utils utils;
 
@@ -65,7 +65,7 @@ public class NotificationFragment extends Fragment {
         TextView emptyTextView = (TextView) view.findViewById(android.R.id.empty);
         listViewActivities.setEmptyView(emptyTextView);
         utils = new Utils(getActivity());
-        loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
+     //   loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
 
         notificationAdapter = new NotificationAdapter(getActivity(), Config.notificationModels);
         listViewActivities.setAdapter(notificationAdapter);
@@ -87,7 +87,7 @@ public class NotificationFragment extends Fragment {
 
         if (utils.isConnectingToInternet()) {
 
-            loadingPanel.setVisibility(View.VISIBLE);
+//            loadingPanel.setVisibility(View.VISIBLE);
 
             StorageService storageService = new StorageService(getContext());
 
@@ -165,7 +165,7 @@ public class NotificationFragment extends Fragment {
 
     public void hideLoader() {
         refreshNotifications();
-        loadingPanel.setVisibility(View.GONE);
+     //   loadingPanel.setVisibility(View.GONE);
     }
 
     private void refreshNotifications() {
@@ -174,14 +174,7 @@ public class NotificationFragment extends Fragment {
 
     public void findActivities(String strActivityId){
 
-      //  System.out.println("Here is activity id : "+strActivityId);
-
         int iPosition = Config.strActivityIds.indexOf(strActivityId);
-        /*for(int i =0 ; i<Config.strActivityIds.size(); i++) {
-            System.out.println("Rushikesh Mohan Belavalekar : " + Config.strActivityIds);
-        }*/
-
-        //System.out.println("Here is positin : "+iPosition);
 
         ActivityModel activityModel;
 

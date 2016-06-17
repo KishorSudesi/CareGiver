@@ -56,9 +56,8 @@ public class MyProfileActivity extends AppCompatActivity {
     private static AppUtils appUtils;
     private static ProgressDialog mProgress = null;
     private static boolean isImageChanged=false;
-    public TextView email;
     ImageView backbutton, edit, imageplace;
-    EditText phone, place, name;
+    EditText phone, place, name, email;
     TextView textViewName;
     Button buttonContinue, buttonBack;
     int Flag = 0;
@@ -69,12 +68,13 @@ public class MyProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_profile);
         // textViewName = (TextView) findViewById(R.id.textCaregiverName);
+
         name = (EditText) findViewById(R.id.input_name);
         phone = (EditText) findViewById(R.id.input_mobile);
         place = (EditText) findViewById(R.id.input_place);
         profileImage = (RoundedImageView) findViewById(R.id.person_icon);
 
-        email = (TextView) findViewById(R.id.input_email);
+        email = (EditText) findViewById(R.id.input_email);
         Button signOut = (Button) findViewById(R.id.buttonLogOut);
         buttonContinue = (Button) findViewById(R.id.buttonContinue);
         buttonBack = (Button) findViewById(R.id.buttonBack);
@@ -151,6 +151,10 @@ public class MyProfileActivity extends AppCompatActivity {
         place.setEnabled(false);
         place.setFocusableInTouchMode(false);
         place.clearFocus();
+
+        email.setEnabled(false);
+        email.setFocusableInTouchMode(false);
+        email.clearFocus();
 
         //  edit = (ImageView)findViewById(R.id.imgPen);
 

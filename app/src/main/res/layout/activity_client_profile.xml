@@ -4,10 +4,31 @@
         android:layout_height="wrap_content"
         android:focusableInTouchMode="false"
         android:orientation="vertical"
-        android:background="@drawable/app_header">
+        >
         <include
             layout="@layout/header_common"
             />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+            <TextView
+                android:id="@+id/textViewClient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/clientdetails"
+                android:textColor="@color/colorPrimary"
+                android:textSize="24sp" />
+        </RelativeLayout>
+    <ImageView
+        android:id="@+id/imageViewLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/colorful_textview"
+        android:padding="15dp" />
+
+
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -15,18 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <include
-            android:id="@+id/includeHeaderClients"
-            layout="@layout/header_client_details"
-            android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:layout_below="@+id/include_header_clients"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/includeHeaderClients"
-            android:background="@drawable/colorful_textview"/>
+
+
 
         <ImageView
             android:id="@+id/imgPen"
@@ -85,7 +96,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:drawableLeft="@mipmap/age"
+                android:drawablePadding="15dp"
+                android:drawableLeft="@drawable/age"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -103,7 +115,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:drawableLeft="@mipmap/health"
+                android:drawablePadding="15dp"
+                android:drawableLeft="@drawable/health"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                  />
 
@@ -121,7 +134,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:drawableLeft="@mipmap/account_type"
+                android:drawablePadding="15dp"
+                android:drawableLeft="@drawable/acc_type"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -138,7 +152,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:drawableLeft="@mipmap/location"
+                android:drawablePadding="15dp"
+                android:drawableLeft="@drawable/location"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -162,13 +177,14 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:paddingTop="@dimen/edit_text_margin"
-              android:src="@mipmap/contact" />
+              android:drawablePadding="15dp"
+              android:src="@drawable/contact" />
 
             <TextView
                 android:id="@+id/editTextMobileNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="12dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                />
@@ -188,7 +204,8 @@
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                 android:paddingTop="@dimen/edit_text_margin"
-                android:src="@mipmap/location" />
+                android:drawablePadding="15dp"
+                android:src="@drawable/location" />
 
 
             <TextView

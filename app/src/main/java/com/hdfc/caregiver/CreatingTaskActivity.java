@@ -58,7 +58,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private AppUtils appUtils;
     private EditText editTextTitle, dateAnd;
     private JSONObject jsonObject;
-    Button back;
+
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
@@ -93,15 +93,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
         inputSearchServices = (AutoCompleteTextView)findViewById(R.id.inputSearchServices);
         dependentlist = (Spinner) findViewById(R.id.spindependentList);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
-
-        back = (Button) findViewById(R.id.button1Back);
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goBack();
-            }
-        });
 
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);

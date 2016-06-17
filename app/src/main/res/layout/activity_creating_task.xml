@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/app_header"
     android:orientation="vertical">
 
     <include
@@ -156,6 +155,7 @@
                 android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:layout_marginBottom="7dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_success"
                 android:gravity="center"

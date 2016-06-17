@@ -50,7 +50,7 @@ public class ClientFragment extends Fragment {
                     }
                 }
             }
-            listAdapter.notifyDataSetChanged();
+            //listAdapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,6 +69,8 @@ public class ClientFragment extends Fragment {
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
         expListView = (ExpandableListView) view.findViewById(R.id.listExp);
 
+        prepareListData();
+
         listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
         expListView.setAdapter(listAdapter);
         expListView.setEmptyView(textViewEmpty);
@@ -86,7 +88,7 @@ public class ClientFragment extends Fragment {
             }
         });*/
 
-        prepareListData();
+
 
         return view;
     }
