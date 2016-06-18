@@ -427,15 +427,14 @@ public class AppUtils {
                     Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
 
                 if (iFlag == 2) {
-                    if (Config.clientModels.size() > 0) {
-                        int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
+                    int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
 
+                    if (Config.clientModels.size() > 0) {
                         if (iPosition > -1 && iPosition < Config.clientModels.size())//todo check
                             Config.clientModels.get(iPosition).setDependentModel(dependentModel);
                     }
 
                     if (Config.clientNameModels.size() > 0) {
-                        int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
                         if (iPosition > -1 && iPosition < Config.clientNameModels.size()) {
                             Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
                             Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
@@ -485,8 +484,10 @@ public class AppUtils {
             } else {
                 if (iFlag == 2) {
 
+                    int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
+
                     if (Config.clientModels.size() > 0) {
-                        int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
+
                         if (iPosition > -1) {
                             int iPosition1 = Config.dependentIdsAdded.indexOf(strDocumentId);
                             if (iPosition1 > -1 && iPosition <= Config.clientModels.size()) {
@@ -498,7 +499,6 @@ public class AppUtils {
 
                     //
                     if (Config.clientNameModels.size() > 0) {
-                        int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
                         if (iPosition > -1 && iPosition <= Config.clientNameModels.size()) {
                             Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
                             Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
