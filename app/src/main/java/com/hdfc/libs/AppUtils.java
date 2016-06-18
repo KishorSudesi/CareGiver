@@ -668,27 +668,33 @@ public class AppUtils {
         Query q8 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strStartDate, QueryBuilder.
                 Operator.GREATER_THAN_EQUALTO);
 
+        //
+        Query q10 = QueryBuilder.build("milestones.status", Config.MilestoneStatus.COMPLETED, QueryBuilder.
+                Operator.NOT_EQUALS);
+
+        //
+
         Query q9 = QueryBuilder.compoundOperator(q7, QueryBuilder.Operator.AND, q8);
 
-        Query q5 = QueryBuilder.compoundOperator(q4, QueryBuilder.Operator.OR, q9);
+        Query q11 = QueryBuilder.compoundOperator(q9, QueryBuilder.Operator.AND, q10);
+
+        Query q5 = QueryBuilder.compoundOperator(q4, QueryBuilder.Operator.OR, q11);
 
         Query q6 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q5);
 
-        Query q10 = QueryBuilder.build("milestones.status", Config.MilestoneStatus.COMPLETED, QueryBuilder.
-                Operator.NOT_EQUALS);
 
        /* Query q7 = QueryBuilder.build("_id",  Config.strActivityIds, QueryBuilder.
                 Operator.INLIST);*/
 
-        Query q11 = QueryBuilder.compoundOperator(q10, QueryBuilder.Operator.AND, q6);
+        // Query q12 = QueryBuilder.compoundOperator(q10, QueryBuilder.Operator.AND, q6);
 
         try {
-            Utils.log(q11.get(), " QUERY ");
+            Utils.log(q6.get(), " QUERY ");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        storageService.findDocsByQueryOrderBy(Config.collectionActivity, q11, 3000, 0,
+        storageService.findDocsByQueryOrderBy(Config.collectionActivity, q6, 3000, 0,
                 "milestones.scheduled_date", 1,
                 new App42CallBack() {
 
@@ -696,7 +702,7 @@ public class AppUtils {
                     public void onSuccess(Object o) {
                         if (o != null) {
 
-                            //Utils.log( o.toString(), " Activity All SSS ");
+                            Utils.log(o.toString(), " Activity All SSS ");
 
                             Storage storage = (Storage) o;
 

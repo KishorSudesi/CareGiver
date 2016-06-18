@@ -143,7 +143,7 @@ public class FeatureActivity extends AppCompatActivity {
 
             int iPosition = Config.dependentIdsAdded.indexOf(act.getStrDependentID());
             String name = Config.dependentModels.get(iPosition).getStrName();
-
+            System.out.println("rammmmmmmmmmmmmmm" + name);
             int iPositionCustomer = Config.customerIdsAdded.indexOf(act.getStrCustomerID());
 
             strDependentMail = Config.customerModels.get(iPositionCustomer).getStrEmail();
@@ -156,7 +156,7 @@ public class FeatureActivity extends AppCompatActivity {
             }
 
             String strActivityName = act.getStrActivityName();
-
+            System.out.println("rajjjjjjjjaaaaaaaaaaajjj" + strActivityName);
             if (strActivityName.length() > 20)
                 strActivityName = strActivityName.substring(0, 18) + "..";
 
@@ -1166,6 +1166,7 @@ public class FeatureActivity extends AppCompatActivity {
                         args.putSerializable("Milestone", milestoneModelObject);
                         intent.putExtras(args);
                         startActivity(intent);
+                        finish();
 
                         //  boolean bEnabled = true;
 

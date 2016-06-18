@@ -93,6 +93,10 @@ public class MilestoneActivity extends AppCompatActivity {
 
         act = (ActivityModel) b.getSerializable("Act");
 
+        bitmaps.clear();
+
+
+
         milestoneModelObject = (MilestoneModel) b.getSerializable("Milestone");
 
         utils = new Utils(MilestoneActivity.this);
@@ -165,6 +169,7 @@ public class MilestoneActivity extends AppCompatActivity {
         if (!bEnabled) {
             button.setVisibility(View.GONE);
             buttonDone.setVisibility(View.GONE);
+            buttonAttach.setVisibility(View.GONE);
         }
 
         TextView milestoneName = (TextView) findViewById(R.id.milestoneName);
@@ -572,7 +577,10 @@ public class MilestoneActivity extends AppCompatActivity {
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle args = new Bundle();
                 Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
+                args.putSerializable("ACTIVITY", act);
+                intent.putExtras(args);
                 startActivity(intent);
             }
         });
@@ -584,6 +592,10 @@ public class MilestoneActivity extends AppCompatActivity {
     dialog.show();
 */
         //}
+
+        backgroundThreadHandler = new BackgroundThreadHandler();
+        Thread backgroundThreadImages = new BackgroundThreadImages();
+        backgroundThreadImages.start();
     }
 
     public void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
@@ -607,8 +619,6 @@ public class MilestoneActivity extends AppCompatActivity {
                 iIndex++;
 
                 if (milestoneModel.getiMilestoneId() == iMileStoneId) {
-
-                    milestoneModel.setFileModels(arrayListFileModel);
 
                     if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
                         strActivityStatus = "completed";
@@ -820,18 +830,19 @@ public class MilestoneActivity extends AppCompatActivity {
         if (b) {
 
          /*   for (MilestoneModel milestoneModel : milestoneModelObject) {
+         milestoneModel.setFileModels(arrayListFileModel);
                 for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
                     Utils.log(fieldModel.getStrFieldLabel() + " ~ " + fieldModel.getStrFieldData(), " DATA ");
                 }
             }
 */
-            uploadImage();
+            uploadImage(iMileStoneId);
 
 
         }
     }
 
-    private void uploadJson() {
+    private void uploadJson(int iMilestoneId) {
         ///////////////////////
         JSONObject jsonObjectMileStone = new JSONObject();
 
@@ -843,7 +854,16 @@ public class MilestoneActivity extends AppCompatActivity {
                 JSONObject jsonObjectMilestone = new JSONObject();
 
                 jsonObjectMilestone.put("id", milestoneModel.getiMilestoneId());
+
+                if (milestoneModel.getiMilestoneId() == iMilestoneId) {
+                    //JSONObject jsonObjectFiles =
+                    //JSONObject jsonObjectFiles =
+                    jsonObjectMilestone.put("files", jsonArrayImagesAdded);
+
+                }
+
                 jsonObjectMilestone.put("status", milestoneModel.getStrMilestoneStatus());
+
                 jsonObjectMilestone.put("name", milestoneModel.getStrMilestoneName());
                 jsonObjectMilestone.put("date", milestoneModel.getStrMilestoneDate());
 
@@ -851,7 +871,7 @@ public class MilestoneActivity extends AppCompatActivity {
                 jsonObjectMilestone.put("reschedule", milestoneModel.isReschedule());
                 jsonObjectMilestone.put("scheduled_date", milestoneModel.getStrMilestoneScheduledDate());
 
-                JSONArray jsonArrayFiles = new JSONArray();
+               /* JSONArray jsonArrayFiles = new JSONArray();
 
                 for (FileModel fileModel : milestoneModel.getFileModels()) {
 
@@ -867,7 +887,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     jsonArrayFiles.put(jsonObjectFile);
                 }
 
-                jsonObjectMilestone.put("files", jsonArrayFiles);
+                jsonObjectMilestone.put("files", jsonArrayFiles);*/
                 //todo add to corresponding milestone
 
                 JSONArray jsonArrayFields = new JSONArray();
@@ -1025,6 +1045,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         for (int i = 0; i < bitmaps.size(); i++) {
             try {
+
                 //
                 ImageView imageView = new ImageView(MilestoneActivity.this);
                 imageView.setPadding(0, 0, 3, 0);
@@ -1039,7 +1060,7 @@ public class MilestoneActivity extends AppCompatActivity {
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
 
-                //Utils.log(" 2 " + String.valueOf(i), " IN ");
+                Utils.log(" 2 " + String.valueOf(i), " IN ");
 
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1073,7 +1094,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
     }
 
-    private void uploadImage() {
+    private void uploadImage(final int iMilestoneId) {
 
         if (arrayListFileModel.size() > 0) {
 
@@ -1103,7 +1124,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                     try {
 
                                         jsonObjectImages.put("file_name", fileModel.getStrFileName());
-                                        jsonObjectImages.put("file_url", fileModel.getStrFileUrl());
+                                        jsonObjectImages.put("file_url", file.getUrl());
                                         jsonObjectImages.put("file_type", fileModel.getStrFileType());
                                         jsonObjectImages.put("file_desc", fileModel.getStrFileDescription());
                                         jsonObjectImages.put("file_path", fileModel.getStrFilePath());
@@ -1114,9 +1135,9 @@ public class MilestoneActivity extends AppCompatActivity {
                                         arrayListFileModel.remove(fileModel);
 
                                         if (arrayListFileModel.size() <= 0) {
-                                            updateImages();
+                                            updateImages(iMilestoneId);
                                         } else {
-                                            uploadImage();
+                                            uploadImage(iMilestoneId);
                                         }
                                         //
 
@@ -1126,9 +1147,9 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                 } else {
                                     if (arrayListFileModel.size() <= 0) {
-                                        updateImages();
+                                        updateImages(iMilestoneId);
                                     } else {
-                                        uploadImage();
+                                        uploadImage(iMilestoneId);
                                     }
                                 }
                             } else {
@@ -1145,9 +1166,9 @@ public class MilestoneActivity extends AppCompatActivity {
                             if (e != null) {
                                 Utils.log(e.getMessage(), " Failure ");
                                 if (arrayListFileModel.size() <= 0) {
-                                    updateImages();
+                                    updateImages(iMilestoneId);
                                 } else {
-                                    uploadImage();
+                                    uploadImage(iMilestoneId);
                                 }
                             } else {
                                 utils.toast(2, 2, getString(R.string.warning_internet));
@@ -1156,17 +1177,27 @@ public class MilestoneActivity extends AppCompatActivity {
                     });
         } else {
             if (arrayListFileModel.size() <= 0) {
-                updateImages();
+                updateImages(iMilestoneId);
             }
         }
 
     }
 
-    private void updateImages() {
+    private void updateImages(int iMilestoneId) {
 
 
         if (utils.isConnectingToInternet()) {
 
+          /*  for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
+                if(milestoneModel.getiMilestoneId()==iMilestoneId)
+                    milestoneModel.setFileModels(arrayListFileModel);
+            }
+
+            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
+                if(milestoneModel.getiMilestoneId()==iMilestoneId)
+                    Utils.log(String.valueOf(milestoneModel.getFileModels().size()), " SIZE ");
+            }
+*/
           /*  JSONObject jsonToUpdate = null;
 
             try {
@@ -1176,7 +1207,7 @@ public class MilestoneActivity extends AppCompatActivity {
                 e.printStackTrace();
             }*/
 
-            uploadJson();
+            uploadJson(iMilestoneId);
 
             /*storageService.updateDocs(jsonToUpdate,
                     act.getStrActivityID(),
@@ -1198,6 +1229,7 @@ public class MilestoneActivity extends AppCompatActivity {
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }
+
 
     private void insertNotification() {
 
@@ -1294,9 +1326,17 @@ public class MilestoneActivity extends AppCompatActivity {
 
         //  reloadMilestones();
 
-        Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
+        // Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
         // Config.intSelectedMenu = Config.intDashboardScreen;
+        //startActivity(intent);
+
+        //ActivityModel obj = activityModels.get(itemPosition);
+        Bundle args = new Bundle();
+        Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
+        args.putSerializable("ACTIVITY", act);
+        intent.putExtras(args);
         startActivity(intent);
+        finish();
     }
 
     private class BackgroundThreadHandler extends Handler {
@@ -1321,7 +1361,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     strImageName1 = galleryFile.getAbsolutePath();
                     Date date = new Date();
 
-                    FileModel fileModel = new FileModel(strFileName, "", strTime, utils.convertDateToString(date), "DESC", strImageName1);
+                    FileModel fileModel = new FileModel(strFileName, "", "IMAGE", utils.convertDateToString(date), "DESC", strImageName1);
                     arrayListFileModel.add(fileModel);
 
                     utils.copyFile(new File(imagePaths.get(i)), galleryFile);
@@ -1349,9 +1389,11 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     utils.compressImageFromPath(strImageName1, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
                     Date date = new Date();
-                    FileModel fileModel = new FileModel(strName, "", strName, utils.convertDateToString(date), "", strImageName1);
+                    FileModel fileModel = new FileModel(strName1, "", "IMAGE", utils.convertDateToString(date), "DESC", strImageName1);
                     arrayListFileModel.add(fileModel);
                     bitmaps.add(utils.getBitmapFromFile(strImageName1, Config.intWidth, Config.intHeight));
+
+                    System.out.println("gurujiiiiiiiiiiiiiiii" + strImageName1);
                 }
 
                 IMAGE_COUNT++;
@@ -1363,5 +1405,35 @@ public class MilestoneActivity extends AppCompatActivity {
         }
     }
 
+    private class BackgroundThreadImages extends Thread {
+        @Override
+        public void run() {
+            try {
+                //
+
+                JSONObject jsonObjectImages = new JSONObject();
+
+                for (FileModel fileModel : milestoneModelObject.getFileModels()) {
+                    if (fileModel.getStrFileName() != null && !fileModel.getStrFileName().equalsIgnoreCase("")) {
+                        bitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(fileModel.getStrFileName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        IMAGE_COUNT++;
+
+                        jsonObjectImages.put("file_name", fileModel.getStrFileName());
+                        jsonObjectImages.put("file_url", fileModel.getStrFileUrl());
+                        jsonObjectImages.put("file_description", fileModel.getStrFileDescription());
+                        jsonObjectImages.put("file_taken", fileModel.getStrFileUploadTime());
+
+                        jsonArrayImagesAdded.put(jsonObjectImages);
+
+                        System.out.println("anikettttttttttt" + fileModel.getStrFilePath());
+                    }
+                }
+                //
+            } catch (Exception | OutOfMemoryError e) {
+                e.printStackTrace();
+            }
+            backgroundThreadHandler.sendEmptyMessage(0);
+        }
+    }
 
 }
