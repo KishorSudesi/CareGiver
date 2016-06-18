@@ -558,7 +558,10 @@ public class MilestoneActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int id = (int) v.getTag();
-                LinearLayout linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                LinearLayout linearLayout = null;
+                if (layoutDialog != null) {
+                    linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                }
                 traverseEditTexts(layoutDialog, id, linearLayout, 1);
 
 
@@ -569,21 +572,26 @@ public class MilestoneActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int id = (int) v.getTag();
-                LinearLayout linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                LinearLayout linearLayout = null;
+                if (layoutDialog != null) {
+                    linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                }
                 traverseEditTexts(layoutDialog, id, linearLayout, 2);
             }
         });
 
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle args = new Bundle();
-                Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
-                args.putSerializable("ACTIVITY", act);
-                intent.putExtras(args);
-                startActivity(intent);
-            }
-        });
+        if (buttonCancel != null) {
+            buttonCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle args = new Bundle();
+                    Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
+                    args.putSerializable("ACTIVITY", act);
+                    intent.putExtras(args);
+                    startActivity(intent);
+                }
+            });
+        }
 
     /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setView(view);
@@ -1420,8 +1428,10 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         jsonObjectImages.put("file_name", fileModel.getStrFileName());
                         jsonObjectImages.put("file_url", fileModel.getStrFileUrl());
-                        jsonObjectImages.put("file_description", fileModel.getStrFileDescription());
-                        jsonObjectImages.put("file_taken", fileModel.getStrFileUploadTime());
+                        jsonObjectImages.put("file_type", fileModel.getStrFileType());
+                        jsonObjectImages.put("file_desc", fileModel.getStrFileDescription());
+                        jsonObjectImages.put("file_path", fileModel.getStrFilePath());
+                        jsonObjectImages.put("file_time", fileModel.getStrFileUploadTime());
 
                         jsonArrayImagesAdded.put(jsonObjectImages);
 
