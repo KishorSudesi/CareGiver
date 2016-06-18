@@ -22,6 +22,7 @@ import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
 import com.hdfc.models.FieldModel;
+import com.hdfc.models.FileModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.models.MilestoneViewModel;
@@ -706,7 +707,7 @@ public class AppUtils {
                                 Storage.JSONDocument jsonDocument = jsonDocList.get(i);
                                 String strDocumentId = jsonDocument.getDocId();
                                 String strActivities = jsonDocument.getJsonDoc();
-                                createActivityModel(strDocumentId, strActivities);
+                                createActivityModel(strDocumentId, strActivities, 1);
                             }
                         }
                         fetchCustomers(1);
@@ -757,7 +758,7 @@ public class AppUtils {
         }*/
     }
 
-    public void createActivityModel(String strDocumentId, final String strDocument) {
+    public void createActivityModel(String strDocumentId, final String strDocument, int iFlag) {
 
         try {
 
@@ -765,11 +766,52 @@ public class AppUtils {
 
             if (jsonObject.has("dependent_id")) {
 
-                boolean bActivity = false, bMilestone = false;
+                boolean bActivity = false, bMilestone = false, bContinue = false, bToday = false;
 
-                if (!Config.strActivityIds.contains(strDocumentId)) {
+                if (jsonObject.has("activity_date")) {
+                    Calendar calendar = Calendar.getInstance();
 
-                    Config.strActivityIds.add(strDocumentId);
+                    Date startDate = null, endDate = null;
+                    String strStartDateCopy, strEndDateCopy;
+                    Date activityDate = null;
+
+                    try {
+                        Date dateNow = calendar.getTime();
+                        strEndDateCopy = Utils.writeFormatDateDB.format(dateNow) + "T23:59:59.999Z";
+                        strStartDateCopy = Utils.writeFormatDateDB.format(dateNow) + "T00:00:00.000Z";
+
+                        activityDate = utils.convertStringToDate(jsonObject.getString("activity_date"));
+
+                        endDate = utils.convertStringToDate(strEndDateCopy);
+                        startDate = utils.convertStringToDate(strStartDateCopy);
+
+                        Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED ");
+
+                        if (activityDate.before(endDate) && activityDate.after(startDate)) {
+                            bToday = true;
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (iFlag == 1 || bToday)
+                    bContinue = Config.strActivityIds.contains(strDocumentId);
+
+                if (iFlag == 2)
+                    bContinue = Config.strActivityIdsNotifications.contains(strDocumentId);
+
+                if (!bContinue) {
+
+                    //Config.strActivityIds.add(strDocumentId);
+
+                    if (iFlag == 1 || bToday)
+                        Config.strActivityIds.add(strDocumentId);
+
+                    if (iFlag == 2)
+                        Config.strActivityIdsNotifications.add(strDocumentId);
+
 
                     if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
                         Config.dependentIds.add(jsonObject.getString("dependent_id"));
@@ -965,23 +1007,26 @@ public class AppUtils {
                                     }
                                 }
 
-                                if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("customer")) {
-                                    if (!Config.customerIds.contains(jsonObjectFeedback.getString("feedback_by")))
-                                        Config.customerIds.add(jsonObjectFeedback.getString("feedback_by"));
-                                }
-
-                                if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("dependent")) {
-                                    if (!Config.dependentIds.contains(jsonObjectFeedback.getString("feedback_by")))
-                                        Config.dependentIds.add(jsonObjectFeedback.getString("feedback_by"));
-                                }
-
                                 feedBackModels.add(feedBackModel);
 
-                                Config.iRatings += jsonObjectFeedback.getInt("feedback_rating");
+                                if (iFlag == 1 || bToday) {
 
-                                Config.iRatingCount += 1;
+                                    if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("customer")) {
+                                        if (!Config.customerIds.contains(jsonObjectFeedback.getString("feedback_by")))
+                                            Config.customerIds.add(jsonObjectFeedback.getString("feedback_by"));
+                                    }
 
-                                Config.feedBackModels.add(feedBackModel);
+                                    if (jsonObjectFeedback.getString("feedback_by_type").equalsIgnoreCase("dependent")) {
+                                        if (!Config.dependentIds.contains(jsonObjectFeedback.getString("feedback_by")))
+                                            Config.dependentIds.add(jsonObjectFeedback.getString("feedback_by"));
+                                    }
+
+                                    Config.iRatings += jsonObjectFeedback.getInt("feedback_rating");
+
+                                    Config.iRatingCount += 1;
+
+                                    Config.feedBackModels.add(feedBackModel);
+                                }
                             }
                         }
                         activityModel.setFeedBackModels(feedBackModels);
@@ -1003,6 +1048,67 @@ public class AppUtils {
                             milestoneModel.setStrMilestoneStatus(jsonObjectMilestone.getString("status"));
                             milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
                             milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
+
+
+                            /////////////
+                            if (jsonObjectMilestone.has("files")) {
+
+                                JSONArray jsonArrayMsFiles = jsonObjectMilestone.
+                                        getJSONArray("files");
+
+                                for (int m = 0; m < jsonArrayMsFiles.length(); m++) {
+
+                                    JSONObject jsonObjectMsFile = jsonArrayMsFiles.
+                                            getJSONObject(m);
+
+                                    if (jsonObjectMsFile.has("file_name")) {
+
+                                        FileModel fileModel = new FileModel(
+                                                jsonObjectMsFile.getString("file_name"),
+                                                jsonObjectMsFile.getString("file_url"),
+                                                jsonObjectMsFile.getString("file_type"),
+                                                jsonObjectMsFile.getString("file_time"),
+                                                jsonObjectMsFile.getString("file_desc"),
+                                                jsonObjectMsFile.getString("file_path"));
+
+                                        milestoneModel.setFileModel(fileModel);
+
+                                        ///
+                                        String strUrlHash = Utils.sha512(jsonObjectMsFile.getString("file_url"));
+
+                                        Cursor cur = CareGiver.dbCon.fetch(
+                                                DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                                                new String[]{jsonObjectMsFile.getString("file_name")}, null, "0, 1", true, null, null
+                                        );
+
+                                        String strHashLocal = "";
+
+                                        if (cur.getCount() <= 0) {
+                                            CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectMsFile.getString("file_name"),
+                                                            jsonObjectMsFile.getString("file_url"), "IMAGE", strUrlHash},
+                                                    new String[]{"name", "url", "file_type", "file_hash"});
+                                        } else {
+
+                                            cur.moveToFirst();
+                                            strHashLocal = cur.getString(0);
+                                            cur.moveToNext();
+                                            CareGiver.dbCon.closeCursor(cur);
+
+                                            if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                                                CareGiver.dbCon.update(
+                                                        DbHelper.strTableNameFiles, "name=?",
+                                                        new String[]{jsonObjectMsFile.getString("file_url"), strUrlHash},
+                                                        new String[]{"url", "file_hash"}, new String[]{jsonObjectMsFile.getString("file_name")}
+                                                );
+                                            }
+                                        }
+
+                                        CareGiver.dbCon.closeCursor(cur);
+                                    }
+                                }
+                            }
+
+                            //////////////////////
 
                             if (jsonObjectMilestone.has("show")) {
 
@@ -1193,7 +1299,12 @@ public class AppUtils {
                             activityModel.setMilestoneModel(milestoneModel);
                         }
                     }
-                    Config.activityModels.add(activityModel);
+
+                    if (iFlag == 1 || bToday)
+                        Config.activityModels.add(activityModel);
+
+                    if (iFlag == 2)
+                        Config.activityModelsNotifications.add(activityModel);
                 }
             }
 

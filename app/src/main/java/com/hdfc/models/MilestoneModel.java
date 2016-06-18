@@ -27,7 +27,9 @@ public class MilestoneModel implements Serializable {
         this.fileModels = fileModels;
     }
 
-
+    public void setFileModel(FileModel fileModel) {
+        this.fileModels.add(fileModel);
+    }
 
     public boolean isReschedule() {
         return isReschedule;

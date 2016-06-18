@@ -296,56 +296,63 @@ public class FeatureActivity extends AppCompatActivity {
                             if (editText.isEnabled()) {
                                 if (b1 && !data.equalsIgnoreCase("")) {
 
-                                    boolean bFuture = true;
+                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                            || fieldModel.getStrFieldType().equalsIgnoreCase("date")
+                                            || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
 
-                                    /////////////////////////////
-                                    Date dateNow = null;
-                                    String strdateCopy;
-                                    Date enteredDate = null;
+                                        boolean bFuture = true;
 
-                                    try {
-                                        strdateCopy = Utils.writeFormat.format(calendar.getTime());
-                                        dateNow = Utils.writeFormat.parse(strdateCopy);
-                                        enteredDate = Utils.writeFormat.parse(data);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
+                                        /////////////////////////////
+                                        Date dateNow = null;
+                                        String strdateCopy;
+                                        Date enteredDate = null;
 
-                                    if (dateNow != null && enteredDate != null) {
-
-                                        Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
-
-                                        if (enteredDate.before(dateNow)) {
-                                            bFuture = false;
-                                        }
-                                    }
-                                    /////////////////////////////
-
-                                    if (bFuture) {
-
-                                        fieldModel.setStrFieldData(data);
-
-                                        if ((milestoneModel.isReschedule() || !milestoneModel.isReschedule())
-                                                && milestoneModel.getStrMilestoneScheduledDate() != null
-                                                && (!milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")
-                                                || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase(""))
-                                                && fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
-                                                ) {
-
-                                            if (milestoneModel.getStrMilestoneScheduledDate() != null
-                                                    && !milestoneModel.getStrMilestoneScheduledDate().
-                                                    equalsIgnoreCase(""))
-                                                milestoneModel.setReschedule(true);
-
-                                            String strDate = (String) editText.getTag(R.id.two);
-                                            milestoneModel.setStrMilestoneScheduledDate(strDate); //todo check possiblity for diff TZ
-
-                                            strScheduledDate = strDate;
+                                        try {
+                                            strdateCopy = Utils.writeFormat.format(calendar.getTime());
+                                            dateNow = Utils.writeFormat.parse(strdateCopy);
+                                            enteredDate = Utils.writeFormat.parse(data);
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
                                         }
 
+                                        if (dateNow != null && enteredDate != null) {
+
+                                            Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
+
+                                            if (enteredDate.before(dateNow)) {
+                                                bFuture = false;
+                                            }
+                                        }
+                                        /////////////////////////////
+
+                                        if (bFuture) {
+
+                                            fieldModel.setStrFieldData(data);
+
+                                            if ((milestoneModel.isReschedule() || !milestoneModel.isReschedule())
+                                                    && milestoneModel.getStrMilestoneScheduledDate() != null
+                                                    && (!milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")
+                                                    || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase(""))
+                                                    && fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                                    ) {
+
+                                                if (milestoneModel.getStrMilestoneScheduledDate() != null
+                                                        && !milestoneModel.getStrMilestoneScheduledDate().
+                                                        equalsIgnoreCase(""))
+                                                    milestoneModel.setReschedule(true);
+
+                                                String strDate = (String) editText.getTag(R.id.two);
+                                                milestoneModel.setStrMilestoneScheduledDate(strDate); //todo check possiblity for diff TZ
+
+                                                strScheduledDate = strDate;
+                                            }
+
+                                        } else {
+                                            editText.setError(context.getString(R.string.invalid_date));
+                                            b = false;
+                                        }
                                     } else {
-                                        editText.setError(context.getString(R.string.invalid_date));
-                                        b = false;
+                                        fieldModel.setStrFieldData(data);
                                     }
 
                                 } else {

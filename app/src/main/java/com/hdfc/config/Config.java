@@ -68,12 +68,18 @@ public class Config {
     public static int intScreenHeight = 0;
     //public static int intCreateTaskScreen = 5;
     //public static ArrayList<FileModel> fileModels = new ArrayList<>();
+
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
+    public static ArrayList<ActivityModel> activityModelsNotifications = new ArrayList<>();
+
     public static ArrayList<MilestoneViewModel> milestoneModels = new ArrayList<>();
     public static ArrayList<String> dependentIds = new ArrayList<>();
     public static ArrayList<String> strProviderIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
+
     public static ArrayList<String> strActivityIds = new ArrayList<>();
+    public static ArrayList<String> strActivityIdsNotifications = new ArrayList<>();
+
     public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
     public static ArrayList<String> customerIdsAdded = new ArrayList<>();
     public static ArrayList<DependentModel> dependentModels = new ArrayList<>();

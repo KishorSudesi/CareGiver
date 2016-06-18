@@ -10,8 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
@@ -525,7 +523,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                         if (activityDate.before(endDate) && activityDate.after(startDate)) {
                                             appUtils.createActivityModel(
                                                     response.getJsonDocList().get(0).getDocId(),
-                                                    response.getJsonDocList().get(0).getJsonDoc()
+                                                    response.getJsonDocList().get(0).getJsonDoc(),
+                                                    1
                                             );
                                         }
 
