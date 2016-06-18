@@ -14,9 +14,9 @@
         android:id="@+id/textViewNotification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
         android:layout_centerHorizontal="true"
         android:padding="10dp"
-        android:layout_below="@+id/header"
         android:text="@string/menu_notification"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
@@ -28,11 +28,14 @@
         android:layout_below="@+id/textViewNotification"
         android:background="@drawable/colorful_textview"
         android:padding="15dp" />
+
     <ListView
         android:id="@+id/listViewActivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/imageViewLine" />
+        android:layout_below="@+id/imageViewLine"
+        android:divider="@color/blue"
+        android:dividerHeight="1dp" />
 
     <TextView
         android:id="@android:id/empty"

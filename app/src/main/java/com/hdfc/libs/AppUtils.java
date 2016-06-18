@@ -2120,7 +2120,7 @@ public class AppUtils {
     public void fetchClients(final int iFlag) {
 
         if (utils.isConnectingToInternet()) {
-            fetchCustomers(2);
+            //fetchCustomers(2);
             StorageService storageService = new StorageService(_ctxt);
 
             Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),

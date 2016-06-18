@@ -2,11 +2,7 @@ package com.hdfc.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,11 +93,11 @@ public class NotificationAdapter extends BaseAdapter {
 
             final String strMessage = strMess;
 
-            if (strMess.length() > 90) {
-                strMess = strMess.substring(0, 90);
+            if (strMess.length() > 75) {
+                strMess = strMess.substring(0, 72);
                 textReadMore.setVisibility(View.VISIBLE);
             }else {
-                textReadMore.setVisibility(View.INVISIBLE);
+                textReadMore.setVisibility(View.GONE);
                 textReadMore.setEnabled(false);
             }
             viewHolder.textViewText.setText(strMess);

@@ -76,6 +76,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     public static void gotoSimpleActivityMenu() {
 
+        threadHandler = new ThreadHandler();
         Thread backgroundThread = new BackgroundThread();
         backgroundThread.start();
     }
@@ -136,7 +137,7 @@ public class DashboardActivity extends AppCompatActivity implements
             notification = (ImageView) findViewById(R.id.buttonNotification);
 
             loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
-            threadHandler = new ThreadHandler();
+
 
             textViewTasks = (TextView) findViewById(R.id.textViewTasks);
             textViewClients = (TextView) findViewById(R.id.textViewClients);
