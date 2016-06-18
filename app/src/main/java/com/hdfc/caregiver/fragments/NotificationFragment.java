@@ -1,22 +1,19 @@
 package com.hdfc.caregiver.fragments;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hdfc.adapters.NotificationAdapter;
 import com.hdfc.app42service.StorageService;
+import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
@@ -90,7 +87,7 @@ public class NotificationFragment extends Fragment {
 
         if (utils.isConnectingToInternet()) {
 
-//            loadingPanel.setVisibility(View.VISIBLE);
+            DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
 
             StorageService storageService = new StorageService(getContext());
 
@@ -168,7 +165,7 @@ public class NotificationFragment extends Fragment {
 
     public void hideLoader() {
         refreshNotifications();
-     //   loadingPanel.setVisibility(View.GONE);
+        DashboardActivity.loadingPanel.setVisibility(View.GONE);
     }
 
     private void refreshNotifications() {
@@ -188,10 +185,12 @@ public class NotificationFragment extends Fragment {
             //
             Intent intent = new Intent(getActivity(), FeatureActivity.class);
             args.putSerializable("ACTIVITY", activityModel);
-            intent.putExtra("noti",3);
+            args.putBoolean("WHICH_SCREEN", true);
             intent.putExtras(args);
             startActivity(intent);
+
         }else {
+
             StorageService storageService = new StorageService(getContext());
 
             storageService.findDocsById(strActivityId, Config.collectionActivity, new AsyncApp42ServiceApi.App42StorageServiceListener() {
@@ -221,9 +220,17 @@ public class NotificationFragment extends Fragment {
                             int iPosition = Config.strNotificationIds.indexOf(strActivityId);
                             if (iPosition > -1) {
                                 ActivityModel activityModel = Config.activityModelsNotifications.get(iPosition);
-                                Bundle args = new Bundle();
+                               /* Bundle args = new Bundle();
                                 Intent intent = new Intent(getActivity(), FeatureActivity.class);
                                 args.putSerializable("ACTIVITY", activityModel);
+                                intent.putExtras(args);
+                                startActivity(intent);*/
+
+                                Bundle args = new Bundle();
+                                //
+                                Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                                args.putSerializable("ACTIVITY", activityModel);
+                                args.putBoolean("WHICH_SCREEN", true);
                                 intent.putExtras(args);
                                 startActivity(intent);
                             }

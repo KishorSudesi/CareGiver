@@ -89,6 +89,7 @@ public class FeatureActivity extends AppCompatActivity {
     private Point p;
     private JSONArray jsonArrayImagesAdded;
     private TextView textViewName;
+    private boolean bWhichScreen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,23 +121,21 @@ public class FeatureActivity extends AppCompatActivity {
         arrayListImageModel.clear();
         bitmaps.clear();
 
+
         try {
             Bundle b = getIntent().getExtras();
+
+            bWhichScreen = b.getBoolean("WHICH_SCREEN", false);
 
             if (cancel != null) {
                 cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(getIntent().hasExtra("noti")){
-                            Config.intSelectedMenu = Config.intNotificationScreen;
                             goBack();
-                        } else if(getIntent().hasExtra("acti")){
-                            Config.intSelectedMenu = Config.intDashboardScreen;
-                            goBack();
-                        }
                     }
                 });
             }
+
             act = (ActivityModel) b.getSerializable("ACTIVITY");
 
             utils = new Utils(FeatureActivity.this);
@@ -205,14 +204,14 @@ public class FeatureActivity extends AppCompatActivity {
         }
 
 
-        if (back != null) {
+       /* if (back != null) {
             back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     goBack();
                 }
             });
-        }
+        }*/
 
         if (linearLayoutAttach != null) {
             linearLayoutAttach.setOnClickListener(new View.OnClickListener() {
@@ -243,6 +242,12 @@ public class FeatureActivity extends AppCompatActivity {
         arrayListImageModel.clear();
         bitmaps.clear();
         IMAGE_COUNT = 0;
+
+        if (bWhichScreen)
+            Config.intSelectedMenu = Config.intNotificationScreen;
+        else
+            Config.intSelectedMenu = Config.intDashboardScreen;
+
         Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
         intent.putExtra("LOAD", bLoad);
         startActivity(intent);

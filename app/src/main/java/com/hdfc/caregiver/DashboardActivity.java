@@ -84,7 +84,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
         if (utils.isConnectingToInternet()) {
 
-            loadingPanel.setVisibility(View.VISIBLE);
+            //loadingPanel.setVisibility(View.VISIBLE);
 
             Config.dependentIds.clear();
             Config.customerIds.clear();
@@ -97,6 +97,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
         } else {
             utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet));
+            loadingPanel.setVisibility(View.GONE);
         }
     }
 

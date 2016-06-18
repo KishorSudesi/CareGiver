@@ -220,7 +220,7 @@ public class AppUtils {
                                     //System.out.println("NACHIKET : "+(o!=null));
                                     if (o != null) {
 
-                                        //Utils.log(o.toString(), " MESS 1");
+                                        Utils.log(o.toString(), " MESS 1");
 
                                         Storage storage = (Storage) o;
 
@@ -297,7 +297,7 @@ public class AppUtils {
 
                                     if (o != null) {
 
-                                        //Utils.log(o.toString(), " fetchCustomers ");
+                                        Utils.log(o.toString(), " fetchCustomers ");
                                         Storage storage = (Storage) o;
 
                                         if (storage.getJsonDocList().size() > 0) {
@@ -774,6 +774,8 @@ public class AppUtils {
 
                 boolean bActivity = false, bMilestone = false, bContinue = false, bToday = false;
 
+
+                /////
                 if (jsonObject.has("activity_date")) {
                     Calendar calendar = Calendar.getInstance();
 
@@ -801,6 +803,7 @@ public class AppUtils {
                         e.printStackTrace();
                     }
                 }
+                ///
 
                 if (iFlag == 1 || bToday)
                     bContinue = Config.strActivityIds.contains(strDocumentId);
