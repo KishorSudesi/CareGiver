@@ -41,7 +41,6 @@ import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.FieldModel;
-import com.hdfc.models.FileModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.views.TouchImageView;
@@ -66,29 +65,25 @@ import java.util.GregorianCalendar;
 public class FeatureActivity extends AppCompatActivity {
 
     public static int IMAGE_COUNT = 0;
-    public static Dialog dialog;
     private static String strImageName = "";
-    private static String strImageName1 = "";
     //private static Bitmap bitmap = null;
     private static StorageService storageService;
     private static ArrayList<ImageModel> arrayListImageModel = new ArrayList<>();
-    private static ArrayList<FileModel> arrayListFileModel = new ArrayList<>();
-    private static Handler backgroundThreadHandler, backgroundThreadHandlerDialog;
+    private static Handler backgroundThreadHandler;
     //private static ProgressDialog mProgress = null;
     private static String strAlert;
     private static JSONObject jsonObject;
     private static ActivityModel act;
     private static LinearLayout layout, dialoglayout;
-    private static String strName, strPushMessage, strDependentMail, strName1;
+    private static String strName, strPushMessage, strDependentMail;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
-    private static ArrayList<Bitmap> bitmaps1 = new ArrayList<>();
+    private static Dialog dialog;
     private static RelativeLayout loadingPanel;
     private static boolean bLoad;
     private static boolean bViewLoaded;
     private static String strActivityStatus = "inprocess";
     private final Context context = this;
-    boolean flag;
     private Utils utils;
     //private ProgressDialog progressDialog;
     private Point p;
@@ -111,17 +106,16 @@ public class FeatureActivity extends AppCompatActivity {
 
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
         layout = (LinearLayout) findViewById(R.id.linear);
+        dialoglayout = (LinearLayout) findViewById(R.id.dialogLinear);
 
         bLoad = false;
 
-        if (cancel != null) {
-            cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    goBack();
-                }
-            });
-        }
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goBack();
+            }
+        });
         IMAGE_COUNT = 0;
         MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(FeatureActivity.this);
 
@@ -248,7 +242,7 @@ public class FeatureActivity extends AppCompatActivity {
         finish();
     }
 
-    public void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
+    private void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
 
         boolean b = true;
 
@@ -550,7 +544,6 @@ public class FeatureActivity extends AppCompatActivity {
     // The method that displays the popup.
     private void showStatusPopup(final Activity context, Point p) {
 
-        flag = true;
         // Inflate the popup_layout.xml
         //LinearLayout viewGroup = (LinearLayout) context.findViewById(R.id.llStatusChangePopup);
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -649,17 +642,14 @@ public class FeatureActivity extends AppCompatActivity {
                     case Config.START_CAMERA_REQUEST_CODE:
 
                         backgroundThreadHandler = new BackgroundThreadHandler();
-                        //  backgroundThreadHandlerDialog = new BackgroundThreadHandlerDialog();
                         strImageName = Utils.customerImageUri.getPath();
-                        // Thread backgroundTreadDialog1 = new BackgroundThreadDialog1();
                         Thread backgroundThreadCamera = new BackgroundThreadCamera();
                         backgroundThreadCamera.start();
-                        //  backgroundTreadDialog1.start();
                         break;
 
                     case Config.START_GALLERY_REQUEST_CODE:
                         backgroundThreadHandler = new BackgroundThreadHandler();
-                        //  backgroundThreadHandlerDialog = new BackgroundThreadHandlerDialog();
+
                         imagePaths.clear();
 
                         String[] all_path = intent.getStringArrayExtra("all_path");
@@ -676,11 +666,8 @@ public class FeatureActivity extends AppCompatActivity {
                                 imagePaths.add(string);
                             }
                         }
-                        // Thread backgroundTreadDialog2 = new BackgroundThreadDialog2();
                         Thread backgroundThread = new BackgroundThread();
                             backgroundThread.start();
-                        //  backgroundTreadDialog2.start();
-
 
                         break;
                 }
@@ -930,61 +917,6 @@ public class FeatureActivity extends AppCompatActivity {
 
     }
 
-    private void addImagesdialog() {
-
-        dialoglayout.removeAllViews();
-
-        for (int i = 0; i < bitmaps.size(); i++) {
-            try {
-                //
-                ImageView imageView = new ImageView(FeatureActivity.this);
-                imageView.setPadding(0, 0, 3, 0);
-
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                layoutParams.setMargins(10, 10, 10, 10);
-                // linearLayout1.setLayoutParams(layoutParams);
-
-                imageView.setLayoutParams(layoutParams);
-                imageView.setImageBitmap(bitmaps.get(i));
-                imageView.setTag(bitmaps.get(i));
-                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
-
-                //Utils.log(" 2 " + String.valueOf(i), " IN ");
-
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        Dialog dialog = new Dialog(FeatureActivity.this);
-                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-                        dialog.setContentView(R.layout.image_dialog_layout);
-
-                        TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
-                        try {
-                            mOriginal.setImageBitmap((Bitmap) v.getTag());
-                        } catch (OutOfMemoryError oOm) {
-                            oOm.printStackTrace();
-                        }
-                        dialog.setCancelable(true);
-
-                        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
-                        dialog.show();
-
-                    }
-                });
-
-                dialoglayout.addView(imageView);
-            } catch (Exception | OutOfMemoryError e) {
-                //bitmap.recycle();
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-
     private void insertNotification() {
 
         if (utils.isConnectingToInternet()) {
@@ -1206,29 +1138,29 @@ public class FeatureActivity extends AppCompatActivity {
                     linearLayout.addView(textViewName);
                 }
 
-
                 textViewName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
+                        final MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
 
                         Bundle args = new Bundle();
-                        MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
+
+
                         Intent intent = new Intent(FeatureActivity.this, MilestoneActivity.class);
+                        args.putSerializable("Act", activityModel);
                         args.putSerializable("Milestone", milestoneModelObject);
                         intent.putExtras(args);
                         startActivity(intent);
-/*
-                        boolean bEnabled = true;
 
-                        if (milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed"))
+                        //  boolean bEnabled = true;
+
+                        /*if (milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed"))
                             bEnabled = false;
 
                             //int i = 0;
 
                             View view = getLayoutInflater().inflate(R.layout.dialog_view, null, false);
-
-                             dialoglayout = (LinearLayout) view.findViewById(R.id.dialogLinear);
 
                             final LinearLayout layoutDialog = (LinearLayout) view.findViewById(R.id.linearLayoutDialog);
 
@@ -1236,21 +1168,7 @@ public class FeatureActivity extends AppCompatActivity {
                             Button button = (Button) view.findViewById(R.id.dialogButtonOK);
                             Button buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
                             Button buttonDone = (Button) view.findViewById(R.id.buttonDone);
-                            Button buttonUpload = (Button) view.findViewById(R.id.dialogButtonUpload);
-                            Button buttonAttach = (Button)view.findViewById(R.id.dialogButtonAttach);
-
-                        buttonAttach.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                flag = false;
-                                strName1 = String.valueOf(new Date().getDate() + "" + new Date().getTime());
-                                strImageName1 = strName1 + ".jpeg";
-
-                                utils.selectImage(strImageName1, null, FeatureActivity.this, false);
-
-
-                            }
-                        });
+                        Button buttonUpload = (Button) view.findViewById(R.id.dialogButtonUpload);
 
                             button.setTag(milestoneModelObject.getiMilestoneId());
                             buttonDone.setTag(milestoneModelObject.getiMilestoneId());
@@ -1680,8 +1598,7 @@ public class FeatureActivity extends AppCompatActivity {
 
                             dialog.show();
 
-                        //}
-                    }*/
+                        //}*/
                     }
                 });
             }
@@ -1695,17 +1612,10 @@ public class FeatureActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
 
             addImages();
+
             loadingPanel.setVisibility(View.GONE);
         }
     }
-
-    /*private class BackgroundThreadHandlerDialog extends Handler {
-
-        public void handleMessage (Message msg) {
-            addImagesdialog();
-        }
-
-    }*/
 
     private class BackgroundThread extends Thread {
         @Override
@@ -1738,39 +1648,6 @@ public class FeatureActivity extends AppCompatActivity {
             }
         }
     }
-
-    /*private class BackgroundThreadDialog2 extends Thread {
-        @Override
-        public void run() {
-
-            try {
-                for(int i=0;i<imagePaths.size();i++) {
-                    Calendar calendar = new GregorianCalendar();
-                    String strTime = String.valueOf(calendar.getTimeInMillis());
-                    String strFileName = strTime + ".jpeg";
-                    File galleryFile = utils.createFileInternalImage(strFileName);
-                    strImageName1 = galleryFile.getAbsolutePath();
-                    Date date = new Date();
-
-                    FileModel fileModel = new FileModel(strFileName, "", strTime, utils.convertDateToString(date), galleryFile.getAbsolutePath());
-                    arrayListFileModel.add(fileModel);
-
-                    utils.copyFile(new File(imagePaths.get(i)), galleryFile);
-                    //
-                    utils.compressImageFromPath(strImageName1, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-                    bitmaps1.add(utils.getBitmapFromFile(strImageName1, Config.intWidth, Config.intHeight));
-
-                    IMAGE_COUNT++;
-                }
-                backgroundThreadHandler.sendEmptyMessage(0);
-            } catch (IOException |OutOfMemoryError e) {
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-*/
 
     private class BackgroundThreadCamera extends Thread {
         @Override
@@ -1809,28 +1686,6 @@ public class FeatureActivity extends AppCompatActivity {
         }
     }
 
-    /* private class BackgroundThreadDialog1 extends Thread {
-         @Override
-         public void run() {
-             try {
-                 if (strImageName1 != null && !strImageName1.equalsIgnoreCase("")) {
-
-                     utils.compressImageFromPath(strImageName1, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-                     Date date = new Date();
-                     ImageModel imageModel = new ImageModel(strName1, "", strName1, utils.convertDateToString(date), strImageName1);
-                     arrayListImageModel.add(imageModel);
-                     bitmaps1.add(utils.getBitmapFromFile(strImageName1, Config.intWidth, Config.intHeight));
-                 }
-
-                 IMAGE_COUNT++;
-
-             } catch (Exception | OutOfMemoryError e) {
-                 e.printStackTrace();
-             }
-             backgroundThreadHandler.sendEmptyMessage(0);
-         }
-     }
- */
     private class BackgroundThreadImages extends Thread {
         @Override
         public void run() {

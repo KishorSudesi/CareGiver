@@ -1,17 +1,24 @@
 package com.hdfc.caregiver;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -22,28 +29,40 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
+import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.FieldModel;
+import com.hdfc.models.FileModel;
 import com.hdfc.models.MilestoneModel;
+import com.hdfc.views.TouchImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
+import com.shephertz.app42.paas.sdk.android.upload.Upload;
+import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class MilestoneActivity extends AppCompatActivity {
 
     public static Dialog dialog;
+    public static int IMAGE_COUNT = 0;
+    private static ArrayList<FileModel> arrayListFileModel = new ArrayList<>();
+    private static ArrayList<String> imagePaths = new ArrayList<>();
+    private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
     private static RelativeLayout loadingPanel;
     private static boolean bLoad;
     private static boolean bViewLoaded;
@@ -52,22 +71,33 @@ public class MilestoneActivity extends AppCompatActivity {
     private static JSONObject jsonObject;
     private static ActivityModel act;
     private static String strName, strPushMessage, strDependentMail, strName1;
+    private static String strImageName1 = "";
     private static StorageService storageService;
+    private static Handler backgroundThreadHandler;
+    private static LinearLayout layout;
     private final Context context = this;
     private Utils utils;
+    private MilestoneModel milestoneModelObject;
+    private JSONArray jsonArrayImagesAdded;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_milestone);
 
+        loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
-        final MilestoneModel milestoneModelObject;
 
         Bundle b = getIntent().getExtras();
 
+        act = (ActivityModel) b.getSerializable("Act");
+
         milestoneModelObject = (MilestoneModel) b.getSerializable("Milestone");
 
+        utils = new Utils(MilestoneActivity.this);
+        storageService = new StorageService(MilestoneActivity.this);
+        jsonArrayImagesAdded = new JSONArray();
 
         boolean bEnabled = true;
 
@@ -78,7 +108,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         // View view = getLayoutInflater().inflate(R.layout.dialog_view, null, false);
 
-        LinearLayout dialoglayout = (LinearLayout) findViewById(R.id.dialogLinear);
+        layout = (LinearLayout) findViewById(R.id.dialogLinear);
 
         final LinearLayout layoutDialog = (LinearLayout) findViewById(R.id.linearLayoutDialog);
 
@@ -89,19 +119,41 @@ public class MilestoneActivity extends AppCompatActivity {
         Button buttonUpload = (Button) findViewById(R.id.dialogButtonUpload);
         Button buttonAttach = (Button) findViewById(R.id.dialogButtonAttach);
 
-       /* buttonAttach.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flag = false;
-                strName1 = String.valueOf(new Date().getDate() + "" + new Date().getTime());
-                strImageName1 = strName1 + ".jpeg";
+        /*if (buttonUpload != null) {
+            buttonUpload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    IMAGE_COUNT = 0;
 
-                utils.selectImage(strImageName1, null, FeatureActivity.this, false);
+                    if (arrayListFileModel.size() > 0) {
+
+                        if (utils.isConnectingToInternet()) {
+                            loadingPanel.setVisibility(View.VISIBLE);
+                            uploadImage();
+                        } else {
+                            utils.toast(2, 2, getString(R.string.warning_internet));
+                        }
+                    } else utils.toast(2, 2, "Select a Image");
+                }
+            });
+        }*/
 
 
-            }
-        });
-*/
+        if (buttonAttach != null) {
+            buttonAttach.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    strName1 = String.valueOf(new Date().getDate() + "" + new Date().getTime());
+                    strImageName1 = strName1 + ".jpeg";
+
+                    utils.selectImage(strImageName1, null, MilestoneActivity.this, false);
+
+
+                }
+            });
+        }
+
         button.setTag(milestoneModelObject.getiMilestoneId());
         buttonDone.setTag(milestoneModelObject.getiMilestoneId());
 
@@ -504,6 +556,7 @@ public class MilestoneActivity extends AppCompatActivity {
                 LinearLayout linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
                 traverseEditTexts(layoutDialog, id, linearLayout, 1);
 
+
             }
         });
 
@@ -519,7 +572,8 @@ public class MilestoneActivity extends AppCompatActivity {
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -554,6 +608,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
                 if (milestoneModel.getiMilestoneId() == iMileStoneId) {
 
+                    milestoneModel.setFileModels(arrayListFileModel);
+
                     if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
                         strActivityStatus = "completed";
                     }
@@ -586,56 +642,63 @@ public class MilestoneActivity extends AppCompatActivity {
                             if (editText.isEnabled()) {
                                 if (b1 && !data.equalsIgnoreCase("")) {
 
-                                    boolean bFuture = true;
+                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                            || fieldModel.getStrFieldType().equalsIgnoreCase("date")
+                                            || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
 
-                                    /////////////////////////////
-                                    Date dateNow = null;
-                                    String strdateCopy;
-                                    Date enteredDate = null;
+                                        boolean bFuture = true;
 
-                                    try {
-                                        strdateCopy = Utils.writeFormat.format(calendar.getTime());
-                                        dateNow = Utils.writeFormat.parse(strdateCopy);
-                                        enteredDate = Utils.writeFormat.parse(data);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
+                                        /////////////////////////////
+                                        Date dateNow = null;
+                                        String strdateCopy;
+                                        Date enteredDate = null;
 
-                                    if (dateNow != null && enteredDate != null) {
-
-                                        Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
-
-                                        if (enteredDate.before(dateNow)) {
-                                            bFuture = false;
-                                        }
-                                    }
-                                    /////////////////////////////
-
-                                    if (bFuture) {
-
-                                        fieldModel.setStrFieldData(data);
-
-                                        if ((milestoneModel.isReschedule() || !milestoneModel.isReschedule())
-                                                && milestoneModel.getStrMilestoneScheduledDate() != null
-                                                && (!milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")
-                                                || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase(""))
-                                                && fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
-                                                ) {
-
-                                            if (milestoneModel.getStrMilestoneScheduledDate() != null
-                                                    && !milestoneModel.getStrMilestoneScheduledDate().
-                                                    equalsIgnoreCase(""))
-                                                milestoneModel.setReschedule(true);
-
-                                            String strDate = (String) editText.getTag(R.id.two);
-                                            milestoneModel.setStrMilestoneScheduledDate(strDate); //todo check possiblity for diff TZ
-
-                                            strScheduledDate = strDate;
+                                        try {
+                                            strdateCopy = Utils.writeFormat.format(calendar.getTime());
+                                            dateNow = Utils.writeFormat.parse(strdateCopy);
+                                            enteredDate = Utils.writeFormat.parse(data);
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
                                         }
 
+                                        if (dateNow != null && enteredDate != null) {
+
+                                            Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
+
+                                            if (enteredDate.before(dateNow)) {
+                                                bFuture = false;
+                                            }
+                                        }
+                                        /////////////////////////////
+
+                                        if (bFuture) {
+
+                                            fieldModel.setStrFieldData(data);
+
+                                            if ((milestoneModel.isReschedule() || !milestoneModel.isReschedule())
+                                                    && milestoneModel.getStrMilestoneScheduledDate() != null
+                                                    && (!milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")
+                                                    || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase(""))
+                                                    && fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                                    ) {
+
+                                                if (milestoneModel.getStrMilestoneScheduledDate() != null
+                                                        && !milestoneModel.getStrMilestoneScheduledDate().
+                                                        equalsIgnoreCase(""))
+                                                    milestoneModel.setReschedule(true);
+
+                                                String strDate = (String) editText.getTag(R.id.two);
+                                                milestoneModel.setStrMilestoneScheduledDate(strDate); //todo check possiblity for diff TZ
+
+                                                strScheduledDate = strDate;
+                                            }
+
+                                        } else {
+                                            editText.setError(context.getString(R.string.invalid_date));
+                                            b = false;
+                                        }
                                     } else {
-                                        editText.setError(context.getString(R.string.invalid_date));
-                                        b = false;
+                                        fieldModel.setStrFieldData(data);
                                     }
 
                                 } else {
@@ -756,13 +819,15 @@ public class MilestoneActivity extends AppCompatActivity {
 
         if (b) {
 
-            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
+         /*   for (MilestoneModel milestoneModel : milestoneModelObject) {
                 for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
                     Utils.log(fieldModel.getStrFieldLabel() + " ~ " + fieldModel.getStrFieldData(), " DATA ");
                 }
             }
+*/
+            uploadImage();
 
-            uploadJson();
+
         }
     }
 
@@ -785,6 +850,25 @@ public class MilestoneActivity extends AppCompatActivity {
                 jsonObjectMilestone.put("show", milestoneModel.isVisible());
                 jsonObjectMilestone.put("reschedule", milestoneModel.isReschedule());
                 jsonObjectMilestone.put("scheduled_date", milestoneModel.getStrMilestoneScheduledDate());
+
+                JSONArray jsonArrayFiles = new JSONArray();
+
+                for (FileModel fileModel : milestoneModel.getFileModels()) {
+
+                    JSONObject jsonObjectFile = new JSONObject();
+
+                    jsonObjectFile.put("file_name", fileModel.getStrFileName());
+                    jsonObjectFile.put("file_url", fileModel.getStrFileUrl());
+                    jsonObjectFile.put("file_type", fileModel.getStrFileType());
+                    jsonObjectFile.put("file_desc", fileModel.getStrFileDescription());
+                    jsonObjectFile.put("file_path", fileModel.getStrFilePath());
+                    jsonObjectFile.put("file_time", fileModel.getStrFileUploadTime());
+
+                    jsonArrayFiles.put(jsonObjectFile);
+                }
+
+                jsonObjectMilestone.put("files", jsonArrayFiles);
+                //todo add to corresponding milestone
 
                 JSONArray jsonArrayFields = new JSONArray();
 
@@ -853,7 +937,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         if (utils.isConnectingToInternet()) {
 
-            dialog.dismiss();
+            //  dialog.dismiss();
 
             loadingPanel.setVisibility(View.VISIBLE);
 
@@ -876,6 +960,241 @@ public class MilestoneActivity extends AppCompatActivity {
                         }
                     });
         } else {
+            utils.toast(2, 2, getString(R.string.warning_internet));
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (resultCode == Activity.RESULT_OK) { //&& data != null
+            try {
+
+                loadingPanel.setVisibility(View.VISIBLE);
+                switch (requestCode) {
+                    case Config.START_CAMERA_REQUEST_CODE:
+
+                        backgroundThreadHandler = new BackgroundThreadHandler();
+                        //  backgroundThreadHandlerDialog = new BackgroundThreadHandlerDialog();
+                        strImageName1 = Utils.customerImageUri.getPath();
+                        // Thread backgroundTreadDialog1 = new BackgroundThreadDialog1();
+                        Thread backgroundThreadCamera = new BackgroundThreadCamera();
+                        backgroundThreadCamera.start();
+                        //  backgroundTreadDialog1.start();
+                        break;
+
+                    case Config.START_GALLERY_REQUEST_CODE:
+                        backgroundThreadHandler = new BackgroundThreadHandler();
+                        //  backgroundThreadHandlerDialog = new BackgroundThreadHandlerDialog();
+                        imagePaths.clear();
+
+                        String[] all_path = intent.getStringArrayExtra("all_path");
+
+                        if (all_path.length + IMAGE_COUNT > 4) {
+
+                            for (int i = 0; i < (4 - IMAGE_COUNT); i++) {
+                                imagePaths.add(all_path[i]);
+                            }
+
+                        } else {
+
+                            for (String string : all_path) {
+                                imagePaths.add(string);
+                            }
+                        }
+                        // Thread backgroundTreadDialog2 = new BackgroundThreadDialog2();
+                        Thread backgroundThread = new BackgroundThread();
+                        backgroundThread.start();
+                        //  backgroundTreadDialog2.start();
+
+
+                        break;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void addImages() {
+
+        layout.removeAllViews();
+
+        for (int i = 0; i < bitmaps.size(); i++) {
+            try {
+                //
+                ImageView imageView = new ImageView(MilestoneActivity.this);
+                imageView.setPadding(0, 0, 3, 0);
+
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                layoutParams.setMargins(10, 10, 10, 10);
+                // linearLayout1.setLayoutParams(layoutParams);
+
+                imageView.setLayoutParams(layoutParams);
+                imageView.setImageBitmap(bitmaps.get(i));
+                imageView.setTag(bitmaps.get(i));
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+
+                //Utils.log(" 2 " + String.valueOf(i), " IN ");
+
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Dialog dialog = new Dialog(MilestoneActivity.this);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                        dialog.setContentView(R.layout.image_dialog_layout);
+
+                        TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
+                        try {
+                            mOriginal.setImageBitmap((Bitmap) v.getTag());
+                        } catch (OutOfMemoryError oOm) {
+                            oOm.printStackTrace();
+                        }
+                        dialog.setCancelable(true);
+
+                        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                        dialog.show();
+
+                    }
+                });
+
+                layout.addView(imageView);
+            } catch (Exception | OutOfMemoryError e) {
+                //bitmap.recycle();
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void uploadImage() {
+
+        if (arrayListFileModel.size() > 0) {
+
+            final FileModel fileModel = arrayListFileModel.get(0);
+
+            UploadService uploadService = new UploadService(this);
+
+            uploadService.uploadImageCommon(fileModel.getStrFilePath(),
+                    fileModel.getStrFileName(), fileModel.getStrFileDescription(),
+                    Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
+                    new App42CallBack() {
+                        public void onSuccess(Object response) {
+
+                            if (response != null) {
+
+                                //Utils.log(response.toString(), " Success ");
+
+                                Upload upload = (Upload) response;
+                                ArrayList<Upload.File> fileList = upload.getFileList();
+
+                                if (fileList.size() > 0) {
+
+                                    Upload.File file = fileList.get(0);
+
+                                    JSONObject jsonObjectImages = new JSONObject();
+
+                                    try {
+
+                                        jsonObjectImages.put("file_name", fileModel.getStrFileName());
+                                        jsonObjectImages.put("file_url", fileModel.getStrFileUrl());
+                                        jsonObjectImages.put("file_type", fileModel.getStrFileType());
+                                        jsonObjectImages.put("file_desc", fileModel.getStrFileDescription());
+                                        jsonObjectImages.put("file_path", fileModel.getStrFilePath());
+                                        jsonObjectImages.put("file_time", fileModel.getStrFileUploadTime());
+
+                                        jsonArrayImagesAdded.put(jsonObjectImages);
+
+                                        arrayListFileModel.remove(fileModel);
+
+                                        if (arrayListFileModel.size() <= 0) {
+                                            updateImages();
+                                        } else {
+                                            uploadImage();
+                                        }
+                                        //
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                } else {
+                                    if (arrayListFileModel.size() <= 0) {
+                                        updateImages();
+                                    } else {
+                                        uploadImage();
+                                    }
+                                }
+                            } else {
+                                loadingPanel.setVisibility(View.GONE);
+                                utils.toast(2, 2, getString(R.string.warning_internet));
+                            }
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+
+                            loadingPanel.setVisibility(View.GONE);
+
+                            if (e != null) {
+                                Utils.log(e.getMessage(), " Failure ");
+                                if (arrayListFileModel.size() <= 0) {
+                                    updateImages();
+                                } else {
+                                    uploadImage();
+                                }
+                            } else {
+                                utils.toast(2, 2, getString(R.string.warning_internet));
+                            }
+                        }
+                    });
+        } else {
+            if (arrayListFileModel.size() <= 0) {
+                updateImages();
+            }
+        }
+
+    }
+
+    private void updateImages() {
+
+
+        if (utils.isConnectingToInternet()) {
+
+          /*  JSONObject jsonToUpdate = null;
+
+            try {
+                jsonToUpdate = new JSONObject();
+                jsonToUpdate.put("files", jsonArrayImagesAdded);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
+
+            uploadJson();
+
+            /*storageService.updateDocs(jsonToUpdate,
+                    act.getStrActivityID(),
+                    Config.collectionActivity, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            //insertNotification()
+                            goToActivityList(getString(R.string.image_upload));
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                            loadingPanel.setVisibility(View.GONE);
+                            utils.toast(2, 2, getString(R.string.warning_internet));
+                        }
+                    });*/
+        } else {
+            loadingPanel.setVisibility(View.GONE);
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }
@@ -975,9 +1294,73 @@ public class MilestoneActivity extends AppCompatActivity {
 
         //  reloadMilestones();
 
-        /*Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
-        Config.intSelectedMenu = Config.intDashboardScreen;
-        startActivity(intent);*/
+        Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
+        // Config.intSelectedMenu = Config.intDashboardScreen;
+        startActivity(intent);
+    }
+
+    private class BackgroundThreadHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+
+            addImages();
+            loadingPanel.setVisibility(View.GONE);
+        }
+    }
+
+    private class BackgroundThread extends Thread {
+        @Override
+        public void run() {
+
+            try {
+                for (int i = 0; i < imagePaths.size(); i++) {
+                    Calendar calendar = new GregorianCalendar();
+                    String strTime = String.valueOf(calendar.getTimeInMillis());
+                    String strFileName = strTime + ".jpeg";
+                    File galleryFile = utils.createFileInternalImage(strFileName);
+                    strImageName1 = galleryFile.getAbsolutePath();
+                    Date date = new Date();
+
+                    FileModel fileModel = new FileModel(strFileName, "", strTime, utils.convertDateToString(date), "DESC", strImageName1);
+                    arrayListFileModel.add(fileModel);
+
+                    utils.copyFile(new File(imagePaths.get(i)), galleryFile);
+                    //
+                    utils.compressImageFromPath(strImageName1, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+                    bitmaps.add(utils.getBitmapFromFile(strImageName1, Config.intWidth, Config.intHeight));
+
+                    IMAGE_COUNT++;
+                }
+                backgroundThreadHandler.sendEmptyMessage(0);
+            } catch (IOException | OutOfMemoryError e) {
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+        }
+    }
+
+    private class BackgroundThreadCamera extends Thread {
+        @Override
+        public void run() {
+            try {
+                if (strImageName1 != null && !strImageName1.equalsIgnoreCase("")) {
+
+                    utils.compressImageFromPath(strImageName1, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                    Date date = new Date();
+                    FileModel fileModel = new FileModel(strName, "", strName, utils.convertDateToString(date), "", strImageName1);
+                    arrayListFileModel.add(fileModel);
+                    bitmaps.add(utils.getBitmapFromFile(strImageName1, Config.intWidth, Config.intHeight));
+                }
+
+                IMAGE_COUNT++;
+
+            } catch (Exception | OutOfMemoryError e) {
+                e.printStackTrace();
+            }
+            backgroundThreadHandler.sendEmptyMessage(0);
+        }
     }
 
 
