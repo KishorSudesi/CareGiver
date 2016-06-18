@@ -336,9 +336,8 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                             ActivityModel obj = activityModels.get(itemPosition);
                             Intent intent = new Intent(getActivity(), FeatureActivity.class);
                             args.putSerializable("ACTIVITY", obj);
-                            intent.putExtras(args);
+                            intent.putExtra("acti",1);
                             startActivity(intent);
-
                         }
                         return Menu.ITEM_SCROLL_BACK;
                     case 1:

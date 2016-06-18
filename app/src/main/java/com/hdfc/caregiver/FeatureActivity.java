@@ -110,12 +110,7 @@ public class FeatureActivity extends AppCompatActivity {
 
         bLoad = false;
 
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goBack();
-            }
-        });
+
         IMAGE_COUNT = 0;
         MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(FeatureActivity.this);
 
@@ -126,9 +121,22 @@ public class FeatureActivity extends AppCompatActivity {
         bitmaps.clear();
 
         try {
-
             Bundle b = getIntent().getExtras();
 
+            if (cancel != null) {
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(getIntent().hasExtra("noti")){
+                            Config.intSelectedMenu = Config.intNotificationScreen;
+                            goBack();
+                        } else if(getIntent().hasExtra("acti")){
+                            Config.intSelectedMenu = Config.intDashboardScreen;
+                            goBack();
+                        }
+                    }
+                });
+            }
             act = (ActivityModel) b.getSerializable("ACTIVITY");
 
             utils = new Utils(FeatureActivity.this);
@@ -236,7 +244,6 @@ public class FeatureActivity extends AppCompatActivity {
         bitmaps.clear();
         IMAGE_COUNT = 0;
         Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
-        Config.intSelectedMenu = Config.intDashboardScreen;
         intent.putExtra("LOAD", bLoad);
         startActivity(intent);
         finish();

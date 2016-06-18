@@ -36,16 +36,16 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_general"
             android:singleLine="true"
-            android:textColor="@color/blue"
-            android:textSize="18sp"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/task_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:padding="@dimen/padding_general"
+            android:textStyle="bold"
             android:singleLine="true"
             android:textColor="@color/colorWhite"
             android:textSize="15sp" />
@@ -60,6 +60,8 @@
                 android:id="@+id/textViewWhat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="#212121"
                 android:layout_weight="0.4"
                 />
 
@@ -70,6 +72,7 @@
                 android:layout_weight="0.6"
                 android:padding="@dimen/padding_general"
                 android:textColor="#000000"
+                android:textStyle="bold"
                 android:textSize="14sp" />
 
         </LinearLayout>

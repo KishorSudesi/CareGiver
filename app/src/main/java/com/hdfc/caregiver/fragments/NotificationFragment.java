@@ -20,6 +20,7 @@ import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
@@ -38,6 +39,7 @@ public class NotificationFragment extends Fragment {
   //  private static RelativeLayout loadingPanel;
     private ListView listViewActivities;
     private Utils utils;
+    private AppUtils appUtils;
 
     public NotificationFragment() {
         // Required empty public constructor
@@ -65,6 +67,7 @@ public class NotificationFragment extends Fragment {
         TextView emptyTextView = (TextView) view.findViewById(android.R.id.empty);
         listViewActivities.setEmptyView(emptyTextView);
         utils = new Utils(getActivity());
+        appUtils = new AppUtils(getContext());
      //   loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
 
         notificationAdapter = new NotificationAdapter(getActivity(), Config.notificationModels);
@@ -107,7 +110,7 @@ public class NotificationFragment extends Fragment {
                         @Override
                         public void onFindDocSuccess(Storage storage) {
 
-                            if (storage != null) {
+                            if (storage !=null) {
 
                                 //Utils.log(storage.toString(), "not ");
 
@@ -172,69 +175,77 @@ public class NotificationFragment extends Fragment {
         notificationAdapter.notifyDataSetChanged();
     }
 
-    public void findActivities(String strActivityId){
+    public void findActivities(final String strActivityId){
 
-        int iPosition = Config.strActivityIds.indexOf(strActivityId);
+        int iPosition = Config.strActivityIdsNotifications.indexOf(strActivityId);
 
         ActivityModel activityModel;
 
         if(iPosition>-1) {
-            activityModel = Config.activityModels.get(iPosition);
+            activityModel = Config.activityModelsNotifications.get(iPosition);
 
             Bundle args = new Bundle();
             //
             Intent intent = new Intent(getActivity(), FeatureActivity.class);
             args.putSerializable("ACTIVITY", activityModel);
+            intent.putExtra("noti",3);
             intent.putExtras(args);
             startActivity(intent);
         }else {
-            /*StorageService storageService = new StorageService(getContext());
+            StorageService storageService = new StorageService(getContext());
 
-            storageService.findDocsByKeyValue(Config.collectionNotification, "activity_id",
-                    Config.activityModels.get(iPosition).getStrActivityID(), new AsyncApp42ServiceApi.App42StorageServiceListener() {
-                        @Override
-                        public void onDocumentInserted(Storage response) {
+            storageService.findDocsById(strActivityId, Config.collectionActivity, new AsyncApp42ServiceApi.App42StorageServiceListener() {
+                @Override
+                public void onDocumentInserted(Storage response) {
 
-                        }
+                }
 
-                        @Override
-                        public void onUpdateDocSuccess(Storage response) {
+                @Override
+                public void onUpdateDocSuccess(Storage response) {
 
-                        }
+                }
 
-                        @Override
-                        public void onFindDocSuccess(Storage storage) throws JSONException {
+                @Override
+                public void onFindDocSuccess(Storage storage) throws JSONException {
+                    if (storage != null) {
 
-                            if (storage != null) {
+                        if (storage.getJsonDocList().size() > 0) {
 
-                                if (storage.getJsonDocList().size() > 0) {
+                            ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
 
-                                    ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
+                            for (int i = 0; i < jsonDocList.size(); i++) {
+//                                    utils.createNotificationModel(jsonDocList.get(i).getDocId(), jsonDocList.get(i).getJsonDoc());
+                                appUtils.createActivityModel(jsonDocList.get(i).getDocId(),jsonDocList.get(i).getJsonDoc(),2);
+                            }
 
-                               *//* for (int i = 0; i < jsonDocList.size(); i++) {
-                                    utils.createNotificationModel(jsonDocList.get(i).getDocId(), jsonDocList.get(i).getJsonDoc());
-
-
-                                }*//*
-                                }
+                            int iPosition = Config.strNotificationIds.indexOf(strActivityId);
+                            if (iPosition > -1) {
+                                ActivityModel activityModel = Config.activityModelsNotifications.get(iPosition);
+                                Bundle args = new Bundle();
+                                Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                                args.putSerializable("ACTIVITY", activityModel);
+                                intent.putExtras(args);
+                                startActivity(intent);
                             }
                         }
+                    }
+                }
 
-                        @Override
-                        public void onInsertionFailed(App42Exception ex) {
+                @Override
+                public void onInsertionFailed(App42Exception ex) {
 
-                        }
+                }
 
-                        @Override
-                        public void onFindDocFailed(App42Exception ex) {
+                @Override
+                public void onFindDocFailed(App42Exception ex) {
 
-                        }
+                }
 
-                        @Override
-                        public void onUpdateDocFailed(App42Exception ex) {
+                @Override
+                public void onUpdateDocFailed(App42Exception ex) {
 
-                        }
-                    });*/
+                }
+            });
         }
     }
 }

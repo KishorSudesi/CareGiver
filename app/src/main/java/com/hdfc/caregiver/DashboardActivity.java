@@ -218,6 +218,11 @@ public class DashboardActivity extends AppCompatActivity implements
                 menuFeedback();
             }
 
+            if (Config.intSelectedMenu == Config.intNotificationScreen) {
+                menuNotification();
+            }
+
+
             if (Config.providerModel != null)
                 App42API.setLoggedInUser(Config.providerModel.getStrEmail());
 
