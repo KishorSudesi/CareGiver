@@ -31,6 +31,10 @@ public class MilestoneModel implements Serializable {
         this.fileModels.add(fileModel);
     }
 
+    public void clearFileModel() {
+        this.fileModels.clear();
+    }
+
     public boolean isReschedule() {
         return isReschedule;
     }

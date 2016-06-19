@@ -23,15 +23,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
@@ -40,7 +37,6 @@ import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
-import com.hdfc.models.FieldModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.views.TouchImageView;
@@ -139,14 +135,14 @@ public class FeatureActivity extends AppCompatActivity {
             act = (ActivityModel) b.getSerializable("ACTIVITY");
             iActivityPosition = b.getInt("ACTIVITY_POSITION", -1);
 
-            if (act == null)
+            if (act == null || iActivityPosition > -1)
                 act = Config.activityModels.get(iActivityPosition);
 
             utils = new Utils(FeatureActivity.this);
 
             int iPosition = Config.dependentIdsAdded.indexOf(act.getStrDependentID());
             String name = Config.dependentModels.get(iPosition).getStrName();
-            System.out.println("rammmmmmmmmmmmmmm" + name);
+            //System.out.println("rammmmmmmmmmmmmmm" + name);
             int iPositionCustomer = Config.customerIdsAdded.indexOf(act.getStrCustomerID());
 
             strDependentMail = Config.customerModels.get(iPositionCustomer).getStrEmail();
@@ -159,7 +155,7 @@ public class FeatureActivity extends AppCompatActivity {
             }
 
             String strActivityName = act.getStrActivityName();
-            System.out.println("rajjjjjjjjaaaaaaaaaaajjj" + strActivityName);
+            //System.out.println("rajjjjjjjjaaaaaaaaaaajjj" + strActivityName);
             if (strActivityName.length() > 20)
                 strActivityName = strActivityName.substring(0, 18) + "..";
 
@@ -189,6 +185,10 @@ public class FeatureActivity extends AppCompatActivity {
         storageService = new StorageService(FeatureActivity.this);
 
         if (done != null) {
+
+            if (act.getStrActivityStatus().equalsIgnoreCase("completed"))
+                done.setVisibility(View.GONE);
+
             done.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -218,6 +218,10 @@ public class FeatureActivity extends AppCompatActivity {
         }*/
 
         if (linearLayoutAttach != null) {
+
+            if (act.getStrActivityStatus().equalsIgnoreCase("completed"))
+                linearLayoutAttach.setVisibility(View.GONE);
+
             linearLayoutAttach.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -258,7 +262,7 @@ public class FeatureActivity extends AppCompatActivity {
         finish();
     }
 
-    private void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
+   /* private void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
 
         boolean b = true;
 
@@ -441,12 +445,12 @@ public class FeatureActivity extends AppCompatActivity {
 
                     strPushMessage = Config.providerModel.getStrName()
                             + getString(R.string.has_updated)
-                          /*  + getString(R.string.activity)
-                            + getString(R.string.space)*/
+                          *//*  + getString(R.string.activity)
+                            + getString(R.string.space)*//*
                             + getString(R.string.space)
                             + act.getStrActivityName()
                             + getString(R.string.hyphen)
-                           /* + getString(R.string.milestone)*/
+                           *//* + getString(R.string.milestone)*//*
                             + getString(R.string.space)
                             + milestoneModel.getStrMilestoneName();
 
@@ -498,7 +502,7 @@ public class FeatureActivity extends AppCompatActivity {
 
             uploadJson();
         }
-    }
+    }*/
 
     private void updateMileStones(JSONObject jsonToUpdate) {
 
@@ -789,7 +793,7 @@ public class FeatureActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadJson() {
+    /*private void uploadJson() {
         ///////////////////////
         JSONObject jsonObjectMileStone = new JSONObject();
 
@@ -871,7 +875,7 @@ public class FeatureActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+*/
 
     @Override
     protected void onDestroy() {
@@ -1175,7 +1179,7 @@ public class FeatureActivity extends AppCompatActivity {
                         args.putSerializable("Milestone", milestoneModelObject);
                         intent.putExtras(args);
                         startActivity(intent);
-                        finish();
+                        //finish();
 
                         //  boolean bEnabled = true;
 

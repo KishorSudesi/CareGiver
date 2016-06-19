@@ -75,16 +75,16 @@ public class RatingsAdapter extends BaseAdapter {
             viewHolder.time.setText(Utils.writeFormat.format(utils.convertStringToDate(feedBackModel.getStrFeedBackTime())));
 
             if (feedBackModel.getIntFeedBackRating()== 1){
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.mipmap.rate_icon_2));
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_1));
             }else if(feedBackModel.getIntFeedBackRating()== 2)
             {
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.smiley_icon));
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_2));
             }else if (feedBackModel.getIntFeedBackRating()== 3){
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.rate_icon_3));
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_3));
             }else if (feedBackModel.getIntFeedBackRating()== 4){
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.rate_icon_2));
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_4));
             }else {
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable( R.mipmap.smiley_icon));
+                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_5));
             }
             File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(feedBackModel.getStrFeedBackBy()));
 

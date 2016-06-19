@@ -744,7 +744,19 @@ public class Utils {
 
         File file = null;
         try {
+            File mFolder = new File(_ctxt.getFilesDir(), "images/");
             file = new File(_ctxt.getFilesDir(), "images/" + strFileName);
+
+            //
+            if (!mFolder.exists()) {
+                mFolder.mkdir();
+            }
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            //
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1238,6 +1250,13 @@ public class Utils {
         if (strPath != null && !strPath.equalsIgnoreCase("")) {
             try {
                 options.inJustDecodeBounds = true;
+
+             /*   File checkFile = new File(strPath);
+
+                if(!checkFile.exists()) {
+                    strPath += ".jpeg";
+                }*/
+
                 original = BitmapFactory.decodeFile(strPath, options);
                 options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight,
                         intWidth, intHeight);

@@ -100,10 +100,15 @@ public class CreatingTaskActivity extends AppCompatActivity {
         dependentlist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (Config.strDependentNames.size() > 0) {
-                    String strName = (String) parent.getAdapter().getItem(position);
-                    strSelectedDependent = Config.strDependentNames.get(Config.strDependentNames.indexOf(strName));
-                } else strSelectedDependent = "";
+                try {
+                    if (Config.strDependentNames.size() > 0) {
+                        String strName = (String) parent.getAdapter().getItem(position);
+                        strSelectedDependent = Config.strDependentNames.get(Config.strDependentNames.indexOf(strName));
+                    } else strSelectedDependent = "";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    strSelectedDependent = "";
+                }
             }
 
             @Override
@@ -146,7 +151,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                 int iPosition = Config.strCustomerNames.indexOf(valSearch.trim());
 
-                if (iPosition > -1 && Config.clientNameModels.size() > 0) {
+                if (iPosition > -1 && Config.clientNameModels.size() > 0 && iPosition < Config.clientNameModels.size()) {
                     names.clear();
                     names = Config.clientNameModels.get(iPosition).getStrDependentNames();
                 }

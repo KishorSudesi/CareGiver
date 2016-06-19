@@ -22,6 +22,7 @@
     <color name="cyanButtonSignOut">#00BCD4</color>
     <color name="background">#EEEEEE</color>
     <color name="colorGrey">#BDBDBD</color>
+    <color name="colorLightGrey">#cccccc</color>
     <color name="colorGreen">#4CAF50</color>
     <color name="colorTeal">#26A69A</color>
     <color name="colorOrange">#FF7043</color>

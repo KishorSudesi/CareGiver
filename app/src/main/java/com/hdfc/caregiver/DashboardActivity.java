@@ -187,14 +187,14 @@ public class DashboardActivity extends AppCompatActivity implements
             notification.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    menuNotification();
+                    menuNotification(true);
                 }
             });
 
             textViewNotification.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    menuNotification();
+                    menuNotification(true);
                 }
             });
 
@@ -221,7 +221,7 @@ public class DashboardActivity extends AppCompatActivity implements
             }
 
             if (Config.intSelectedMenu == Config.intNotificationScreen) {
-                menuNotification();
+                menuNotification(false);
             }
 
 
@@ -283,11 +283,11 @@ public class DashboardActivity extends AppCompatActivity implements
         transaction.commit();
     }
 
-    private void goToNotification(){
+    private void goToNotification(boolean b) {
         Config.intSelectedMenu = Config.intNotificationScreen;
-        NotificationFragment fragment = NotificationFragment.newInstance();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
+        NotificationFragment fragment = NotificationFragment.newInstance(b);
+      /*  Bundle args = new Bundle();
+        fragment.setArguments(args);*/
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frameLayout,fragment);
         transaction.addToBackStack(null);
@@ -301,11 +301,11 @@ public class DashboardActivity extends AppCompatActivity implements
         goToClients();
     }
 
-    private void menuNotification() {
+    private void menuNotification(boolean b) {
         setMenu();
         notification.setImageDrawable(getResources().getDrawable(R.mipmap.notification_active));
         textViewNotification.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        goToNotification();
+        goToNotification(b);
     }
 
     private void menuDashboard() {

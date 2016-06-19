@@ -183,6 +183,7 @@
     <string name="no_push_actiity_updated">Activity Updated. Not able to Notify the Customer</string>
     <string name="error_client">Select a Valid Client</string>
     <string name="error_medicines">Check Medicine Details</string>
+    <string name="close_error">Close other Tasks to close the activity</string>
 
 
     <!--Dashboard Menu Strings-->

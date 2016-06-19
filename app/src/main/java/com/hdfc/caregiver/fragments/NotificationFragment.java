@@ -21,7 +21,10 @@ import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
+import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.storage.Query;
+import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
 import org.json.JSONException;
@@ -42,9 +45,10 @@ public class NotificationFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static NotificationFragment newInstance() {
+    public static NotificationFragment newInstance(boolean b) {
         NotificationFragment fragment = new NotificationFragment();
         Bundle args = new Bundle();
+        args.putBoolean("RELOAD", b);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,6 +71,9 @@ public class NotificationFragment extends Fragment {
         appUtils = new AppUtils(getContext());
      //   loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
 
+        Bundle bundle = this.getArguments();
+        boolean b = bundle.getBoolean("RELOAD", false);
+
         notificationAdapter = new NotificationAdapter(getActivity(), Config.notificationModels);
         listViewActivities.setAdapter(notificationAdapter);
 
@@ -78,7 +85,8 @@ public class NotificationFragment extends Fragment {
             }
         });
 
-        loadNotifications();
+        if (b)
+            loadNotifications();
 
         return view;
     }
@@ -91,23 +99,18 @@ public class NotificationFragment extends Fragment {
 
             StorageService storageService = new StorageService(getContext());
 
-            storageService.findDocsByKeyValue(Config.collectionNotification,
-                    "user_id",
-                    Config.providerModel.getStrProviderId(),
-                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+            Query q1 = QueryBuilder.build("user_id", Config.providerModel.getStrProviderId(), QueryBuilder.
+                    Operator.EQUALS);
+
+            storageService.findDocsByQueryOrderBy(Config.collectionNotification, q1, 3000, 0,
+                    "time", 1, new App42CallBack() {
+
 
                         @Override
-                        public void onDocumentInserted(Storage response) {
-                        }
+                        public void onSuccess(Object o) {
+                            if (o != null) {
 
-                        @Override
-                        public void onUpdateDocSuccess(Storage response) {
-                        }
-
-                        @Override
-                        public void onFindDocSuccess(Storage storage) {
-
-                            if (storage !=null) {
+                                Storage storage = (Storage) o;
 
                                 //Utils.log(storage.toString(), "not ");
 
@@ -127,12 +130,7 @@ public class NotificationFragment extends Fragment {
                         }
 
                         @Override
-                        public void onInsertionFailed(App42Exception ex) {
-                        }
-
-                        @Override
-                        public void onFindDocFailed(App42Exception ex) {
-
+                        public void onException(Exception e) {
                             hideLoader();
 
                            /* if (ex != null) {
@@ -151,10 +149,6 @@ public class NotificationFragment extends Fragment {
                                 utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                             refreshNotifications();*/
-                        }
-
-                        @Override
-                        public void onUpdateDocFailed(App42Exception ex) {
                         }
                     });
 

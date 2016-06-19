@@ -353,9 +353,12 @@ public class AppUtils {
                         jsonObjectDependent.getString("dependent_email"),
                         jsonObjectDependent.getString("dependent_illness"),
                         "",
-                        jsonObjectDependent.getString("dependent_profile_url"),
+                        "",
                         strDocumentId,
                         jsonObjectDependent.getString("customer_id"));
+
+                if (jsonObjectDependent.has("dependent_profile_url"))
+                    dependentModel.setStrImageUrl(jsonObjectDependent.getString("dependent_profile_url"));
 
                 dependentModel.setStrDob(jsonObjectDependent.getString("dependent_dob"));
 
@@ -446,41 +449,43 @@ public class AppUtils {
                         jsonObjectDependent.getString("dependent_profile_url"), "IMAGE"));*/
 
                 //
-                String strUrl = jsonObjectDependent.getString("dependent_profile_url");
+                if (jsonObjectDependent.has("dependent_profile_url")) {
+                    String strUrl = jsonObjectDependent.getString("dependent_profile_url");
 
-                String strUrlHash = Utils.sha512(strUrl);
+                    String strUrlHash = Utils.sha512(strUrl);
 
-                Cursor cur = CareGiver.dbCon.fetch(
-                        DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
-                        new String[]{strDocumentId}, null, "0, 1", true, null, null
-                );
+                    Cursor cur = CareGiver.dbCon.fetch(
+                            DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                            new String[]{strDocumentId}, null, "0, 1", true, null, null
+                    );
 
-                Utils.log(strUrlHash, " HASH ");
+                    Utils.log(strUrlHash, " HASH ");
 
 
-                String strHashLocal = "";
+                    String strHashLocal = "";
 
-                if (cur.getCount() <= 0) {
-                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{strDocumentId,
-                                    strUrl, "IMAGE", strUrlHash},
-                            new String[]{"name", "url", "file_type", "file_hash"});
-                } else {
+                    if (cur.getCount() <= 0) {
+                        CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{strDocumentId,
+                                        strUrl, "IMAGE", strUrlHash},
+                                new String[]{"name", "url", "file_type", "file_hash"});
+                    } else {
 
-                    cur.moveToFirst();
-                    strHashLocal = cur.getString(0);
-                    cur.moveToNext();
-                    CareGiver.dbCon.closeCursor(cur);
+                        cur.moveToFirst();
+                        strHashLocal = cur.getString(0);
+                        cur.moveToNext();
+                        CareGiver.dbCon.closeCursor(cur);
 
-                    if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                        CareGiver.dbCon.update(
-                                DbHelper.strTableNameFiles, "name=?",
-                                new String[]{strUrl, strUrlHash},
-                                new String[]{"url", "file_hash"}, new String[]{strDocumentId}
-                        );
+                        if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                            CareGiver.dbCon.update(
+                                    DbHelper.strTableNameFiles, "name=?",
+                                    new String[]{strUrl, strUrlHash},
+                                    new String[]{"url", "file_hash"}, new String[]{strDocumentId}
+                            );
+                        }
                     }
-                }
 
-                CareGiver.dbCon.closeCursor(cur);
+                    CareGiver.dbCon.closeCursor(cur);
+                }
             } else {
                 if (iFlag == 2) {
 

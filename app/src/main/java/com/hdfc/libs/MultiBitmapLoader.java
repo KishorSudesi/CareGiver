@@ -118,7 +118,7 @@ public class MultiBitmapLoader {
     }
 
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(key) == null) {
+        if (key != null && bitmap != null && getBitmapFromMemCache(key) == null) {
             mMemoryCache.put(key, bitmap);
         }
     }
