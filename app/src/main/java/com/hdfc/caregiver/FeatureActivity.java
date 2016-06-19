@@ -64,7 +64,7 @@ import java.util.GregorianCalendar;
 
 public class FeatureActivity extends AppCompatActivity {
 
-    public static int IMAGE_COUNT = 0;
+    public static int IMAGE_COUNT = 0, iActivityPosition = -1;
     private static String strImageName = "";
     //private static Bitmap bitmap = null;
     private static StorageService storageService;
@@ -137,6 +137,10 @@ public class FeatureActivity extends AppCompatActivity {
             }
 
             act = (ActivityModel) b.getSerializable("ACTIVITY");
+            iActivityPosition = b.getInt("ACTIVITY_POSITION", -1);
+
+            if (act == null)
+                act = Config.activityModels.get(iActivityPosition);
 
             utils = new Utils(FeatureActivity.this);
 
