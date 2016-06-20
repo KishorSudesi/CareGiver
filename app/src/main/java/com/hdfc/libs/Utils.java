@@ -100,6 +100,8 @@ public class Utils {
     public static Uri customerImageUri;
     private static Context _ctxt;
 
+   // public static String typeOfImage;
+
     static {
         System.loadLibrary("stringGen");
         //log("Loaded 0", "NDK");
@@ -1079,7 +1081,6 @@ public class Utils {
                                         Config.START_GALLERY_REQUEST_CODE);
                         }
 
-
                     } else if (items[item].equals("Cancel")) {
                         dialog.dismiss();
                     }
@@ -1092,6 +1093,7 @@ public class Utils {
     }
 
     public void openCamera(String strFileName, Fragment fragment, final Activity activity) {
+
 
         try {
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
