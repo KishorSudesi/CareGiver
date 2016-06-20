@@ -75,7 +75,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         collectDeviceInformation();
     }
 
-    public long getAvailableInternalMemorySize() {
+    private long getAvailableInternalMemorySize() {
         File path = Environment.getDataDirectory();
         StatFs stat = new StatFs(path.getPath());
         long blockSize = stat.getBlockSize();
@@ -83,7 +83,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         return availableBlocks * blockSize;
     }
 
-    public long getTotalInternalMemorySize() {
+    private long getTotalInternalMemorySize() {
         File path = Environment.getDataDirectory();
         StatFs stat = new StatFs(path.getPath());
         long blockSize = stat.getBlockSize();
@@ -128,60 +128,59 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         }
     }
 
-    public String createCrashLog() {
-        StringBuffer logBuf = new StringBuffer();
-        logBuf.append("Version : " + VersionName);
-        logBuf.append("\n");
-        logBuf.append("Package : " + PackageName);
-        logBuf.append("\n");
-        logBuf.append("FilePath : " + FilePath);
-        logBuf.append("\n");
-        logBuf.append("Phone Model" + PhoneModel);
-        logBuf.append("\n");
-        logBuf.append("Android Version : " + AndroidVersion);
-        logBuf.append("\n");
-        logBuf.append("Board : " + Board);
-        logBuf.append("\n");
-        logBuf.append("Brand : " + Brand);
-        logBuf.append("\n");
-        logBuf.append("CPU ABI : " + CPU_ABI);
-        logBuf.append("\n");
-        logBuf.append("Device : " + Device);
-        logBuf.append("\n");
-        logBuf.append("Display : " + Display);
-        logBuf.append("\n");
-        logBuf.append("Finger Print : " + FingerPrint);
-        logBuf.append("\n");
-        logBuf.append("Host : " + Host);
-        logBuf.append("\n");
-        logBuf.append("ID : " + ID);
-        logBuf.append("\n");
-        logBuf.append("Manufacturer : " + Manufacturer);
-        logBuf.append("\n");
-        logBuf.append("Model : " + Model);
-        logBuf.append("\n");
-        logBuf.append("Product : " + Product);
-        logBuf.append("\n");
-        logBuf.append("Tags : " + Tags);
-        logBuf.append("\n");
-        logBuf.append("Time : " + Time);
-        logBuf.append("\n");
-        logBuf.append("Type : " + Type);
-        logBuf.append("\n");
-        logBuf.append("User : " + User);
-        logBuf.append("\n");
-        logBuf.append("Total Internal memory : " +
-                getTotalInternalMemorySize());
-        logBuf.append("\n");
-        logBuf.append("Available Internal memory : " +
-                getAvailableInternalMemorySize());
-        logBuf.append("\n");
-        return logBuf.toString();
+    private String createCrashLog() {
+        String logBuf = ("Version : " + VersionName) +
+                "\n" +
+                "Package : " + PackageName +
+                "\n" +
+                "FilePath : " + FilePath +
+                "\n" +
+                "Phone Model" + PhoneModel +
+                "\n" +
+                "Android Version : " + AndroidVersion +
+                "\n" +
+                "Board : " + Board +
+                "\n" +
+                "Brand : " + Brand +
+                "\n" +
+                "CPU ABI : " + CPU_ABI +
+                "\n" +
+                "Device : " + Device +
+                "\n" +
+                "Display : " + Display +
+                "\n" +
+                "Finger Print : " + FingerPrint +
+                "\n" +
+                "Host : " + Host +
+                "\n" +
+                "ID : " + ID +
+                "\n" +
+                "Manufacturer : " + Manufacturer +
+                "\n" +
+                "Model : " + Model +
+                "\n" +
+                "Product : " + Product +
+                "\n" +
+                "Tags : " + Tags +
+                "\n" +
+                "Time : " + Time +
+                "\n" +
+                "Type : " + Type +
+                "\n" +
+                "User : " + User +
+                "\n" +
+                "Total Internal memory : " +
+                getTotalInternalMemorySize() +
+                "\n" +
+                "Available Internal memory : " +
+                getAvailableInternalMemorySize() +
+                "\n";
+        return logBuf;
     }
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        StringBuffer reportBuf = new StringBuffer();
+        StringBuilder reportBuf = new StringBuilder();
 
         Date CurDate = new Date();
         reportBuf.append("Error Report collected on : " + CurDate.toString());

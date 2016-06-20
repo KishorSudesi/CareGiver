@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.caregiver.DashboardActivity;
@@ -19,6 +20,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+
+import static android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC;
 
 /**
  * Created by Admin on 1/22/2016.
@@ -131,6 +134,19 @@ public class App42GCMService extends IntentService {
         notificationIntent.putExtra("message_delivered", true);
         notificationIntent.putExtra("message", msg);
         notificationIntent.setFlags(603979776);//603979776 Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP
+
+        //
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(DashboardActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(notificationIntent);
+        //
+
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
@@ -140,6 +156,8 @@ public class App42GCMService extends IntentService {
                 .setDefaults(1).setDefaults(2)
                 .setLights(Notification.DEFAULT_LIGHTS, 5000, 5000)
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .setAutoCancel(true)
+                .setVisibility(VISIBILITY_PUBLIC)
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
 
         mBuilder.setContentIntent(contentIntent);

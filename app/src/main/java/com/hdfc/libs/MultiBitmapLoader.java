@@ -46,7 +46,7 @@ public class MultiBitmapLoader {
         };
     }
 
-    public static boolean cancelPotentialWork(String data, ImageView imageView) {
+    private static boolean cancelPotentialWork(String data, ImageView imageView) {
         final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
         //check here
         if (bitmapWorkerTask != null) {
@@ -112,18 +112,18 @@ public class MultiBitmapLoader {
         return inSampleSize;
     }
 
-    public int getMemory() {
+    private int getMemory() {
         Runtime rt = Runtime.getRuntime();
         return (int) rt.maxMemory() / 1024;
     }
 
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+    private void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         if (key != null && bitmap != null && getBitmapFromMemCache(key) == null) {
             mMemoryCache.put(key, bitmap);
         }
     }
 
-    public Bitmap getBitmapFromMemCache(String key) {
+    private Bitmap getBitmapFromMemCache(String key) {
         return mMemoryCache.get(key);
     }
 
@@ -143,26 +143,26 @@ public class MultiBitmapLoader {
         }
     }
 
-    public static class AsyncDrawable extends BitmapDrawable {
+    private static class AsyncDrawable extends BitmapDrawable {
         private final WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
 
-        public AsyncDrawable(Resources res, Bitmap bitmap,
-                             BitmapWorkerTask bitmapWorkerTask) {
+        AsyncDrawable(Resources res, Bitmap bitmap,
+                      BitmapWorkerTask bitmapWorkerTask) {
             super(res, bitmap);
             bitmapWorkerTaskReference =
                     new WeakReference<>(bitmapWorkerTask);
         }
 
-        public BitmapWorkerTask getBitmapWorkerTask() {
+        BitmapWorkerTask getBitmapWorkerTask() {
             return bitmapWorkerTaskReference.get();
         }
     }
 
-    class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+    private class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
         private String data = "";
 
-        public BitmapWorkerTask(ImageView imageView) {
+        BitmapWorkerTask(ImageView imageView) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<>(imageView);
         }

@@ -56,7 +56,7 @@ public class Config {
     /*public static final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};*/
     public static final boolean isDebuggable = true;
     public static final String string = Utils.getStringJni();
-    public static final boolean release = false;
+    public static final boolean release = true;
     //Login specific //User Specific clear at logout or whenever needed
     public final static String strCustomerImageName = "provider_image";
     public static int intClientScreen = 2;
@@ -74,7 +74,7 @@ public class Config {
 
     public static ArrayList<MilestoneViewModel> milestoneModels = new ArrayList<>();
     public static ArrayList<String> dependentIds = new ArrayList<>();
-    public static ArrayList<String> strProviderIds = new ArrayList<>();
+    //public static ArrayList<String> strProviderIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
 
     public static ArrayList<String> strActivityIds = new ArrayList<>();
@@ -89,6 +89,7 @@ public class Config {
     public static DependentModel dependentModel = null;
     public static JSONObject jsonObject = null;
     public static int intSelectedMenu = 0;
+
     public static ArrayList<ClientModel> clientModels = new ArrayList<>();
 
     public static ArrayList<NotificationModel> notificationModels = new ArrayList<>();

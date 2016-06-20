@@ -790,7 +790,7 @@ public class AsyncApp42ServiceApi {
         }.start();
     }
 
-    public void getImageCount(final String userName,
+   /* public void getImageCount(final String userName,
                               final App42CallBack callBack) {
         final Handler callerThreadHandler = new Handler();
         new Thread() {
@@ -817,7 +817,7 @@ public class AsyncApp42ServiceApi {
                 }
             }
         }.start();
-    }
+    }*/
 
     public void sendPushToUser(final String userName, final String strMessage,
                                final App42CallBack callBack) {
