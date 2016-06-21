@@ -95,8 +95,8 @@ public class FeatureActivity extends AppCompatActivity {
         //ImageView attach = (ImageView) findViewById(R.id.imgAttachHeaderTaskDetail);
         ImageView imgLogoHeaderTaskDetail = (ImageView) findViewById(R.id.imgLogoHeaderTaskDetail);
         Button done = (Button) findViewById(R.id.buttonVegetibleDone);
-        ImageView back = (ImageView) findViewById(R.id.imgBackHeaderTaskDetail);
-        LinearLayout linearLayoutAttach = (LinearLayout) findViewById(R.id.linearLayout);
+        //ImageView back = (ImageView) findViewById(R.id.imgBackHeaderTaskDetail);
+        LinearLayout linearLayoutAttach = (LinearLayout) findViewById(R.id.linearLayout1);
         Button cancel = (Button) findViewById(R.id.buttonBack);
         TextView textViewActivityName = (TextView) findViewById(R.id.txtActivityName);
         TextView textViewTime = (TextView) findViewById(R.id.txtActivityTime);
