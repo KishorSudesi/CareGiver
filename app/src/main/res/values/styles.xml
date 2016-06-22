@@ -50,4 +50,9 @@
         <item name="android:indeterminate">true</item>
     </style>
 
+    <!--for tooltip only-->
+    <style name="simpletooltip_default" parent="@android:style/TextAppearance.Medium">
+
+    </style>
+
 </resources>

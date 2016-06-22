@@ -38,7 +38,6 @@ public class ClientFragment extends Fragment {
     public static void prepareListData() {
         try {
             if (expListView != null) {
-
                 listDataHeader.clear();
                 listDataChild.clear();
 

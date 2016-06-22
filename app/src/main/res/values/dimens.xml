@@ -18,6 +18,7 @@
     <dimen name="polygonViewCircleWidth">42dp</dimen>
     <dimen name="polygonViewStrokeWidth">2dp</dimen>
 
+    <dimen name="label_text">16dp</dimen>
 
     <dimen name="slv_item_height">66dip</dimen>
     <dimen name="slv_item_height2">90dip</dimen>
@@ -32,5 +33,12 @@
     <dimen name="photo_width">100dp</dimen>
     <dimen name="photo_height">100dp</dimen>
 
-    <dimen name="label_text">16sp</dimen>
+    <!--for toolip only-->
+    <dimen name="simpletooltip_margin">10dp</dimen>
+    <dimen name="simpletooltip_padding">8dp</dimen>
+    <dimen name="simpletooltip_arrow_width">30dp</dimen>
+    <dimen name="simpletooltip_arrow_height">15dp</dimen>
+
+    <dimen name="simpletooltip_max_width">150dp</dimen>
+
 </resources>

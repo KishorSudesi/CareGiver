@@ -67,8 +67,7 @@ public class AppUtils {
         utils = new Utils(_ctxt);
         //progressDialog = new ProgressDialog(_ctxt);
         storageService = new StorageService(_ctxt);
-        sharedPreferences = _ctxt.getSharedPreferences(Config.strPreferenceName,
-                Context.MODE_PRIVATE);
+        sharedPreferences = _ctxt.getSharedPreferences(Config.strPreferenceName, Context.MODE_PRIVATE);
 
         strProviderId = sharedPreferences.getString("PROVIDER_ID", "");
 
@@ -121,7 +120,6 @@ public class AppUtils {
     public static void unregisterGcm() {
 
         Thread thread = new Thread(new Runnable() {
-
             @Override
             public void run() {
                 try {

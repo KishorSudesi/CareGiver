@@ -60,7 +60,7 @@ import java.util.GregorianCalendar;
 
 public class FeatureActivity extends AppCompatActivity {
 
-    public static int IMAGE_COUNT = 0, iActivityPosition = -1;
+    public static int IMAGE_COUNT = 0, iActivityPosition = -1, intSelectedMenuF;
     private static String strImageName = "";
     //private static Bitmap bitmap = null;
     private static StorageService storageService;
@@ -106,7 +106,6 @@ public class FeatureActivity extends AppCompatActivity {
         dialoglayout = (LinearLayout) findViewById(R.id.dialogLinear);
 
         bLoad = false;
-
 
         IMAGE_COUNT = 0;
         MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(FeatureActivity.this);
@@ -250,6 +249,7 @@ public class FeatureActivity extends AppCompatActivity {
         arrayListImageModel.clear();
         bitmaps.clear();
         IMAGE_COUNT = 0;
+
 
         if (bWhichScreen)
             Config.intSelectedMenu = Config.intNotificationScreen;
@@ -1049,6 +1049,7 @@ public class FeatureActivity extends AppCompatActivity {
 
         super.onResume();
 
+        System.out.println("HERE IS 2ND PROOF : "+Config.intSelectedMenu);
         if (!bViewLoaded) {
 
             bViewLoaded = true;
@@ -1172,7 +1173,6 @@ public class FeatureActivity extends AppCompatActivity {
                         final MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
 
                         Bundle args = new Bundle();
-
 
                         Intent intent = new Intent(FeatureActivity.this, MilestoneActivity.class);
                         args.putSerializable("Act", activityModel);

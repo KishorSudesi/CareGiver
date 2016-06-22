@@ -109,7 +109,7 @@
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
                     android:background="#000000"
-                    android:text="@string/cancel"
+                    android:text="@string/back"
                     android:textColor="@color/colorWhite"
                     android:visibility="visible" />
 
@@ -120,20 +120,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:padding="@dimen/padding_general">
-
-                <!-- <Button
-                     android:id="@+id/dialogButtonUpload"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:layout_gravity="center_horizontal"
-                     android:layout_margin="@dimen/margin_general"
-                     android:layout_marginTop="15dp"
-                     android:layout_weight="1"
-                     android:background="@color/blue"
-                     android:text="Upload"
-                     android:textColor="@color/colorWhite"
-                     android:visibility="visible" />-->
-
 
             </LinearLayout>
 

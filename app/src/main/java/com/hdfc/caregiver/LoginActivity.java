@@ -152,7 +152,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 // get user input and set it to result
-
                 String scheck = new String(res);
                 String string = edittextCaptcha.getText().toString();
                 boolean b = string.equals(scheck);
@@ -319,6 +318,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Object o) {
 
+                System.out.println("Success for Verfy Login ");
                 if (o != null) {
 
                     Config.dependentIds.clear();
@@ -396,7 +396,6 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Object o) {
                             try {
-
                                     Storage storage = (Storage) o;
 
                                 if (storage.isResponseSuccess() && storage.getJsonDocList().size() > 0) {

@@ -9,6 +9,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
+import android.view.Gravity;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
@@ -44,6 +47,8 @@ import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
 
+import com.hdfc.simpleTooltip.SimpleTooltip;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,6 +70,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
     private static RelativeLayout loadingPanel;
+    private com.hdfc.simpleTooltip.SimpleTooltip simpleTooltip;
     /* private static boolean bLoad;
      private static boolean bViewLoaded;*/
     private static String strActivityStatus = "inprocess";
@@ -92,7 +98,7 @@ public class MilestoneActivity extends AppCompatActivity {
         setContentView(R.layout.activity_milestone);
 
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
-
+        System.out.println("HERE IS PROOF : "+Config.intSelectedMenu);
 
         Bundle b = getIntent().getExtras();
 
@@ -121,7 +127,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         Button button = (Button) findViewById(R.id.dialogButtonOK);
         Button buttonCancel = (Button) findViewById(R.id.buttonCancel);
-        Button buttonDone = (Button) findViewById(R.id.buttonDone);
+        final Button buttonDone = (Button) findViewById(R.id.buttonDone);
         Button buttonUpload = (Button) findViewById(R.id.dialogButtonUpload);
         Button buttonAttach = (Button) findViewById(R.id.dialogButtonAttach);
 
@@ -612,16 +618,24 @@ public class MilestoneActivity extends AppCompatActivity {
                         linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
                     }
                     traverseEditTexts(layoutDialog, id, linearLayout, 1);
-
-
                 }
             });
         }
 
         if (buttonDone != null) {
+
+            simpleTooltip = new SimpleTooltip.Builder(MilestoneActivity.this)
+                        .anchorView(buttonDone)
+                        .text("Complete Task")
+                        .gravity(Gravity.BOTTOM)
+                        .build();
+
+            simpleTooltip.show();
+
             buttonDone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    simpleTooltip.dismiss();
                     int id = (int) v.getTag();
                     LinearLayout linearLayout = null;
                     if (layoutDialog != null) {
@@ -636,12 +650,6 @@ public class MilestoneActivity extends AppCompatActivity {
             buttonCancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   /* Bundle args = new Bundle();
-                    Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
-                    args.putSerializable("ACTIVITY", act);
-                    intent.putExtras(args);
-                    startActivity(intent);*/
-
                     Bundle args = new Bundle();
                     Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
                     args.putSerializable("ACTIVITY", act);
