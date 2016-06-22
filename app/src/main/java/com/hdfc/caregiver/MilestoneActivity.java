@@ -84,7 +84,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private static int iActivityPosition;
     private static boolean bEnabled;
     private final Context context = this;
-    private com.hdfc.simpleTooltip.SimpleTooltip simpleTooltip;
+    private SimpleTooltip simpleTooltip;
     private Utils utils;
     private MilestoneModel milestoneModelObject;
     private JSONArray jsonArrayImagesAdded;
@@ -95,7 +95,7 @@ public class MilestoneActivity extends AppCompatActivity {
         setContentView(R.layout.activity_milestone);
 
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
-        System.out.println("HERE IS PROOF : "+Config.intSelectedMenu);
+        //System.out.println("HERE IS PROOF : "+Config.intSelectedMenu);
 
         Bundle b = getIntent().getExtras();
 
@@ -124,8 +124,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
         Button button = (Button) findViewById(R.id.dialogButtonOK);
         Button buttonCancel = (Button) findViewById(R.id.buttonCancel);
-        final Button buttonDone = (Button) findViewById(R.id.buttonDone);
-        Button buttonUpload = (Button) findViewById(R.id.dialogButtonUpload);
+        Button buttonDone = (Button) findViewById(R.id.buttonDone);
+        //Button buttonUpload = (Button) findViewById(R.id.dialogButtonUpload);
         Button buttonAttach = (Button) findViewById(R.id.dialogButtonAttach);
 
         int iPosition = Config.strActivityIds.indexOf(act.getStrActivityID());
@@ -136,7 +136,6 @@ public class MilestoneActivity extends AppCompatActivity {
         if (iPosition > -1) {
             iActivityPosition = iPosition;
         }
-
 
         /*if (buttonUpload != null) {
             buttonUpload.setOnClickListener(new View.OnClickListener() {
@@ -157,21 +156,7 @@ public class MilestoneActivity extends AppCompatActivity {
             });
         }*/
 
-
-        if (buttonAttach != null) {
-            buttonAttach.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    strName1 = String.valueOf(new Date().getDate() + "" + new Date().getTime());
-                    strImageName1 = strName1 + ".jpeg";
-
-                    utils.selectImage(strImageName1, null, MilestoneActivity.this, false);
-
-
-                }
-            });
-        }
+        simpleTooltip = null;
 
         if (button != null) {
             button.setTag(milestoneModelObject.getiMilestoneId());
@@ -186,6 +171,12 @@ public class MilestoneActivity extends AppCompatActivity {
             }
             if (buttonDone != null) {
                 buttonDone.setVisibility(View.VISIBLE);
+                simpleTooltip = new SimpleTooltip.Builder(MilestoneActivity.this)
+                        .anchorView(buttonDone)
+                        .text(getString(R.string.completed_task))
+                        .gravity(Gravity.BOTTOM)
+                        .build();
+                simpleTooltip.show();
             }
         }
 
@@ -195,6 +186,12 @@ public class MilestoneActivity extends AppCompatActivity {
             }
             if (buttonDone != null) {
                 buttonDone.setVisibility(View.VISIBLE);
+                simpleTooltip = new SimpleTooltip.Builder(MilestoneActivity.this)
+                        .anchorView(buttonDone)
+                        .text(getString(R.string.completed_task))
+                        .gravity(Gravity.BOTTOM)
+                        .build();
+                simpleTooltip.show();
             }
         }
 
@@ -205,6 +202,8 @@ public class MilestoneActivity extends AppCompatActivity {
             }
             if (buttonDone != null) {
                 buttonDone.setVisibility(View.GONE);
+                if (simpleTooltip != null && simpleTooltip.isShowing())
+                    simpleTooltip.dismiss();
             }
             if (buttonAttach != null) {
                 buttonAttach.setVisibility(View.GONE);
@@ -611,6 +610,8 @@ public class MilestoneActivity extends AppCompatActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (simpleTooltip != null && simpleTooltip.isShowing())
+                        simpleTooltip.dismiss();
                     int id = (int) v.getTag();
                     LinearLayout linearLayout = null;
                     if (layoutDialog != null) {
@@ -621,20 +622,29 @@ public class MilestoneActivity extends AppCompatActivity {
             });
         }
 
+        if (buttonAttach != null) {
+            buttonAttach.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (simpleTooltip != null && simpleTooltip.isShowing())
+                        simpleTooltip.dismiss();
+                    strName1 = String.valueOf(new Date().getDate() + "" + new Date().getTime());
+                    strImageName1 = strName1 + ".jpeg";
+
+                    utils.selectImage(strImageName1, null, MilestoneActivity.this, false);
+
+
+                }
+            });
+        }
+
         if (buttonDone != null) {
-
-            simpleTooltip = new SimpleTooltip.Builder(MilestoneActivity.this)
-                        .anchorView(buttonDone)
-                        .text("Complete Task")
-                        .gravity(Gravity.BOTTOM)
-                        .build();
-
-            simpleTooltip.show();
 
             buttonDone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    simpleTooltip.dismiss();
+                    if (simpleTooltip != null && simpleTooltip.isShowing())
+                        simpleTooltip.dismiss();
                     int id = (int) v.getTag();
                     LinearLayout linearLayout = null;
                     if (layoutDialog != null) {
@@ -649,6 +659,8 @@ public class MilestoneActivity extends AppCompatActivity {
             buttonCancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (simpleTooltip != null && simpleTooltip.isShowing())
+                        simpleTooltip.dismiss();
                     Bundle args = new Bundle();
                     Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
                     args.putSerializable("ACTIVITY", act);
@@ -698,10 +710,9 @@ public class MilestoneActivity extends AppCompatActivity {
 
                 if (milestoneModel.getiMilestoneId() == iMileStoneId) {
 
-                    strScheduledDate = "";
-
                     Date date = calendar.getTime();
-                    milestoneModel.setStrMilestoneDate(utils.convertDateToString(date));
+
+                    strScheduledDate = "";
 
                     //if(iFlag==1)
                     //milestoneModel.setStrMilestoneStatus("opened");
@@ -914,6 +925,12 @@ public class MilestoneActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
+
+                    if (b) {
+                        milestoneModel.setStrMilestoneDate(utils.convertDateToString(date));
+                    }
+
+                    //break;
                     //
                 }
 

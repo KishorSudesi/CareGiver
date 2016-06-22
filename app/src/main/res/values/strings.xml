@@ -134,6 +134,7 @@
     <string name="not_found">NOT FOUND</string>
     <string name="upcoming_activity">Upcoming Activity</string>
     <string name="completed_activity">Completed Activity</string>
+    <string name="completed_task">Complete Task</string>
     <string name="buy_services">Buy Services</string>
     <string name="buy_services_large_text">Pay as you go services that can be easily added to an existing package</string>
     <string name="date_time">21-Dec-15 at 6:00pm</string>

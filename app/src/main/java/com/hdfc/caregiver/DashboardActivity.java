@@ -77,6 +77,16 @@ public class DashboardActivity extends AppCompatActivity implements
 
     public static void gotoSimpleActivityMenu() {
 
+        if (Config.intSelectedMenu == Config.intDashboardScreen) {
+            ActivityFragment.activityModels = Config.activityModels;
+            ActivityFragment.mAdapter.notifyDataSetChanged();
+        }
+
+        if (Config.intSelectedMenu == Config.intMileStoneScreen) {
+            MileStoneFragment.milestoneModels = Config.milestoneModels;
+            MileStoneFragment.mAdapter.notifyDataSetChanged();
+        }
+
         threadHandler = new ThreadHandler();
         Thread backgroundThread = new BackgroundThread();
         backgroundThread.start();
@@ -524,16 +534,6 @@ public class DashboardActivity extends AppCompatActivity implements
 
             if (!utils.isConnectingToInternet())
                 utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet));
-
-            if (Config.intSelectedMenu == Config.intDashboardScreen) {
-                ActivityFragment.activityModels = Config.activityModels;
-                ActivityFragment.mAdapter.notifyDataSetChanged();
-            }
-
-            if (Config.intSelectedMenu == Config.intMileStoneScreen) {
-                MileStoneFragment.milestoneModels = Config.milestoneModels;
-                MileStoneFragment.mAdapter.notifyDataSetChanged();
-            }
 
            /* if (Config.intSelectedMenu == Config.intClientScreen) {
                 ClientFragment.prepareListData();
