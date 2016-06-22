@@ -184,6 +184,8 @@
     <string name="error_client">Select a Valid Client</string>
     <string name="error_medicines">Check Medicine Details</string>
     <string name="close_error">Close other Tasks to close the activity</string>
+    <string name="close_date_error">Future Date. Cannot clsoe this task</string>
+    <string name="select_dependent">Select a Care Receipent</string>
 
 
     <!--Dashboard Menu Strings-->

@@ -271,14 +271,109 @@ public class AppUtils {
         }
     }
 
-    private void fetchCustomers(final int iFlag) {
+    private void fetchDependentsCopy(final int iFlag) {
 
-        if (Config.customerIds.size() > 0) {
+        if (Config.dependentIds.size() > 0) {
 
             if (utils.isConnectingToInternet()) {
 
-                final Query query = QueryBuilder.build("_id", Config.customerIds,
+                Query query = QueryBuilder.build("_id", Config.dependentIds, QueryBuilder.Operator.INLIST);
+
+                storageService.findDocsByQuery(Config.collectionDependent, query, new App42CallBack() {
+
+                    @Override
+                    public void onSuccess(Object o) {
+                        try {
+                            //System.out.println("NACHIKET : "+(o!=null));
+                            if (o != null) {
+
+                                Utils.log(o.toString(), " MESS 1");
+
+                                Storage storage = (Storage) o;
+
+                                if (storage.getJsonDocList().size() > 0) {
+
+                                    for (int i = 0; i < storage.getJsonDocList().size(); i++) {
+
+                                        Storage.JSONDocument jsonDocument = storage.
+                                                getJsonDocList().get(i);
+
+                                        String strDocument = jsonDocument.getJsonDoc();
+                                        String strDependentDocId = jsonDocument.
+                                                getDocId();
+                                        createDependentModel(strDependentDocId, strDocument, iFlag);
+                                    }
+                                }
+                            }
+                            if (iFlag == 2)
+                                DashboardActivity.gotoSimpleActivityMenu();
+                            else
+                                DashboardActivity.refreshClientsData();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onException(Exception e) {
+                        Utils.log(e.getMessage(), " MESS 1");
+                        if (iFlag == 2)
+                            DashboardActivity.gotoSimpleActivityMenu();
+                        else
+                            DashboardActivity.refreshClientsData();
+                    }
+
+                });
+
+            } else {
+                if (iFlag == 2)
+                    DashboardActivity.gotoSimpleActivityMenu();
+                else
+                    DashboardActivity.refreshClientsData();
+            }
+
+        } else {
+            if (iFlag == 2)
+                DashboardActivity.gotoSimpleActivityMenu();
+            else
+                DashboardActivity.refreshClientsData();
+        }
+    }
+
+    private void fetchCustomers(final int iFlag) {
+
+        // if (Config.customerIds.size() > 0) {
+
+            if (utils.isConnectingToInternet()) {
+
+                /*long mLongUpdatedDate=0;
+
+                ///////////////////////
+                Cursor cur = CareGiver.dbCon.fetch(
+                        DbHelper.strTableNameCollection, new String[]{"updated_date"}, "collection_name=?",
+                        new String[]{"customer"}, "updated_date desc", "0, 1", true, null, null
+                );
+
+
+                if (cur.getCount()> 0) {
+                    cur.moveToFirst();
+                    mLongUpdatedDate = cur.getLong(0);
+                }
+                CareGiver.dbCon.closeCursor(cur);*/
+
+
+                Query mQuery1 = QueryBuilder.build("_id", Config.customerIds,
                         QueryBuilder.Operator.INLIST);
+
+               /* Date mDate = new Date(mLongUpdatedDate);
+
+                String mStrUpdatedDate = utils.convertDateToString(mDate);
+
+                Query mQuery2 = QueryBuilder.build("_$updatedAt", mStrUpdatedDate,
+                        QueryBuilder.Operator.GREATER_THAN);
+
+                Query mQuery3 = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
+                        mQuery2);*/
 
               /*  try {
                     Utils.log(query.get(), " query ");
@@ -286,7 +381,7 @@ public class AppUtils {
                     e.printStackTrace();
                 }*/
 
-                storageService.findDocsByQuery(Config.collectionCustomer, query,
+                storageService.findDocsByQuery(Config.collectionCustomer, mQuery1,
                         new App42CallBack() {
 
                             @Override
@@ -330,7 +425,7 @@ public class AppUtils {
                 fetchDependents(iFlag);
             }
 
-        } else fetchDependents(iFlag);
+        // } else fetchDependents(iFlag);
     }
 
     private void createDependentModel(String strDocumentId, String strDocument, int iFlag) {
@@ -424,21 +519,23 @@ public class AppUtils {
 
                 Config.dependentModels.add(dependentModel);
 
-                if (!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name")))
-                    Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
-
                 if (iFlag == 2) {
-                    int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
 
-                    if (Config.clientModels.size() > 0) {
-                        if (iPosition > -1 && iPosition < Config.clientModels.size())//todo check
-                            Config.clientModels.get(iPosition).setDependentModel(dependentModel);
-                    }
+                    if (!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name"))) {
+                        Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
 
-                    if (Config.clientNameModels.size() > 0) {
-                        if (iPosition > -1 && iPosition < Config.clientNameModels.size()) {
-                            Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
-                            Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                        int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.getString("customer_id"));
+
+                        if (Config.clientModels.size() > 0) {
+                            if (iPosition > -1 && iPosition < Config.clientModels.size())//todo check
+                                Config.clientModels.get(iPosition).setDependentModel(dependentModel);
+                        }
+
+                        if (Config.clientNameModels.size() > 0) {
+                            if (iPosition > -1 && iPosition < Config.clientNameModels.size()) {
+                                Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                                Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                            }
                         }
                     }
                 }
@@ -457,7 +554,7 @@ public class AppUtils {
                             new String[]{strDocumentId}, null, "0, 1", true, null, null
                     );
 
-                    Utils.log(strUrlHash, " HASH ");
+                    //Utils.log(strUrlHash, " HASH ");
 
 
                     String strHashLocal = "";
@@ -486,25 +583,29 @@ public class AppUtils {
                 }
             } else {
                 if (iFlag == 2) {
+//todo
+                    if (!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name"))) {
+                        Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
 
-                    int iPosition = Config.customerIdsAdded.indexOf(jsonObjectDependent.getString("customer_id"));
+                        int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.getString("customer_id"));
 
-                    if (Config.clientModels.size() > 0) {
+                        if (Config.clientModels.size() > 0) {
 
-                        if (iPosition > -1) {
-                            int iPosition1 = Config.dependentIdsAdded.indexOf(strDocumentId);
-                            if (iPosition1 > -1 && iPosition <= Config.clientModels.size()) {
-                                DependentModel dependentModel = Config.dependentModels.get(iPosition1);
-                                Config.clientModels.get(iPosition).setDependentModel(dependentModel);
+                            if (iPosition > -1 && iPosition < Config.clientModels.size()) {
+                                int iPosition1 = Config.dependentIdsAdded.indexOf(strDocumentId);
+                                if (iPosition1 > -1 && iPosition1 < Config.dependentModels.size()) {
+                                    DependentModel dependentModel = Config.dependentModels.get(iPosition1);
+                                    Config.clientModels.get(iPosition).setDependentModel(dependentModel);
+                                }
                             }
                         }
-                    }
 
-                    //
-                    if (Config.clientNameModels.size() > 0) {
-                        if (iPosition > -1 && iPosition <= Config.clientNameModels.size()) {
-                            Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
-                            Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                        //
+                        if (Config.clientNameModels.size() > 0) {
+                            if (iPosition > -1 && iPosition < Config.clientNameModels.size()) {
+                                Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                                Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                            }
                         }
                     }
                 }
@@ -541,18 +642,23 @@ public class AppUtils {
                             jsonObject.getString("customer_contact_no"),
                             strDocumentId);
 
-                    if (!Config.strCustomerNames.contains(jsonObject.getString("customer_name")))
-                        Config.strCustomerNames.add(jsonObject.getString("customer_name"));
 
                     if (iFlag == 2) {
-                        ClientModel clientModel = new ClientModel();
-                        clientModel.setCustomerModel(customerModel);
-                        Config.clientModels.add(clientModel);
 
-                        ClientNameModel clientNameModel = new ClientNameModel();
-                        clientNameModel.setStrCustomerName(jsonObject.getString("customer_name"));
+                        if (!Config.strCustomerNames.contains(jsonObject.getString("customer_name"))) {
+                            Config.strCustomerNames.add(jsonObject.getString("customer_name"));
 
-                        Config.clientNameModels.add(clientNameModel);
+                            Config.customerIdsCopy.add(strDocumentId);
+
+                            ClientModel clientModel = new ClientModel();
+                            clientModel.setCustomerModel(customerModel);
+                            Config.clientModels.add(clientModel);
+
+                            ClientNameModel clientNameModel = new ClientNameModel();
+                            clientNameModel.setStrCustomerName(jsonObject.getString("customer_name"));
+
+                            Config.clientNameModels.add(clientNameModel);
+                        }
                     }
 
                     Config.customerModels.add(customerModel);
@@ -594,22 +700,27 @@ public class AppUtils {
                 } else {
                     if (iFlag == 2) {
 
-                        int iPosition = Config.strCustomerNames.indexOf(jsonObject.getString("customer_name"));
+                        if (!Config.strCustomerNames.contains(jsonObject.getString("customer_name"))) {
+                            Config.strCustomerNames.add(jsonObject.getString("customer_name"));
 
-                        if (iPosition > -1) {
-                            CustomerModel customerModel = Config.customerModels.get(iPosition);
+                            Config.customerIdsCopy.add(strDocumentId);
 
-                            ClientModel clientModel = new ClientModel();
-                            clientModel.setCustomerModel(customerModel);
-                            Config.clientModels.add(clientModel);
+                            int iPosition = Config.customerIdsAdded.indexOf(strDocumentId);
+
+                            if (iPosition > -1 && iPosition < Config.customerModels.size()) {
+                                CustomerModel customerModel = Config.customerModels.get(iPosition);
+
+                                ClientModel clientModel = new ClientModel();
+                                clientModel.setCustomerModel(customerModel);
+                                Config.clientModels.add(clientModel);
+                            }
+
+                            ClientNameModel clientNameModel = new ClientNameModel();
+                            clientNameModel.setStrCustomerName(jsonObject.getString("customer_name"));
+
+                            Config.clientNameModels.add(clientNameModel);
                         }
 
-                        //
-                        ClientNameModel clientNameModel = new ClientNameModel();
-                        clientNameModel.setStrCustomerName(jsonObject.getString("customer_name"));
-
-                        Config.clientNameModels.add(clientNameModel);
-                        //
                     }
                 }
             }
@@ -640,11 +751,11 @@ public class AppUtils {
 
                     if (cur.getCount() > 0) {
                         cur.moveToFirst();
-                           *//* while (!cur.isAfterLast()) {*//*
+                            while (!cur.isAfterLast()) {
                         strUpdatedDate = cur.getString(0);
                         strDocumentLocal = cur.getString(1);
-                            *//*    cur.moveToNext();
-                            }*//*
+                                cur.moveToNext();
+                            }
                     }
                     CareGiver.dbCon.closeCursor(cur);
                 }
@@ -652,7 +763,40 @@ public class AppUtils {
                 CareGiver.dbCon.closeCursor(cur);
                 e.printStackTrace();
             }
-        }*/
+        }
+
+        ////////////////////////
+        String strUrlHash = Utils.sha512(jsonObjectVideo.getString("video_url"));
+
+        Cursor cur = CareGiver.dbCon.fetch(
+                DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                new String[]{jsonObjectVideo.getString("video_name")}, null, "0, 1", true, null, null
+        );
+
+        String strHashLocal = "";
+
+        if (cur.getCount() <= 0) {
+            CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectVideo.getString("video_name"),
+                            jsonObjectVideo.getString("video_url"), "VIDEO", strUrlHash},
+                    new String[]{"name", "url", "file_type", "file_hash"});
+        } else {
+
+            cur.moveToFirst();
+            strHashLocal = cur.getString(0);
+            cur.moveToNext();
+            CareGiver.dbCon.closeCursor(cur);
+
+            if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                CareGiver.dbCon.update(
+                        DbHelper.strTableNameFiles, "name=?",
+                        new String[]{jsonObjectVideo.getString("video_url"), strUrlHash},
+                        new String[]{"url", "file_hash"}, new String[]{jsonObjectVideo.getString("video_name")}
+                );
+            }
+        }
+
+        CareGiver.dbCon.closeCursor(cur);*/
+        ////////////////////////
 
         Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
                 QueryBuilder.Operator.EQUALS);
@@ -671,11 +815,8 @@ public class AppUtils {
         Query q8 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strStartDate, QueryBuilder.
                 Operator.GREATER_THAN_EQUALTO);
 
-        //
         Query q10 = QueryBuilder.build("milestones.status", Config.MilestoneStatus.COMPLETED, QueryBuilder.
                 Operator.NOT_EQUALS);
-
-        //
 
         Query q9 = QueryBuilder.compoundOperator(q7, QueryBuilder.Operator.AND, q8);
 
@@ -684,12 +825,6 @@ public class AppUtils {
         Query q5 = QueryBuilder.compoundOperator(q4, QueryBuilder.Operator.OR, q11);
 
         Query q6 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q5);
-
-
-       /* Query q7 = QueryBuilder.build("_id",  Config.strActivityIds, QueryBuilder.
-                Operator.INLIST);*/
-
-        // Query q12 = QueryBuilder.compoundOperator(q10, QueryBuilder.Operator.AND, q6);
 
         try {
             Utils.log(q6.get(), " QUERY ");
@@ -705,7 +840,7 @@ public class AppUtils {
                     public void onSuccess(Object o) {
                         if (o != null) {
 
-                            Utils.log(o.toString(), " Activity All SSS ");
+                            //Utils.log(o.toString(), " Activity All SSS ");
 
                             Storage storage = (Storage) o;
 
@@ -720,12 +855,14 @@ public class AppUtils {
                             }
                         }
                         fetchCustomers(1);
+                        //DashboardActivity.reloadActivities();
                     }
 
                     @Override
                     public void onException(Exception ex) {
                         Utils.log(ex.getMessage(), " f1 ");
                         fetchCustomers(1);
+                        //DashboardActivity.reloadActivities();
                     }
         });
     }

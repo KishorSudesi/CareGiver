@@ -56,6 +56,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private AppUtils appUtils;
     private EditText editTextTitle, dateAnd;
     private JSONObject jsonObject;
+    private int mDependentPosition = -1;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -103,7 +104,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 try {
                     if (Config.strDependentNames.size() > 0) {
                         String strName = (String) parent.getAdapter().getItem(position);
-                        strSelectedDependent = Config.strDependentNames.get(Config.strDependentNames.indexOf(strName));
+                        int iPosition = Config.strDependentNames.indexOf(strName);
+                        if (iPosition > -1) {
+                            strSelectedDependent = Config.strDependentNames.get(iPosition);
+                        } else {
+                            strSelectedDependent = "";
+                        }
                     } else strSelectedDependent = "";
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -149,11 +155,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                 valSearch = inputSearch.getText().toString().trim();
 
-                int iPosition = Config.strCustomerNames.indexOf(valSearch.trim());
+                mDependentPosition = Config.strCustomerNames.indexOf(valSearch.trim());
 
-                if (iPosition > -1 && Config.clientNameModels.size() > 0 && iPosition < Config.clientNameModels.size()) {
+                if (mDependentPosition > -1 && Config.clientNameModels.size() > 0 && mDependentPosition < Config.clientNameModels.size()) {
                     names.clear();
-                    names = Config.clientNameModels.get(iPosition).getStrDependentNames();
+                    names = Config.clientNameModels.get(mDependentPosition).getStrDependentNames();
                 }
 
                 ArrayAdapter<String> adapter1 = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, names);
@@ -204,6 +210,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                         if (TextUtils.isEmpty(strSelectedDependent)) {
                             //dependentlist.setError(getString(R.string.error_field_required));
+                            utils.toast(2, 2, getString(R.string.select_dependent));
                             focusView = dependentlist;
                             cancel = true;
                         }
@@ -228,13 +235,14 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 if (iServicePosition > -1)
                                     serviceModel = Config.serviceModels.get(iServicePosition);
 
-                                int iDependentPosition = Config.strDependentNames.indexOf(strSelectedDependent);
-                                if (iDependentPosition > -1)
-                                    dependentModel = Config.dependentModels.get(iDependentPosition);
-
                                 int iCustomerPosition = Config.strCustomerNames.indexOf(valSearch);
                                 if (iCustomerPosition > -1)
                                     strSelectedCustomer = Config.clientModels.get(iCustomerPosition).getCustomerModel().getStrEmail();
+
+                                int iDependentPosition = Config.clientNameModels.get(iCustomerPosition).getStrDependentNames().indexOf(strSelectedDependent);
+                                if (iDependentPosition > -1)
+                                    dependentModel = Config.clientModels.get(iCustomerPosition).getDependentModels().get(iDependentPosition);
+
 
                                 if (iCustomerPosition > -1) {
 

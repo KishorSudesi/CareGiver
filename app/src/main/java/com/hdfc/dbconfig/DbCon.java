@@ -22,7 +22,7 @@ public class DbCon {
     public static synchronized DbCon getInstance(Context ctx) {
 
         if (dbConInstance == null) {
-            dbConInstance = new DbCon(ctx.getApplicationContext());
+            dbConInstance = new DbCon(ctx);
         }
         return dbConInstance;
     }

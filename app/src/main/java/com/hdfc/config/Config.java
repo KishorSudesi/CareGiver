@@ -76,6 +76,7 @@ public class Config {
     public static ArrayList<String> dependentIds = new ArrayList<>();
     //public static ArrayList<String> strProviderIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
+    public static ArrayList<String> customerIdsCopy = new ArrayList<>();
 
     public static ArrayList<String> strActivityIds = new ArrayList<>();
     public static ArrayList<String> strActivityIdsNotifications = new ArrayList<>();

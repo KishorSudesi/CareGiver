@@ -41,6 +41,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
     private static MultiBitmapLoader multiBitmapLoader;
     private static Utils utils;
     private static Context context;
+
     public static BaseAdapter mAdapter = new BaseAdapter() {
 
         @Override

@@ -22,14 +22,14 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public static final String strTableNameCollection = "collections";
     public static final String strTableNameFiles = "files";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
     private static SQLiteDatabase db;
-    private Utils utils;
+    //private Utils utils;
     private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection + " ( id integer primary key autoincrement," +
-            " object_id VARCHAR(50), updated_date VARCHAR(20), document text,  collection_name VARCHAR(50), status integer)";
+            " object_id VARCHAR(50), updated_date integer, document text, collection_name VARCHAR(50), status integer)";
 
     private String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
             " name VARCHAR(100), url VARCHAR(300), file_type VARCHAR(10),  file_hash VARCHAR(50))";
@@ -41,7 +41,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this._ctxt = context;
-        utils = new Utils(context);
+        //utils = new Utils(context);
         originalFile = _ctxt.getDatabasePath(DATABASE_NAME);
 
         try {
@@ -54,7 +54,7 @@ public class DbHelper extends SQLiteOpenHelper {
     static synchronized DbHelper getInstance(Context ctx) {
 
         if (dbInstance == null) {
-            dbInstance = new DbHelper(ctx.getApplicationContext());
+            dbInstance = new DbHelper(ctx);
         }
         return dbInstance;
     }

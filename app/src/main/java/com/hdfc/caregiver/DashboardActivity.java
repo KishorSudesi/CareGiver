@@ -25,6 +25,7 @@ import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.caregiver.fragments.MileStoneFragment;
 import com.hdfc.caregiver.fragments.NotificationFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
@@ -92,7 +93,10 @@ public class DashboardActivity extends AppCompatActivity implements
             Config.clientModels.clear();
 
             Config.clientNameModels.clear();
-            //Config.strDependentNames.clear();
+
+            Config.strDependentNames.clear();
+            Config.strCustomerNames.clear();
+            Config.customerIdsCopy.clear();
 
             appUtils.fetchClients(2);
 
@@ -100,6 +104,21 @@ public class DashboardActivity extends AppCompatActivity implements
             utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet));
             loadingPanel.setVisibility(View.GONE);
         }
+    }
+
+    public static void reloadActivities() {
+
+        if (Config.intSelectedMenu == Config.intDashboardScreen) {
+            ActivityFragment.activityModels = Config.activityModels;
+            ActivityFragment.mAdapter.notifyDataSetChanged();
+        }
+
+      /*  if (Config.intSelectedMenu == Config.intMileStoneScreen) {
+            MileStoneFragment.milestoneModels = Config.milestoneModels;
+            MileStoneFragment.mAdapter.notifyDataSetChanged();
+        }*/
+
+        loadingPanel.setVisibility(View.GONE);
     }
 
     private void gotoSimpleActivity() {
@@ -293,6 +312,7 @@ public class DashboardActivity extends AppCompatActivity implements
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
     private void menuClientsLoad() {
         setMenu();
         clients.setImageDrawable(getResources().getDrawable(R.mipmap.client));
@@ -412,6 +432,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
+        if (CareGiver.dbCon != null) {
+            CareGiver.dbCon.close();
+        }
     }
 
     private void refreshDashboardData() {
@@ -463,6 +487,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 appUtils.fetchActivities();
 
         } else {
+            reloadActivities();
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }

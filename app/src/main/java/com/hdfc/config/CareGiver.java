@@ -11,4 +11,14 @@ public class CareGiver extends Application {
 
     public static DbCon dbCon = null;
 
+    //private static Context context;
+
+    public void onCreate() {
+        super.onCreate();
+        //CareGiver.context = getApplicationContext();
+    }
+
+   /* public static Context getContext() {
+        return context;
+    }*/
 }

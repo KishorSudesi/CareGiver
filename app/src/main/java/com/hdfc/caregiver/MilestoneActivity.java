@@ -9,11 +9,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.util.AttributeSet;
-import android.view.Gravity;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -40,14 +38,13 @@ import com.hdfc.models.ActivityModel;
 import com.hdfc.models.FieldModel;
 import com.hdfc.models.FileModel;
 import com.hdfc.models.MilestoneModel;
+import com.hdfc.simpleTooltip.SimpleTooltip;
 import com.hdfc.views.TouchImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
-
-import com.hdfc.simpleTooltip.SimpleTooltip;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,7 +67,6 @@ public class MilestoneActivity extends AppCompatActivity {
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
     private static RelativeLayout loadingPanel;
-    private com.hdfc.simpleTooltip.SimpleTooltip simpleTooltip;
     /* private static boolean bLoad;
      private static boolean bViewLoaded;*/
     private static String strActivityStatus = "inprocess";
@@ -88,6 +84,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private static int iActivityPosition;
     private static boolean bEnabled;
     private final Context context = this;
+    private com.hdfc.simpleTooltip.SimpleTooltip simpleTooltip;
     private Utils utils;
     private MilestoneModel milestoneModelObject;
     private JSONArray jsonArrayImagesAdded;
@@ -274,8 +271,8 @@ public class MilestoneActivity extends AppCompatActivity {
                             || fieldModel.getStrFieldType().equalsIgnoreCase("date")
                             || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
 
-                        editText.setCompoundDrawables(getResources().getDrawable(R.drawable.calender_date_picked),
-                                null, getResources().getDrawable(R.drawable.calender_date_picked), null);
+                        editText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.calender_date_picked),
+                                null, null, null);
 
                         //editText.setInputType(InputType.TYPE_CLASS_DATETIME);
 
@@ -452,6 +449,7 @@ public class MilestoneActivity extends AppCompatActivity {
                         Button buttonDel = new Button(MilestoneActivity.this);
                         buttonDel.setText("X");
                         buttonDel.setTextColor(Color.BLACK);
+                        buttonDel.setPadding(5, 5, 5, 5);
                         buttonDel.setEnabled(bEnabled);
                         buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
                         buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
@@ -569,6 +567,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                 buttonDel.setText("X");
                                 buttonDel.setTextColor(Color.BLACK);
                                 buttonDel.setEnabled(finalBEnabled);
+                                buttonDel.setPadding(5, 5, 5, 5);
                                 buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
                                 buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
                                 buttonDel.setOnClickListener(new View.OnClickListener() {
@@ -676,7 +675,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
     private void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
 
-        boolean b = true;
+        boolean b = true, bClose = true;
 
         try {
 
@@ -753,6 +752,13 @@ public class MilestoneActivity extends AppCompatActivity {
                                             }
                                         }
                                         /////////////////////////////
+
+                                        if (iFlag == 2) {
+                                            if (enteredDate.after(dateNow)) {
+                                                bClose = false;
+                                                Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
+                                            }
+                                        }
 
                                         if (bFuture) {
 
@@ -856,10 +862,11 @@ public class MilestoneActivity extends AppCompatActivity {
                     }
 
                     if (b) {
-                        if (iFlag == 2)
+
+                        if (iFlag == 2 && bClose)
                             milestoneModel.setStrMilestoneStatus("completed");
 
-                        if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
+                        if (iIndex == act.getMilestoneModels().size() && iFlag == 2 && bClose) {
                             strActivityStatus = "completed";
                         }
 
@@ -932,6 +939,11 @@ public class MilestoneActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        if (iFlag == 2 && !bClose) {
+            b = false;
+            utils.toast(2, 2, getString(R.string.close_date_error));
+        }
+
 
         if (b) {
 
@@ -940,7 +952,7 @@ public class MilestoneActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadJson(int iMilestoneId) {
+    private void uploadJson() {
         ///////////////////////
         JSONObject jsonObjectMileStone = new JSONObject();
 
@@ -1378,7 +1390,7 @@ public class MilestoneActivity extends AppCompatActivity {
                 e.printStackTrace();
             }*/
 
-            uploadJson(iMilestoneId);
+            uploadJson();
 
             /*storageService.updateDocs(jsonToUpdate,
                     act.getStrActivityID(),

@@ -116,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
 
         CrashLogger.getInstance().init(LoginActivity.this);
 
-        CareGiver.dbCon = DbCon.getInstance(LoginActivity.this);
+        CareGiver.dbCon = DbCon.getInstance(getApplicationContext());
         //CareGiver.dbCon.open();
 
     }
@@ -252,9 +252,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (CareGiver.dbCon != null) {
-            CareGiver.dbCon.close();
-        }
     }
 
     @Override
@@ -473,6 +470,9 @@ public class LoginActivity extends AppCompatActivity {
     public void onBackPressed() {
         //super.onBackPressed();
         moveTaskToBack(true);
+        if (CareGiver.dbCon != null) {
+            CareGiver.dbCon.close();
+        }
         finish();
     }
 }
