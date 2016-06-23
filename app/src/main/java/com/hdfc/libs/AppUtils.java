@@ -342,7 +342,7 @@ public class AppUtils {
 
     private void fetchCustomers(final int iFlag) {
 
-        // if (Config.customerIds.size() > 0) {
+        if (Config.customerIds.size() > 0) {
 
             if (utils.isConnectingToInternet()) {
 
@@ -425,7 +425,7 @@ public class AppUtils {
                 fetchDependents(iFlag);
             }
 
-        // } else fetchDependents(iFlag);
+        } else fetchDependents(iFlag);
     }
 
     private void createDependentModel(String strDocumentId, String strDocument, int iFlag) {
