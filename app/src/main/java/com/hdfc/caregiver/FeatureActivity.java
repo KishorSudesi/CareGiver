@@ -250,7 +250,6 @@ public class FeatureActivity extends AppCompatActivity {
         bitmaps.clear();
         IMAGE_COUNT = 0;
 
-
         if (bWhichScreen)
             Config.intSelectedMenu = Config.intNotificationScreen;
         else
@@ -1050,6 +1049,10 @@ public class FeatureActivity extends AppCompatActivity {
         super.onResume();
 
         System.out.println("HERE IS 2ND PROOF : "+Config.intSelectedMenu);
+
+        if(Config.intSelectedMenu == 3){
+            bWhichScreen = true;
+        }
         if (!bViewLoaded) {
 
             bViewLoaded = true;

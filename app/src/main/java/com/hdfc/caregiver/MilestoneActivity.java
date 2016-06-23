@@ -121,7 +121,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
         final LinearLayout layoutDialog = (LinearLayout) findViewById(R.id.linearLayoutDialog);
 
-
         Button button = (Button) findViewById(R.id.dialogButtonOK);
         Button buttonCancel = (Button) findViewById(R.id.buttonCancel);
         Button buttonDone = (Button) findViewById(R.id.buttonDone);
@@ -176,7 +175,9 @@ public class MilestoneActivity extends AppCompatActivity {
                         .text(getString(R.string.completed_task))
                         .gravity(Gravity.BOTTOM)
                         .build();
-                simpleTooltip.show();
+                if(!milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed")) {
+                    simpleTooltip.show();
+                }
             }
         }
 
@@ -191,7 +192,9 @@ public class MilestoneActivity extends AppCompatActivity {
                         .text(getString(R.string.completed_task))
                         .gravity(Gravity.BOTTOM)
                         .build();
-                simpleTooltip.show();
+                if(!milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed")) {
+                    simpleTooltip.show();
+                }
             }
         }
 

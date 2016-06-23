@@ -361,7 +361,6 @@ public class AppUtils {
                 }
                 CareGiver.dbCon.closeCursor(cur);*/
 
-
                 Query mQuery1 = QueryBuilder.build("_id", Config.customerIds,
                         QueryBuilder.Operator.INLIST);
 
