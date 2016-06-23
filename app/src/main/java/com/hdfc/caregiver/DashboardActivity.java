@@ -25,7 +25,6 @@ import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.caregiver.fragments.MileStoneFragment;
 import com.hdfc.caregiver.fragments.NotificationFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
-import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
@@ -442,10 +441,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (CareGiver.dbCon != null) {
+        //super.onBackPressed();
+       /* if (CareGiver.dbCon != null) {
             CareGiver.dbCon.close();
-        }
+        }*/
     }
 
     private void refreshDashboardData() {
