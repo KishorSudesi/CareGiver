@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
@@ -91,6 +92,7 @@ public class FeatureActivity extends AppCompatActivity {
     private JSONArray jsonArrayImagesAdded;
     private TextView textViewName;
     private boolean bWhichScreen = false;
+    private boolean success;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -929,16 +931,23 @@ public class FeatureActivity extends AppCompatActivity {
                         alertbox.setMessage("Do you want to delete this image?");
                         alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0, int arg1) {
+
+
                                 try {
                                     Uri path = getImageUri(getApplicationContext(), bitmaps.get(pos));
+                                    // boolean success = new File(path.getPath()).delete();
                                     File fDelete = new File(path.getPath());
                                     System.out.println("PATH : " + path.getPath());
                                     System.out.println("HERE WE ARE : " + fDelete.delete());
-                                    fDelete.delete();
-
+                                    if (fDelete.exists()) {
+                                        success = fDelete.delete();
+                                    }
+                                    if (success) {
+                                        Toast.makeText(FeatureActivity.this, "The file has been successfully deleted", Toast.LENGTH_LONG).show();
+                                    }
                                     //imageView.setImageBitmap(null);
                                     bitmaps.remove(pos);//[pos]=null;
-
+                                    layout.removeViewAt(pos);
                                     arg0.dismiss();
                                 } catch (Exception e) {
                                     e.printStackTrace();
