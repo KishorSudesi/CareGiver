@@ -913,7 +913,6 @@ public class AppUtils {
 
                 boolean bActivity = false, bMilestone = false, bContinue = false, bToday = false;
 
-
                 /////
                 if (jsonObject.has("activity_date")) {
                     Calendar calendar = Calendar.getInstance();
@@ -982,7 +981,6 @@ public class AppUtils {
 
                     if (jsonObject.has("activity_date")) {
                         activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
-
                         /////////
                         try {
 

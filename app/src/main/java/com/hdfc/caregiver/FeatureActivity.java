@@ -4,18 +4,22 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -50,6 +54,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -896,7 +901,7 @@ public class FeatureActivity extends AppCompatActivity {
         for (int i = 0; i < bitmaps.size(); i++) {
             try {
                 //
-                ImageView imageView = new ImageView(FeatureActivity.this);
+                final ImageView imageView = new ImageView(FeatureActivity.this);
                 imageView.setPadding(0, 0, 3, 0);
 
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -906,10 +911,49 @@ public class FeatureActivity extends AppCompatActivity {
                 imageView.setLayoutParams(layoutParams);
                 imageView.setImageBitmap(bitmaps.get(i));
                 imageView.setTag(bitmaps.get(i));
+                imageView.setTag(R.id.three, i);
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
+                //final Bitmap bmp = bitmaps.get(i);
 
                 //Utils.log(" 2 " + String.valueOf(i), " IN ");
+
+                imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        final int pos = (int) v.getTag(R.id.three);
+
+                        final AlertDialog.Builder alertbox =
+                                new AlertDialog.Builder(FeatureActivity.this);
+                        alertbox.setTitle("Delete Image");
+                        alertbox.setMessage("Do you want to delete this image?");
+                        alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                try {
+                                    Uri path = getImageUri(getApplicationContext(), bitmaps.get(pos));
+                                    File fDelete = new File(path.getPath());
+                                    System.out.println("PATH : " + path.getPath());
+                                    System.out.println("HERE WE ARE : " + fDelete.delete());
+                                    fDelete.delete();
+
+                                    //imageView.setImageBitmap(null);
+                                    bitmaps.remove(pos);//[pos]=null;
+
+                                    arg0.dismiss();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                        alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                arg0.dismiss();
+                            }
+                        });
+                        alertbox.show();
+                        return false;
+                    }
+                });
 
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -941,6 +985,13 @@ public class FeatureActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 
     private void insertNotification() {
