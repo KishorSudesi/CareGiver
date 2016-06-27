@@ -990,8 +990,8 @@ public class MilestoneActivity extends AppCompatActivity {
                 jsonObjectMilestone.put("id", milestoneModel.getiMilestoneId());
 
                 // if (milestoneModel.getiMilestoneId() == iMilestoneId) {
-                    //JSONObject jsonObjectFiles =
-                    //JSONObject jsonObjectFiles =
+                //JSONObject jsonObjectFiles =
+                //JSONObject jsonObjectFiles =
                 // jsonObjectMilestone.put("files", jsonArrayImagesAdded);
 
                 //}
@@ -1155,9 +1155,9 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         } else {*/
 
-                            for (String string : all_path) {
-                                imagePaths.add(string);
-                            }
+                        for (String string : all_path) {
+                            imagePaths.add(string);
+                        }
                         //}
                         // Thread backgroundTreadDialog2 = new BackgroundThreadDialog2();
                         Thread backgroundThread = new BackgroundThread();

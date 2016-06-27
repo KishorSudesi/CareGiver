@@ -14,6 +14,8 @@ public class FileModel implements Serializable {
     private String strUrlMd5;
     private String strFileUploadTime;
     private String strFileDescription;
+    private boolean isNew;
+
 
     public FileModel(String strFileName, String strFileUrl, String strFileType,
                      String strFileUploadTime, String strFileDescription,
@@ -24,6 +26,14 @@ public class FileModel implements Serializable {
         this.strFileUploadTime = strFileUploadTime;
         this.strFileDescription = strFileDescription;
         this.strFilePath = strFilePath;
+    }
+
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean aNew) {
+        isNew = aNew;
     }
 
     public String getStrFilePath() {

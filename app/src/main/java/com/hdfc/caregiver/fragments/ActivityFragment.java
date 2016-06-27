@@ -439,9 +439,9 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
             args.putSerializable("ACTIVITY", activityModels.get(position));
 
             if (!activityModels.get(position).getStrActivityStatus().equalsIgnoreCase("completed")) {
-                ActivityModel obj = activityModels.get(position);
+                //ActivityModel obj = activityModels.get(position);
                 Intent intent = new Intent(getActivity(), FeatureActivity.class);
-                args.putSerializable("ACTIVITY", obj);
+                //args.putSerializable("ACTIVITY", obj);
                 intent.putExtras(args);
                 startActivity(intent);
             } else {

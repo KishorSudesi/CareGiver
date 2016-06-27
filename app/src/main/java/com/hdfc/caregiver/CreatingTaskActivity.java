@@ -18,6 +18,7 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
+import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.AsyncApp42ServiceApi;
@@ -558,8 +559,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     try {
                                         Calendar calendar = Calendar.getInstance();
                                         Date dateNow = calendar.getTime();
-                                        strEndDateCopy = strDate + "T23:59:59.999Z";
-                                        strStartDateCopy = strDate + "T00:00:00.000Z";
+                                        strEndDateCopy = DashboardFragment.strDate + "T23:59:59.999Z";
+                                        strStartDateCopy = DashboardFragment.strDate + "T00:00:00.000Z";
                                         activityDate = utils.convertStringToDate(_strDate);
 
                                         endDate = utils.convertStringToDate(strEndDateCopy);
