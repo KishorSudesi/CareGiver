@@ -1081,6 +1081,12 @@ public class MilestoneActivity extends AppCompatActivity {
             jsonObjectMileStone.put("status", strActivityStatus);
             jsonObjectMileStone.put("activity_done_date", strActivityDoneDate);
 
+            if (iActivityPosition > -1) {
+                //Config.activityModels.get(iPosition).removeMilestoneModel(milestoneModel);
+                Config.activityModels.get(iActivityPosition).setStrActivityStatus(strActivityStatus);
+                Config.activityModels.get(iActivityPosition).setStrActivityDoneDate(strActivityDoneDate);
+            }
+
             updateMileStones(jsonObjectMileStone);
 
         } catch (Exception e) {

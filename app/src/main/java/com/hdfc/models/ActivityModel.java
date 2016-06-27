@@ -14,6 +14,8 @@ public class ActivityModel implements Serializable {
     private String strProviderID;
     private String strServcieID;
 
+    private String strCreatedBy;
+
     private String strActivityName;
     private String strActivityDesc;
     //private String strActivityMessage;
@@ -67,6 +69,14 @@ public class ActivityModel implements Serializable {
         this.imageModels = imageModels;
         this.videoModels = videoModels;
         this.feedBackModels = feedBackModels;
+    }
+
+    public String getStrCreatedBy() {
+        return strCreatedBy;
+    }
+
+    public void setStrCreatedBy(String strCreatedBy) {
+        this.strCreatedBy = strCreatedBy;
     }
 
     public int getiActivityDisplayFlag() {

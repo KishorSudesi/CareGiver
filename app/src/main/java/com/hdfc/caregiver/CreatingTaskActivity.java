@@ -252,7 +252,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                 if (dateNow != null && enteredDate != null) {
 
-                                    //Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
+                                    Utils.log(String.valueOf(dateNow + " ! " + enteredDate), " NOW ");
 
                                     if (enteredDate.compareTo(dateNow) < 0) {
                                         bFuture = false;
@@ -559,12 +559,22 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     try {
                                         Calendar calendar = Calendar.getInstance();
                                         Date dateNow = calendar.getTime();
-                                        strEndDateCopy = DashboardFragment.strDate + "T23:59:59.999Z";
-                                        strStartDateCopy = DashboardFragment.strDate + "T00:00:00.000Z";
-                                        activityDate = utils.convertStringToDate(_strDate);
 
-                                        endDate = utils.convertStringToDate(strEndDateCopy);
-                                        startDate = utils.convertStringToDate(strStartDateCopy);
+                                        String strDate;
+
+                                        if (DashboardFragment._strDate == null) {
+                                            Date date = calendar.getTime();
+                                            strDate = Utils.writeFormatDateDB.format(date);
+                                        } else {
+                                            strDate = DashboardFragment._strDate;
+                                        }
+
+                                        strEndDateCopy = strDate + "T23:59:59.999";
+                                        strStartDateCopy = strDate + "T00:00:00.000";
+                                        activityDate = Utils.readFormat.parse(_strDate);
+
+                                        endDate = Utils.queryFormat.parse(strEndDateCopy);
+                                        startDate = Utils.queryFormat.parse(strStartDateCopy);
                                         strDateNow = utils.convertDateToString(dateNow);
 
                                         Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED ");

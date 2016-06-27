@@ -489,6 +489,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
 
             DashboardFragment.strDate = Utils.writeFormatDate.format(date);
+            DashboardFragment._strDate = Utils.writeFormatDateDB.format(date);
 
             Config.intSelectedMenu = Config.intDashboardScreen;
 

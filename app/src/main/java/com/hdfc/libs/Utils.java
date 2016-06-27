@@ -88,7 +88,7 @@ public class Utils {
             SimpleDateFormat("yyyy-MM-dd", locale);
     public final static SimpleDateFormat writeFormatTime = new
             SimpleDateFormat("kk:mm", locale); // aa
-    private final static SimpleDateFormat queryFormat =
+    public final static SimpleDateFormat queryFormat =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
 
   /*  public final static SimpleDateFormat dateFormat =

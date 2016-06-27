@@ -74,6 +74,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                 cvh.textViewWhat = (TextView) convertView.findViewById(R.id.textViewWhat);
                 cvh.imagePerson = (ImageView) convertView.findViewById(R.id.imagePerson);
                 cvh.linearLayout = (LinearLayout) convertView.findViewById(R.id.llFirst);
+                cvh.linearParent = (LinearLayout) convertView.findViewById(R.id.linearParent);
                 convertView.setTag(cvh);
 
             } else {
@@ -111,6 +112,17 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                 cvh.textMessage.setText(strMessage);
 
                 cvh.textTime.setText(utils.formatDate(activityModel.getStrActivityDate()));
+
+                if (activityModel.getStrCreatedBy() != null
+                        && !activityModel.getStrCreatedBy().equalsIgnoreCase("")
+                        && activityModel.getStrCreatedBy().equalsIgnoreCase("customer")
+                        ) {
+                    //cvh.linearParent.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_customer));
+                    cvh.textViewWhat.setTextColor(context.getResources().getColor(R.color.colorRed));
+                } else {
+                    //cvh.linearParent.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_provider));
+                    cvh.textViewWhat.setTextColor(context.getResources().getColor(R.color.colorAccent));
+                }
 
                 if (activityModel.getStrActivityStatus().equalsIgnoreCase("completed")) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.done);
@@ -157,6 +169,7 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
             TextView textTime;
             TextView textViewWhat;
             LinearLayout linearLayout;
+            LinearLayout linearParent;
         }
     };
     private Menu mMenu;

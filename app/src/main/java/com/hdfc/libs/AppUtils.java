@@ -976,6 +976,8 @@ public class AppUtils {
                     activityModel.setStrActivityStatus(jsonObject.getString("status"));
                     activityModel.setStrActivityDesc(jsonObject.getString("activity_desc"));
 
+                    activityModel.setStrCreatedBy(jsonObject.optString("created_by"));
+
                     activityModel.setStrServcieID(jsonObject.getString("service_id"));
                     activityModel.setStrServiceName(jsonObject.getString("service_name"));
 

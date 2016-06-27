@@ -519,67 +519,92 @@ public class FeatureActivity extends AppCompatActivity {
                     imageView.setTag(R.id.three, i);
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
-                    imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                    /*imageView.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
-                            final ImageModel mImageModel = (ImageModel) v.getTag();
 
-                            final int mPosition = (int) v.getTag(R.id.three);
 
-                            final AlertDialog.Builder alertbox =
-                                    new AlertDialog.Builder(FeatureActivity.this);
-                            alertbox.setTitle(getString(R.string.delete_image));
-                            alertbox.setMessage(getString(R.string.confirm_delete_image));
-                            alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
 
-                                    try {
-                                        File fDelete = utils.getInternalFileImages(mImageModel.getStrImageName());
-
-                                        if (fDelete.exists()) {
-                                            success = fDelete.delete();
-
-                                            if (mImageModel.ismIsNew())
-                                                mImageCount--;
-
-                                            mImageChanged = true;
-
-                                            imageModels.remove(mImageModel);
-
-                                            bitmaps.remove(mPosition);
-                                        }
-                                        if (success) {
-                                            utils.toast(2, 2, getString(R.string.file_deleted));
-                                        }
-                                        addImages();
-                                        arg0.dismiss();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-                            alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    arg0.dismiss();
-                                }
-                            });
-                            alertbox.show();
                             return false;
                         }
-                    });
+                    });*/
 
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
+                            final ImageModel mImageModel = (ImageModel) v.getTag();
+
                             final int mPosition = (int) v.getTag(R.id.three);
 
-                            Dialog dialog = new Dialog(FeatureActivity.this);
+                            final Dialog dialog = new Dialog(FeatureActivity.this);
                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
                             dialog.setContentView(R.layout.image_dialog_layout);
 
                             TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
+                            TextView textViewClose = (TextView) dialog.findViewById(R.id.textViewClose);
+                            Button buttonDelete = (Button) dialog.findViewById(R.id.textViewTitle);
+
+
+                            textViewClose.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //mOriginal.
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            buttonDelete.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    //
+                                    final AlertDialog.Builder alertbox =
+                                            new AlertDialog.Builder(FeatureActivity.this);
+                                    alertbox.setTitle(getString(R.string.delete_image));
+                                    alertbox.setMessage(getString(R.string.confirm_delete_image));
+                                    alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+                                            try {
+                                                File fDelete = utils.getInternalFileImages(mImageModel.getStrImageName());
+
+                                                if (fDelete.exists()) {
+                                                    success = fDelete.delete();
+
+                                                    if (mImageModel.ismIsNew())
+                                                        mImageCount--;
+
+                                                    mImageChanged = true;
+
+                                                    imageModels.remove(mImageModel);
+
+                                                    bitmaps.remove(mPosition);
+                                                }
+                                                if (success) {
+                                                    utils.toast(2, 2, getString(R.string.file_deleted));
+                                                }
+                                                arg0.dismiss();
+                                                dialog.dismiss();
+                                                addImages();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                    alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+                                            arg0.dismiss();
+                                        }
+                                    });
+                                    alertbox.show();
+                                    //
+                                }
+                            });
+
+
+
                             try {
                                 mOriginal.setImageBitmap(bitmaps.get(mPosition));
                                 //, Config.intWidth, Config.intHeight)

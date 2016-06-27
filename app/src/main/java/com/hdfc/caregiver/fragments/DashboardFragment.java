@@ -43,7 +43,7 @@ public class DashboardFragment extends Fragment {
             // the date and time that the user has selected.
 
             strDate = Utils.writeFormatDateDB.format(date);
-            //_strDate = Utils.writeFormatDateDB.format(date);
+            _strDate = Utils.writeFormatDateDB.format(date);
 
             strEndDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T23:59:59.999"));
             strStartDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T00:00:00.000"));
