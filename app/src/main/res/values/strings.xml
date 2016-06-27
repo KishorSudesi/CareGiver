@@ -27,6 +27,7 @@
     <string name="forgot">Forgot?</string>
     <string name="submit">Submit</string>
     <string name="reschedule">Reschedule</string>
+    <string name="no">No</string>
 
     <string name="error_confirm_password">Invalid Confirm Password</string>
     <string name="error_invalid_email">Invalid Email</string>
@@ -38,7 +39,7 @@
     <string name="process_login">Authenticating…</string>
     <string name="success_login">Login Success…</string>
     <string name="invalid_credentials">Invalid Credentials</string>
-    <string name="invalid_date">Select a Feature Date</string>
+    <string name="invalid_date">Select a Future Date</string>
 
     <string name="warning_profile_pic">Profile Picture Needed</string>
     <string name="warning_internet">Please check your internet connection and try again</string>
@@ -71,6 +72,7 @@
     <string name="noFeatures">No Features</string>
 
     <string name="yrs"> Yrs</string>
+    <string name="yes">Yes</string>
     <string name="separator">  |  </string>
 
     <string name="attachments">View Attachments</string>
@@ -150,11 +152,14 @@
     <string name="hyphen">-</string>
     <string name="scheduled_to">Scheduled To</string>
     <string name="resetted_password">New password has been sent to your E-mail id</string>
+    <string name="delete_image">Delete Image</string>
+    <string name="confirm_delete_image">Do you want to delete this image?</string>
+    <string name="file_deleted">File Deleted</string>
 
     <!--Mislestone Related-->
     <string name="medicine_name">Medicine Name</string>
     <string name="qunatity">Quantity</string>
-    <string name="read_more">read more...</string>
+    <string name="read_more">read more…</string>
 
     <!--Success Strings-->
     <string name="account_success_header">Account Successfully Created</string>
@@ -164,7 +169,7 @@
     <string name="activity_added">Activity Created Successfully</string>
     <string name="activity_updated">Activity Updated Successfully</string>
     <string name="milestone_updated">Milestone Saved</string>
-    <string name="image_upload">Images Uploaded</string>
+    <string name="image_upload">Images Saved</string>
 
     <!--Process Strings-->
     <string name="uploading">Uploading…</string>
@@ -185,7 +190,7 @@
     <string name="error_client">Select a Valid Client</string>
     <string name="error_medicines">Check Medicine Details</string>
     <string name="close_error">Close other Tasks to close the activity</string>
-    <string name="close_date_error">Future Date. Cannot clsoe this task</string>
+    <string name="close_date_error">Future Date. Cannot close this task</string>
     <string name="select_dependent">Select a Care Receipent</string>
 
 
@@ -197,7 +202,7 @@
     <string name="menu_account">My Account</string>
 
     <!--Warning Strings-->
-    <string name="no_dependents">No Care Recepients</string>
+    <string name="no_dependents">No Care Recipients</string>
 
     <!--Permission Strings-->
     <string name="permission_contact_rationale">We need access to Contacts to Proceed Further</string>

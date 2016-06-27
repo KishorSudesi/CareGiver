@@ -71,6 +71,7 @@ public class NotificationAdapter extends BaseAdapter {
             viewHolder.textViewName = (TextView) convertView.findViewById(R.id.textViewName);
             viewHolder.textViewText = (TextView) convertView.findViewById(R.id.textViewText);
             viewHolder.textViewTime = (TextView) convertView.findViewById(R.id.textViewTime);
+            viewHolder.textReadMore = (TextView) convertView.findViewById(R.id.textReadMore);
             viewHolder.roundedImageView = (ImageView) convertView.
                     findViewById(R.id.roundedImageView);
             viewHolder.linearLayout = (LinearLayout) convertView.findViewById(R.id.activityList);
@@ -86,31 +87,31 @@ public class NotificationAdapter extends BaseAdapter {
 
             String strName = "", strMess = "";
           //  String readMore = " READ MORE..";
-
-            TextView textReadMore = (TextView)convertView.findViewById(R.id.textReadMore);
-
             strMess = adapterNotificationModels.get(position).getStrMessage();
 
-            final String strMessage = strMess;
+            String strMessage = strMess;
 
             if (strMess.length() > 75) {
                 strMess = strMess.substring(0, 72);
-                textReadMore.setVisibility(View.VISIBLE);
+                viewHolder.textReadMore.setVisibility(View.VISIBLE);
+                viewHolder.textReadMore.setTag(strMessage);
             }else {
-                textReadMore.setVisibility(View.GONE);
-                textReadMore.setEnabled(false);
+                viewHolder.textReadMore.setVisibility(View.GONE);
+                viewHolder.textReadMore.setEnabled(false);
             }
             viewHolder.textViewText.setText(strMess);
 
-            textReadMore.setOnClickListener(new View.OnClickListener() {
+            viewHolder.textReadMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    String strMessage = (String) v.getTag();
                     final AlertDialog.Builder builder = new AlertDialog.Builder(_context);
                     builder.setTitle("Notification");
                     builder.setMessage(strMessage);
                     builder.setPositiveButton(_context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
                         }
                     });
                     builder.show();
@@ -168,6 +169,7 @@ public class NotificationAdapter extends BaseAdapter {
     private static class ViewHolder {
         TextView textViewName;
         TextView textViewText;
+        TextView textReadMore;
         TextView textViewTime;
         ImageView roundedImageView;
         LinearLayout linearLayout;

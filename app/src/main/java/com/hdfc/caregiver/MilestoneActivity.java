@@ -103,8 +103,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
         bitmaps.clear();
 
-
-
         milestoneModelObject = (MilestoneModel) b.getSerializable("Milestone");
 
         utils = new Utils(MilestoneActivity.this);
@@ -732,6 +730,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
                             EditText editText = (EditText) v.findViewById(fieldModel.getiFieldID());
 
+                            editText.setError(null);
+
                             boolean b1 = (Boolean) editText.getTag(R.id.one);
                             String data = editText.getText().toString().trim();
 
@@ -761,14 +761,18 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                             //Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
 
-                                            if (enteredDate.before(dateNow)) {
+                                            /*if (enteredDate.before(dateNow)) {
+                                                bFuture = false;
+                                            }*/
+
+                                            if (enteredDate.compareTo(dateNow) < 0) {
                                                 bFuture = false;
                                             }
                                         }
                                         /////////////////////////////
 
                                         if (iFlag == 2) {
-                                            if (enteredDate.after(dateNow)) {
+                                            if (enteredDate.compareTo(dateNow) < 0) {
                                                 bClose = false;
                                                 Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
                                             }

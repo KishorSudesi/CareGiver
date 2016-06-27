@@ -166,7 +166,7 @@ public class NotificationFragment extends Fragment {
         notificationAdapter.notifyDataSetChanged();
     }
 
-    public void findActivities(final String strActivityId){
+    private void findActivities(final String strActivityId) {
 
         int iPosition = Config.strActivityIdsNotifications.indexOf(strActivityId);
 

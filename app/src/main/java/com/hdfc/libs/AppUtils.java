@@ -1439,7 +1439,7 @@ public class AppUtils {
                                 iTemp = 2;
 
                             if (bActivity && bMilestone)
-                                iTemp = 3;
+                                iTemp = 2;
 
                             activityModel.setiActivityDisplayFlag(iTemp);
                             activityModel.setMilestoneModel(milestoneModel);

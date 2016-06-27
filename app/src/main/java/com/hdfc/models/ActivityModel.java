@@ -129,6 +129,10 @@ public class ActivityModel implements Serializable {
         this.milestoneModels.clear();
     }
 
+    public void clearImageModel() {
+        this.imageModels.clear();
+    }
+
     public String getStrActivityID() {
         return strActivityID;
     }

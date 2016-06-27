@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/app_header">
+    android:background="@drawable/app_header"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/header"
@@ -44,9 +44,9 @@
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
-                android:textColor="@color/blue"
                 android:gravity="center_horizontal"
                 android:padding="@dimen/padding_general"
+                android:textColor="@color/blue"
                 android:textStyle="bold" />
 
             <TextView
@@ -116,8 +116,9 @@
                 android:background="@drawable/button_success"
                 android:gravity="center"
                 android:text="@string/upload_button"
+                android:textColor="@color/colorWhite"
                 android:textSize="20sp"
-                android:textColor="@color/colorWhite" />
+                android:visibility="gone" />
         </LinearLayout>
 
     </LinearLayout>

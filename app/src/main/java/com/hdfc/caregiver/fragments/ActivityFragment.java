@@ -86,14 +86,14 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
 
                 int iDisplayFlag = activityModel.getiActivityDisplayFlag();
 
-                if (iDisplayFlag == 1)
+                if (iDisplayFlag == 1 || iDisplayFlag == 0)
                     cvh.textViewWhat.setText(context.getString(R.string.activity));
 
                 if (iDisplayFlag == 2)
                     cvh.textViewWhat.setText(context.getString(R.string.task));
 
-                if (iDisplayFlag == 3)
-                    cvh.textViewWhat.setText(context.getString(R.string.activity));
+               /* if (iDisplayFlag == 3)
+                    cvh.textViewWhat.setText(context.getString(R.string.activity));*/
 
 
                 String strMessage = activityModel.getStrActivityDesc();

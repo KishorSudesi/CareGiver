@@ -12,6 +12,7 @@ public class ImageModel implements Serializable {
     private String strImageDesc;
     private String strImageTime;
     private String strImagePath;
+    private boolean mIsNew;
 
     public ImageModel(String strImageName, String strImageUrl, String strImageDesc, String strImageTime, String strImagePath) {
         this.strImageName = strImageName;
@@ -19,6 +20,14 @@ public class ImageModel implements Serializable {
         this.strImageDesc = strImageDesc;
         this.strImageTime = strImageTime;
         this.strImagePath = strImagePath;
+    }
+
+    public boolean ismIsNew() {
+        return mIsNew;
+    }
+
+    public void setmIsNew(boolean mIsNew) {
+        this.mIsNew = mIsNew;
     }
 
     public String getStrImageName() {

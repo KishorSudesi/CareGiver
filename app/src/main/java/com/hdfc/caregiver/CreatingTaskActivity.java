@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,7 +46,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
     private static String valDateTime, valTitle, valSearch, strServiceName;
     private static StorageService storageService;
-    private static RelativeLayout loadingPanel;
+    private RelativeLayout loadingPanel;
     private Spinner dependentlist;
     private boolean isClicked = false;
     private View focusView = null;
@@ -57,6 +58,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private EditText editTextTitle, dateAnd;
     private JSONObject jsonObject;
     private int mDependentPosition = -1;
+    //private static Calendar calendar;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -92,6 +94,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
         inputSearchServices = (AutoCompleteTextView)findViewById(R.id.inputSearchServices);
         dependentlist = (Spinner) findViewById(R.id.spindependentList);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
+
+        //calendar = Calendar.getInstance();
 
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);
@@ -228,38 +232,71 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                             if (utils.isConnectingToInternet()) {
 
-                                ServiceModel serviceModel = null;
-                                DependentModel dependentModel = null;
+                                ////////////////////////////
+                                boolean bFuture = true;
 
-                                int iServicePosition = Config.servicelist.indexOf(strServiceName);
-                                if (iServicePosition > -1)
-                                    serviceModel = Config.serviceModels.get(iServicePosition);
+                                /////////////////////////////
+                                Calendar calendar = Calendar.getInstance();
+                                Date dateNow = null;
+                                String strdateCopy;
+                                Date enteredDate = null;
 
-                                int iCustomerPosition = Config.strCustomerNames.indexOf(valSearch);
-                                if (iCustomerPosition > -1)
-                                    strSelectedCustomer = Config.clientModels.get(iCustomerPosition).getCustomerModel().getStrEmail();
+                                try {
+                                    strdateCopy = Utils.writeFormat.format(calendar.getTime());
+                                    dateNow = Utils.writeFormat.parse(strdateCopy);
+                                    enteredDate = Utils.readFormat.parse(_strDate);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
 
-                                int iDependentPosition = Config.clientNameModels.get(iCustomerPosition).getStrDependentNames().indexOf(strSelectedDependent);
-                                if (iDependentPosition > -1)
-                                    dependentModel = Config.clientModels.get(iCustomerPosition).getDependentModels().get(iDependentPosition);
+                                if (dateNow != null && enteredDate != null) {
+
+                                    //Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
+
+                                    if (enteredDate.compareTo(dateNow) < 0) {
+                                        bFuture = false;
+                                    }
+                                }
+                                ////////////////////////////
+
+                                if (bFuture) {
+
+                                    ServiceModel serviceModel = null;
+                                    DependentModel dependentModel = null;
+
+                                    int iServicePosition = Config.servicelist.indexOf(strServiceName);
+                                    if (iServicePosition > -1)
+                                        serviceModel = Config.serviceModels.get(iServicePosition);
+
+                                    int iCustomerPosition = Config.strCustomerNames.indexOf(valSearch);
+                                    if (iCustomerPosition > -1)
+                                        strSelectedCustomer = Config.clientModels.get(iCustomerPosition).getCustomerModel().getStrEmail();
+
+                                    int iDependentPosition = Config.clientNameModels.get(iCustomerPosition).getStrDependentNames().indexOf(strSelectedDependent);
+                                    if (iDependentPosition > -1)
+                                        dependentModel = Config.clientModels.get(iCustomerPosition).getDependentModels().get(iDependentPosition);
 
 
-                                if (iCustomerPosition > -1) {
+                                    if (iCustomerPosition > -1) {
 
-                                    if (iServicePosition > -1) {
+                                        if (iServicePosition > -1) {
 
-                                        loadingPanel.setVisibility(View.VISIBLE);
+                                            loadingPanel.setVisibility(View.VISIBLE);
 
-                                        uploadData(serviceModel, dependentModel);
+                                            uploadData(serviceModel, dependentModel);
+
+                                        } else {
+                                            isClicked = false;
+                                            utils.toast(2, 2, getString(R.string.error_service));
+                                        }
 
                                     } else {
                                         isClicked = false;
-                                        utils.toast(2, 2, getString(R.string.error_service));
+                                        utils.toast(2, 2, getString(R.string.error_client));
                                     }
-
                                 } else {
                                     isClicked = false;
-                                    utils.toast(2, 2, getString(R.string.error_client));
+                                    utils.toast(2, 2, getString(R.string.invalid_date));
                                 }
 
                             } else {
@@ -513,18 +550,16 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     //fetchService(serviceModel, dependentModel);
 
                                     //
-
-                                    Calendar calendar = Calendar.getInstance();
-
                                     Date startDate = null, endDate = null;
                                     String strStartDateCopy, strEndDateCopy;
                                     String strDateNow = "";
                                     Date activityDate = null;
 
                                     try {
+                                        Calendar calendar = Calendar.getInstance();
                                         Date dateNow = calendar.getTime();
-                                        strEndDateCopy = Utils.writeFormatDateDB.format(dateNow) + "T23:59:59.999Z";
-                                        strStartDateCopy = Utils.writeFormatDateDB.format(dateNow) + "T00:00:00.000Z";
+                                        strEndDateCopy = strDate + "T23:59:59.999Z";
+                                        strStartDateCopy = strDate + "T00:00:00.000Z";
                                         activityDate = utils.convertStringToDate(_strDate);
 
                                         endDate = utils.convertStringToDate(strEndDateCopy);

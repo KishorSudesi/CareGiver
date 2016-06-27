@@ -27,7 +27,7 @@ public class DashboardFragment extends Fragment {
 
     //private static int iMenuLength=2;
 
-    public static String strDate;
+    public static String strDate, _strDate;
     public static String strStartDate, strEndDate;
     //private Button buttonActivity, buttonTask;
     private TextView textView;
@@ -43,6 +43,7 @@ public class DashboardFragment extends Fragment {
             // the date and time that the user has selected.
 
             strDate = Utils.writeFormatDateDB.format(date);
+            //_strDate = Utils.writeFormatDateDB.format(date);
 
             strEndDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T23:59:59.999"));
             strStartDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T00:00:00.000"));
