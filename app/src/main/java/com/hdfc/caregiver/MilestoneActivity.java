@@ -62,6 +62,8 @@ import java.util.Date;
 
 public class MilestoneActivity extends AppCompatActivity {
 
+    private static String data, strdateCopy;
+    private static Date enteredDate, dateNow;
     //public static Dialog dialog;
     private static int IMAGE_COUNT = 0;
     //private static ArrayList<FileModel> arrayListFileModel = new ArrayList<>();
@@ -127,7 +129,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         final LinearLayout layoutDialog = (LinearLayout) findViewById(R.id.linearLayoutDialog);
 
-        Button button = (Button) findViewById(R.id.dialogButtonOK);
+        final Button button = (Button) findViewById(R.id.dialogButtonOK);
         Button buttonCancel = (Button) findViewById(R.id.buttonCancel);
         Button buttonDone = (Button) findViewById(R.id.buttonDone);
         //Button buttonUpload = (Button) findViewById(R.id.dialogButtonUpload);
@@ -617,18 +619,45 @@ public class MilestoneActivity extends AppCompatActivity {
             }
         }
 
+
         if (button != null) {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (simpleTooltip != null && simpleTooltip.isShowing())
-                        simpleTooltip.dismiss();
-                    int id = (int) v.getTag();
-                    LinearLayout linearLayout = null;
-                    if (layoutDialog != null) {
-                        linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                    String buttonText = button.getText().toString();
+
+                    if (buttonText.equals("Submit")) {
+                        if (simpleTooltip != null && simpleTooltip.isShowing())
+                            simpleTooltip.dismiss();
+                        int id = (int) v.getTag();
+                        LinearLayout linearLayout = null;
+                        if (layoutDialog != null) {
+                            linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                        }
+                        traverseEditTexts(layoutDialog, id, linearLayout, 1);
+                    } else if (buttonText.equals("Reschedule")) {
+
+                        if (enteredDate != null && enteredDate != dateNow) {
+                            if (simpleTooltip != null && simpleTooltip.isShowing())
+                                simpleTooltip.dismiss();
+                            int id = (int) v.getTag();
+                            LinearLayout linearLayout = null;
+                            if (layoutDialog != null) {
+                                linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                            }
+                            traverseEditTextsNotValid(layoutDialog, id, linearLayout, 1);
+                        } else {
+
+                            if (simpleTooltip != null && simpleTooltip.isShowing())
+                                simpleTooltip.dismiss();
+                            int id = (int) v.getTag();
+                            LinearLayout linearLayout = null;
+                            if (layoutDialog != null) {
+                                linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                            }
+                            traverseEditTexts(layoutDialog, id, linearLayout, 1);
+                        }
                     }
-                    traverseEditTexts(layoutDialog, id, linearLayout, 1);
                 }
             });
         }
@@ -769,7 +798,7 @@ public class MilestoneActivity extends AppCompatActivity {
                             editText.setError(null);
 
                             boolean b1 = (Boolean) editText.getTag(R.id.one);
-                            String data = editText.getText().toString().trim();
+                            data = editText.getText().toString().trim();
 
                             if (editText.isEnabled()) {
                                 if (b1 && !data.equalsIgnoreCase("")) {
@@ -781,9 +810,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                         boolean bFuture = true;
 
                                         /////////////////////////////
-                                        Date dateNow = null;
-                                        String strdateCopy;
-                                        Date enteredDate = null;
+                                        dateNow = null;
+                                        enteredDate = null;
 
                                         try {
                                             strdateCopy = Utils.writeFormat.format(calendar.getTime());
@@ -847,6 +875,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                             b = false;
                                         }
                                     } else {
+
+
                                         fieldModel.setStrFieldData(data);
                                     }
 
@@ -1011,6 +1041,300 @@ public class MilestoneActivity extends AppCompatActivity {
 
         }
     }
+
+    private void traverseEditTextsNotValid(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
+
+        boolean b = true, bClose = true;
+
+        try {
+
+            Calendar calendar = Calendar.getInstance();
+
+            String strScheduledDate = "";
+
+            //int iPosition = Config.strActivityIds.indexOf(act.getStrActivityID());
+
+            if (iActivityPosition > -1)
+                Config.activityModels.get(iActivityPosition).clearMilestoneModel();
+
+            int iIndex = 0;
+
+            int iClose = 0;
+
+            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
+
+                iIndex++;
+
+                if (milestoneModel.getiMilestoneId() == iMileStoneId) {
+
+                    Date date = calendar.getTime();
+
+                    strScheduledDate = "";
+
+                    //if(iFlag==1)
+                    //milestoneModel.setStrMilestoneStatus("opened");
+
+
+                    for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
+
+                        //text
+                        if (fieldModel.getStrFieldType().equalsIgnoreCase("text")
+                                || fieldModel.getStrFieldType().equalsIgnoreCase("number")
+                                || fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                || fieldModel.getStrFieldType().equalsIgnoreCase("date")
+                                || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+
+                            EditText editText = (EditText) v.findViewById(fieldModel.getiFieldID());
+
+                            editText.setError(null);
+
+                            boolean b1 = (Boolean) editText.getTag(R.id.one);
+                            data = editText.getText().toString().trim();
+
+                            if (editText.isEnabled()) {
+                                if (b1 && !data.equalsIgnoreCase("")) {
+
+                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                            || fieldModel.getStrFieldType().equalsIgnoreCase("date")
+                                            || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+
+                                        boolean bFuture = true;
+
+                                        /////////////////////////////
+                                        dateNow = null;
+                                        enteredDate = null;
+
+                                        try {
+                                            strdateCopy = Utils.writeFormat.format(calendar.getTime());
+                                            dateNow = Utils.writeFormat.parse(strdateCopy);
+                                            enteredDate = Utils.writeFormat.parse(data);
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        if (dateNow != null && enteredDate != null) {
+
+                                            //Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
+
+                                            /*if (enteredDate.before(dateNow)) {
+                                                bFuture = false;
+                                            }*/
+
+                                            if (enteredDate.compareTo(dateNow) < 0) {
+                                                bFuture = false;
+                                            }
+                                        }
+                                        /////////////////////////////
+
+                                        if (iFlag == 2) {
+                                            if (enteredDate.compareTo(dateNow) < 0) {
+                                                bClose = false;
+                                                Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
+                                            }
+                                        }
+
+                                        if (bFuture) {
+
+                                            fieldModel.setStrFieldData(data);
+
+                                            String strDate = (String) editText.getTag(R.id.two);
+
+                                            if ((milestoneModel.isReschedule() || !milestoneModel.isReschedule())
+                                                    && milestoneModel.getStrMilestoneScheduledDate() != null
+                                                    && (!milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")
+                                                    || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase(""))
+                                                    && fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                                    ) {
+
+                                                if (milestoneModel.getStrMilestoneScheduledDate() != null
+                                                        && !milestoneModel.getStrMilestoneScheduledDate().
+                                                        equalsIgnoreCase(""))
+                                                    milestoneModel.setReschedule(true);
+
+
+                                                milestoneModel.setStrMilestoneScheduledDate(strDate);
+
+                                                strScheduledDate = strDate;
+                                            }
+
+                                            if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
+                                                strActivityDoneDate = strDate;
+                                            }
+
+                                        } else {
+                                            //  editText.setError(context.getString(R.string.invalid_date));
+                                            // b = false;
+                                        }
+                                    } else {
+
+
+                                        fieldModel.setStrFieldData(data);
+                                    }
+
+                                } else {
+                                    editText.setError(context.getString(R.string.error_field_required));
+                                    b = false;
+                                }
+                            }
+                        }
+
+                        //radio or dropdown
+                        if (fieldModel.getStrFieldType().equalsIgnoreCase("radio")
+                                || fieldModel.getStrFieldType().equalsIgnoreCase("dropdown")) {
+
+                            Spinner spinner = (Spinner) v.findViewById(fieldModel.getiFieldID());
+
+                            boolean b1 = (Boolean) spinner.getTag();
+
+                            String data = fieldModel.getStrFieldValues()[spinner.getSelectedItemPosition()];
+
+                            if (b1 && !data.equalsIgnoreCase("")) {
+                                fieldModel.setStrFieldData(data);
+                            } else {
+                                utils.toast(2, 2, getString(R.string.error_field_required));
+                                spinner.setBackgroundDrawable(getResources().getDrawable(R.drawable.edit_text));
+                                b = false;
+                            }
+                        }
+                        //
+
+                        //array
+                        if (fieldModel.getStrFieldType().equalsIgnoreCase("array")) {
+
+                            ArrayList<String> strMedicineNames = utils.getEditTextValueByTag(viewGroup, "medicine_name");
+                            ArrayList<String> strMedicineQty = utils.getEditTextValueByTag(viewGroup, "medicine_qty");
+
+                            int j = 0;
+
+                            if (strMedicineNames.size() > 0) {
+
+                                JSONObject jsonObject = new JSONObject();
+
+                                JSONArray jsonArray = new JSONArray();
+
+                                for (int i = 0; i < strMedicineNames.size(); i++) {
+
+                                    if (!strMedicineNames.get(i).equalsIgnoreCase("") && !strMedicineQty.get(i).equalsIgnoreCase("")) {
+                                        j++;
+                                        JSONObject jsonObjectMedicine = new JSONObject();
+
+                                        jsonObjectMedicine.put("medicine_name", strMedicineNames.get(i));
+                                        jsonObjectMedicine.put("medicine_qty", Integer.parseInt(strMedicineQty.get(i)));
+
+                                        jsonArray.put(jsonObjectMedicine);
+                                    }
+                                }
+                                jsonObject.put("array_data", jsonArray);
+
+                                fieldModel.setStrArrayData(jsonObject.toString());
+                            }
+
+                            if (j <= 0) {
+                                b = false;
+                                utils.toast(2, 2, getString(R.string.error_medicines));
+                            }
+                        }
+                    }
+
+                    if (b) {
+
+                        if (iFlag == 2 && bClose)
+                            milestoneModel.setStrMilestoneStatus("completed");
+
+                        if (iIndex == act.getMilestoneModels().size() && iFlag == 2 && bClose) {
+                            strActivityStatus = "completed";
+                        }
+
+                        //
+                        //String strDate = milestoneModel.getStrMilestoneDate();
+
+                        String strPushMessage = Config.providerModel.getStrName()
+                                + getString(R.string.has_updated)
+                          /*  + getString(R.string.activity)
+                            + getString(R.string.space)*/
+                                + getString(R.string.space)
+                                + act.getStrActivityName()
+                                + getString(R.string.hyphen)
+                           /* + getString(R.string.milestone)*/
+                                + getString(R.string.space)
+                                + milestoneModel.getStrMilestoneName();
+
+
+                        if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
+                            strPushMessage += getString(R.string.space) + getString(R.string.scheduled_to)
+                                    + getString(R.string.space) + strScheduledDate + getString(R.string.space);
+                        }
+
+                        jsonObject = new JSONObject();
+
+                        try {
+
+                            String strDateNow = "";
+                            Date dateNow = calendar.getTime();
+                            strDateNow = utils.convertDateToString(dateNow);
+
+                            int iCustomerPosition = Config.customerIdsAdded.indexOf(act.getStrCustomerID());
+
+                            if (iCustomerPosition > -1)
+                                strDependentMail = Config.customerModels.get(iCustomerPosition).getStrEmail();
+
+                            jsonObject.put("created_by", Config.providerModel.getStrProviderId());
+                            jsonObject.put("time", strDateNow);
+                            jsonObject.put("user_type", "dependent");
+                            jsonObject.put("user_id", act.getStrDependentID());
+                            jsonObject.put("activity_id", act.getStrActivityID());//todo add to care taker
+                            jsonObject.put("created_by_type", "provider");
+                            jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (b) {
+                        milestoneModel.setStrMilestoneDate(utils.convertDateToString(date));
+                    }
+
+                    //break;
+                    //
+                }
+
+                if (!milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed") && iIndex < act.getMilestoneModels().size()) {
+                    iClose++;
+                }
+
+                if (iFlag == 2 && strActivityStatus.equalsIgnoreCase("completed") && iClose > 0) {
+                    b = false;
+                    utils.toast(2, 2, getString(R.string.close_error));
+                    strActivityStatus = "inprocess";
+                    milestoneModel.setStrMilestoneStatus("inactive");
+                }
+
+                //
+                if (iActivityPosition > -1) {
+                    //Config.activityModels.get(iPosition).removeMilestoneModel(milestoneModel);
+                    Config.activityModels.get(iActivityPosition).setMilestoneModel(milestoneModel);
+                }
+                //
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (iFlag == 2 && !bClose) {
+            b = false;
+            utils.toast(2, 2, getString(R.string.close_date_error));
+        }
+
+
+        if (b) {
+
+            uploadImage(v, iMileStoneId, viewGroup, iFlag);
+
+        }
+    }
+
+
+
 
     private void uploadJson() {
         ///////////////////////
