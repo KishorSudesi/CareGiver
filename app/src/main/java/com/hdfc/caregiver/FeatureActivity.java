@@ -46,7 +46,8 @@ import java.util.Date;
 
 public class FeatureActivity extends AppCompatActivity {
 
-    public static int IMAGE_COUNT = 0, iActivityPosition = -1;
+    public static int IMAGE_COUNT = 0;
+    private static int iActivityPosition = -1;
     private static String strImageName = "";
     private static StorageService storageService;
     private static Handler backgroundThreadHandler;
@@ -55,7 +56,7 @@ public class FeatureActivity extends AppCompatActivity {
     private static String strName;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
-    private static boolean bLoad;
+    private static boolean bLoad, isCompleted = false;
     private static boolean bViewLoaded, mImageChanged;
     private static ArrayList<ImageModel> imageModels;
     private int mImageCount, mImageUploadCount;
@@ -137,6 +138,9 @@ public class FeatureActivity extends AppCompatActivity {
             }
 
             bViewLoaded = false;
+
+            if (act.getStrActivityStatus().equalsIgnoreCase("completed"))
+                isCompleted = true;
 
             storageService = new StorageService(FeatureActivity.this);
 
@@ -545,6 +549,9 @@ public class FeatureActivity extends AppCompatActivity {
                             TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
                             TextView textViewClose = (TextView) dialog.findViewById(R.id.textViewClose);
                             Button buttonDelete = (Button) dialog.findViewById(R.id.textViewTitle);
+
+                            if (isCompleted)
+                                buttonDelete.setVisibility(View.INVISIBLE);
 
 
                             textViewClose.setOnClickListener(new View.OnClickListener() {
