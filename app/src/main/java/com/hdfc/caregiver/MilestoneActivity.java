@@ -62,22 +62,15 @@ import java.util.Date;
 
 public class MilestoneActivity extends AppCompatActivity {
 
-    private static String data, strdateCopy;
-    private static Date enteredDate, dateNow;
-    //public static Dialog dialog;
     private static int IMAGE_COUNT = 0;
-    //private static ArrayList<FileModel> arrayListFileModel = new ArrayList<>();
     private static ArrayList<FileModel> fileModels = new ArrayList<>();
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
-    /* private static boolean bLoad;
-     private static boolean bViewLoaded;*/
     private static String strActivityStatus = "inprocess";
     private static String strActivityDoneDate = "";
     private static String strAlert;
     private static JSONObject jsonObject;
     private static ActivityModel act;
-    //private static String strName;
     private static String strDependentMail;
     private static String strName1;
     private static String strImageName1 = "";
@@ -91,7 +84,6 @@ public class MilestoneActivity extends AppCompatActivity {
     private LinearLayout layout;
     private SimpleTooltip simpleTooltip;
     private Utils utils;
-    //private JSONArray jsonArrayImagesAdded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +91,6 @@ public class MilestoneActivity extends AppCompatActivity {
         setContentView(R.layout.activity_milestone);
 
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
-        //System.out.println("HERE IS PROOF : "+Config.intSelectedMenu);
-
         Bundle b = getIntent().getExtras();
 
         act = (ActivityModel) b.getSerializable("Act");
@@ -115,15 +105,10 @@ public class MilestoneActivity extends AppCompatActivity {
 
         utils = new Utils(MilestoneActivity.this);
         storageService = new StorageService(MilestoneActivity.this);
-        //jsonArrayImagesAdded = new JSONArray();
 
         if (milestoneModelObject != null) {
             bEnabled = !milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed");
         }
-
-        //int i = 0;
-
-        // View view = getLayoutInflater().inflate(R.layout.dialog_view, null, false);
 
         layout = (LinearLayout) findViewById(R.id.dialogLinear);
 
@@ -132,585 +117,592 @@ public class MilestoneActivity extends AppCompatActivity {
         final Button button = (Button) findViewById(R.id.dialogButtonOK);
         Button buttonCancel = (Button) findViewById(R.id.buttonCancel);
         Button buttonDone = (Button) findViewById(R.id.buttonDone);
-        //Button buttonUpload = (Button) findViewById(R.id.dialogButtonUpload);
         Button buttonAttach = (Button) findViewById(R.id.dialogButtonAttach);
 
         int iPosition = Config.strActivityIds.indexOf(act.getStrActivityID());
-
-        //Config.activityModels.get(iPosition).clearMilestoneModel();
-
 
         if (iPosition > -1) {
             iActivityPosition = iPosition;
         }
 
-        /*if (buttonUpload != null) {
-            buttonUpload.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    IMAGE_COUNT = 0;
-
-                    if (arrayListFileModel.size() > 0) {
-
-                        if (utils.isConnectingToInternet()) {
-                            loadingPanel.setVisibility(View.VISIBLE);
-                            uploadImage();
-                        } else {
-                            utils.toast(2, 2, getString(R.string.warning_internet));
-                        }
-                    } else utils.toast(2, 2, "Select a Image");
-                }
-            });
-        }*/
-
         simpleTooltip = null;
 
-        if (button != null) {
-            button.setTag(milestoneModelObject.getiMilestoneId());
-        }
-        if (buttonDone != null) {
-            buttonDone.setTag(milestoneModelObject.getiMilestoneId());
-        }
+        if (milestoneModelObject != null) {
 
-        if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")) {
             if (button != null) {
-                button.setText(getString(R.string.update));
+                button.setTag(milestoneModelObject.getiMilestoneId());
             }
             if (buttonDone != null) {
-                buttonDone.setVisibility(View.VISIBLE);
-                simpleTooltip = new SimpleTooltip.Builder(MilestoneActivity.this)
-                        .anchorView(buttonDone)
-                        .text(getString(R.string.completed_task))
-                        .gravity(Gravity.BOTTOM)
-                        .build();
-                if(!milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed")) {
-                    simpleTooltip.show();
+                buttonDone.setTag(milestoneModelObject.getiMilestoneId());
+            }
+
+            if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")) {
+                if (button != null) {
+                    button.setText(getString(R.string.update));
                 }
-            }
-        }
-
-        if (milestoneModelObject.getiMilestoneId() == act.getMilestoneModels().size()) {
-            if (button != null) {
-                button.setVisibility(View.GONE);
-            }
-            if (buttonDone != null) {
-                buttonDone.setVisibility(View.VISIBLE);
-                simpleTooltip = new SimpleTooltip.Builder(MilestoneActivity.this)
-                        .anchorView(buttonDone)
-                        .text(getString(R.string.completed_task))
-                        .gravity(Gravity.BOTTOM)
-                        .build();
-                if(!milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed")) {
-                    simpleTooltip.show();
-                }
-            }
-        }
-
-
-        if (!bEnabled) {
-            if (button != null) {
-                button.setVisibility(View.GONE);
-            }
-            if (buttonDone != null) {
-                buttonDone.setVisibility(View.GONE);
-                if (simpleTooltip != null && simpleTooltip.isShowing())
-                    simpleTooltip.dismiss();
-            }
-            if (buttonAttach != null) {
-                buttonAttach.setVisibility(View.GONE);
-            }
-        }
-
-        TextView milestoneName = (TextView) findViewById(R.id.milestoneName);
-        if (milestoneName != null) {
-            milestoneName.setText(milestoneModelObject.getStrMilestoneName());
-        }
-
-        fileModels = milestoneModelObject.getFileModels();
-
-
-        if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")
-                && milestoneModelObject.getStrMilestoneScheduledDate() != null
-                && !milestoneModelObject.getStrMilestoneScheduledDate().equalsIgnoreCase("")) {
-            if (button != null) {
-                button.setText(getString(R.string.reschedule));
-            }
-        }
-
-        for (FieldModel fieldModel : milestoneModelObject.getFieldModels()) {
-
-            final FieldModel finalFieldModel = fieldModel;
-
-            //i++;
-
-            LinearLayout linearLayout1 = new LinearLayout(MilestoneActivity.this);
-            linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
-
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(10, 10, 10, 10);
-            linearLayout1.setLayoutParams(layoutParams);
-
-            TextView textView = new TextView(MilestoneActivity.this);
-            textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 3));
-            textView.setText(fieldModel.getStrFieldLabel());
-
-            linearLayout1.addView(textView);
-
-            if (fieldModel.getStrFieldType().equalsIgnoreCase("text")
-                    || fieldModel.getStrFieldType().equalsIgnoreCase("number")
-                    || fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
-                    || fieldModel.getStrFieldType().equalsIgnoreCase("date")
-                    || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
-
-                final EditText editText = new EditText(MilestoneActivity.this);
-
-                editText.setId(fieldModel.getiFieldID());
-                editText.setTag(R.id.one, fieldModel.isFieldRequired());
-                editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
-                editText.setText(fieldModel.getStrFieldData());
-
-                if (fieldModel.isFieldView())
-                    editText.setEnabled(false);
-
-                if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
-                    editText.setInputType(InputType.TYPE_CLASS_TEXT);
-
-                if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))
-                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-
-                try {
-                    if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
-                            || fieldModel.getStrFieldType().equalsIgnoreCase("date")
-                            || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
-
-                        editText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.calender_date_picked),
-                                null, null, null);
-
-                        //editText.setInputType(InputType.TYPE_CLASS_DATETIME);
-
-                        final SlideDateTimeListener listener = new SlideDateTimeListener() {
-
-                            @Override
-                            public void onDateTimeSet(Date date) {
-                                // selectedDateTime = date.getDate()+"-"+date.getMonth()+"-"+date.getYear()+" "+
-                                // date.getTime();
-                                // Do something with the date. This Date object contains
-                                // the date and time that the user has selected.
-
-                                String strDate = "";
-
-                                if (finalFieldModel.getStrFieldType().equalsIgnoreCase("datetime"))
-                                    strDate = Utils.writeFormat.format(date);
-
-                                if (finalFieldModel.getStrFieldType().equalsIgnoreCase("time"))
-                                    strDate = Utils.writeFormatTime.format(date);
-
-                                if (finalFieldModel.getStrFieldType().equalsIgnoreCase("date"))
-                                    strDate = Utils.writeFormatDate.format(date);
-
-                                editText.setTag(R.id.two, Utils.readFormat.format(date));
-                                editText.setText(strDate);
-                            }
-
-                            @Override
-                            public void onDateTimeCancel() {
-                                // Overriding onDateTimeCancel() is optional.
-                            }
-
-                        };
-
-                        editText.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                new SlideDateTimePicker.Builder(getSupportFragmentManager())
-                                        .setListener(listener)
-                                        .setInitialDate(new Date())
-                                        .build()
-                                        .show();
-                            }
-                        });
+                if (buttonDone != null) {
+                    buttonDone.setVisibility(View.VISIBLE);
+                    simpleTooltip = new SimpleTooltip.Builder(MilestoneActivity.this)
+                            .anchorView(buttonDone)
+                            .text(getString(R.string.completed_task))
+                            .gravity(Gravity.BOTTOM)
+                            .build();
+                    if (!milestoneModelObject.getStrMilestoneStatus().
+                            equalsIgnoreCase("completed")) {
+                        simpleTooltip.show();
                     }
-
-                    editText.setEnabled(bEnabled);
-
-                    linearLayout1.addView(editText);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
 
-            if (fieldModel.getStrFieldType().equalsIgnoreCase("radio")
-                    || fieldModel.getStrFieldType().equalsIgnoreCase("dropdown")) {
-
-                final Spinner spinner = new Spinner(MilestoneActivity.this);
-
-                spinner.setId(fieldModel.getiFieldID());
-                spinner.setTag(fieldModel.isFieldRequired());
-                spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
-                //spinner.setText(fieldModel.getStrFieldData());
-
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(MilestoneActivity.this, android.R.layout.select_dialog_item, fieldModel.getStrFieldValues());
-
-                spinner.setAdapter(adapter);
-
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                        try {
-
-                            if (finalFieldModel.isChild()) {
-
-                                for (int i = 0; i < finalFieldModel.getiChildfieldID().length; i++) {
-
-                                    if (finalFieldModel.getStrChildType()[i].equalsIgnoreCase("text")) {
-
-                                        EditText editTextChild = (EditText) layoutDialog.findViewById(finalFieldModel.getiChildfieldID()[i]);
-
-                                        if (editTextChild != null) {
-
-                                            String strValue = spinner.getSelectedItem().toString();
-
-                                            if (finalFieldModel.getStrChildCondition()[i].equalsIgnoreCase("equals")) {
-
-                                                if (strValue.equalsIgnoreCase(finalFieldModel.getStrChildValue()[i])) {
-                                                    //editText.setVisibility(View.VISIBLE);
-                                                    editTextChild.setEnabled(true);
-                                                    break;
-                                                } else {
-                                                    editTextChild.setEnabled(false);
-                                                }
-                                            } else
-                                                editTextChild.setEnabled(false);
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                });
-
-                if (fieldModel.getStrFieldData() != null && !fieldModel.getStrFieldData().equalsIgnoreCase("")) {
-
-                    int iSelected = adapter.getPosition(fieldModel.getStrFieldData());
-                    spinner.setSelection(iSelected);
+            if (milestoneModelObject.getiMilestoneId() == act.getMilestoneModels().size()) {
+                if (button != null) {
+                    button.setVisibility(View.GONE);
                 }
-
-                spinner.setEnabled(bEnabled);
-
-                linearLayout1.addView(spinner);
+                if (buttonDone != null) {
+                    buttonDone.setVisibility(View.VISIBLE);
+                    simpleTooltip = new SimpleTooltip.Builder(MilestoneActivity.this)
+                            .anchorView(buttonDone)
+                            .text(getString(R.string.completed_task))
+                            .gravity(Gravity.BOTTOM)
+                            .build();
+                    if (!milestoneModelObject.getStrMilestoneStatus().
+                            equalsIgnoreCase("completed")) {
+                        simpleTooltip.show();
+                    }
+                }
             }
 
-            if (fieldModel.getStrFieldType().equalsIgnoreCase("array")) {
 
-                final LinearLayout linearLayoutParent = new LinearLayout(MilestoneActivity.this);
-                linearLayoutParent.setOrientation(LinearLayout.VERTICAL);
-                linearLayoutParent.setTag(R.id.linearparent);
-
-                LinearLayout.LayoutParams layoutParentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                layoutParentParams.setMargins(10, 10, 10, 10);
-                linearLayoutParent.setLayoutParams(layoutParentParams);
-
-                //
-                try {
-
-                    JSONObject jsonObjectMedicines = new JSONObject(fieldModel.getStrArrayData());
-
-                    JSONArray jsonArrayMedicines = jsonObjectMedicines.getJSONArray("array_data");
-
-                    for (int i = 0; i < jsonArrayMedicines.length(); i++) {
-
-                        JSONObject jsonObjectMedicine =
-                                jsonArrayMedicines.getJSONObject(i);
-
-                        final LinearLayout linearLayoutArrayExist = new LinearLayout(MilestoneActivity.this);
-                        linearLayoutArrayExist.setOrientation(LinearLayout.HORIZONTAL);
-                        //linearLayoutArrayExist.setId(R.id.actionBarNotification);
-
-                        LinearLayout.LayoutParams layoutArrayExistParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        layoutArrayExistParams.setMargins(10, 10, 10, 10);
-                        linearLayoutArrayExist.setLayoutParams(layoutArrayExistParams);
-
-
-                        EditText editMedicineName = new EditText(MilestoneActivity.this);
-                        editMedicineName.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
-                        editMedicineName.setHint(getString(R.string.medicine_name));
-                        editMedicineName.setTag("medicine_name");
-                        editMedicineName.setInputType(InputType.TYPE_CLASS_TEXT);
-                        editMedicineName.setText(jsonObjectMedicine.getString("medicine_name"));
-                        editMedicineName.setEnabled(bEnabled);
-                        linearLayoutArrayExist.addView(editMedicineName);
-
-                        EditText editMedicineQty = new EditText(MilestoneActivity.this);
-                        editMedicineQty.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-                        editMedicineQty.setHint(getString(R.string.qunatity));
-                        editMedicineQty.setTag("medicine_qty");
-                        editMedicineQty.setInputType(InputType.TYPE_CLASS_NUMBER);
-                        editMedicineQty.setText(String.valueOf(jsonObjectMedicine.getInt("medicine_qty")));
-                        editMedicineQty.setEnabled(bEnabled);
-                        linearLayoutArrayExist.addView(editMedicineQty);
-
-
-                        //
-                        Button buttonDel = new Button(MilestoneActivity.this);
-                        buttonDel.setText("X");
-                        buttonDel.setTextColor(Color.BLACK);
-                        buttonDel.setPadding(5, 5, 5, 5);
-                        buttonDel.setEnabled(bEnabled);
-                        buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
-                        buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
-                        buttonDel.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-
-                                try {
-                                    if (bEnabled) {
-                                        LinearLayout linearLayout = (LinearLayout) v.getParent();
-                                        linearLayout.removeAllViews();
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                        linearLayoutArrayExist.addView(buttonDel);
-
-                        linearLayoutParent.addView(linearLayoutArrayExist);
-                        ///
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+            if (!bEnabled) {
+                if (button != null) {
+                    button.setVisibility(View.GONE);
                 }
-                //
-
-                final LinearLayout linearLayoutArray = new LinearLayout(MilestoneActivity.this);
-                linearLayoutArray.setOrientation(LinearLayout.HORIZONTAL);
-
-                LinearLayout.LayoutParams layoutArrayParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                layoutArrayParams.setMargins(10, 10, 10, 10);
-                linearLayoutArray.setLayoutParams(layoutArrayParams);
-
-
-                for (int j = 0; j < finalFieldModel.getiArrayCount(); j++) {
-
-                    EditText editTextArray = new EditText(MilestoneActivity.this);
-
-                    if (j == 0) {
-                        editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
-                        editTextArray.setHint(getString(R.string.medicine_name));
-                        editTextArray.setTag("medicine_name");
-                        editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
-                    }
-
-                    if (j == 1) {
-                        editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-                        editTextArray.setHint(getString(R.string.qunatity));
-                        editTextArray.setTag("medicine_qty");
-                        editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    }
-
-                                           /* if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
-
-
-                                            if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))*/
-
-                    editTextArray.setEnabled(bEnabled);
-
-                    linearLayoutArray.addView(editTextArray);
+                if (buttonDone != null) {
+                    buttonDone.setVisibility(View.GONE);
+                    if (simpleTooltip != null && simpleTooltip.isShowing())
+                        simpleTooltip.dismiss();
                 }
+                if (buttonAttach != null) {
+                    buttonAttach.setVisibility(View.GONE);
+                }
+            }
 
-                final boolean finalBEnabled = bEnabled;
+            TextView milestoneName = (TextView) findViewById(R.id.milestoneName);
+            if (milestoneName != null) {
+                milestoneName.setText(milestoneModelObject.getStrMilestoneName());
+            }
 
-                Button buttonAdd = new Button(MilestoneActivity.this);
-                buttonAdd.setBackgroundDrawable(getResources().getDrawable(R.drawable.add_icon));
-                buttonAdd.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
-                buttonAdd.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            fileModels = milestoneModelObject.getFileModels();
 
-                        try {
+            if (!milestoneModelObject.getStrMilestoneDate().equalsIgnoreCase("")
+                    && milestoneModelObject.getStrMilestoneScheduledDate() != null
+                    && !milestoneModelObject.getStrMilestoneScheduledDate().equalsIgnoreCase("")) {
+                if (button != null) {
+                    button.setText(getString(R.string.reschedule));
+                }
+            }
 
-                            if (bEnabled) {
+            for (FieldModel fieldModel : milestoneModelObject.getFieldModels()) {
 
-                                final LinearLayout linearLayoutArrayInner = new LinearLayout(MilestoneActivity.this);
-                                linearLayoutArrayInner.setOrientation(LinearLayout.HORIZONTAL);
+                final FieldModel finalFieldModel = fieldModel;
 
-                                LinearLayout.LayoutParams layoutArrayInnerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                layoutArrayInnerParams.setMargins(10, 10, 10, 10);
-                                linearLayoutArrayInner.setLayoutParams(layoutArrayInnerParams);
+                LinearLayout linearLayout1 = new LinearLayout(MilestoneActivity.this);
+                linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
 
-                                for (int j = 0; j < finalFieldModel.getiArrayCount(); j++) {
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(10, 10, 10, 10);
+                linearLayout1.setLayoutParams(layoutParams);
 
-                                    EditText editTextArray = new EditText(MilestoneActivity.this);
+                TextView textView = new TextView(MilestoneActivity.this);
+                textView.setLayoutParams(new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT, 3));
+                textView.setText(fieldModel.getStrFieldLabel());
 
-                                    if (j == 0) {
-                                        editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2));
-                                        editTextArray.setHint(getString(R.string.medicine_name));
-                                        editTextArray.setTag("medicine_name");
-                                        editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
-                                    }
+                linearLayout1.addView(textView);
 
-                                    if (j == 1) {
-                                        editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-                                        editTextArray.setHint(getString(R.string.qunatity));
-                                        editTextArray.setTag("medicine_qty");
-                                        editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
-                                    }
+                if (fieldModel.getStrFieldType().equalsIgnoreCase("text")
+                        || fieldModel.getStrFieldType().equalsIgnoreCase("number")
+                        || fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                        || fieldModel.getStrFieldType().equalsIgnoreCase("date")
+                        || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
 
-                                                        /*if (finalFieldModel.getStrFieldType().equalsIgnoreCase("text"))
+                    final EditText editText = new EditText(MilestoneActivity.this);
 
+                    editText.setId(fieldModel.getiFieldID());
+                    editText.setTag(R.id.one, fieldModel.isFieldRequired());
+                    editText.setLayoutParams(new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                    editText.setText(fieldModel.getStrFieldData());
 
-                                                        if (finalFieldModel.getStrFieldType().equalsIgnoreCase("number"))*/
+                    if (fieldModel.isFieldView())
+                        editText.setEnabled(false);
 
-                                    editTextArray.setEnabled(finalBEnabled);
-                                    linearLayoutArrayInner.addView(editTextArray);
+                    if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
+                        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+
+                    if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                    try {
+                        if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                || fieldModel.getStrFieldType().equalsIgnoreCase("date")
+                                || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+
+                            editText.setCompoundDrawablesWithIntrinsicBounds(getResources().
+                                            getDrawable(R.drawable.calender_date_picked),
+                                    null, null, null);
+
+                            //editText.setInputType(InputType.TYPE_CLASS_DATETIME);
+
+                            final SlideDateTimeListener listener = new SlideDateTimeListener() {
+
+                                @Override
+                                public void onDateTimeSet(Date date) {
+                                    // selectedDateTime = date.getDate()+"-"+date.getMonth()+"-"+date.getYear()+" "+
+                                    // date.getTime();
+                                    // Do something with the date. This Date object contains
+                                    // the date and time that the user has selected.
+
+                                    String strDate = "";
+
+                                    if (finalFieldModel.getStrFieldType().
+                                            equalsIgnoreCase("datetime"))
+                                        strDate = Utils.writeFormat.format(date);
+
+                                    if (finalFieldModel.getStrFieldType().equalsIgnoreCase("time"))
+                                        strDate = Utils.writeFormatTime.format(date);
+
+                                    if (finalFieldModel.getStrFieldType().equalsIgnoreCase("date"))
+                                        strDate = Utils.writeFormatDate.format(date);
+
+                                    editText.setTag(R.id.two, Utils.readFormat.format(date));
+                                    editText.setText(strDate);
                                 }
 
-                                //
-                                Button buttonDel = new Button(MilestoneActivity.this);
-                                buttonDel.setText("X");
-                                buttonDel.setTextColor(Color.BLACK);
-                                buttonDel.setEnabled(finalBEnabled);
-                                buttonDel.setPadding(5, 5, 5, 5);
-                                buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
-                                buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
-                                buttonDel.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
+                                @Override
+                                public void onDateTimeCancel() {
+                                }
 
+                            };
+
+                            editText.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    Date setDate = new Date();
+
+                                    if (finalFieldModel.getStrFieldData() != null
+                                            && !finalFieldModel.getStrFieldData().
+                                            equalsIgnoreCase("")) {
                                         try {
-                                            LinearLayout linearLayout = (LinearLayout) v.getParent();
-                                            linearLayout.removeAllViews();
-
-                                        } catch (Exception e) {
+                                            setDate = Utils.writeFormat.parse(finalFieldModel.
+                                                    getStrFieldData());
+                                        } catch (ParseException e) {
                                             e.printStackTrace();
                                         }
                                     }
-                                });
 
-                                linearLayoutArrayInner.addView(buttonDel);
-                                ///
-
-                                linearLayoutParent.addView(linearLayoutArrayInner);
-                            }
-                            //
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                                    new SlideDateTimePicker.Builder(getSupportFragmentManager())
+                                            .setListener(listener)
+                                            .setInitialDate(setDate)
+                                            .build()
+                                            .show();
+                                }
+                            });
                         }
+
+                        editText.setEnabled(bEnabled);
+
+                        linearLayout1.addView(editText);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                });
+                }
 
-                linearLayoutArray.addView(buttonAdd);
+                if (fieldModel.getStrFieldType().equalsIgnoreCase("radio")
+                        || fieldModel.getStrFieldType().equalsIgnoreCase("dropdown")) {
 
-                linearLayoutParent.addView(linearLayoutArray);
+                    final Spinner spinner = new Spinner(MilestoneActivity.this);
 
-                linearLayout1.addView(linearLayoutParent);
+                    spinner.setId(fieldModel.getiFieldID());
+                    spinner.setTag(fieldModel.isFieldRequired());
+                    spinner.setLayoutParams(new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(MilestoneActivity.this,
+                            android.R.layout.select_dialog_item, fieldModel.getStrFieldValues());
+
+                    spinner.setAdapter(adapter);
+
+                    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position,
+                                                   long id) {
+
+                            try {
+
+                                if (finalFieldModel.isChild()) {
+
+                                    for (int i = 0; i < finalFieldModel.getiChildfieldID().length;
+                                         i++) {
+
+                                        if (finalFieldModel.getStrChildType()[i].
+                                                equalsIgnoreCase("text")) {
+
+                                            EditText editTextChild = (EditText) layoutDialog.
+                                                    findViewById(finalFieldModel.
+                                                            getiChildfieldID()[i]);
+
+                                            if (editTextChild != null) {
+
+                                                String strValue = spinner.getSelectedItem().
+                                                        toString();
+
+                                                if (finalFieldModel.getStrChildCondition()[i].
+                                                        equalsIgnoreCase("equals")) {
+
+                                                    if (strValue.equalsIgnoreCase(finalFieldModel.
+                                                            getStrChildValue()[i])) {
+                                                        //editText.setVisibility(View.VISIBLE);
+
+                                                        if (!bEnabled)
+                                                            editTextChild.setEnabled(false);
+                                                        else
+                                                            editTextChild.setEnabled(true);
+
+                                                        break;
+                                                    } else {
+                                                        editTextChild.setEnabled(false);
+                                                    }
+                                                } else
+                                                    editTextChild.setEnabled(false);
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+                        }
+                    });
+
+                    if (fieldModel.getStrFieldData() != null && !fieldModel.getStrFieldData().
+                            equalsIgnoreCase("")) {
+
+                        int iSelected = adapter.getPosition(fieldModel.getStrFieldData());
+                        spinner.setSelection(iSelected);
+                    }
+
+                    spinner.setEnabled(bEnabled);
+
+                    linearLayout1.addView(spinner);
+                }
+
+                if (fieldModel.getStrFieldType().equalsIgnoreCase("array")) {
+
+                    final LinearLayout linearLayoutParent = new LinearLayout(MilestoneActivity.this);
+                    linearLayoutParent.setOrientation(LinearLayout.VERTICAL);
+                    linearLayoutParent.setTag(R.id.linearparent);
+
+                    LinearLayout.LayoutParams layoutParentParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                    layoutParentParams.setMargins(10, 10, 10, 10);
+                    linearLayoutParent.setLayoutParams(layoutParentParams);
+
+                    try {
+
+                        JSONObject jsonObjectMedicines = new JSONObject(fieldModel.getStrArrayData());
+
+                        JSONArray jsonArrayMedicines = jsonObjectMedicines.getJSONArray("array_data");
+
+                        for (int i = 0; i < jsonArrayMedicines.length(); i++) {
+
+                            JSONObject jsonObjectMedicine =
+                                    jsonArrayMedicines.getJSONObject(i);
+
+                            final LinearLayout linearLayoutArrayExist = new LinearLayout(
+                                    MilestoneActivity.this);
+                            linearLayoutArrayExist.setOrientation(LinearLayout.HORIZONTAL);
+
+                            LinearLayout.LayoutParams layoutArrayExistParams = new LinearLayout.
+                                    LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT);
+                            layoutArrayExistParams.setMargins(10, 10, 10, 10);
+                            linearLayoutArrayExist.setLayoutParams(layoutArrayExistParams);
+
+
+                            EditText editMedicineName = new EditText(MilestoneActivity.this);
+                            editMedicineName.setLayoutParams(new LinearLayout.LayoutParams(0,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                            editMedicineName.setHint(getString(R.string.medicine_name));
+                            editMedicineName.setTag("medicine_name");
+                            editMedicineName.setInputType(InputType.TYPE_CLASS_TEXT);
+                            editMedicineName.setText(jsonObjectMedicine.getString("medicine_name"));
+                            editMedicineName.setEnabled(bEnabled);
+                            linearLayoutArrayExist.addView(editMedicineName);
+
+                            EditText editMedicineQty = new EditText(MilestoneActivity.this);
+                            editMedicineQty.setLayoutParams(new LinearLayout.LayoutParams(0,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                            editMedicineQty.setHint(getString(R.string.qunatity));
+                            editMedicineQty.setTag("medicine_qty");
+                            editMedicineQty.setInputType(InputType.TYPE_CLASS_NUMBER);
+                            editMedicineQty.setText(String.valueOf(jsonObjectMedicine.
+                                    getInt("medicine_qty")));
+                            editMedicineQty.setEnabled(bEnabled);
+                            linearLayoutArrayExist.addView(editMedicineQty);
+
+
+                            Button buttonDel = new Button(MilestoneActivity.this);
+                            buttonDel.setText("X");
+                            buttonDel.setTextColor(Color.BLACK);
+                            buttonDel.setPadding(5, 5, 5, 5);
+                            buttonDel.setEnabled(bEnabled);
+                            buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.
+                                    circle));
+                            buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
+                            buttonDel.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    try {
+                                        if (bEnabled) {
+                                            LinearLayout linearLayout = (LinearLayout) v.getParent();
+                                            linearLayout.removeAllViews();
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                            linearLayoutArrayExist.addView(buttonDel);
+
+                            linearLayoutParent.addView(linearLayoutArrayExist);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    final LinearLayout linearLayoutArray = new LinearLayout(MilestoneActivity.this);
+                    linearLayoutArray.setOrientation(LinearLayout.HORIZONTAL);
+
+                    LinearLayout.LayoutParams layoutArrayParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                    layoutArrayParams.setMargins(10, 10, 10, 10);
+                    linearLayoutArray.setLayoutParams(layoutArrayParams);
+
+
+                    for (int j = 0; j < finalFieldModel.getiArrayCount(); j++) {
+
+                        EditText editTextArray = new EditText(MilestoneActivity.this);
+
+                        if (j == 0) {
+                            editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                            editTextArray.setHint(getString(R.string.medicine_name));
+                            editTextArray.setTag("medicine_name");
+                            editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
+                        }
+
+                        if (j == 1) {
+                            editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                            editTextArray.setHint(getString(R.string.qunatity));
+                            editTextArray.setTag("medicine_qty");
+                            editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        }
+
+                        editTextArray.setEnabled(bEnabled);
+
+                        linearLayoutArray.addView(editTextArray);
+                    }
+
+                    final boolean finalBEnabled = bEnabled;
+
+                    Button buttonAdd = new Button(MilestoneActivity.this);
+                    buttonAdd.setBackgroundDrawable(getResources().getDrawable(R.drawable.add_icon));
+                    buttonAdd.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
+                    buttonAdd.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            try {
+
+                                if (bEnabled) {
+
+                                    final LinearLayout linearLayoutArrayInner = new LinearLayout(
+                                            MilestoneActivity.this);
+                                    linearLayoutArrayInner.setOrientation(LinearLayout.HORIZONTAL);
+
+                                    LinearLayout.LayoutParams layoutArrayInnerParams =
+                                            new LinearLayout.LayoutParams(
+                                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                                    LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    layoutArrayInnerParams.setMargins(10, 10, 10, 10);
+                                    linearLayoutArrayInner.setLayoutParams(layoutArrayInnerParams);
+
+                                    for (int j = 0; j < finalFieldModel.getiArrayCount(); j++) {
+
+                                        EditText editTextArray = new EditText(MilestoneActivity.this);
+
+                                        if (j == 0) {
+                                            editTextArray.setLayoutParams(new LinearLayout.
+                                                    LayoutParams(0,
+                                                    ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                                            editTextArray.setHint(getString(R.string.medicine_name));
+                                            editTextArray.setTag("medicine_name");
+                                            editTextArray.setInputType(InputType.TYPE_CLASS_TEXT);
+                                        }
+
+                                        if (j == 1) {
+                                            editTextArray.setLayoutParams(new LinearLayout.
+                                                    LayoutParams(0,
+                                                    ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                                            editTextArray.setHint(getString(R.string.qunatity));
+                                            editTextArray.setTag("medicine_qty");
+                                            editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                        }
+
+                                        editTextArray.setEnabled(finalBEnabled);
+                                        linearLayoutArrayInner.addView(editTextArray);
+                                    }
+
+                                    Button buttonDel = new Button(MilestoneActivity.this);
+                                    buttonDel.setText("X");
+                                    buttonDel.setTextColor(Color.BLACK);
+                                    buttonDel.setEnabled(finalBEnabled);
+                                    buttonDel.setPadding(5, 5, 5, 5);
+                                    buttonDel.setBackgroundDrawable(getResources().
+                                            getDrawable(R.drawable.circle));
+                                    buttonDel.setLayoutParams(new LinearLayout.
+                                            LayoutParams(64, 64, 0));
+                                    buttonDel.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+
+                                            try {
+                                                LinearLayout linearLayout = (LinearLayout) v.
+                                                        getParent();
+                                                linearLayout.removeAllViews();
+
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+
+                                    linearLayoutArrayInner.addView(buttonDel);
+
+                                    linearLayoutParent.addView(linearLayoutArrayInner);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    linearLayoutArray.addView(buttonAdd);
+
+                    linearLayoutParent.addView(linearLayoutArray);
+
+                    linearLayout1.addView(linearLayoutParent);
+                }
+                if (layoutDialog != null) {
+                    layoutDialog.addView(linearLayout1);
+                }
             }
-            if (layoutDialog != null) {
-                layoutDialog.addView(linearLayout1);
-            }
-        }
 
+            if (button != null) {
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-        if (button != null) {
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String buttonText = button.getText().toString();
+                        int iValidFlag = 0;
 
-                    if (buttonText.equals("Submit")) {
+                        String buttonText = button.getText().toString();
+
                         if (simpleTooltip != null && simpleTooltip.isShowing())
                             simpleTooltip.dismiss();
                         int id = (int) v.getTag();
                         LinearLayout linearLayout = null;
                         if (layoutDialog != null) {
-                            linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
+                            linearLayout = (LinearLayout) layoutDialog.findViewWithTag(
+                                    R.id.linearparent);
                         }
-                        traverseEditTexts(layoutDialog, id, linearLayout, 1);
-                    } else if (buttonText.equals("Reschedule")) {
 
-                        if (enteredDate != null && enteredDate != dateNow) {
-                            if (simpleTooltip != null && simpleTooltip.isShowing())
-                                simpleTooltip.dismiss();
-                            int id = (int) v.getTag();
-                            LinearLayout linearLayout = null;
-                            if (layoutDialog != null) {
-                                linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
-                            }
-                            traverseEditTextsNotValid(layoutDialog, id, linearLayout, 1);
-                        } else {
-
-                            if (simpleTooltip != null && simpleTooltip.isShowing())
-                                simpleTooltip.dismiss();
-                            int id = (int) v.getTag();
-                            LinearLayout linearLayout = null;
-                            if (layoutDialog != null) {
-                                linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
-                            }
-                            traverseEditTexts(layoutDialog, id, linearLayout, 1);
+                        if (buttonText.equals("Reschedule")) {
+                            // if (enteredDate != null && enteredDate != dateNow) {
+                            iValidFlag = 1;
+                            //}
                         }
+
+                        traverseEditTexts(layoutDialog, id, linearLayout, 1, iValidFlag);
                     }
-                }
-            });
-        }
+                });
+            }
 
-        if (buttonAttach != null) {
-            buttonAttach.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (simpleTooltip != null && simpleTooltip.isShowing())
-                        simpleTooltip.dismiss();
-                    strName1 = String.valueOf(new Date().getDate() + "" + new Date().getTime());
-                    strImageName1 = strName1 + ".jpeg";
+            if (buttonAttach != null) {
+                buttonAttach.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (simpleTooltip != null && simpleTooltip.isShowing())
+                            simpleTooltip.dismiss();
+                        strName1 = String.valueOf(new Date().getDate() + "" + new Date().getTime());
+                        strImageName1 = strName1 + ".jpeg";
 
-                    utils.selectImage(strImageName1, null, MilestoneActivity.this, false);
+                        utils.selectImage(strImageName1, null, MilestoneActivity.this, false);
 
-
-                }
-            });
-        }
-
-        if (buttonDone != null) {
-
-            buttonDone.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (simpleTooltip != null && simpleTooltip.isShowing())
-                        simpleTooltip.dismiss();
-                    int id = (int) v.getTag();
-                    LinearLayout linearLayout = null;
-                    if (layoutDialog != null) {
-                        linearLayout = (LinearLayout) layoutDialog.findViewWithTag(R.id.linearparent);
                     }
-                    traverseEditTexts(layoutDialog, id, linearLayout, 2);
-                }
-            });
+                });
+            }
+
+            if (buttonDone != null) {
+
+                buttonDone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (simpleTooltip != null && simpleTooltip.isShowing())
+                            simpleTooltip.dismiss();
+                        int id = (int) v.getTag();
+                        LinearLayout linearLayout = null;
+                        if (layoutDialog != null) {
+                            linearLayout = (LinearLayout) layoutDialog.findViewWithTag(
+                                    R.id.linearparent);
+                        }
+                        traverseEditTexts(layoutDialog, id, linearLayout, 2, 0);
+                    }
+                });
+            }
+
+            if (buttonCancel != null) {
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (simpleTooltip != null && simpleTooltip.isShowing())
+                            simpleTooltip.dismiss();
+                        goBack();
+                    }
+                });
+            }
+
+            loadingPanel.setVisibility(View.VISIBLE);
+
+            backgroundThreadHandler = new BackgroundThreadHandler();
+            Thread backgroundThreadImages = new BackgroundThreadImages();
+            backgroundThreadImages.start();
         }
-
-        if (buttonCancel != null) {
-            buttonCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (simpleTooltip != null && simpleTooltip.isShowing())
-                        simpleTooltip.dismiss();
-                    goBack();
-                }
-            });
-        }
-
-        loadingPanel.setVisibility(View.VISIBLE);
-
-        backgroundThreadHandler = new BackgroundThreadHandler();
-        Thread backgroundThreadImages = new BackgroundThreadImages();
-        backgroundThreadImages.start();
     }
 
     private void goBack() {
@@ -719,12 +711,14 @@ public class MilestoneActivity extends AppCompatActivity {
                     new AlertDialog.Builder(MilestoneActivity.this);
             alertbox.setTitle(getString(R.string.delete_file));
             alertbox.setMessage(getString(R.string.confirm_unsaved_files));
-            alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+            alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.
+                    OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     goBackIntent();
                 }
             });
-            alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+            alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.
+                    OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     arg0.dismiss();
                 }
@@ -751,7 +745,8 @@ public class MilestoneActivity extends AppCompatActivity {
         goBack();
     }
 
-    private void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
+    private void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag,
+                                   int iValidflag) {
 
         boolean b = true, bClose = true;
 
@@ -798,23 +793,26 @@ public class MilestoneActivity extends AppCompatActivity {
                             editText.setError(null);
 
                             boolean b1 = (Boolean) editText.getTag(R.id.one);
-                            data = editText.getText().toString().trim();
+                            String data = editText.getText().toString().trim();
 
                             if (editText.isEnabled()) {
                                 if (b1 && !data.equalsIgnoreCase("")) {
 
                                     if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
                                             || fieldModel.getStrFieldType().equalsIgnoreCase("date")
-                                            || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+                                            ||
+                                            fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
 
                                         boolean bFuture = true;
 
                                         /////////////////////////////
-                                        dateNow = null;
-                                        enteredDate = null;
+                                        Date dateNow = null;
+                                        String strdateCopy;
+                                        Date enteredDate = null;
 
                                         try {
-                                            strdateCopy = Utils.writeFormat.format(calendar.getTime());
+                                            strdateCopy = Utils.writeFormat.format(calendar.
+                                                    getTime());
                                             dateNow = Utils.writeFormat.parse(strdateCopy);
                                             enteredDate = Utils.writeFormat.parse(data);
                                         } catch (ParseException e) {
@@ -838,7 +836,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                         if (iFlag == 2) {
                                             if (enteredDate.compareTo(dateNow) < 0) {
                                                 bClose = false;
-                                                Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
+                                                Utils.log(String.valueOf(date + " ! " + enteredDate)
+                                                        , " NOW ");
                                             }
                                         }
 
@@ -848,15 +847,23 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                             String strDate = (String) editText.getTag(R.id.two);
 
-                                            if ((milestoneModel.isReschedule() || !milestoneModel.isReschedule())
-                                                    && milestoneModel.getStrMilestoneScheduledDate() != null
-                                                    && (!milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")
-                                                    || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase(""))
-                                                    && fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
+                                            if ((milestoneModel.isReschedule()
+                                                    || !milestoneModel.isReschedule())
+                                                    && milestoneModel.getStrMilestoneScheduledDate()
+                                                    != null
+                                                    && (!milestoneModel.
+                                                    getStrMilestoneScheduledDate().
+                                                    equalsIgnoreCase("")
+                                                    || milestoneModel.getStrMilestoneScheduledDate()
+                                                    .equalsIgnoreCase(""))
+                                                    && fieldModel.getStrFieldType().equalsIgnoreCase
+                                                    ("datetime")
                                                     ) {
 
-                                                if (milestoneModel.getStrMilestoneScheduledDate() != null
-                                                        && !milestoneModel.getStrMilestoneScheduledDate().
+                                                if (milestoneModel.
+                                                        getStrMilestoneScheduledDate() != null
+                                                        && !milestoneModel.
+                                                        getStrMilestoneScheduledDate().
                                                         equalsIgnoreCase(""))
                                                     milestoneModel.setReschedule(true);
 
@@ -866,12 +873,14 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 strScheduledDate = strDate;
                                             }
 
-                                            if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
+                                            if (iIndex == act.getMilestoneModels().size()
+                                                    && iFlag == 2) {
                                                 strActivityDoneDate = strDate;
                                             }
 
                                         } else {
-                                            editText.setError(context.getString(R.string.invalid_date));
+                                            editText.setError(
+                                                    context.getString(R.string.invalid_date));
                                             b = false;
                                         }
                                     } else {
@@ -881,7 +890,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                     }
 
                                 } else {
-                                    editText.setError(context.getString(R.string.error_field_required));
+                                    editText.setError(context.getString(
+                                            R.string.error_field_required));
                                     b = false;
                                 }
                             }
@@ -895,13 +905,15 @@ public class MilestoneActivity extends AppCompatActivity {
 
                             boolean b1 = (Boolean) spinner.getTag();
 
-                            String data = fieldModel.getStrFieldValues()[spinner.getSelectedItemPosition()];
+                            String data = fieldModel.getStrFieldValues()[spinner.
+                                    getSelectedItemPosition()];
 
                             if (b1 && !data.equalsIgnoreCase("")) {
                                 fieldModel.setStrFieldData(data);
                             } else {
                                 utils.toast(2, 2, getString(R.string.error_field_required));
-                                spinner.setBackgroundDrawable(getResources().getDrawable(R.drawable.edit_text));
+                                spinner.setBackgroundDrawable(getResources().getDrawable(
+                                        R.drawable.edit_text));
                                 b = false;
                             }
                         }
@@ -910,8 +922,10 @@ public class MilestoneActivity extends AppCompatActivity {
                         //array
                         if (fieldModel.getStrFieldType().equalsIgnoreCase("array")) {
 
-                            ArrayList<String> strMedicineNames = utils.getEditTextValueByTag(viewGroup, "medicine_name");
-                            ArrayList<String> strMedicineQty = utils.getEditTextValueByTag(viewGroup, "medicine_qty");
+                            ArrayList<String> strMedicineNames = utils.getEditTextValueByTag(
+                                    viewGroup, "medicine_name");
+                            ArrayList<String> strMedicineQty = utils.getEditTextValueByTag(
+                                    viewGroup, "medicine_qty");
 
                             int j = 0;
 
@@ -923,12 +937,15 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                 for (int i = 0; i < strMedicineNames.size(); i++) {
 
-                                    if (!strMedicineNames.get(i).equalsIgnoreCase("") && !strMedicineQty.get(i).equalsIgnoreCase("")) {
+                                    if (!strMedicineNames.get(i).equalsIgnoreCase("")
+                                            && !strMedicineQty.get(i).equalsIgnoreCase("")) {
                                         j++;
                                         JSONObject jsonObjectMedicine = new JSONObject();
 
-                                        jsonObjectMedicine.put("medicine_name", strMedicineNames.get(i));
-                                        jsonObjectMedicine.put("medicine_qty", Integer.parseInt(strMedicineQty.get(i)));
+                                        jsonObjectMedicine.put("medicine_name", strMedicineNames
+                                                .get(i));
+                                        jsonObjectMedicine.put("medicine_qty",
+                                                Integer.parseInt(strMedicineQty.get(i)));
 
                                         jsonArray.put(jsonObjectMedicine);
                                     }
@@ -970,8 +987,11 @@ public class MilestoneActivity extends AppCompatActivity {
 
 
                         if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
-                            strPushMessage += getString(R.string.space) + getString(R.string.scheduled_to)
-                                    + getString(R.string.space) + strScheduledDate + getString(R.string.space);
+                            strPushMessage += getString(R.string.space)
+                                    + getString(R.string.scheduled_to)
+                                    + getString(R.string.space)
+                                    + strScheduledDate + getString(R.string.space);
+                            //todo check date format
                         }
 
                         jsonObject = new JSONObject();
@@ -982,10 +1002,12 @@ public class MilestoneActivity extends AppCompatActivity {
                             Date dateNow = calendar.getTime();
                             strDateNow = utils.convertDateToString(dateNow);
 
-                            int iCustomerPosition = Config.customerIdsAdded.indexOf(act.getStrCustomerID());
+                            int iCustomerPosition = Config.customerIdsAdded.indexOf(act.
+                                    getStrCustomerID());
 
                             if (iCustomerPosition > -1)
-                                strDependentMail = Config.customerModels.get(iCustomerPosition).getStrEmail();
+                                strDependentMail = Config.customerModels.get(iCustomerPosition).
+                                        getStrEmail();
 
                             jsonObject.put("created_by", Config.providerModel.getStrProviderId());
                             jsonObject.put("time", strDateNow);
@@ -1007,7 +1029,8 @@ public class MilestoneActivity extends AppCompatActivity {
                     //
                 }
 
-                if (!milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed") && iIndex < act.getMilestoneModels().size()) {
+                if (!milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed")
+                        && iIndex < act.getMilestoneModels().size()) {
                     iClose++;
                 }
 
@@ -1034,15 +1057,12 @@ public class MilestoneActivity extends AppCompatActivity {
             utils.toast(2, 2, getString(R.string.close_date_error));
         }
 
-
         if (b) {
-
             uploadImage(v, iMileStoneId, viewGroup, iFlag);
-
         }
     }
 
-    private void traverseEditTextsNotValid(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
+    /*private void traverseEditTextsNotValid(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
 
         boolean b = true, bClose = true;
 
@@ -1116,9 +1136,9 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                             //Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
 
-                                            /*if (enteredDate.before(dateNow)) {
+                                            *//*if (enteredDate.before(dateNow)) {
                                                 bFuture = false;
-                                            }*/
+                                            }*//*
 
                                             if (enteredDate.compareTo(dateNow) < 0) {
                                                 bFuture = false;
@@ -1162,6 +1182,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                             }
 
                                         } else {
+                                            //todo check
                                             //  editText.setError(context.getString(R.string.invalid_date));
                                             // b = false;
                                         }
@@ -1250,12 +1271,12 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         String strPushMessage = Config.providerModel.getStrName()
                                 + getString(R.string.has_updated)
-                          /*  + getString(R.string.activity)
-                            + getString(R.string.space)*/
+                          *//*  + getString(R.string.activity)
+                            + getString(R.string.space)*//*
                                 + getString(R.string.space)
                                 + act.getStrActivityName()
                                 + getString(R.string.hyphen)
-                           /* + getString(R.string.milestone)*/
+                           *//* + getString(R.string.milestone)*//*
                                 + getString(R.string.space)
                                 + milestoneModel.getStrMilestoneName();
 
@@ -1331,7 +1352,7 @@ public class MilestoneActivity extends AppCompatActivity {
             uploadImage(v, iMileStoneId, viewGroup, iFlag);
 
         }
-    }
+    }*/
 
 
 
@@ -1363,7 +1384,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
                 jsonObjectMilestone.put("show", milestoneModel.isVisible());
                 jsonObjectMilestone.put("reschedule", milestoneModel.isReschedule());
-                jsonObjectMilestone.put("scheduled_date", milestoneModel.getStrMilestoneScheduledDate());
+                jsonObjectMilestone.put("scheduled_date", milestoneModel.
+                        getStrMilestoneScheduledDate());
 
                 JSONArray jsonArrayFiles = new JSONArray();
 
@@ -1400,30 +1422,41 @@ public class MilestoneActivity extends AppCompatActivity {
                     jsonObjectField.put("label", fieldModel.getStrFieldLabel());
                     jsonObjectField.put("type", fieldModel.getStrFieldType());
 
-                    if (fieldModel.getStrFieldValues() != null && fieldModel.getStrFieldValues().length > 0)
-                        jsonObjectField.put("values", utils.stringToJsonArray(fieldModel.getStrFieldValues()));
+                    if (fieldModel.getStrFieldValues() != null && fieldModel.getStrFieldValues().
+                            length > 0)
+                        jsonObjectField.put("values", utils.stringToJsonArray(fieldModel.
+                                getStrFieldValues()));
 
                     if (fieldModel.isChild()) {
 
                         jsonObjectField.put("child", fieldModel.isChild());
 
-                        if (fieldModel.getStrChildType() != null && fieldModel.getStrChildType().length > 0)
-                            jsonObjectField.put("child_type", utils.stringToJsonArray(fieldModel.getStrChildType()));
+                        if (fieldModel.getStrChildType() != null && fieldModel.getStrChildType().
+                                length > 0)
+                            jsonObjectField.put("child_type", utils.stringToJsonArray(fieldModel.
+                                    getStrChildType()));
 
-                        if (fieldModel.getStrChildValue() != null && fieldModel.getStrChildValue().length > 0)
-                            jsonObjectField.put("child_value", utils.stringToJsonArray(fieldModel.getStrChildValue()));
+                        if (fieldModel.getStrChildValue() != null && fieldModel.getStrChildValue().
+                                length > 0)
+                            jsonObjectField.put("child_value", utils.stringToJsonArray(fieldModel.
+                                    getStrChildValue()));
 
-                        if (fieldModel.getStrChildCondition() != null && fieldModel.getStrChildCondition().length > 0)
-                            jsonObjectField.put("child_condition", utils.stringToJsonArray(fieldModel.getStrChildCondition()));
+                        if (fieldModel.getStrChildCondition() != null && fieldModel.
+                                getStrChildCondition().length > 0)
+                            jsonObjectField.put("child_condition", utils.stringToJsonArray(
+                                    fieldModel.getStrChildCondition()));
 
-                        if (fieldModel.getiChildfieldID() != null && fieldModel.getiChildfieldID().length > 0)
-                            jsonObjectField.put("child_field", utils.intToJsonArray(fieldModel.getiChildfieldID()));
+                        if (fieldModel.getiChildfieldID() != null && fieldModel.getiChildfieldID().
+                                length > 0)
+                            jsonObjectField.put("child_field", utils.intToJsonArray(fieldModel.
+                                    getiChildfieldID()));
                     }
 
                     //
                     if (fieldModel.getiArrayCount() > 0) {
                         jsonObjectField.put("array_fields", fieldModel.getiArrayCount());
-                        jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.getStrArrayType()));
+                        jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.
+                                getStrArrayType()));
                         jsonObjectField.put("array_data", fieldModel.getStrArrayData());
                     }
                     //
@@ -1443,8 +1476,10 @@ public class MilestoneActivity extends AppCompatActivity {
 
             if (iActivityPosition > -1) {
                 //Config.activityModels.get(iPosition).removeMilestoneModel(milestoneModel);
-                Config.activityModels.get(iActivityPosition).setStrActivityStatus(strActivityStatus);
-                Config.activityModels.get(iActivityPosition).setStrActivityDoneDate(strActivityDoneDate);
+                Config.activityModels.get(iActivityPosition).setStrActivityStatus(
+                        strActivityStatus);
+                Config.activityModels.get(iActivityPosition).setStrActivityDoneDate(
+                        strActivityDoneDate);
             }
 
 
@@ -1554,7 +1589,9 @@ public class MilestoneActivity extends AppCompatActivity {
                     ImageView imageView = new ImageView(MilestoneActivity.this);
                     imageView.setPadding(0, 0, 3, 0);
 
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
                     // linearLayout1.setLayoutParams(layoutParams);
 
@@ -1592,9 +1629,12 @@ public class MilestoneActivity extends AppCompatActivity {
 
                             dialog.setContentView(R.layout.image_dialog_layout);
 
-                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
-                            TextView textViewClose = (TextView) dialog.findViewById(R.id.textViewClose);
-                            Button buttonDelete = (Button) dialog.findViewById(R.id.textViewTitle);
+                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                                    R.id.imgOriginal);
+                            TextView textViewClose = (TextView) dialog.findViewById(
+                                    R.id.textViewClose);
+                            Button buttonDelete = (Button) dialog.findViewById(
+                                    R.id.textViewTitle);
 
                             if (!bEnabled)
                                 buttonDelete.setVisibility(View.INVISIBLE);
@@ -1616,11 +1656,13 @@ public class MilestoneActivity extends AppCompatActivity {
                                             new AlertDialog.Builder(MilestoneActivity.this);
                                     alertbox.setTitle(getString(R.string.delete_file));
                                     alertbox.setMessage(getString(R.string.confirm_delete_file));
-                                    alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                    alertbox.setPositiveButton(getString(R.string.yes), new
+                                            DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0, int arg1) {
 
                                             try {
-                                                File fDelete = utils.getInternalFileImages(mFileModel.getStrFileName());
+                                                File fDelete = utils.getInternalFileImages(
+                                                        mFileModel.getStrFileName());
 
                                                 boolean success = true;
 
@@ -1637,7 +1679,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                                     bitmaps.remove(mPosition);
                                                 }
                                                 if (success) {
-                                                    utils.toast(2, 2, getString(R.string.file_deleted));
+                                                    utils.toast(2, 2, getString(
+                                                            R.string.file_deleted));
                                                 }
                                                 arg0.dismiss();
                                                 dialog.dismiss();
@@ -1647,7 +1690,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-                                    alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                                    alertbox.setNegativeButton(getString(R.string.no), new
+                                            DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0, int arg1) {
                                             arg0.dismiss();
                                         }
@@ -1665,7 +1709,8 @@ public class MilestoneActivity extends AppCompatActivity {
                             }
                             dialog.setCancelable(true);
 
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
                             dialog.show();
                         }
                     });
@@ -1681,7 +1726,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
     }
 
-    private void uploadImage(final ViewGroup v, final int iMileStoneId, final ViewGroup viewGroup, final int iFlag) {
+    private void uploadImage(final ViewGroup v, final int iMileStoneId, final ViewGroup viewGroup,
+                             final int iFlag) {
 
         if (mImageCount > 0) {
 
@@ -1763,7 +1809,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                             }*/
 
                                             fileModels.get(mImageUploadCount).setNew(false);
-                                            fileModels.get(mImageUploadCount).setStrFileUrl(file.getUrl());
+                                            fileModels.get(mImageUploadCount).setStrFileUrl(file.
+                                                    getUrl());
 
                                             try {
                                                 mImageUploadCount++;
@@ -1889,7 +1936,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     if (iActivityPosition > -1) {
                         //Config.activityModels.get(iPosition).removeMilestoneModel(milestoneModel);
-                        Config.activityModels.get(iActivityPosition).setMilestoneModel(milestoneModel);
+                        Config.activityModels.get(iActivityPosition).setMilestoneModel(
+                                milestoneModel);
                     }
                 }
             } catch (Exception e) {
@@ -2004,7 +2052,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
         if (utils.isConnectingToInternet()) {
 
-            PushNotificationService pushNotificationService = new PushNotificationService(MilestoneActivity.this);
+            PushNotificationService pushNotificationService = new PushNotificationService(
+                    MilestoneActivity.this);
 
             pushNotificationService.sendPushToUser(strDependentMail, jsonObject.toString(),
                     new App42CallBack() {
@@ -2118,7 +2167,8 @@ public class MilestoneActivity extends AppCompatActivity {
                     File mCopyFile = utils.getInternalFileImages(strTime);
                     utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                    FileModel fileModel = new FileModel(strTime, "", "IMAGE", utils.convertDateToString(date), "DESC", mCopyFile.getAbsolutePath());
+                    FileModel fileModel = new FileModel(strTime, "", "IMAGE", utils.
+                            convertDateToString(date), "DESC", mCopyFile.getAbsolutePath());
 
                     fileModel.setNew(true);
 
@@ -2127,9 +2177,11 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     //
 
-                    utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                    utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
+                            Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
-                    bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                    bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                            Config.intWidth, Config.intHeight));
 
                     IMAGE_COUNT++;
 
@@ -2162,15 +2214,18 @@ public class MilestoneActivity extends AppCompatActivity {
                     utils.copyFile(new File(strImageName1), mCopyFile);
                     Date date = new Date();
                     //ImageModel imageModel = new ImageModel(strName1, "", strName1, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-                    FileModel fileModel = new FileModel(strName1, "", "IMAGE", utils.convertDateToString(date), "DESC", mCopyFile.getAbsolutePath());
+                    FileModel fileModel = new FileModel(strName1, "", "IMAGE", utils.
+                            convertDateToString(date), "DESC", mCopyFile.getAbsolutePath());
                     fileModel.setNew(true);
                     //arrayListImageModel.add(imageModel);
 
                     fileModels.add(fileModel);
 
-                    utils.compressImageFromPath(strImageName1, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                    utils.compressImageFromPath(strImageName1, Config.intCompressWidth,
+                            Config.intCompressHeight, Config.iQuality);
 
-                    bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                    bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                            Config.intWidth, Config.intHeight));
 
                     mImageCount++;
 
@@ -2193,8 +2248,11 @@ public class MilestoneActivity extends AppCompatActivity {
             try {
 
                 for (FileModel fileModel : fileModels) {
-                    if (fileModel.getStrFileName() != null && !fileModel.getStrFileName().equalsIgnoreCase("")) {
-                        bitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(fileModel.getStrFileName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+                    if (fileModel.getStrFileName() != null && !fileModel.getStrFileName().
+                            equalsIgnoreCase("")) {
+                        bitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(
+                                fileModel.getStrFileName()).getAbsolutePath(), Config.intWidth,
+                                Config.intHeight));
                         IMAGE_COUNT++;
 
                         fileModel.setNew(false);

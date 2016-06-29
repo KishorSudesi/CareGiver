@@ -70,7 +70,8 @@
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
                     android:background="@color/blue"
-                    android:text="Attach File"
+                    android:text="@string/attach_file"
+                    android:textAllCaps="false"
                     android:textColor="@color/colorWhite"
                     android:visibility="visible" />
 
@@ -84,6 +85,7 @@
                     android:layout_weight="1"
                     android:background="@color/blue"
                     android:text="@string/submit"
+                    android:textAllCaps="false"
                     android:textColor="@color/colorWhite"
                     android:visibility="visible" />
 
@@ -96,7 +98,8 @@
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
                     android:background="@color/blue"
-                    android:text="@string/close"
+                    android:text="@string/complete"
+                    android:textAllCaps="false"
                     android:textColor="@color/colorWhite"
                     android:visibility="gone" />
 
@@ -110,6 +113,7 @@
                     android:layout_weight="1"
                     android:background="#000000"
                     android:text="@string/back"
+                    android:textAllCaps="false"
                     android:textColor="@color/colorWhite"
                     android:visibility="visible" />
 
@@ -135,4 +139,5 @@
     </ScrollView>
 
 </RelativeLayout>
+
 </LinearLayout>

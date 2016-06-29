@@ -15,6 +15,7 @@
     <string name="user_ratings">Overall User Ratings</string>
     <string name="done">Done</string>
     <string name="close">Close</string>
+    <string name="complete">Complete</string>
     <string name="feedback">Feedback</string>
     <string name="clients">Clients</string>
     <string name="clientdetails">Client Details</string>
@@ -161,6 +162,7 @@
     <string name="confirm_unsaved_images">Some Images are not Saved, Delete Them?</string>
     <string name="confirm_unsaved_files">Some Files are not Saved, Delete Them?</string>
     <string name="file_deleted">File Deleted</string>
+    <string name="attach_file">Attach File</string>
 
     <!--Mislestone Related-->
     <string name="medicine_name">Medicine Name</string>
@@ -232,7 +234,6 @@
     <!--Google Strings-->
     <string name="google_app_id">910502819263</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
