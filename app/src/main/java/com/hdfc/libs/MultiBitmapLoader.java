@@ -171,6 +171,7 @@ public class MultiBitmapLoader {
         @Override
         protected Bitmap doInBackground(String... params) {
             data = params[0];
+            Utils.log(data, " ROUND PATH ");
             Bitmap tempBitmap = getBitmapFromFile(data, Config.intWidth, Config.intHeight);
             tempBitmap = utils.roundedBitmap(tempBitmap);
             addBitmapToMemoryCache(String.valueOf(params[0]), tempBitmap);

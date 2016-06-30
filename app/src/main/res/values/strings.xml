@@ -26,6 +26,7 @@
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
     <string name="forgot">Forgot?</string>
+    <string name="forgot_password">Forgot Password?</string>
     <string name="submit">Submit</string>
     <string name="reschedule">Reschedule</string>
     <string name="no">No</string>

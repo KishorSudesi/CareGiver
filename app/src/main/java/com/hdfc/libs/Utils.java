@@ -121,6 +121,11 @@ public class Utils {
         queryFormat.setTimeZone(TimeZone.getDefault());
     }
 
+    public Utils() {
+        readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        queryFormat.setTimeZone(TimeZone.getDefault());
+    }
+
     public static native String getString();
 
     public static String getStringJni() {
@@ -739,6 +744,39 @@ public class Utils {
             e.printStackTrace();
             log(" 1 ", " 1 ");
             Toast.makeText(_ctxt, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void toast(int type, int duration, String message, Context context) {
+
+        String strColor = "#ffffff";
+
+        if (type == 2)
+            strColor = "#fcc485";
+
+        try {
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) ((Activity) context).
+                    findViewById(R.id.toast_layout_root));
+
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            text.setText(message);
+            text.setTextColor(Color.parseColor(strColor));
+
+            Toast toast = new Toast(context);
+            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+
+            //if (duration == 2)
+            toast.setDuration(Toast.LENGTH_LONG);
+           /* else
+                toast.setDuration(Toast.LENGTH_SHORT);*/
+
+            toast.setView(layout);
+            toast.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            log(" 1 ", " 1 ");
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     }
 

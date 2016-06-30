@@ -22,14 +22,16 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public static final String strTableNameCollection = "collections";
     public static final String strTableNameFiles = "files";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
+    private static String strDateFormat = "yyyy-MM-dd HH:mm:ss";
     private static SQLiteDatabase db;
     //private Utils utils;
+
     private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection + " ( id integer primary key autoincrement," +
-            " object_id VARCHAR(50), updated_date integer, document text, collection_name VARCHAR(50), status integer)";
+            " object_id VARCHAR(50), updated_date datetime, document text, collection_name VARCHAR(50), status integer)";
 
     private String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
             " name VARCHAR(100), url VARCHAR(300), file_type VARCHAR(10),  file_hash VARCHAR(50))";

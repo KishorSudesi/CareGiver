@@ -141,7 +141,51 @@ public class AppUtils {
 
         try {
             JSONObject jsonObject = new JSONObject(strDocument);
+
             if (jsonObject.has("provider_email")) {
+
+                //
+                //todo insert or update
+
+                /*
+                *String strUrl = jsonObject.getString("provider_profile_url");
+
+                String strUrlHash = Utils.sha512(strUrl);
+
+                Cursor cur = CareGiver.dbCon.fetch(
+                        DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
+                        new String[]{strProviderId}, null, "0, 1", true, null, null
+                );
+
+                String strHashLocal = "";
+
+                if (cur.getCount() <= 0) {
+                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{strProviderId,
+                                    strUrl, "IMAGE", strUrlHash},
+                            new String[]{"name", "url", "file_type", "file_hash"});
+                } else {
+
+                    cur.moveToFirst();
+
+                    while (!cur.isAfterLast()) {
+                        //strUrlLocal=cur.getString(0);
+                        strHashLocal = cur.getString(0);
+                        cur.moveToNext();
+                    }
+
+                    //CareGiver.dbCon.closeCursor(cur);
+
+                    if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
+                        CareGiver.dbCon.update(
+                                DbHelper.strTableNameFiles, "name=?",
+                                new String[]{strUrl, strUrlHash},
+                                new String[]{"url", "file_hash"}, new String[]{strProviderId}
+                        );
+                    }
+                }
+
+                CareGiver.dbCon.closeCursor(cur);
+                */
                 Config.providerModel = new ProviderModel(
                         jsonObject.getString("provider_name"),
                         jsonObject.getString("provider_profile_url"),
@@ -730,72 +774,36 @@ public class AppUtils {
 
     public void fetchActivities() {
 
-
-        /*String strUpdatedDate="";
-
-        if (DbCon.isDbOpened) {
-
-            Cursor cur = null;
-
-            try {
-
-                if(!strProviderId.equalsIgnoreCase("")) {
-
-                //_$createdAt
-
-                    strProviderId = AESCrypt.decrypt(Config.string, strProviderId);
-                    cur = CareGiver.dbCon.fetch(DbHelper.strTableNameCollection,
-                            new String[]{"updated_date", "document"}, "object_id=?",
-                            new String[]{strProviderId}, null, "0, 1", true, null, null);
-
-                    if (cur.getCount() > 0) {
-                        cur.moveToFirst();
-                            while (!cur.isAfterLast()) {
-                        strUpdatedDate = cur.getString(0);
-                        strDocumentLocal = cur.getString(1);
-                                cur.moveToNext();
-                            }
-                    }
-                    CareGiver.dbCon.closeCursor(cur);
-                }
-            } catch (Exception e) {
-                CareGiver.dbCon.closeCursor(cur);
-                e.printStackTrace();
-            }
-        }
-
-        ////////////////////////
-        String strUrlHash = Utils.sha512(jsonObjectVideo.getString("video_url"));
+      /*  String strDate = Config.UPDATE_DATE;
 
         Cursor cur = CareGiver.dbCon.fetch(
-                DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
-                new String[]{jsonObjectVideo.getString("video_name")}, null, "0, 1", true, null, null
+                DbHelper.strTableNameCollection, new String[]{"updated_date"}, "collection_name=?",
+                new String[]{Config.collectionActivity}, "updated_date DESC", "0, 1", true, null, null
         );
 
-        String strHashLocal = "";
-
-        if (cur.getCount() <= 0) {
-            CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectVideo.getString("video_name"),
-                            jsonObjectVideo.getString("video_url"), "VIDEO", strUrlHash},
-                    new String[]{"name", "url", "file_type", "file_hash"});
-        } else {
+        if (cur.getCount() > 0) {
 
             cur.moveToFirst();
-            strHashLocal = cur.getString(0);
-            cur.moveToNext();
-            CareGiver.dbCon.closeCursor(cur);
+
+            while (!cur.isAfterLast()) {
+                //strUrlLocal=cur.getString(0);
+                strHashLocal = cur.getString(0);
+                cur.moveToNext();
+            }
+
+            //CareGiver.dbCon.closeCursor(cur);
 
             if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
                 CareGiver.dbCon.update(
                         DbHelper.strTableNameFiles, "name=?",
-                        new String[]{jsonObjectVideo.getString("video_url"), strUrlHash},
-                        new String[]{"url", "file_hash"}, new String[]{jsonObjectVideo.getString("video_name")}
+                        new String[]{strUrl, strUrlHash},
+                        new String[]{"url", "file_hash"}, new String[]{strProviderId}
                 );
             }
         }
 
         CareGiver.dbCon.closeCursor(cur);*/
-        ////////////////////////
+
 
         Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
                 QueryBuilder.Operator.EQUALS);

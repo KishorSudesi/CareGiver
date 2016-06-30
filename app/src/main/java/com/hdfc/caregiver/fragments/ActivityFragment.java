@@ -31,9 +31,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 
-public class ActivityFragment extends Fragment implements SlideAndDragListView.OnListItemLongClickListener,
+public class ActivityFragment extends Fragment
+        implements SlideAndDragListView.OnListItemLongClickListener,
         SlideAndDragListView.OnDragListener, SlideAndDragListView.OnSlideListener,
-         SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnListItemClickListener,
+        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnListItemClickListener,
         SlideAndDragListView.OnItemDeleteListener {
 
     //private static final int PICK_CONTACT = 979;
@@ -118,17 +119,22 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                         && activityModel.getStrCreatedBy().equalsIgnoreCase("customer")
                         ) {
                     //cvh.linearParent.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_customer));
-                    cvh.textViewWhat.setTextColor(context.getResources().getColor(R.color.colorRed));
+                    cvh.textViewWhat.setTextColor(context.getResources().getColor(
+                            R.color.colorRed));
                 } else {
                     //cvh.linearParent.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_provider));
-                    cvh.textViewWhat.setTextColor(context.getResources().getColor(R.color.colorAccent));
+                    cvh.textViewWhat.setTextColor(context.getResources().getColor(
+                            R.color.colorAccent));
                 }
 
                 if (activityModel.getStrActivityStatus().equalsIgnoreCase("completed")) {
-                    cvh.imageTiming.setBackgroundResource(R.drawable.done);
-                    cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                    //cvh.imageTiming.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.done));
+                    cvh.imageTiming.setBackgroundResource(R.mipmap.done_action);
+                    cvh.imageTiming.setTextColor(context.getResources().getColor(
+                            R.color.colorWhite));
                     cvh.imageTiming.setText("");
-                    cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.status_closed));
+                    cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(
+                            R.drawable.status_closed));
                 }
 
                 if (activityModel.getStrActivityStatus().equalsIgnoreCase("new")
@@ -141,21 +147,26 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
 
                 if (activityModel.getStrActivityStatus().equalsIgnoreCase("inprocess")) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
-                    cvh.imageTiming.setText(utils.formatDateTime(activityModel.getStrActivityDate()));
-                    cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorAccent));
-                    cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.status_process));
+                    cvh.imageTiming.setText(utils.formatDateTime(activityModel.
+                            getStrActivityDate()));
+                    cvh.imageTiming.setTextColor(context.getResources().getColor(
+                            R.color.colorAccent));
+                    cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(
+                            R.drawable.status_process));
                 }
 
 
                 //Utils.log(activityModel.getStrDependentID(), " IMG ");
 
-                File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(activityModel.getStrDependentID().trim()));
+                File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(
+                        activityModel.getStrDependentID().trim()));
 
                 if (fileImage.exists()) {
                     String filename = fileImage.getAbsolutePath();
                     multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
                 } else {
-                    cvh.imagePerson.setImageDrawable(context.getResources().getDrawable(R.drawable.person_icon));
+                    cvh.imagePerson.setImageDrawable(context.getResources().getDrawable(
+                            R.drawable.person_icon));
                 }
             }
             return convertView;
@@ -232,17 +243,20 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
         mListView.setOnMenuItemClickListener(this);
         mListView.setOnItemDeleteListener(this);
 
-       /* mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        mListView.setOnListItemClickListener(new SlideAndDragListView.OnListItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-              *//*  intent.putExtra("WHICH_SCREEN",intWhichScreen);
-                System.out.println("Data contained in model class is : "+activityModels.get(position)+" Parent item is "+parent.getItemAtPosition(position));
-                intent.putExtra("WHICH_SCREEN",activityModels.get(position));
-                startActivity(intent);*//*
-
+            public void onListItemClick(View v, int position) {
+                if (activityModels.size() > 0) {
+                    Bundle args = new Bundle();
+                    args.putSerializable("ACTIVITY", activityModels.get(position));
+                    args.putInt("ACTIVITY_POSITION", position);
+                    Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                    intent.putExtras(args);
+                    startActivity(intent);
+                }
             }
-        });*/
+        });
 
         return view;
     }
@@ -397,7 +411,8 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                     case 1:
                         Intent sendIntent = new Intent(Intent.ACTION_VIEW);
 
-                        int iPosition = Config.dependentIds.indexOf(activityModel.getStrDependentID());
+                        int iPosition = Config.dependentIds.indexOf(activityModel.
+                                getStrDependentID());
 
                         String strNo2 = "";
 
@@ -414,7 +429,8 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
                         return Menu.ITEM_SCROLL_BACK;
                     case 2:
 
-                        int iPosition2 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
+                        int iPosition2 = Config.dependentIds.indexOf(activityModel.
+                                getStrDependentID());
 
                         String strNo3 = "";
 
@@ -447,11 +463,11 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
 
     @Override
     public void onListItemClick(View v, int position) {
-        if (activityModels.size() > 0) {
+      /*  if (activityModels.size() > 0) {
             Bundle args = new Bundle();
             args.putSerializable("ACTIVITY", activityModels.get(position));
 
-            if (!activityModels.get(position).getStrActivityStatus().equalsIgnoreCase("completed")) {
+            if (!activityModels.get(position).getStrActivityStatus().equalsIgnoreCase("completed")){
                 //ActivityModel obj = activityModels.get(position);
                 Intent intent = new Intent(getActivity(), FeatureActivity.class);
                 //args.putSerializable("ACTIVITY", obj);
@@ -460,6 +476,6 @@ public class ActivityFragment extends Fragment implements SlideAndDragListView.O
             } else {
                 utils.toast(2, 2, "Activity is Closed");
             }
-        }
+        }*/
     }
 }

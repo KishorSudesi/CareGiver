@@ -3,89 +3,122 @@
     android:id="@+id/linearParent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/margin_general"
+    android:layout_marginRight="@dimen/margin_general"
     android:background="@color/colorWhite"
     android:orientation="horizontal"
-    android:padding="@dimen/padding_general"
     android:weightSum="3">
 
-    <TextView
-        android:id="@+id/imageTiming"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_margin="@dimen/margin_general"
-        android:layout_weight="0.5"
-        android:background="@drawable/circle"
-        android:gravity="center" />
-
     <LinearLayout
-        android:id="@+id/llFirst"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_marginLeft="@dimen/margin_general"
         android:layout_marginRight="@dimen/margin_general"
-        android:layout_weight="2"
-        android:alpha="0.8"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_general">
+        android:layout_weight="0.5"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="2dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:background="@color/colorDarkBlue"
+            android:gravity="center" />
 
         <TextView
-            android:id="@+id/task_subject"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding_general"
-            android:singleLine="true"
-            android:textColor="@color/colorWhite"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/task_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding_general"
-            android:singleLine="true"
-            android:textColor="@color/colorWhite"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
+            android:id="@+id/imageTiming"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_height="50dp"
+            android:background="@drawable/circle"
+            android:gravity="center" />
 
-            <TextView
-                android:id="@+id/textViewWhat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.4"
-                android:textColor="#212121"
-                android:textStyle="bold"
-                />
-
-            <TextView
-                android:id="@+id/task_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.6"
-                android:padding="@dimen/padding_general"
-                android:textColor="#000000"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
+        <ImageView
+            android:layout_width="2dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:background="@color/colorDarkBlue"
+            android:gravity="center" />
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imagePerson"
+
+    <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_centerVertical="true"
-        android:layout_margin="@dimen/margin_general"
-        android:layout_weight="0.5" />
+        android:layout_height="120dp"
+        android:layout_weight="2"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_general">
+
+        <LinearLayout
+            android:id="@+id/llFirst"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_general"
+            android:alpha="0.8"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_general">
+
+            <TextView
+                android:id="@+id/task_subject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_general"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/task_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_general"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/textViewWhat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:textColor="#212121"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/task_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:padding="@dimen/padding_general"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:layout_weight="0.5"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imagePerson"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="@dimen/margin_general" />
+
+    </LinearLayout>
 
 </LinearLayout>

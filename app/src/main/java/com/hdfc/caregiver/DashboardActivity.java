@@ -115,7 +115,7 @@ public class DashboardActivity extends AppCompatActivity implements
         }
     }
 
-    public static void reloadActivities() {
+    private static void reloadActivities() {
 
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
             ActivityFragment.activityModels = Config.activityModels;
@@ -166,7 +166,6 @@ public class DashboardActivity extends AppCompatActivity implements
 
             loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
-
             textViewTasks = (TextView) findViewById(R.id.textViewTasks);
             textViewClients = (TextView) findViewById(R.id.textViewClients);
             textViewFeedback = (TextView) findViewById(R.id.textViewFeedback);
@@ -179,7 +178,8 @@ public class DashboardActivity extends AppCompatActivity implements
             try {
                 networkStateReceiver = new NetworkStateReceiver();
                 networkStateReceiver.addListener(this);
-                this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+                this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.
+                        ConnectivityManager.CONNECTIVITY_ACTION));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -263,11 +263,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
             Bundle bundle = getIntent().getExtras();
 
-            boolean b = false, bCreated = false;
+            boolean b = false;
 
             if (bundle != null) {
                 b = bundle.getBoolean("LOAD");
-                //b = bundle.getBoolean("CREATED");
             }
 
             /*if(bCreated){
@@ -484,8 +483,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
             String strDate = Utils.writeFormatDateDB.format(date);
 
-            DashboardFragment.strEndDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T23:59:59.999"));
-            DashboardFragment.strStartDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T00:00:00.000"));
+            DashboardFragment.strEndDate = utils.convertDateToStringQuery(utils.
+                    convertStringToDateQuery(strDate + "T23:59:59.999"));
+            DashboardFragment.strStartDate = utils.convertDateToStringQuery(utils.
+                    convertStringToDateQuery(strDate + "T00:00:00.000"));
 
 
             DashboardFragment.strDate = Utils.writeFormatDate.format(date);
@@ -498,7 +499,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
         } else {
             reloadActivities();
-            utils.toast(2, 2, getString(R.string.warning_internet));
+            utils.toast(2, 2, getString(R.string.warning_internet), DashboardActivity.this);
         }
     }
 
