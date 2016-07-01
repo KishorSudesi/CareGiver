@@ -26,7 +26,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
-    private static String strDateFormat = "yyyy-MM-dd HH:mm:ss";
+    private static String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
     private static SQLiteDatabase db;
     //private Utils utils;
 
