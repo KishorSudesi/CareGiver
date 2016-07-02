@@ -774,8 +774,7 @@ public class FeatureActivity extends AppCompatActivity {
                             strName = String.valueOf(calendar.getTimeInMillis());
                             strImageName = strName + ".jpeg";
 
-                            utils.selectImage(strImageName, null, FeatureActivity.this, false);
-
+                            utils.selectFile(strImageName, null, FeatureActivity.this, false);
                         } else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }
