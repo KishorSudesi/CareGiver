@@ -11,6 +11,7 @@
     <string name="menu_feedback">Feedback</string>
     <string name="my_tasks">My Tasks</string>
     <string name="header_creating_task">Creating Task</string>
+    <string name="check_in_care">Check In Care</string>
     <string name="header_task_details">Task Details</string>
     <string name="user_ratings">Overall User Ratings</string>
     <string name="done">Done</string>

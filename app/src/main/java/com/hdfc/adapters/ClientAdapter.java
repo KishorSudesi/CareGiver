@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hdfc.caregiver.CheckInCareProcess;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
@@ -73,6 +75,7 @@ public class ClientAdapter extends BaseExpandableListAdapter {
             //viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
             viewHolder.customer = (ImageView) convertView.findViewById(R.id.imageClients);
+
 
             convertView.setTag(viewHolder);
         } else {
@@ -154,6 +157,7 @@ public class ClientAdapter extends BaseExpandableListAdapter {
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
             viewHolder.contact = (TextView)convertView.findViewById(R.id.textViewContact);
             viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);
+            viewHolder.insert = (ImageButton)convertView.findViewById(R.id.insert);
 
             convertView.setTag(viewHolder);
         }else {
@@ -186,6 +190,16 @@ public class ClientAdapter extends BaseExpandableListAdapter {
             }
         });
 
+        viewHolder.insert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent next = new Intent(_context, CheckInCareProcess.class);
+                _context.startActivity(next);
+
+            }
+        });
+
         return convertView;
     }
 
@@ -202,5 +216,6 @@ public class ClientAdapter extends BaseExpandableListAdapter {
     public  class ViewHolder{
         TextView name, age, address, contact;
         ImageView client, customer;
+        ImageButton insert;
     }
 }
