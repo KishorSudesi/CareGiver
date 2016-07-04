@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +32,7 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ImageModel;
+import com.hdfc.views.RoundedImageView;
 import com.hdfc.views.TouchImageView;
 
 import java.io.File;
@@ -44,13 +47,15 @@ import java.util.GregorianCalendar;
  * Created by Admin on 01-07-2016.
  */
 public class CheckInCareProcess extends AppCompatActivity implements View.OnClickListener,AdapterView.OnItemSelectedListener {
-    private ImageView client,pick_date,pick_date2,pick_date3,pick_date4;
+    private ImageView pick_date,pick_date2,pick_date3,pick_date4;
+    static RoundedImageView client;
     private Spinner spinner,spinner1,spinner2,spinner3;
     private Button btn_submit,buttonHallAdd,buttonKitchenAdd,buttonWashroomAdd,buttonBedroomAdd;
     private EditText electronic,homeapplience,automobile,maidservices,kitchen_equipments,grocery;
     private TextView txtwater,txtgas,txtelectricity,txttelephone;
+    private TextView utilitystatus,waterstatus,gasstatus,electricitystatus,telephonestatus,equipmentstatus;
     private String strwaterDate,strelectricityDate,strtelephoneDate,strgasDate,_strwaterDate,_strelectricityDate,_strtelephoneDate,_strgasDate;
-    private static final String[]option = {"Y", "N"};
+    private static final String[]option = {"N", "Y"};
     int isClicked = 0;
     private static Utils utils;
     private static ProgressDialog mProgress = null;
@@ -70,6 +75,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private boolean success;
     private static boolean bViewLoaded, mImageChanged;
     private LinearLayout layout;
+    private CheckBox electrocheck,homecheck,autocheck;
 
 
 
@@ -128,7 +134,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         progressDialog = new ProgressDialog(CheckInCareProcess.this);
         mProgress = new ProgressDialog(CheckInCareProcess.this);
 
-        client = (ImageView)findViewById(R.id.clientimg);
+        electrocheck = (CheckBox)findViewById(R.id.electrocheck);
+        homecheck = (CheckBox)findViewById(R.id.homecheck);
+        autocheck= (CheckBox)findViewById(R.id.autocheck);
+
+        client = (RoundedImageView)findViewById(R.id.clientimg);
         pick_date = (ImageView)findViewById(R.id.pick_date);
         pick_date2 = (ImageView)findViewById(R.id.pick_date2);
         pick_date3 = (ImageView)findViewById(R.id.pick_date3);
@@ -150,6 +160,14 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         txtelectricity = (TextView)findViewById(R.id.electricitytxt);
         txttelephone = (TextView)findViewById(R.id.telephonetxt);
 
+        utilitystatus = (TextView)findViewById(R.id.utilitystatus);
+        equipmentstatus = (TextView)findViewById(R.id.equipmentstatus);
+        waterstatus = (TextView)findViewById(R.id.waterstatus);
+        gasstatus = (TextView)findViewById(R.id.gasstatus);
+        electricitystatus = (TextView)findViewById(R.id.electricitystatus);
+        telephonestatus = (TextView)findViewById(R.id.telephonestatus);
+
+
 
         electronic = (EditText)findViewById(R.id.electronics);
         homeapplience = (EditText)findViewById(R.id.homeapplience);
@@ -158,6 +176,18 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         kitchen_equipments = (EditText)findViewById(R.id.kitchen_equipments);
         grocery  =(EditText)findViewById(R.id.grocery);
 
+        if(electrocheck.isChecked()==true
+                &&homecheck.isChecked()==true
+                &&autocheck.isChecked()==true){
+
+            equipmentstatus.setVisibility(View.VISIBLE);
+            equipmentstatus.setText("Done");
+            equipmentstatus.setTextColor(Color.BLUE);
+        }else{
+            equipmentstatus.setVisibility(View.VISIBLE);
+            equipmentstatus.setText("Pending");
+            equipmentstatus.setTextColor(Color.RED);
+        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(CheckInCareProcess.this,
                 android.R.layout.simple_spinner_item,option);
@@ -188,6 +218,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         pick_date2.setOnClickListener(this);
         pick_date3.setOnClickListener(this);
         pick_date4.setOnClickListener(this);
+
+        electrocheck.setOnClickListener(this);
+        homecheck.setOnClickListener(this);
+        autocheck.setOnClickListener(this);
+
 
         buttonHallAdd.setOnClickListener(this);
         buttonKitchenAdd.setOnClickListener(this);
@@ -238,7 +273,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         .build()
                         .show();
                 break;
-            case R.id.buttonHallAdd:
+         /*   case R.id.buttonHallAdd:
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                         + ".jpeg", null, CheckInCareProcess.this, true);
 
@@ -257,9 +292,21 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                         + ".jpeg", null, CheckInCareProcess.this, true);
 
-                break;
+                break;*/
 
 
+        }
+        if(electrocheck.isChecked()==true
+                &&homecheck.isChecked()==true
+                &&autocheck.isChecked()==true){
+
+            equipmentstatus.setVisibility(View.VISIBLE);
+            equipmentstatus.setText("Done");
+            equipmentstatus.setTextColor(Color.BLUE);
+        }else{
+            equipmentstatus.setVisibility(View.VISIBLE);
+            equipmentstatus.setText("Pending");
+            equipmentstatus.setTextColor(Color.RED);
         }
     }
 
@@ -539,16 +586,68 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     }
 
 
-
-
-
-
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
         String item = parent.getItemAtPosition(position).toString();
 
+        switch(parent.getId()) {
+            case R.id.spinner:
+
+                if(item.equals("Y")){
+                    waterstatus.setText("Yes");
+                }else{
+                    waterstatus.setText("No");
+                }
+
+                break;
+
+            case R.id.spinner1:
+
+                if(item.equals("Y")){
+                    gasstatus.setText("Yes");
+                }else{
+                    gasstatus.setText("No");
+                }
+
+                break;
+
+            case R.id.spinner2:
+
+                if(item.equals("Y")){
+                    electricitystatus.setText("Yes");
+                }else{
+                    electricitystatus.setText("No");
+                }
+
+                break;
+
+
+            case R.id.spinner3:
+
+                if(item.equals("Y")){
+                    telephonestatus.setText("Yes");
+                }else{
+                    telephonestatus.setText("No");
+                }
+
+                break;
+        }
+
+
+        if(waterstatus.getText().toString().equals("Yes")
+                &&gasstatus.getText().toString().equals("Yes")
+                &&electricitystatus.getText().toString().equals("Yes")
+                &&telephonestatus.getText().toString().equals("Yes")){
+            utilitystatus.setVisibility(View.VISIBLE);
+            utilitystatus.setText("Done");
+            utilitystatus.setTextColor(Color.BLUE);
+        }else {
+            utilitystatus.setVisibility(View.VISIBLE);
+            utilitystatus.setText("Pending");
+            utilitystatus.setTextColor(Color.RED);
+
+        }
     }
 
     @Override
