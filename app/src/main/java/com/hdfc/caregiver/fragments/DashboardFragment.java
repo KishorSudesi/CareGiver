@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
@@ -137,22 +138,12 @@ public class DashboardFragment extends Fragment {
             }
         });*/
 
-        textView = (TextView) view.findViewById(R.id.textViewDate);
-        ImageView calender = (ImageView) view.findViewById(R.id.calendar);
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new SlideDateTimePicker.Builder(getActivity().getSupportFragmentManager())
-                        .setListener(listener)
-                        .setInitialDate(new Date())
-                        .build()
-                        .show();
-            }
-        });
+        LinearLayout layoutDate = (LinearLayout)view.findViewById(R.id.linearDate);
 
+        textView = (TextView) view.findViewById(R.id.textViewDate);
         textView.setText(strDate);
 
-        calender.setOnClickListener(new View.OnClickListener() {
+        layoutDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new SlideDateTimePicker.Builder(getActivity().getSupportFragmentManager())
@@ -162,6 +153,7 @@ public class DashboardFragment extends Fragment {
                         .show();
             }
         });
+
 /*
         ActivityFragment fragment = ActivityFragment.newInstance();
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();

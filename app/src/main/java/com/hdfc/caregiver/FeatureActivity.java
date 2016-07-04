@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -68,8 +69,10 @@ public class FeatureActivity extends AppCompatActivity {
     private TextView textViewTime;
     private MultiBitmapLoader multiBitmapLoader;
     private ImageView imgLogoHeaderTaskDetail;
-    private LinearLayout linearLayoutAttach;
+    private LinearLayout linearLayoutAttach,linearName;
     private Button done;
+    static int iPosition;
+    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +97,48 @@ public class FeatureActivity extends AppCompatActivity {
 
         TextView dependentName = (TextView) findViewById(R.id.textViewHeaderTaskDetail);
 
+        linearName = (LinearLayout)findViewById(R.id.linearName);
+
         mImageCount = 0;
         mImageChanged = false;
         bitmaps.clear();
+
+       linearName.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               final AlertDialog.Builder builder = new AlertDialog.Builder(FeatureActivity.this);
+               LayoutInflater inflater = getLayoutInflater();
+               View dialogView = inflater.inflate(R.layout.name_popup, null);
+               builder.setView(dialogView);
+
+               TextView textName = (TextView)dialogView.findViewById(R.id.textPopupName);
+               ImageView imageDialog = (ImageView)dialogView.findViewById(R.id.popupImage);
+
+               name = Config.dependentModels.get(iPosition).getStrName();
+               textName.setText(name);
+
+               File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrDependentID()));
+
+               if (fileImage.exists()) {
+                   String filename = fileImage.getAbsolutePath();
+                   multiBitmapLoader.loadBitmap(filename, imageDialog);
+               } else {
+                   if (imageDialog != null) {
+                       imageDialog.setImageDrawable(getResources().getDrawable(R.drawable.person_icon));
+                   }
+               }
+
+               builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+                       dialog.dismiss();
+                   }
+               });
+               AlertDialog alertDialog = builder.create();
+               //builder.show();
+               alertDialog.show();
+           }
+       });
 
         try {
             Bundle b = getIntent().getExtras();
@@ -119,8 +161,8 @@ public class FeatureActivity extends AppCompatActivity {
                 act = Config.activityModels.get(iActivityPosition);
 
 
-            int iPosition = Config.dependentIdsAdded.indexOf(act.getStrDependentID());
-            String name = Config.dependentModels.get(iPosition).getStrName();
+            iPosition = Config.dependentIdsAdded.indexOf(act.getStrDependentID());
+            name = Config.dependentModels.get(iPosition).getStrName();
 
             if (name.length() > 20)
                 name = name.substring(0, 18) + "..";
@@ -732,8 +774,7 @@ public class FeatureActivity extends AppCompatActivity {
                             strName = String.valueOf(calendar.getTimeInMillis());
                             strImageName = strName + ".jpeg";
 
-                            utils.selectImage(strImageName, null, FeatureActivity.this, false);
-
+                            utils.selectFile(strImageName, null, FeatureActivity.this, false);
                         } else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }

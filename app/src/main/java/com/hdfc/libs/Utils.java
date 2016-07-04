@@ -1079,7 +1079,6 @@ public class Utils {
 
         try {
             final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
-            // System.out.println("Pilu : " + FeatureActivity.IMAGE_COUNT);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
 
@@ -1087,11 +1086,9 @@ public class Utils {
             builder.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int item) {
-
                     //System.out.println(items[item].equals("Take Photo"));
                     if (items[item].equals("Take Photo")) {
                         openCamera(strFileName, fragment, activity);
-                        //System.out.println("DDDDDDDIC DIC DIC DIC ::: " + strFileName);
 
                     } else if (items[item].equals("Choose from Library")) {
 
@@ -1126,6 +1123,54 @@ public class Utils {
             });
             builder.show();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void selectFile(final String strFileName, final Fragment fragment,
+                           final Activity activity, final boolean isSingle){
+        try{
+            final CharSequence[] items = {"Take Photo", "Take Video", "Choose from Library", "Cancel"};
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
+            builder.setTitle("Select File");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(items[which].equals("Take Photo")){
+                        openCamera(strFileName,fragment,activity);
+                    } else if(items[which].equals("Take Video")){
+                        Intent intent = new Intent("android.media.action.VIDEO_CAMERA");
+                        activity.startActivityForResult(intent,1);
+                    } else if(items[which].equals("Choose from Library")){
+                        Intent intent;
+
+                        if (isSingle) {
+                            intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+
+                            if (fragment != null)
+                                fragment.startActivityForResult(Intent.createChooser(intent,
+                                        "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
+                            else
+                                activity.startActivityForResult(Intent.createChooser(intent,
+                                        "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
+                        } else {
+                            intent = new Intent(Action.ACTION_MULTIPLE_PICK);
+
+                            if (fragment != null)
+                                fragment.startActivityForResult(intent,
+                                        Config.START_GALLERY_REQUEST_CODE);
+                            else
+                                activity.startActivityForResult(intent,
+                                        Config.START_GALLERY_REQUEST_CODE);
+                        }
+                    }
+                }
+            });
+            builder.show();
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
