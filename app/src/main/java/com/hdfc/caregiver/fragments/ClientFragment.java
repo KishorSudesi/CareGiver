@@ -76,6 +76,7 @@ public class ClientFragment extends Fragment {
 
 
 
+
        /* ImageButton add = (ImageButton) view.findViewById(R.id.add_button);
 
         add.setOnClickListener(new View.OnClickListener() {

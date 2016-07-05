@@ -30,7 +30,9 @@ import android.widget.TextView;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.config.Config;
+import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
+import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.views.RoundedImageView;
 import com.hdfc.views.TouchImageView;
@@ -57,6 +59,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private String strwaterDate,strelectricityDate,strtelephoneDate,strgasDate,_strwaterDate,_strelectricityDate,_strtelephoneDate,_strgasDate;
     private static final String[]option = {"N", "Y"};
     int isClicked = 0;
+    int isHallFlag = 0;
     private static Utils utils;
     private static ProgressDialog mProgress = null;
     private ProgressDialog progressDialog;
@@ -66,15 +69,22 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     public static Bitmap bitmap = null;
     private static boolean isImageChanged=false;
     private static ArrayList<String> imagePaths = new ArrayList<>();
-    private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
-    private static ArrayList<ImageModel> imageModels;
+    private static ArrayList<Bitmap> hallbitmaps = new ArrayList<>();
+    private static ArrayList<Bitmap> kitchenbitmaps = new ArrayList<>();
+    private static ArrayList<Bitmap> washroombitmaps = new ArrayList<>();
+    private static ArrayList<Bitmap> bedroombitmaps = new ArrayList<>();
+    private static ArrayList<ImageModel> hallimageModels = new ArrayList<>();
+    private static ArrayList<ImageModel> kitchenimageModels = new ArrayList<>();
+    private static ArrayList<ImageModel> washroomimageModels = new ArrayList<>();
+    private static ArrayList<ImageModel> bedroomimageModels = new ArrayList<>();
     public static int IMAGE_COUNT = 0;
     private int mImageCount, mImageUploadCount;
     private static String strName;
     private static boolean bLoad, isCompleted = false;
     private boolean success;
+    private MultiBitmapLoader multiBitmapLoader;
     private static boolean bViewLoaded, mImageChanged;
-    private LinearLayout layout;
+    private LinearLayout layouthall,layoutkitchen,layoutwashroom,layoutbedroom;
     private CheckBox electrocheck,homecheck,autocheck;
 
 
@@ -127,7 +137,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_in_care);
 
-        layout = (LinearLayout) findViewById(R.id.linear_hall);
+        layouthall = (LinearLayout) findViewById(R.id.linear_hall);
+        layoutkitchen = (LinearLayout)findViewById(R.id.linear_kitchen);
+        layoutwashroom = (LinearLayout)findViewById(R.id.linear_washroom);
+        layoutbedroom = (LinearLayout)findViewById(R.id.linear_bedroom);
+        multiBitmapLoader = new MultiBitmapLoader(CheckInCareProcess.this);
 
 
         utils = new Utils(CheckInCareProcess.this);
@@ -273,26 +287,26 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         .build()
                         .show();
                 break;
-         /*   case R.id.buttonHallAdd:
+            case R.id.buttonHallAdd:
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareProcess.this, true);
+                        + ".jpeg", null, CheckInCareProcess.this, false);
 
                 break;
             case R.id.buttonKitchenAdd:
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareProcess.this, true);
+                        + ".jpeg", null, CheckInCareProcess.this, false);
 
                 break;
             case R.id.buttonWashroomAdd:
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareProcess.this, true);
+                        + ".jpeg", null, CheckInCareProcess.this, false);
 
                 break;
             case R.id.buttonBedroomAdd:
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareProcess.this, true);
+                        + ".jpeg", null, CheckInCareProcess.this, false);
 
-                break;*/
+                break;
 
 
         }
@@ -324,7 +338,6 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     }
 
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -332,8 +345,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         if (resultCode == Activity.RESULT_OK) {
             try {
 
-                mProgress.setMessage(getString(R.string.loading));
-                mProgress.show();
+             /*   mProgress.setMessage(getString(R.string.loading));
+                mProgress.show();*/
                 switch (requestCode) {
                     case Config.START_CAMERA_REQUEST_CODE:
 
@@ -350,7 +363,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                         String[] all_path = intent.getStringArrayExtra("all_path");
 
-                        Collections.addAll(imagePaths, all_path);
+
+                            Collections.addAll(imagePaths, all_path);
 
                         Thread backgroundThread = new BackgroundThread();
                         backgroundThread.start();
@@ -367,50 +381,150 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private class BackgroundThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            addImages();
+        if(isHallFlag ==1) {
+            addHallImages();
+        }
+            if(isHallFlag ==2) {
+                addKitchenImages();
+            }
+            if(isHallFlag ==3) {
+                addWashroomImages();
+            }
+            if(isHallFlag ==4) {
+                addBedroomImages();
+            }
         }
     }
 
     private class BackgroundThread extends Thread {
         @Override
         public void run() {
+                if(isHallFlag==1) {
+                try {
+                    for (int i = 0; i < imagePaths.size(); i++) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strTime = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strTime + ".jpeg";
 
-            try {
-                for(int i=0;i<imagePaths.size();i++) {
-                    Calendar calendar = Calendar.getInstance();
-                    String strTime = String.valueOf(calendar.getTimeInMillis());
-                    String strFileName = strTime + ".jpeg";
+                        Date date = new Date();
 
-                    //File galleryFile = utils.createFileInternalImage(strFileName);
-                    //strImageName = galleryFile.getAbsolutePath();
-                    Date date = new Date();
+                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                    File mCopyFile = utils.getInternalFileImages(strTime);
-                    utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
+                        imageModel.setmIsNew(true);
 
-                    //utils.copyFile(new File(strImageName), mCopyFile);
-                    //
+                        hallimageModels.add(imageModel);
 
-                    ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
-                    imageModel.setmIsNew(true);
+                        hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
 
-                    imageModels.add(imageModel);
-                    //
+                        IMAGE_COUNT++;
 
-                    utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-
-                    bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                    IMAGE_COUNT++;
-
-                    mImageCount++;
+                        mImageCount++;
+                    }
+                    backgroundThreadHandler.sendEmptyMessage(0);
+                } catch (OutOfMemoryError | Exception e) {
+                    e.printStackTrace();
                 }
-                backgroundThreadHandler.sendEmptyMessage(0);
-            } catch (OutOfMemoryError | Exception e) {
-                e.printStackTrace();
+            }
+            if(isHallFlag==2) {
+                try {
+                    for (int i = 0; i < imagePaths.size(); i++) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strTime = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strTime + ".jpeg";
+
+                        Date date = new Date();
+
+                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
+
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+
+                        imageModel.setmIsNew(true);
+
+                            kitchenimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+
+                        kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        IMAGE_COUNT++;
+
+                        mImageCount++;
+                    }
+                    backgroundThreadHandler.sendEmptyMessage(0);
+                } catch (OutOfMemoryError | Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if(isHallFlag==3) {
+                try {
+                    for (int i = 0; i < imagePaths.size(); i++) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strTime = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strTime + ".jpeg";
+
+                        Date date = new Date();
+
+                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
+
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+
+                        imageModel.setmIsNew(true);
+
+                        washroomimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+
+                        washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        IMAGE_COUNT++;
+
+                        mImageCount++;
+                    }
+                    backgroundThreadHandler.sendEmptyMessage(0);
+                } catch (OutOfMemoryError | Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if(isHallFlag==4) {
+                try {
+                    for (int i = 0; i < imagePaths.size(); i++) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strTime = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strTime + ".jpeg";
+
+                        Date date = new Date();
+
+                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
+
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+
+                        imageModel.setmIsNew(true);
+
+                        bedroomimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+
+                        bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        IMAGE_COUNT++;
+
+                        mImageCount++;
+                    }
+                    backgroundThreadHandler.sendEmptyMessage(0);
+                } catch (OutOfMemoryError | Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -418,42 +532,195 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private class BackgroundThreadCamera extends Thread {
         @Override
         public void run() {
-            try {
-                if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+            if(isHallFlag==1) {
+                try {
+                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
 
-                    File mCopyFile = utils.getInternalFileImages(strName);
+                        File mCopyFile = utils.getInternalFileImages(strName);
 
-                    utils.copyFile(new File(strImageName), mCopyFile);
+                        utils.copyFile(new File(strImageName), mCopyFile);
 
-                    Date date = new Date();
-                    ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-                    imageModel.setmIsNew(true);
-                    //arrayListImageModel.add(imageModel);
+                        Date date = new Date();
+                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        imageModel.setmIsNew(true);
 
-                    imageModels.add(imageModel);
+                            hallimageModels.add(imageModel);
 
-                    utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
-                    bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
 
-                    mImageCount++;
+                        mImageCount++;
 
-                    IMAGE_COUNT++;
+                        IMAGE_COUNT++;
+                    }
+
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
                 }
+            }
+            if(isHallFlag==2) {
+                try {
+                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
 
-            } catch (Exception | OutOfMemoryError e) {
-                e.printStackTrace();
+                        File mCopyFile = utils.getInternalFileImages(strName);
+
+                        utils.copyFile(new File(strImageName), mCopyFile);
+
+                        Date date = new Date();
+                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        imageModel.setmIsNew(true);
+
+                        kitchenimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+                        kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        mImageCount++;
+
+                        IMAGE_COUNT++;
+                    }
+
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if(isHallFlag==3) {
+                try {
+                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+
+                        File mCopyFile = utils.getInternalFileImages(strName);
+
+                        utils.copyFile(new File(strImageName), mCopyFile);
+
+                        Date date = new Date();
+                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        imageModel.setmIsNew(true);
+
+                        washroomimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+                        washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        mImageCount++;
+
+                        IMAGE_COUNT++;
+                    }
+
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if(isHallFlag==4) {
+                try {
+                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+
+                        File mCopyFile = utils.getInternalFileImages(strName);
+
+                        utils.copyFile(new File(strImageName), mCopyFile);
+
+                        Date date = new Date();
+                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        imageModel.setmIsNew(true);
+
+                        bedroomimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+                        bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        mImageCount++;
+
+                        IMAGE_COUNT++;
+                    }
+
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
             }
             backgroundThreadHandler.sendEmptyMessage(0);
         }
     }
 
-    private void addImages() {
+    private class BackgroundThreadImages extends Thread {
+        @Override
+        public void run() {
+            if(isHallFlag==1) {
+                try {
 
-        layout.removeAllViews();
+                    for (ImageModel imageModel : hallimageModels) {
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                            hallbitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
 
-        if (imageModels != null) {
-            for (int i = 0; i < imageModels.size(); i++) {
+                            imageModel.setmIsNew(false);
+
+                            IMAGE_COUNT++;
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if(isHallFlag==2) {
+                try {
+
+                    for (ImageModel imageModel : kitchenimageModels) {
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                            kitchenbitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                            imageModel.setmIsNew(false);
+
+                            IMAGE_COUNT++;
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if(isHallFlag==3) {
+                try {
+
+                    for (ImageModel imageModel : washroomimageModels) {
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                            washroombitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                            imageModel.setmIsNew(false);
+
+                            IMAGE_COUNT++;
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if(isHallFlag==4) {
+                try {
+
+                    for (ImageModel imageModel : bedroomimageModels) {
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                            bedroombitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                            imageModel.setmIsNew(false);
+
+                            IMAGE_COUNT++;
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            backgroundThreadHandler.sendEmptyMessage(0);
+        }
+    }
+
+    private void addHallImages() {
+
+        layouthall.removeAllViews();
+
+        if (hallimageModels != null) {
+            for (int i = 0; i < hallimageModels.size(); i++) {
                 try {
                     final ImageView imageView = new ImageView(CheckInCareProcess.this);
                     imageView.setPadding(0, 0, 3, 0);
@@ -461,26 +728,17 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
-                    Utils.log(String.valueOf(imageModels.get(i).getStrImageName() + " # " +
-                            imageModels.get(i).getStrImagePath()), " height 0 ");
+                    Utils.log(String.valueOf(hallimageModels.get(i).getStrImageName() + " # " +
+                            hallimageModels.get(i).getStrImagePath()), " height 0 ");
 
-                    Utils.log(String.valueOf(bitmaps.get(i).getHeight()), " height ");
+                    Utils.log(String.valueOf(hallbitmaps.get(i).getHeight()), " height ");
 
                     imageView.setLayoutParams(layoutParams);
-                    imageView.setImageBitmap(bitmaps.get(i));
-                    imageView.setTag(imageModels.get(i));
+                    imageView.setImageBitmap(hallbitmaps.get(i));
+                    imageView.setTag(hallimageModels.get(i));
                     imageView.setTag(R.id.three, i);
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
-                    /*imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-
-
-
-                            return false;
-                        }
-                    });*/
 
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -534,16 +792,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                                     mImageChanged = true;
 
-                                                    imageModels.remove(mImageModel);
+                                                    hallimageModels.remove(mImageModel);
 
-                                                    bitmaps.remove(mPosition);
+                                                    hallbitmaps.remove(mPosition);
                                                 }
                                                 if (success) {
                                                     utils.toast(2, 2, getString(R.string.file_deleted));
                                                 }
                                                 arg0.dismiss();
                                                 dialog.dismiss();
-                                                addImages();
+                                                addHallImages();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
@@ -562,7 +820,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
 
                             try {
-                                mOriginal.setImageBitmap(bitmaps.get(mPosition));
+                                mOriginal.setImageBitmap(hallbitmaps.get(mPosition));
                                 //, Config.intWidth, Config.intHeight)
                             } catch (OutOfMemoryError oOm) {
                                 oOm.printStackTrace();
@@ -575,7 +833,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         }
                     });
 
-                    layout.addView(imageView);
+                    layouthall.addView(imageView);
                 } catch (Exception | OutOfMemoryError e) {
                     e.printStackTrace();
                 }
@@ -584,6 +842,392 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
 
     }
+
+    private void addKitchenImages() {
+
+        layoutkitchen.removeAllViews();
+
+        if (kitchenimageModels != null) {
+            for (int i = 0; i < kitchenimageModels.size(); i++) {
+                try {
+                    final ImageView imageView = new ImageView(CheckInCareProcess.this);
+                    imageView.setPadding(0, 0, 3, 0);
+
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    layoutParams.setMargins(10, 10, 10, 10);
+
+                    Utils.log(String.valueOf(kitchenimageModels.get(i).getStrImageName() + " # " +
+                            kitchenimageModels.get(i).getStrImagePath()), " height 0 ");
+
+                    Utils.log(String.valueOf(kitchenbitmaps.get(i).getHeight()), " height ");
+
+                    imageView.setLayoutParams(layoutParams);
+                    imageView.setImageBitmap(kitchenbitmaps.get(i));
+                    imageView.setTag(kitchenimageModels.get(i));
+                    imageView.setTag(R.id.three, i);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            final ImageModel mImageModel = (ImageModel) v.getTag();
+
+                            final int mPosition = (int) v.getTag(R.id.three);
+
+                            final Dialog dialog = new Dialog(CheckInCareProcess.this);
+                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                            dialog.setContentView(R.layout.image_dialog_layout);
+
+                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
+                            TextView textViewClose = (TextView) dialog.findViewById(R.id.textViewClose);
+                            Button buttonDelete = (Button) dialog.findViewById(R.id.textViewTitle);
+
+                            if (isCompleted)
+                                buttonDelete.setVisibility(View.INVISIBLE);
+
+
+                            textViewClose.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //mOriginal.
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            buttonDelete.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    //
+                                    final AlertDialog.Builder alertbox =
+                                            new AlertDialog.Builder(CheckInCareProcess.this);
+                                    alertbox.setTitle(getString(R.string.delete_image));
+                                    alertbox.setMessage(getString(R.string.confirm_delete_image));
+                                    alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+                                            try {
+                                                File fDelete = utils.getInternalFileImages(mImageModel.getStrImageName());
+
+                                                if (fDelete.exists()) {
+                                                    success = fDelete.delete();
+
+                                                    if (mImageModel.ismIsNew())
+                                                        mImageCount--;
+
+                                                    mImageChanged = true;
+
+                                                    kitchenimageModels.remove(mImageModel);
+
+                                                    kitchenbitmaps.remove(mPosition);
+                                                }
+                                                if (success) {
+                                                    utils.toast(2, 2, getString(R.string.file_deleted));
+                                                }
+                                                arg0.dismiss();
+                                                dialog.dismiss();
+                                                addKitchenImages();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                    alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+                                            arg0.dismiss();
+                                        }
+                                    });
+                                    alertbox.show();
+                                    //
+                                }
+                            });
+
+
+
+                            try {
+                                mOriginal.setImageBitmap(kitchenbitmaps.get(mPosition));
+                                //, Config.intWidth, Config.intHeight)
+                            } catch (OutOfMemoryError oOm) {
+                                oOm.printStackTrace();
+                            }
+                            dialog.setCancelable(true);
+
+                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                            dialog.show();
+
+                        }
+                    });
+
+                    layoutkitchen.addView(imageView);
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+    }
+
+    private void addWashroomImages() {
+
+        layoutwashroom.removeAllViews();
+
+        if (washroomimageModels != null) {
+            for (int i = 0; i < washroomimageModels.size(); i++) {
+                try {
+                    final ImageView imageView = new ImageView(CheckInCareProcess.this);
+                    imageView.setPadding(0, 0, 3, 0);
+
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    layoutParams.setMargins(10, 10, 10, 10);
+
+                    Utils.log(String.valueOf(washroomimageModels.get(i).getStrImageName() + " # " +
+                            washroomimageModels.get(i).getStrImagePath()), " height 0 ");
+
+                    Utils.log(String.valueOf(washroombitmaps.get(i).getHeight()), " height ");
+
+                    imageView.setLayoutParams(layoutParams);
+                    imageView.setImageBitmap(washroombitmaps.get(i));
+                    imageView.setTag(washroomimageModels.get(i));
+                    imageView.setTag(R.id.three, i);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            final ImageModel mImageModel = (ImageModel) v.getTag();
+
+                            final int mPosition = (int) v.getTag(R.id.three);
+
+                            final Dialog dialog = new Dialog(CheckInCareProcess.this);
+                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                            dialog.setContentView(R.layout.image_dialog_layout);
+
+                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
+                            TextView textViewClose = (TextView) dialog.findViewById(R.id.textViewClose);
+                            Button buttonDelete = (Button) dialog.findViewById(R.id.textViewTitle);
+
+                            if (isCompleted)
+                                buttonDelete.setVisibility(View.INVISIBLE);
+
+
+                            textViewClose.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //mOriginal.
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            buttonDelete.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    //
+                                    final AlertDialog.Builder alertbox =
+                                            new AlertDialog.Builder(CheckInCareProcess.this);
+                                    alertbox.setTitle(getString(R.string.delete_image));
+                                    alertbox.setMessage(getString(R.string.confirm_delete_image));
+                                    alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+                                            try {
+                                                File fDelete = utils.getInternalFileImages(mImageModel.getStrImageName());
+
+                                                if (fDelete.exists()) {
+                                                    success = fDelete.delete();
+
+                                                    if (mImageModel.ismIsNew())
+                                                        mImageCount--;
+
+                                                    mImageChanged = true;
+
+                                                    washroomimageModels.remove(mImageModel);
+
+                                                    washroombitmaps.remove(mPosition);
+                                                }
+                                                if (success) {
+                                                    utils.toast(2, 2, getString(R.string.file_deleted));
+                                                }
+                                                arg0.dismiss();
+                                                dialog.dismiss();
+                                                addWashroomImages();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                    alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+                                            arg0.dismiss();
+                                        }
+                                    });
+                                    alertbox.show();
+                                    //
+                                }
+                            });
+
+
+
+                            try {
+                                mOriginal.setImageBitmap(washroombitmaps.get(mPosition));
+                                //, Config.intWidth, Config.intHeight)
+                            } catch (OutOfMemoryError oOm) {
+                                oOm.printStackTrace();
+                            }
+                            dialog.setCancelable(true);
+
+                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                            dialog.show();
+
+                        }
+                    });
+
+                    layoutwashroom.addView(imageView);
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+    }
+
+    private void addBedroomImages() {
+
+        layoutbedroom.removeAllViews();
+
+        if (bedroomimageModels != null) {
+            for (int i = 0; i < bedroomimageModels.size(); i++) {
+                try {
+                    final ImageView imageView = new ImageView(CheckInCareProcess.this);
+                    imageView.setPadding(0, 0, 3, 0);
+
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    layoutParams.setMargins(10, 10, 10, 10);
+
+                    Utils.log(String.valueOf(bedroomimageModels.get(i).getStrImageName() + " # " +
+                            bedroomimageModels.get(i).getStrImagePath()), " height 0 ");
+
+                    Utils.log(String.valueOf(bedroombitmaps.get(i).getHeight()), " height ");
+
+                    imageView.setLayoutParams(layoutParams);
+                    imageView.setImageBitmap(bedroombitmaps.get(i));
+                    imageView.setTag(bedroomimageModels.get(i));
+                    imageView.setTag(R.id.three, i);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            final ImageModel mImageModel = (ImageModel) v.getTag();
+
+                            final int mPosition = (int) v.getTag(R.id.three);
+
+                            final Dialog dialog = new Dialog(CheckInCareProcess.this);
+                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                            dialog.setContentView(R.layout.image_dialog_layout);
+
+                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
+                            TextView textViewClose = (TextView) dialog.findViewById(R.id.textViewClose);
+                            Button buttonDelete = (Button) dialog.findViewById(R.id.textViewTitle);
+
+                            if (isCompleted)
+                                buttonDelete.setVisibility(View.INVISIBLE);
+
+
+                            textViewClose.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //mOriginal.
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            buttonDelete.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    //
+                                    final AlertDialog.Builder alertbox =
+                                            new AlertDialog.Builder(CheckInCareProcess.this);
+                                    alertbox.setTitle(getString(R.string.delete_image));
+                                    alertbox.setMessage(getString(R.string.confirm_delete_image));
+                                    alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+                                            try {
+                                                File fDelete = utils.getInternalFileImages(mImageModel.getStrImageName());
+
+                                                if (fDelete.exists()) {
+                                                    success = fDelete.delete();
+
+                                                    if (mImageModel.ismIsNew())
+                                                        mImageCount--;
+
+                                                    mImageChanged = true;
+
+                                                    bedroomimageModels.remove(mImageModel);
+
+                                                    bedroombitmaps.remove(mPosition);
+                                                }
+                                                if (success) {
+                                                    utils.toast(2, 2, getString(R.string.file_deleted));
+                                                }
+                                                arg0.dismiss();
+                                                dialog.dismiss();
+                                                addBedroomImages();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                    alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+                                            arg0.dismiss();
+                                        }
+                                    });
+                                    alertbox.show();
+                                    //
+                                }
+                            });
+
+
+
+                            try {
+                                mOriginal.setImageBitmap(bedroombitmaps.get(mPosition));
+                                //, Config.intWidth, Config.intHeight)
+                            } catch (OutOfMemoryError oOm) {
+                                oOm.printStackTrace();
+                            }
+                            dialog.setCancelable(true);
+
+                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                            dialog.show();
+
+                        }
+                    });
+
+                    layoutbedroom.addView(imageView);
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+    }
+
+
 
 
     @Override
@@ -653,5 +1297,98 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+
+        //todo bad design redo
+
+
+        utils = new Utils(CheckInCareProcess.this);
+
+        try {
+
+            if (buttonHallAdd != null) {
+                buttonHallAdd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isHallFlag = 1;
+                        if (IMAGE_COUNT < 20) {
+
+                            utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
+                                    + ".jpeg", null, CheckInCareProcess.this, false);
+                        } else {
+                            utils.toast(2, 2, "Maximum 20 Images only Allowed");
+                        }
+
+                    }
+                });
+            }
+            if (buttonKitchenAdd != null) {
+                buttonKitchenAdd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isHallFlag = 2;
+                        if (IMAGE_COUNT < 20) {
+
+                            utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
+                                    + ".jpeg", null, CheckInCareProcess.this, false);
+                        } else {
+                            utils.toast(2, 2, "Maximum 20 Images only Allowed");
+                        }
+
+                    }
+                });
+            }
+            if (buttonWashroomAdd != null) {
+                buttonWashroomAdd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isHallFlag = 3;
+                        if (IMAGE_COUNT < 20) {
+
+                            utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
+                                    + ".jpeg", null, CheckInCareProcess.this, false);
+                        } else {
+                            utils.toast(2, 2, "Maximum 20 Images only Allowed");
+                        }
+
+                    }
+                });
+            }
+            if (buttonBedroomAdd != null) {
+                buttonBedroomAdd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isHallFlag = 4;
+                        if (IMAGE_COUNT < 20) {
+
+                            utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
+                                    + ".jpeg", null, CheckInCareProcess.this, false);
+                        } else {
+                            utils.toast(2, 2, "Maximum 20 Images only Allowed");
+                        }
+
+                    }
+                });
+            }
+
+
+
+            if (!bViewLoaded) {
+
+                bViewLoaded = true;
+
+                backgroundThreadHandler = new BackgroundThreadHandler();
+                Thread backgroundThreadImages = new BackgroundThreadImages();
+                backgroundThreadImages.start();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
