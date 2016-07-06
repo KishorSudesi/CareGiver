@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hdfc.adapters.ClientAdapter;
+import com.hdfc.adapters.ExpandableListAdapter;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.ClientModel;
@@ -26,7 +28,7 @@ public class ClientFragment extends Fragment {
     private static ExpandableListView expListView;
     private static List<CustomerModel> listDataHeader = new ArrayList<>();
     private static HashMap<CustomerModel, List<DependentModel>> listDataChild = new HashMap<>();
-    private static ClientAdapter listAdapter;
+    private static ExpandableListAdapter listAdapter;
 
     public static ClientFragment newInstance() {
         ClientFragment fragment = new ClientFragment();
@@ -70,11 +72,64 @@ public class ClientFragment extends Fragment {
 
         prepareListData();
 
-        listAdapter = new ClientAdapter(getActivity(), listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapter(getActivity(), listDataHeader, listDataChild);
         expListView.setAdapter(listAdapter);
         expListView.setEmptyView(textViewEmpty);
 
+        // Listview Group click listener
+        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v,
+                                        int groupPosition, long id) {
+                // Toast.makeText(getApplicationContext(),
+                // "Group Clicked " + listDataHeader.get(groupPosition),
+                // Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+        // Listview Group expanded listener
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                Toast.makeText(getActivity(),
+                        listDataHeader.get(groupPosition) + " Expanded",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Listview Group collasped listener
+        expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+                Toast.makeText(getActivity(),
+                        listDataHeader.get(groupPosition) + " Collapsed",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        // Listview on child click listener
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+                // TODO Auto-generated method stub
+                Toast.makeText(
+                        getActivity(),
+                        listDataHeader.get(groupPosition)
+                                + " : "
+                                + listDataChild.get(
+                                listDataHeader.get(groupPosition)).get(
+                                childPosition), Toast.LENGTH_SHORT)
+                        .show();
+                return false;
+            }
+        });
 
 
        /* ImageButton add = (ImageButton) view.findViewById(R.id.add_button);

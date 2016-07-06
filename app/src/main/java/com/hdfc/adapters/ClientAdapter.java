@@ -30,18 +30,20 @@ public class ClientAdapter extends BaseExpandableListAdapter {
     private HashMap<CustomerModel, List<DependentModel>> _listDataChild;
     private Utils utils;
     private MultiBitmapLoader multiBitmapLoader;
+    private final LayoutInflater inf;
 //    private ExpandableListView expListView;
 
    /* public ClientAdapter(){
     }*/
 
-    public ClientAdapter(Context context, List<CustomerModel> listDataHeader,
+    public ClientAdapter(Context context,List<CustomerModel> listDataHeader,
                          HashMap<CustomerModel, List<DependentModel>> listChildData) {
         this._context = context;
         utils = new Utils(_context);
         multiBitmapLoader = new MultiBitmapLoader(_context);
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
+        inf = LayoutInflater.from(_context);
     }
 
     @Override
@@ -63,9 +65,9 @@ public class ClientAdapter extends BaseExpandableListAdapter {
         ViewHolder viewHolder;
 
         if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this._context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.list_item_dependents, null);
+           /* LayoutInflater infalInflater = (LayoutInflater) this._context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);*/
+            convertView = inf.inflate(R.layout.list_item_dependents, null);
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
 
@@ -150,8 +152,10 @@ public class ClientAdapter extends BaseExpandableListAdapter {
         ViewHolder viewHolder;
 
         if (convertView == null) {
+/*
             LayoutInflater infalInflater = (LayoutInflater) this._context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.list_group_customers, null);
+*/
+            convertView = inf.inflate(R.layout.list_group_customers, null);
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
@@ -169,6 +173,7 @@ public class ClientAdapter extends BaseExpandableListAdapter {
         viewHolder.address.setText(customerModel.getStrAddress());
 
         viewHolder.client.setTag(customerModel);
+        viewHolder.insert.setTag(customerModel);
 
         File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(customerModel.getStrCustomerID()));
 
@@ -193,7 +198,7 @@ public class ClientAdapter extends BaseExpandableListAdapter {
         viewHolder.insert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Config.customerModel = (CustomerModel) v.getTag();
                 Intent next = new Intent(_context, CheckInCareProcess.class);
                 _context.startActivity(next);
 

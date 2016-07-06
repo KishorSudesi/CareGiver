@@ -33,6 +33,7 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
+import com.hdfc.models.CustomerModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.views.RoundedImageView;
 import com.hdfc.views.TouchImageView;
@@ -50,11 +51,11 @@ import java.util.GregorianCalendar;
  */
 public class CheckInCareProcess extends AppCompatActivity implements View.OnClickListener,AdapterView.OnItemSelectedListener {
     private ImageView pick_date,pick_date2,pick_date3,pick_date4;
-    static RoundedImageView client;
+    private ImageView client;
     private Spinner spinner,spinner1,spinner2,spinner3;
     private Button btn_submit,buttonHallAdd,buttonKitchenAdd,buttonWashroomAdd,buttonBedroomAdd;
     private EditText electronic,homeapplience,automobile,maidservices,kitchen_equipments,grocery;
-    private TextView txtwater,txtgas,txtelectricity,txttelephone;
+    private TextView txtwater,txtgas,txtelectricity,txttelephone,clientnametxt;
     private TextView utilitystatus,waterstatus,gasstatus,electricitystatus,telephonestatus,equipmentstatus;
     private String strwaterDate,strelectricityDate,strtelephoneDate,strgasDate,_strwaterDate,_strelectricityDate,_strtelephoneDate,_strgasDate;
     private static final String[]option = {"N", "Y"};
@@ -63,7 +64,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private static Utils utils;
     private static ProgressDialog mProgress = null;
     private ProgressDialog progressDialog;
-    public static String strImageName = "";
+    public static String strImageName = "",strClientName = "";
     public static Uri uri;
     private static Handler backgroundThreadHandler;
     public static Bitmap bitmap = null;
@@ -137,6 +138,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_in_care);
 
+
         layouthall = (LinearLayout) findViewById(R.id.linear_hall);
         layoutkitchen = (LinearLayout)findViewById(R.id.linear_kitchen);
         layoutwashroom = (LinearLayout)findViewById(R.id.linear_washroom);
@@ -152,7 +154,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         homecheck = (CheckBox)findViewById(R.id.homecheck);
         autocheck= (CheckBox)findViewById(R.id.autocheck);
 
-        client = (RoundedImageView)findViewById(R.id.clientimg);
+        client = (ImageView)findViewById(R.id.clientimg);
         pick_date = (ImageView)findViewById(R.id.pick_date);
         pick_date2 = (ImageView)findViewById(R.id.pick_date2);
         pick_date3 = (ImageView)findViewById(R.id.pick_date3);
@@ -173,6 +175,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         txtgas = (TextView)findViewById(R.id.gastxt);
         txtelectricity = (TextView)findViewById(R.id.electricitytxt);
         txttelephone = (TextView)findViewById(R.id.telephonetxt);
+        clientnametxt = (TextView)findViewById(R.id.clientnametxt);
 
         utilitystatus = (TextView)findViewById(R.id.utilitystatus);
         equipmentstatus = (TextView)findViewById(R.id.equipmentstatus);
@@ -189,6 +192,23 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         maidservices = (EditText)findViewById(R.id.maidservices);
         kitchen_equipments = (EditText)findViewById(R.id.kitchen_equipments);
         grocery  =(EditText)findViewById(R.id.grocery);
+
+        if (Config.customerModel != null) {
+            strClientName = Config.customerModel.getStrName();
+            strImageName = Config.customerModel.getStrCustomerID();
+
+        }
+
+        clientnametxt.setText(strClientName);
+
+        File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(strImageName));
+
+        if(fileImage.exists()) {
+            String filename = fileImage.getAbsolutePath();
+            multiBitmapLoader.loadBitmap(filename, client);
+        }else{
+            client.setImageDrawable(this.getResources().getDrawable(R.drawable.person_icon));
+        }
 
         if(electrocheck.isChecked()==true
                 &&homecheck.isChecked()==true
@@ -381,9 +401,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private class BackgroundThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-        if(isHallFlag ==1) {
+
+            if(isHallFlag ==1) {
             addHallImages();
-        }
+            }
             if(isHallFlag ==2) {
                 addKitchenImages();
             }
@@ -399,6 +420,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private class BackgroundThread extends Thread {
         @Override
         public void run() {
+
                 if(isHallFlag==1) {
                 try {
                     for (int i = 0; i < imagePaths.size(); i++) {

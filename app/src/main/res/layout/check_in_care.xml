@@ -32,34 +32,32 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:gravity="center">
+                android:layout_height="50dp"
+                android:gravity="center|center_horizontal"
+                android:orientation="horizontal"
+                android:weightSum="1">
 
-            <com.hdfc.views.RoundedImageView
+            <ImageView
                 android:id="@+id/clientimg"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_centerVertical="true"
                 android:src="@drawable/person_icon"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp" />
+               android:layout_weight="0.3"/>
 
             <TextView
                 android:id="@+id/clientnametxt"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="11dp"
-                android:layout_marginStart="11dp"
-                android:layout_toEndOf="@+id/imgLogoHeaderTaskDetail"
-                android:layout_toRightOf="@+id/imgLogoHeaderTaskDetail"
-                android:gravity="center"
+                android:layout_weight="0.7"
+                android:gravity="left"
+                android:text="dkfjdslfjdk"
                 android:textColor="@color/blue"
                 android:textSize="20dp" />
 
-            </RelativeLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
