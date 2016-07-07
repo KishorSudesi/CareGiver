@@ -78,12 +78,15 @@ public class MilestoneActivity extends AppCompatActivity {
     private static Handler backgroundThreadHandler;
     private static int iActivityPosition;
     private static boolean bEnabled, mImageChanged;
+    private static boolean isToDate = false, isFromDate = false;
     private final Context context = this;
     private RelativeLayout loadingPanel;
     private int mImageCount, mImageUploadCount;
     private LinearLayout layout;
     private SimpleTooltip simpleTooltip;
     private Utils utils;
+    private byte editTextType = 0;
+    private byte TYPE_FROM = 1, TYPE_TO = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +104,7 @@ public class MilestoneActivity extends AppCompatActivity {
         mImageCount = 0;
         mImageChanged = false;
 
-        MilestoneModel milestoneModelObject = (MilestoneModel) b.getSerializable("Milestone");
+        final MilestoneModel milestoneModelObject = (MilestoneModel) b.getSerializable("Milestone");
 
         utils = new Utils(MilestoneActivity.this);
         storageService = new StorageService(MilestoneActivity.this);
@@ -190,6 +193,7 @@ public class MilestoneActivity extends AppCompatActivity {
             TextView milestoneName = (TextView) findViewById(R.id.milestoneName);
             if (milestoneName != null) {
                 milestoneName.setText(milestoneModelObject.getStrMilestoneName());
+
             }
 
             fileModels = milestoneModelObject.getFileModels();
@@ -202,7 +206,7 @@ public class MilestoneActivity extends AppCompatActivity {
                 }
             }
 
-            for (FieldModel fieldModel : milestoneModelObject.getFieldModels()) {
+            for (final FieldModel fieldModel : milestoneModelObject.getFieldModels()) {
 
                 final FieldModel finalFieldModel = fieldModel;
 
@@ -252,8 +256,16 @@ public class MilestoneActivity extends AppCompatActivity {
                                 || fieldModel.getStrFieldType().equalsIgnoreCase("date")
                                 || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
 
+
+                            if (!isFromDate) {
+                                isFromDate = true;
+                                editText.setTag(TYPE_FROM);
+                            } else if (isFromDate && !isToDate) {
+                                isToDate = true;
+                                editText.setTag(TYPE_TO);
+                            }
                             editText.setCompoundDrawablesWithIntrinsicBounds(getResources().
-                                            getDrawable(R.drawable.calender_date_picked),
+                                            getDrawable(R.drawable.calendar_date_picker),
                                     null, null, null);
 
                             //editText.setInputType(InputType.TYPE_CLASS_DATETIME);
@@ -288,31 +300,95 @@ public class MilestoneActivity extends AppCompatActivity {
                                 }
 
                             };
+                            if (milestoneModelObject.getStrMilestoneName().contains("closure") && !milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed")) {
 
-                            editText.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
+                                Date date = Calendar.getInstance().getTime();
+                                String date2 = Utils.writeFormat.format(date);
+                                editText.setText(date2);
+                                //bEnabled=false;
+                                editText.setEnabled(false);
+                                editText.setFocusable(false);
+                                editText.setClickable(false);
 
-                                    Date setDate = new Date();
+                            } else {
+                                editText.setEnabled(true);
+                                //editText.setFocusable(true);
+                                //editText.setClickable(true);
+                                editText.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
 
-                                    if (finalFieldModel.getStrFieldData() != null
-                                            && !finalFieldModel.getStrFieldData().
-                                            equalsIgnoreCase("")) {
-                                        try {
-                                            setDate = Utils.writeFormat.parse(finalFieldModel.
-                                                    getStrFieldData());
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
+                                        Date setDate = new Date();
+
+//                                    if (finalFieldModel.getStrFieldData() != null
+//                                            && !finalFieldModel.getStrFieldData().
+//                                            equalsIgnoreCase("")) {
+//                                        try {
+//                                            setDate = Utils.writeFormat.parse(finalFieldModel.
+//                                                    getStrFieldData());
+//                                        } catch (ParseExcption e) {
+//                                            e.printStackTerace();
+//                                        }
+//                                    }
+                                        // Unparseable date: "2016-07-02T07:12:20.725Z" (at offset 4)
+                                        if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")) {
+                                            if (finalFieldModel.getStrFieldData() != null
+                                                    && !finalFieldModel.getStrFieldData().
+                                                    equalsIgnoreCase("")) {
+                                                try {
+
+
+                                                    setDate = Utils.writeFormat.parse(finalFieldModel.getStrFieldData());
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        } else {
+
+
+                                            if (v != null) {
+                                                try {
+                                                    editTextType = (byte) v.getTag();
+                                                } catch (Exception e) {
+
+                                                }
+
+
+                                                if (editTextType == TYPE_FROM) {
+                                                    if (milestoneModelObject.getStrMilestoneDate() != null
+                                                            && !milestoneModelObject.getStrMilestoneDate().
+                                                            equalsIgnoreCase("")) {
+                                                        try {
+
+
+                                                            setDate = Utils.readFormat.parse(milestoneModelObject.getStrMilestoneDate());
+                                                        } catch (ParseException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                } else if (editTextType == TYPE_TO) {
+                                                    if (finalFieldModel.getStrFieldData() != null
+                                                            && !finalFieldModel.getStrFieldData().
+                                                            equalsIgnoreCase("")) {
+                                                        try {
+
+
+                                                            setDate = Utils.writeFormat.parse(finalFieldModel.getStrFieldData());
+                                                        } catch (ParseException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
+                                        new SlideDateTimePicker.Builder(getSupportFragmentManager())
+                                                .setListener(listener)
+                                                .setInitialDate(setDate)
+                                                .build()
+                                                .show();
                                     }
-
-                                    new SlideDateTimePicker.Builder(getSupportFragmentManager())
-                                            .setListener(listener)
-                                            .setInitialDate(setDate)
-                                            .build()
-                                            .show();
-                                }
-                            });
+                                });
+                            }
                         }
 
                         editText.setEnabled(bEnabled);
@@ -1355,8 +1431,6 @@ public class MilestoneActivity extends AppCompatActivity {
     }*/
 
 
-
-
     private void uploadJson() {
         ///////////////////////
         JSONObject jsonObjectMileStone = new JSONObject();
@@ -1658,44 +1732,44 @@ public class MilestoneActivity extends AppCompatActivity {
                                     alertbox.setMessage(getString(R.string.confirm_delete_file));
                                     alertbox.setPositiveButton(getString(R.string.yes), new
                                             DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
+                                                public void onClick(DialogInterface arg0, int arg1) {
 
-                                            try {
-                                                File fDelete = utils.getInternalFileImages(
-                                                        mFileModel.getStrFileName());
+                                                    try {
+                                                        File fDelete = utils.getInternalFileImages(
+                                                                mFileModel.getStrFileName());
 
-                                                boolean success = true;
+                                                        boolean success = true;
 
-                                                if (fDelete.exists()) {
-                                                    success = fDelete.delete();
+                                                        if (fDelete.exists()) {
+                                                            success = fDelete.delete();
 
-                                                    if (mFileModel.isNew())
-                                                        mImageCount--;
+                                                            if (mFileModel.isNew())
+                                                                mImageCount--;
 
-                                                    mImageChanged = true;
+                                                            mImageChanged = true;
 
-                                                    fileModels.remove(mFileModel);
+                                                            fileModels.remove(mFileModel);
 
-                                                    bitmaps.remove(mPosition);
+                                                            bitmaps.remove(mPosition);
+                                                        }
+                                                        if (success) {
+                                                            utils.toast(2, 2, getString(
+                                                                    R.string.file_deleted));
+                                                        }
+                                                        arg0.dismiss();
+                                                        dialog.dismiss();
+                                                        addImages();
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
                                                 }
-                                                if (success) {
-                                                    utils.toast(2, 2, getString(
-                                                            R.string.file_deleted));
-                                                }
-                                                arg0.dismiss();
-                                                dialog.dismiss();
-                                                addImages();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
+                                            });
                                     alertbox.setNegativeButton(getString(R.string.no), new
                                             DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
-                                            arg0.dismiss();
-                                        }
-                                    });
+                                                public void onClick(DialogInterface arg0, int arg1) {
+                                                    arg0.dismiss();
+                                                }
+                                            });
                                     alertbox.show();
                                     //
                                 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.StorageService;
@@ -45,6 +46,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Admin on 4/25/2016.
@@ -60,7 +64,8 @@ public class AppUtils {
     private static SharedPreferences sharedPreferences;
 
     private static String strDocumentLocal = "", strProviderId = "";
-
+    //MS
+    private Set<String> categorySet = new HashSet<>();
 
     public AppUtils(Context context) {
         _ctxt = context;
@@ -256,49 +261,49 @@ public class AppUtils {
 
                 storageService.findDocsByQuery(Config.collectionDependent, query, new App42CallBack() {
 
-                            @Override
-                            public void onSuccess(Object o) {
-                                try {
-                                    //System.out.println("NACHIKET : "+(o!=null));
-                                    if (o != null) {
+                    @Override
+                    public void onSuccess(Object o) {
+                        try {
+                            //System.out.println("NACHIKET : "+(o!=null));
+                            if (o != null) {
 
-                                        Utils.log(o.toString(), " MESS 1");
+                                Utils.log(o.toString(), " MESS 1");
 
-                                        Storage storage = (Storage) o;
+                                Storage storage = (Storage) o;
 
-                                        if (storage.getJsonDocList().size() > 0) {
+                                if (storage.getJsonDocList().size() > 0) {
 
-                                            for (int i = 0; i < storage.getJsonDocList().size(); i++) {
+                                    for (int i = 0; i < storage.getJsonDocList().size(); i++) {
 
-                                                Storage.JSONDocument jsonDocument = storage.
-                                                        getJsonDocList().get(i);
+                                        Storage.JSONDocument jsonDocument = storage.
+                                                getJsonDocList().get(i);
 
-                                                String strDocument = jsonDocument.getJsonDoc();
-                                                String strDependentDocId = jsonDocument.
-                                                        getDocId();
-                                                createDependentModel(strDependentDocId, strDocument, iFlag);
-                                            }
-                                        }
+                                        String strDocument = jsonDocument.getJsonDoc();
+                                        String strDependentDocId = jsonDocument.
+                                                getDocId();
+                                        createDependentModel(strDependentDocId, strDocument, iFlag);
                                     }
-                                    if (iFlag == 2)
-                                        DashboardActivity.gotoSimpleActivityMenu();
-                                    else
-                                        DashboardActivity.refreshClientsData();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
                             }
+                            if (iFlag == 2)
+                                DashboardActivity.gotoSimpleActivityMenu();
+                            else
+                                DashboardActivity.refreshClientsData();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-                            @Override
-                            public void onException(Exception e) {
-                                Utils.log(e.getMessage(), " MESS 1");
-                                if (iFlag == 2)
-                                    DashboardActivity.gotoSimpleActivityMenu();
-                                else
-                                    DashboardActivity.refreshClientsData();
-                            }
+                    @Override
+                    public void onException(Exception e) {
+                        Utils.log(e.getMessage(), " MESS 1");
+                        if (iFlag == 2)
+                            DashboardActivity.gotoSimpleActivityMenu();
+                        else
+                            DashboardActivity.refreshClientsData();
+                    }
 
-                        });
+                });
 
             } else {
                 if (iFlag == 2)
@@ -871,7 +876,7 @@ public class AppUtils {
                         fetchCustomers(1);
                         //DashboardActivity.reloadActivities();
                     }
-        });
+                });
     }
 
     public void loadAllFiles() {
@@ -1464,7 +1469,7 @@ public class AppUtils {
                 }
             }
 
-        }catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -1939,11 +1944,12 @@ public class AppUtils {
             e.printStackTrace();
         }
     }
-    //MS
 
     public void createServiceModel(String strDocumentId, JSONObject jsonObject) {
 
+        Log.i("res", "......................" + jsonObject);
         try {
+
             ServiceModel serviceModel = new ServiceModel();
 
             serviceModel.setDoubleCost(jsonObject.getDouble("cost"));
@@ -2089,6 +2095,25 @@ public class AppUtils {
                 Config.strServcieIds.add(strDocumentId);
 
                 Config.servicelist.add(jsonObject.getString("service_name"));
+                categorySet.add(jsonObject.getString("category_name"));
+                //Config.serviceCategorylist.add();
+                List<String> serviceNameList = new ArrayList<String>();
+
+                if (Config.serviceNameModels != null && Config.serviceNameModels.size() > 0) {
+                    if (Config.serviceNameModels.containsKey(jsonObject.getString("category_name")))
+
+                    {
+                        serviceNameList.addAll(Config.serviceNameModels.get(jsonObject.getString("category_name")));
+                        serviceNameList.add(jsonObject.getString("service_name"));
+                    } else {
+                        serviceNameList.add(jsonObject.getString("service_name"));
+                    }
+                } else {
+                    serviceNameList.add(jsonObject.getString("service_name"));
+                }
+
+
+                Config.serviceNameModels.put(jsonObject.getString("category_name"), serviceNameList);
 
 
                 //
@@ -2106,6 +2131,10 @@ public class AppUtils {
                 }*/
                 //
             }
+            Config.serviceCategorylist.clear();
+            List<String> serviceNameList = new ArrayList<String>(categorySet);
+            Config.serviceCategorylist.addAll(serviceNameList);
+
 
         } catch (JSONException e) {
             e.printStackTrace();
