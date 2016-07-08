@@ -32,45 +32,63 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:gravity="center|center_horizontal"
-                android:orientation="horizontal"
-                android:weightSum="1">
+                >
 
             <ImageView
                 android:id="@+id/clientimg"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/clientnametxt"
                 android:layout_centerVertical="true"
                 android:src="@drawable/person_icon"
-               android:layout_weight="0.3"/>
+               />
 
             <TextView
                 android:id="@+id/clientnametxt"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:gravity="left"
-                android:text="dkfjdslfjdk"
+                android:layout_centerInParent="true"
                 android:textColor="@color/blue"
                 android:textSize="20dp" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@drawable/colorful_textview"/>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:gravity="left"
                 android:layout_margin="10dp"
-                android:text="Home Essentials"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:orientation="horizontal"
+                android:weightSum="1">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:gravity="left"
+                    android:layout_weight="0.8"
+                    android:text="Home Essentials"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/homeessentialstatus"
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:gravity="left"
+                    android:textSize="15sp"
+                    android:layout_weight="0.2"
+                    android:visibility="gone"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -83,7 +101,7 @@
                 android:layout_height="25dp"
                 android:gravity="left"
                 android:text="Utility Bills"
-                android:layout_weight="0.5"
+                android:layout_weight="0.8"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
@@ -92,7 +110,7 @@
                     android:layout_height="25dp"
                     android:gravity="left"
                     android:textSize="15sp"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.2"
                     android:visibility="gone"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -390,13 +408,33 @@
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:weightSum="1"
+            android:orientation="horizontal">
+
+
+        <TextView
+                android:layout_width="0dp"
                 android:layout_height="25dp"
                 android:gravity="left"
-                android:layout_margin="10dp"
+                android:layout_weight="0.8"
                 android:text="Kitchen Equipments"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/kitchenequipmentstatus"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:gravity="left"
+                android:layout_weight="0.2"
+                android:textSize="15sp"
+                android:visibility="gone"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -408,11 +446,17 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.3"
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:textSize="12sp"
                     android:text="Kitchen Equipments" />
+
+                <CheckBox
+                    android:id="@+id/kitchenequipcheck"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.1"/>
 
                 <EditText
                     android:id="@+id/kitchen_equipments"
@@ -424,13 +468,33 @@
 
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:gravity="left"
+                android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:text="Grocery"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:weightSum="1"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:gravity="left"
+                    android:layout_weight="0.8"
+                    android:text="Grocery"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/grocerystatus"
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:gravity="left"
+                    android:layout_weight="0.2"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -442,11 +506,17 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.3"
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:textSize="12sp"
                     android:text="Grocery" />
+
+                <CheckBox
+                    android:id="@+id/grocerycheck"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.1"/>
 
                 <EditText
                     android:id="@+id/grocery"
@@ -588,17 +658,36 @@
                 android:layout_height="1dp"
                 android:background="@color/blue"/>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:gravity="left"
                 android:layout_margin="10dp"
-                android:text="Domestic Help Status"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:weightSum="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:gravity="left"
+                    android:layout_weight="0.8"
+                    android:text="Domestic Help Status"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/domestichelpstatus"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:gravity="left"
+                    android:layout_weight="0.2"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_marginTop="5dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
@@ -606,11 +695,17 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.3"
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:textSize="15sp"
                     android:text="Maid Services" />
+
+                <CheckBox
+                    android:id="@+id/domesticcheck"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.1"/>
 
                 <EditText
                     android:id="@+id/maidservices"
@@ -626,13 +721,33 @@
                 android:layout_height="1dp"
                 android:background="@color/blue"/>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:gravity="left"
                 android:layout_margin="10dp"
-                android:text="Upload Media"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:weightSum="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:gravity="left"
+                    android:layout_weight="0.8"
+                    android:text="Upload Media"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/uploadmediastatus"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:gravity="left"
+                    android:layout_weight="0.2"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            </LinearLayout>
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -644,9 +759,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:layout_toLeftOf="@+id/buttonHallAdd"
+                    android:layout_toLeftOf="@+id/hallstatus"
                     android:text="Hall"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/hallstatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginRight="20dp"
+                    android:layout_toLeftOf="@+id/buttonHallAdd"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
 
                 <Button
                     android:id="@+id/buttonHallAdd"
@@ -681,9 +808,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:layout_toLeftOf="@+id/buttonKitchenAdd"
+                    android:layout_toLeftOf="@+id/kitchenstatus"
                     android:text="Kitchen"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/kitchenstatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginRight="20dp"
+                    android:layout_toLeftOf="@+id/buttonKitchenAdd"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
 
                 <Button
                     android:id="@+id/buttonKitchenAdd"
@@ -717,9 +856,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:layout_toLeftOf="@+id/buttonWashroomAdd"
+                    android:layout_toLeftOf="@+id/washroomstatus"
                     android:text="Washroom"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/washroomstatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginRight="20dp"
+                    android:layout_toLeftOf="@+id/buttonWashroomAdd"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
 
                 <Button
                     android:id="@+id/buttonWashroomAdd"
@@ -754,9 +905,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:layout_toLeftOf="@+id/buttonBedroomAdd"
+                    android:layout_toLeftOf="@+id/bedroomstatus"
                     android:text="Bedroom"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/bedroomstatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginRight="20dp"
+                    android:layout_toLeftOf="@+id/buttonBedroomAdd"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
 
                 <Button
                     android:id="@+id/buttonBedroomAdd"
@@ -779,6 +942,39 @@
                     layout="@layout/attach_bedroom_task_detail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/blue"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.4"
+                    android:gravity="left|center"
+                    android:padding="10dp"
+                    android:textSize="15sp"
+                    android:text="Media Comment" />
+
+
+
+                <EditText
+                    android:id="@+id/mediacomment"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.6"
+                    android:maxLength="80"
+                    android:padding="10dp" />
+
             </LinearLayout>
 
             <TextView
