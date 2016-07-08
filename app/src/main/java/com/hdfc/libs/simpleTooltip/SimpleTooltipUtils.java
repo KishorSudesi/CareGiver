@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.hdfc.simpleTooltip;
+package com.hdfc.libs.simpleTooltip;
 
 import android.content.Context;
 import android.content.res.Resources;

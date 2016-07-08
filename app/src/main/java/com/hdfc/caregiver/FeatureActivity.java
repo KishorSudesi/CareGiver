@@ -69,10 +69,8 @@ public class FeatureActivity extends AppCompatActivity {
     private TextView textViewTime;
     private MultiBitmapLoader multiBitmapLoader;
     private ImageView imgLogoHeaderTaskDetail;
-    private LinearLayout linearLayoutAttach,linearName;
+    private LinearLayout linearLayoutAttach;
     private Button done;
-    static int iPosition;
-    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,48 +95,52 @@ public class FeatureActivity extends AppCompatActivity {
 
         TextView dependentName = (TextView) findViewById(R.id.textViewHeaderTaskDetail);
 
-        linearName = (LinearLayout)findViewById(R.id.linearName);
+        LinearLayout linearName = (LinearLayout) findViewById(R.id.linearName);
 
         mImageCount = 0;
         mImageChanged = false;
         bitmaps.clear();
 
-       linearName.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               final AlertDialog.Builder builder = new AlertDialog.Builder(FeatureActivity.this);
-               LayoutInflater inflater = getLayoutInflater();
-               View dialogView = inflater.inflate(R.layout.name_popup, null);
-               builder.setView(dialogView);
+        if (linearName != null) {
+            linearName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(FeatureActivity.this);
+                    LayoutInflater inflater = getLayoutInflater();
+                    View dialogView = inflater.inflate(R.layout.name_popup, null);
+                    builder.setView(dialogView);
 
-               TextView textName = (TextView)dialogView.findViewById(R.id.textPopupName);
-               ImageView imageDialog = (ImageView)dialogView.findViewById(R.id.popupImage);
+                    TextView textName = (TextView) dialogView.findViewById(R.id.textPopupName);
+                    ImageView imageDialog = (ImageView) dialogView.findViewById(R.id.popupImage);
 
-               name = Config.dependentModels.get(iPosition).getStrName();
-               textName.setText(name);
+                    int iCustomerPosition = Config.customerIdsAdded.indexOf(act.getStrCustomerID());
 
-               File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrDependentID()));
+                    String name = Config.customerModels.get(iCustomerPosition).getStrName();
+                    textName.setText(name);
 
-               if (fileImage.exists()) {
-                   String filename = fileImage.getAbsolutePath();
-                   multiBitmapLoader.loadBitmap(filename, imageDialog);
-               } else {
-                   if (imageDialog != null) {
-                       imageDialog.setImageDrawable(getResources().getDrawable(R.drawable.person_icon));
-                   }
-               }
+                    File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrCustomerID()));
 
-               builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                   @Override
-                   public void onClick(DialogInterface dialog, int which) {
-                       dialog.dismiss();
-                   }
-               });
-               AlertDialog alertDialog = builder.create();
-               //builder.show();
-               alertDialog.show();
-           }
-       });
+                    if (fileImage.exists()) {
+                        String filename = fileImage.getAbsolutePath();
+                        multiBitmapLoader.loadBitmap(filename, imageDialog);
+                    } else {
+                        if (imageDialog != null) {
+                            imageDialog.setImageDrawable(getResources().getDrawable(R.drawable.person_icon));
+                        }
+                    }
+
+                    builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    //builder.show();
+                    alertDialog.show();
+                }
+            });
+        }
 
         try {
             Bundle b = getIntent().getExtras();
@@ -161,8 +163,8 @@ public class FeatureActivity extends AppCompatActivity {
                 act = Config.activityModels.get(iActivityPosition);
 
 
-            iPosition = Config.dependentIdsAdded.indexOf(act.getStrDependentID());
-            name = Config.dependentModels.get(iPosition).getStrName();
+            int iPosition = Config.dependentIdsAdded.indexOf(act.getStrDependentID());
+            String name = Config.dependentModels.get(iPosition).getStrName();
 
             if (name.length() > 20)
                 name = name.substring(0, 18) + "..";

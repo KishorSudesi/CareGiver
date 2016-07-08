@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.hdfc.simpleTooltip;
+package com.hdfc.libs.simpleTooltip;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -44,8 +44,8 @@ class ArrowDrawable extends ColorDrawable {
 
     private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final int mBackgroundColor;
-    private Path mPath;
     private final int mDirection;
+    private Path mPath;
 
     ArrowDrawable(@ColorInt int foregroundColor, int direction) {
         this.mBackgroundColor = Color.TRANSPARENT;

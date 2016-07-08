@@ -716,7 +716,7 @@ public class Utils {
 
     public void toast(int type, int duration, String message) {
 
-        String strColor = "#ffffff";
+        String strColor = "#FF0000";
 
         if (type == 2)
             strColor = "#fcc485";

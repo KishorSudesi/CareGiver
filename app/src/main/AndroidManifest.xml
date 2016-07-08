@@ -70,13 +70,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -93,14 +92,14 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.shephertz.app42.paas.sdk.android.App42BroadcastReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="com.shephertz.app42.paas.sdk.android.AlarmReceiver" />
+        <!-- <receiver android:name="com.shephertz.app42.paas.sdk.android.App42BroadcastReceiver">
+             <intent-filter>
+                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+             </intent-filter>
+         </receiver>
+         <receiver android:name="com.shephertz.app42.paas.sdk.android.AlarmReceiver" />
 
-        <service android:name="com.shephertz.app42.paas.sdk.android.App42DataSyncService" />
+         <service android:name="com.shephertz.app42.paas.sdk.android.App42DataSyncService" />-->
         <service android:name="com.hdfc.app42service.App42GCMService" />
 
         <receiver
@@ -123,6 +122,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
         <activity
             android:name=".UpdateUtilityBills"
             android:screenOrientation="portrait"

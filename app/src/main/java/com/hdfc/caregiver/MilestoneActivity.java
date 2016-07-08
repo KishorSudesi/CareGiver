@@ -36,11 +36,11 @@ import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
+import com.hdfc.libs.simpleTooltip.SimpleTooltip;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.FieldModel;
 import com.hdfc.models.FileModel;
 import com.hdfc.models.MilestoneModel;
-import com.hdfc.simpleTooltip.SimpleTooltip;
 import com.hdfc.views.TouchImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
@@ -208,7 +208,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
             for (final FieldModel fieldModel : milestoneModelObject.getFieldModels()) {
 
-                final FieldModel finalFieldModel = fieldModel;
+                //final FieldModel finalFieldModel = fieldModel;
 
                 LinearLayout linearLayout1 = new LinearLayout(MilestoneActivity.this);
                 linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
@@ -257,13 +257,14 @@ public class MilestoneActivity extends AppCompatActivity {
                                 || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
 
 
-                            if (!isFromDate) {
+                            /*if (!isFromDate) {
                                 isFromDate = true;
                                 editText.setTag(TYPE_FROM);
                             } else if (isFromDate && !isToDate) {
                                 isToDate = true;
                                 editText.setTag(TYPE_TO);
-                            }
+                            }*/
+
                             editText.setCompoundDrawablesWithIntrinsicBounds(getResources().
                                             getDrawable(R.drawable.calendar_date_picker),
                                     null, null, null);
@@ -281,14 +282,14 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                     String strDate = "";
 
-                                    if (finalFieldModel.getStrFieldType().
+                                    if (fieldModel.getStrFieldType().
                                             equalsIgnoreCase("datetime"))
                                         strDate = Utils.writeFormat.format(date);
 
-                                    if (finalFieldModel.getStrFieldType().equalsIgnoreCase("time"))
+                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("time"))
                                         strDate = Utils.writeFormatTime.format(date);
 
-                                    if (finalFieldModel.getStrFieldType().equalsIgnoreCase("date"))
+                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("date"))
                                         strDate = Utils.writeFormatDate.format(date);
 
                                     editText.setTag(R.id.two, Utils.readFormat.format(date));
@@ -300,9 +301,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                 }
 
                             };
-                            if (milestoneModelObject.getStrMilestoneName().contains("closure")
-                                    && !milestoneModelObject.getStrMilestoneStatus().
-                                    equalsIgnoreCase("completed")) {
+
+                            if (act.getMilestoneModels().size() == milestoneModelObject.getiMilestoneId()) {
 
                                 Date date = Calendar.getInstance().getTime();
                                 String date2 = Utils.writeFormat.format(date);
@@ -313,6 +313,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                 editText.setClickable(false);
 
                             } else {
+
                                 editText.setEnabled(true);
                                 //editText.setFocusable(true);
                                 //editText.setClickable(true);
@@ -334,16 +335,41 @@ public class MilestoneActivity extends AppCompatActivity {
                                     }*/
                                         // Unparseable date: "2016-07-02T07:12:20.725Z" (at offset 4)
                                         if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")) {
-                                            if (finalFieldModel.getStrFieldData() != null
-                                                    && !finalFieldModel.getStrFieldData().
+                                            if (fieldModel.getStrFieldData() != null
+                                                    && !fieldModel.getStrFieldData().
                                                     equalsIgnoreCase("")) {
                                                 try {
-                                                    setDate = Utils.writeFormat.parse(finalFieldModel.getStrFieldData());
+                                                    setDate = Utils.writeFormat.parse(fieldModel.getStrFieldData());
                                                 } catch (ParseException e) {
                                                     e.printStackTrace();
                                                 }
                                             }
-                                        } else {
+                                        }
+
+                                        if (fieldModel.getStrFieldType().equalsIgnoreCase("date")) {
+                                            if (fieldModel.getStrFieldData() != null
+                                                    && !fieldModel.getStrFieldData().
+                                                    equalsIgnoreCase("")) {
+                                                try {
+                                                    setDate = Utils.writeFormatDate.parse(fieldModel.getStrFieldData());
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }
+
+                                        if (fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+                                            if (fieldModel.getStrFieldData() != null
+                                                    && !fieldModel.getStrFieldData().
+                                                    equalsIgnoreCase("")) {
+                                                try {
+                                                    setDate = Utils.writeFormatTime.parse(fieldModel.getStrFieldData());
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }
+                                        /*else {
 
                                             if (v != null) {
                                                 try {
@@ -363,18 +389,18 @@ public class MilestoneActivity extends AppCompatActivity {
                                                         }
                                                     }
                                                 } else if (editTextType == TYPE_TO) {
-                                                    if (finalFieldModel.getStrFieldData() != null
-                                                            && !finalFieldModel.getStrFieldData().
+                                                    if (fieldModel.getStrFieldData() != null
+                                                            && !fieldModel.getStrFieldData().
                                                             equalsIgnoreCase("")) {
                                                         try {
-                                                            setDate = Utils.writeFormat.parse(finalFieldModel.getStrFieldData());
+                                                            setDate = Utils.writeFormat.parse(fieldModel.getStrFieldData());
                                                         } catch (ParseException e) {
                                                             e.printStackTrace();
                                                         }
                                                     }
                                                 }
                                             }
-                                        }
+                                        }*/
                                         new SlideDateTimePicker.Builder(getSupportFragmentManager())
                                                 .setListener(listener)
                                                 .setInitialDate(setDate)
@@ -386,6 +412,8 @@ public class MilestoneActivity extends AppCompatActivity {
                         }
 
                         editText.setEnabled(bEnabled);
+                       /* editText.setFocusable(bEnabled);
+                        editText.setClickable(bEnabled);*/
 
                         linearLayout1.addView(editText);
                     } catch (Exception e) {
@@ -416,16 +444,16 @@ public class MilestoneActivity extends AppCompatActivity {
 
                             try {
 
-                                if (finalFieldModel.isChild()) {
+                                if (fieldModel.isChild()) {
 
-                                    for (int i = 0; i < finalFieldModel.getiChildfieldID().length;
+                                    for (int i = 0; i < fieldModel.getiChildfieldID().length;
                                          i++) {
 
-                                        if (finalFieldModel.getStrChildType()[i].
+                                        if (fieldModel.getStrChildType()[i].
                                                 equalsIgnoreCase("text")) {
 
                                             EditText editTextChild = (EditText) layoutDialog.
-                                                    findViewById(finalFieldModel.
+                                                    findViewById(fieldModel.
                                                             getiChildfieldID()[i]);
 
                                             if (editTextChild != null) {
@@ -433,10 +461,10 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 String strValue = spinner.getSelectedItem().
                                                         toString();
 
-                                                if (finalFieldModel.getStrChildCondition()[i].
+                                                if (fieldModel.getStrChildCondition()[i].
                                                         equalsIgnoreCase("equals")) {
 
-                                                    if (strValue.equalsIgnoreCase(finalFieldModel.
+                                                    if (strValue.equalsIgnoreCase(fieldModel.
                                                             getStrChildValue()[i])) {
                                                         //editText.setVisibility(View.VISIBLE);
 
@@ -574,7 +602,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     linearLayoutArray.setLayoutParams(layoutArrayParams);
 
 
-                    for (int j = 0; j < finalFieldModel.getiArrayCount(); j++) {
+                    for (int j = 0; j < fieldModel.getiArrayCount(); j++) {
 
                         EditText editTextArray = new EditText(MilestoneActivity.this);
 
@@ -623,7 +651,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                     layoutArrayInnerParams.setMargins(10, 10, 10, 10);
                                     linearLayoutArrayInner.setLayoutParams(layoutArrayInnerParams);
 
-                                    for (int j = 0; j < finalFieldModel.getiArrayCount(); j++) {
+                                    for (int j = 0; j < fieldModel.getiArrayCount(); j++) {
 
                                         EditText editTextArray = new EditText(MilestoneActivity.this);
 
@@ -870,8 +898,10 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                     if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
                                             || fieldModel.getStrFieldType().equalsIgnoreCase("date")
-                                            ||
-                                            fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+                                            ) {
+
+                                    /*    ||
+                                        fieldModel.getStrFieldType().equalsIgnoreCase("time")*/
 
                                         boolean bFuture = true;
 
@@ -881,10 +911,22 @@ public class MilestoneActivity extends AppCompatActivity {
                                         Date enteredDate = null;
 
                                         try {
-                                            strdateCopy = Utils.writeFormat.format(calendar.
-                                                    getTime());
-                                            dateNow = Utils.writeFormat.parse(strdateCopy);
-                                            enteredDate = Utils.writeFormat.parse(data);
+
+                                            if (fieldModel.getStrFieldType().
+                                                    equalsIgnoreCase("datetime")) {
+                                                strdateCopy = Utils.writeFormat.format(calendar.
+                                                        getTime());
+                                                dateNow = Utils.writeFormat.parse(strdateCopy);
+                                                enteredDate = Utils.writeFormat.parse(data);
+                                            }
+
+                                            if (fieldModel.getStrFieldType().equalsIgnoreCase("date")) {
+                                                strdateCopy = Utils.writeFormatDate.format(calendar.
+                                                        getTime());
+                                                dateNow = Utils.writeFormatDate.parse(strdateCopy);
+                                                enteredDate = Utils.writeFormatDate.parse(data);
+                                            }
+
                                         } catch (ParseException e) {
                                             e.printStackTrace();
                                         }
@@ -954,8 +996,6 @@ public class MilestoneActivity extends AppCompatActivity {
                                             b = false;
                                         }
                                     } else {
-
-
                                         fieldModel.setStrFieldData(data);
                                     }
 
