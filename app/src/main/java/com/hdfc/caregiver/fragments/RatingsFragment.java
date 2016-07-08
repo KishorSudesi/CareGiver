@@ -3,7 +3,6 @@ package com.hdfc.caregiver.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -43,6 +43,7 @@ public class RatingsFragment extends Fragment {
     RoundedImageView imageProfilePic;
     RelativeLayout myprofile;
     ListView listratings;
+    private RatingBar ratingBar;
 
     public RatingsFragment(){
     }
@@ -73,7 +74,8 @@ public class RatingsFragment extends Fragment {
         textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
         Button logout = (Button) view.findViewById(R.id.buttonlogout);
 
-        layout = (LinearLayout) view.findViewById(R.id.linearLayoutRatings);
+        //  layout = (LinearLayout) view.findViewById(R.id.linearLayoutRatings);
+        ratingBar = (RatingBar) view.findViewById(R.id.ratingBar);
 
         imageProfilePic = (RoundedImageView)view.findViewById(R.id.img);
         mProgress = new ProgressDialog(getActivity());
@@ -102,9 +104,10 @@ public class RatingsFragment extends Fragment {
         int iRatings = 0;
 
         if (Config.iRatingCount > 0)
-            iRatings = (int) Utils.round(Config.iRatings / Config.iRatingCount, 2);
 
-        int i = iRatings;
+            ratingBar.setRating((float) (Config.iRatings / Config.iRatingCount));
+
+        /*int i = iRatings;
         layout.removeAllViews();
 
         int j, k;
@@ -132,7 +135,7 @@ public class RatingsFragment extends Fragment {
 
             layout.addView(imageView);
         }
-
+*/
         //Utils.log(String.valueOf(i + " ! " + k), " R ");
 
         ratingsAdapter = new RatingsAdapter(getContext(), Config.feedBackModels);

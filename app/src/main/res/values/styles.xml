@@ -55,4 +55,9 @@
 
     </style>
 
+    <style name="CustomRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/custom_ratingbar</item>
+
+    </style>
+
 </resources>

@@ -18,8 +18,10 @@ import com.hdfc.models.ServiceModel;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by balamurugan@adstringo.in on 23-12-2015.
@@ -100,6 +102,7 @@ public class Config {
 
 
     public static ArrayList<ClientNameModel> clientNameModels = new ArrayList<>();
+    public static Map<String, List<String>> serviceNameModels = new HashMap<>();
     public static boolean boolIsLoggedIn = false;
     public static double iRatings = 0;
     public static int iRatingCount = 0;
@@ -108,6 +111,7 @@ public class Config {
     public static ArrayList<String> strServcieIds = new ArrayList<>();
     public static ArrayList<ServiceModel> serviceModels = new ArrayList<>();
     public static ArrayList<String> servicelist = new ArrayList<>();
+    public static ArrayList<String> serviceCategorylist = new ArrayList<>();
 
     public static ArrayList<String> strDependentNames = new ArrayList<>();
     public static ArrayList<String> strCustomerNames = new ArrayList<>();

@@ -62,6 +62,7 @@ public class MyProfileActivity extends AppCompatActivity {
     Button buttonContinue, buttonBack;
     int Flag = 0;
     private ProgressDialog progressDialog;
+    private ImageView pen;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,7 @@ public class MyProfileActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.input_email);
         Button signOut = (Button) findViewById(R.id.buttonLogOut);
         buttonContinue = (Button) findViewById(R.id.buttonContinue);
+        pen = (ImageView) findViewById(R.id.imgPen);
         buttonBack = (Button) findViewById(R.id.buttonBack);
 
         buttonBack.setOnClickListener(new View.OnClickListener() {

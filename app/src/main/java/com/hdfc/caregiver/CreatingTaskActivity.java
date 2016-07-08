@@ -45,13 +45,13 @@ import java.util.Date;
  */
 public class CreatingTaskActivity extends AppCompatActivity {
 
-    private static String valDateTime, valTitle, valSearch, strServiceName;
+    private static String valDateTime, valTitle, valSearch, strServiceName, valSearchService;
     private static StorageService storageService;
     private RelativeLayout loadingPanel;
-    private Spinner dependentlist;
+    private Spinner dependentlist, serviceCategoryList, inputSearchServices;
     private boolean isClicked = false;
     private View focusView = null;
-    private AutoCompleteTextView inputSearch, inputSearchServices;
+    private AutoCompleteTextView inputSearch;
     private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate, strSelectedDependent;
     //private ProgressDialog progressDialog;
     private Utils utils;
@@ -59,6 +59,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private EditText editTextTitle, dateAnd;
     private JSONObject jsonObject;
     private int mDependentPosition = -1;
+    private int mCategoryPosition = -1;
+
     //private static Calendar calendar;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
@@ -90,10 +92,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creating_task);
         dateAnd = (EditText) findViewById(R.id.editDob);
-        editTextTitle = (EditText)findViewById(R.id.editTextTitle);
+        editTextTitle = (EditText) findViewById(R.id.editTextTitle);
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
-        inputSearchServices = (AutoCompleteTextView)findViewById(R.id.inputSearchServices);
+        inputSearchServices = (Spinner) findViewById(R.id.inputSearchServices);
         dependentlist = (Spinner) findViewById(R.id.spindependentList);
+        serviceCategoryList = (Spinner) findViewById(R.id.spinServiceList);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
         //calendar = Calendar.getInstance();
@@ -167,11 +170,59 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     names = Config.clientNameModels.get(mDependentPosition).getStrDependentNames();
                 }
 
-                ArrayAdapter<String> adapter1 = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, names);
+                ArrayAdapter<String> adapter1 = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.simple_dropdown_item_1line, names);
                 dependentlist.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
 
             }
         });
+
+        inputSearchServices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ArrayList<String> nameService = new ArrayList<>();
+                nameService.clear();
+                nameService.add(getString(R.string.no_services));
+
+
+                try {
+                    mCategoryPosition = position;
+
+
+                    if (Config.serviceNameModels.size() > 0) {
+                        nameService.clear();
+                        nameService.addAll(Config.serviceNameModels.get(Config.serviceCategorylist.get(position)));
+
+                    }
+
+                    ArrayAdapter<String> adapter1 = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.simple_dropdown_item_1line, nameService);
+                    serviceCategoryList.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
+
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        serviceCategoryList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                valSearchService = serviceCategoryList.getSelectedItem().toString();
+                System.out.println("Gurujiiiiiiiiiiiiiiii" + valSearchService);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         Button createtaskDone = (Button) findViewById(R.id.textViewDoneHeaderCreatingTask);
 
@@ -188,12 +239,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
                         editTextTitle.setError(null);
                         dateAnd.setError(null);
                         inputSearch.setError(null);
-                        inputSearchServices.setError(null);
+                        // serviceCategoryList.setError(null);
 
                         valTitle = editTextTitle.getText().toString().trim();
                         valDateTime = dateAnd.getText().toString().trim();
                         valSearch = inputSearch.getText().toString().trim();
-                        strServiceName = inputSearchServices.getText().toString().trim();
+                        strServiceName = valSearchService;
+
 
                         if (TextUtils.isEmpty(valDateTime)) {
                             dateAnd.setError(getString(R.string.error_field_required));
@@ -207,11 +259,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             cancel = true;
                         }
 
-                        if (TextUtils.isEmpty(strServiceName)) {
-                            inputSearchServices.setError(getString(R.string.error_field_required));
+                        /*if (TextUtils.isEmpty(strServiceName)) {
+                            // inputSearchServices.setError(getString(R.string.error_field_required));
                             focusView = inputSearchServices;
                             cancel = true;
-                        }
+                        }*/
 
                         if (TextUtils.isEmpty(strSelectedDependent)) {
                             //dependentlist.setError(getString(R.string.error_field_required));
@@ -332,9 +384,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
     private void refreshServiceAdapter() {
         ArrayAdapter<String> adapter;
-        adapter = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.servicelist);
+        adapter = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.simple_dropdown_item_1line, Config.serviceCategorylist);
 
-        inputSearchServices.setThreshold(1);//will start working from first character
+        //inputSearchServices.setThreshold(1);//will start working from first character
         inputSearchServices.setAdapter(adapter);
     }
 
@@ -347,7 +399,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         storageService.findAllDocs(Config.collectionService,
@@ -382,12 +434,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                               }
-                           }
+                                }
+                            }
 
                         } else {
                             utils.toast(2, 2, getString(R.string.warning_internet));
-                       }
+                        }
 
                         refreshServices();
                     }
@@ -405,11 +457,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 utils.toast(2, 2, strMess);
                             } else {
                                 utils.toast(2, 2, getString(R.string.warning_internet));
-                           }
+                            }
 
                         } catch (JSONException e1) {
                             e1.printStackTrace();
-                       }
+                        }
                     }
                 });
     }
