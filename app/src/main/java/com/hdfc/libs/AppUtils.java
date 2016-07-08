@@ -2097,12 +2097,10 @@ public class AppUtils {
                 Config.servicelist.add(jsonObject.getString("service_name"));
                 categorySet.add(jsonObject.getString("category_name"));
                 //Config.serviceCategorylist.add();
-                List<String> serviceNameList = new ArrayList<String>();
+                List<String> serviceNameList = new ArrayList<>();
 
                 if (Config.serviceNameModels != null && Config.serviceNameModels.size() > 0) {
-                    if (Config.serviceNameModels.containsKey(jsonObject.getString("category_name")))
-
-                    {
+                    if (Config.serviceNameModels.containsKey(jsonObject.getString("category_name"))) {
                         serviceNameList.addAll(Config.serviceNameModels.get(jsonObject.getString("category_name")));
                         serviceNameList.add(jsonObject.getString("service_name"));
                     } else {
@@ -2111,7 +2109,6 @@ public class AppUtils {
                 } else {
                     serviceNameList.add(jsonObject.getString("service_name"));
                 }
-
 
                 Config.serviceNameModels.put(jsonObject.getString("category_name"), serviceNameList);
 

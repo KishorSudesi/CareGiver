@@ -300,7 +300,9 @@ public class MilestoneActivity extends AppCompatActivity {
                                 }
 
                             };
-                            if (milestoneModelObject.getStrMilestoneName().contains("closure") && !milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed")) {
+                            if (milestoneModelObject.getStrMilestoneName().contains("closure")
+                                    && !milestoneModelObject.getStrMilestoneStatus().
+                                    equalsIgnoreCase("completed")) {
 
                                 Date date = Calendar.getInstance().getTime();
                                 String date2 = Utils.writeFormat.format(date);
@@ -320,31 +322,28 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                         Date setDate = new Date();
 
-//                                    if (finalFieldModel.getStrFieldData() != null
-//                                            && !finalFieldModel.getStrFieldData().
-//                                            equalsIgnoreCase("")) {
-//                                        try {
-//                                            setDate = Utils.writeFormat.parse(finalFieldModel.
-//                                                    getStrFieldData());
-//                                        } catch (ParseExcption e) {
-//                                            e.printStackTerace();
-//                                        }
-//                                    }
+/*                                    if (finalFieldModel.getStrFieldData() != null
+                                            && !finalFieldModel.getStrFieldData().
+                                            equalsIgnoreCase("")) {
+                                        try {
+                                            setDate = Utils.writeFormat.parse(finalFieldModel.
+                                                    getStrFieldData());
+                                        } catch (ParseExcption e) {
+                                            e.printStackTerace();
+                                        }
+                                    }*/
                                         // Unparseable date: "2016-07-02T07:12:20.725Z" (at offset 4)
                                         if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")) {
                                             if (finalFieldModel.getStrFieldData() != null
                                                     && !finalFieldModel.getStrFieldData().
                                                     equalsIgnoreCase("")) {
                                                 try {
-
-
                                                     setDate = Utils.writeFormat.parse(finalFieldModel.getStrFieldData());
                                                 } catch (ParseException e) {
                                                     e.printStackTrace();
                                                 }
                                             }
                                         } else {
-
 
                                             if (v != null) {
                                                 try {
@@ -353,14 +352,11 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                                 }
 
-
                                                 if (editTextType == TYPE_FROM) {
                                                     if (milestoneModelObject.getStrMilestoneDate() != null
                                                             && !milestoneModelObject.getStrMilestoneDate().
                                                             equalsIgnoreCase("")) {
                                                         try {
-
-
                                                             setDate = Utils.readFormat.parse(milestoneModelObject.getStrMilestoneDate());
                                                         } catch (ParseException e) {
                                                             e.printStackTrace();
@@ -371,8 +367,6 @@ public class MilestoneActivity extends AppCompatActivity {
                                                             && !finalFieldModel.getStrFieldData().
                                                             equalsIgnoreCase("")) {
                                                         try {
-
-
                                                             setDate = Utils.writeFormat.parse(finalFieldModel.getStrFieldData());
                                                         } catch (ParseException e) {
                                                             e.printStackTrace();
