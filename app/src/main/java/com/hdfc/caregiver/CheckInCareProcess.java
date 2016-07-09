@@ -7,12 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -32,46 +30,27 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.config.Config;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.ActivityModel;
-import com.hdfc.models.CustomerModel;
 import com.hdfc.models.ImageModel;
-import com.hdfc.views.RoundedImageView;
 import com.hdfc.views.TouchImageView;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by Admin on 01-07-2016.
  */
 public class CheckInCareProcess extends AppCompatActivity implements View.OnClickListener,AdapterView.OnItemSelectedListener {
-    private ImageView pick_date,pick_date2,pick_date3,pick_date4;
-    private ImageView client;
-    private Spinner spinner,spinner1,spinner2,spinner3;
-    private Button btn_submit,buttonHallAdd,buttonKitchenAdd,buttonWashroomAdd,buttonBedroomAdd;
-    private EditText electronic,homeapplience,automobile,maidservices,kitchen_equipments,grocery,mediacomment;
-    private TextView txtwater,txtgas,txtelectricity,txttelephone,clientnametxt;
-    private TextView utilitystatus,waterstatus,gasstatus,electricitystatus,telephonestatus,
-            equipmentstatus,grocerystatus,kitchenequipmentstatus,domestichelpstatus,uploadmediastatus,hallstatus,
-            kitchenstatus,washroomstatus,bedroomstatus,homeessentialstatus;
-    private String strwaterDate,strelectricityDate,strtelephoneDate,strgasDate,_strwaterDate,
-            _strelectricityDate,_strtelephoneDate,_strgasDate;
     private static final String[]option = {"N", "Y"};
-    public String item = "";
-    int isClicked = 0;
-    int isHallFlag = 0;
-    private static Utils utils;
-    private static ProgressDialog mProgress = null;
-    private ProgressDialog progressDialog;
     public static String strImageName = "",strClientName = "";
     public static Uri uri;
-    private static Handler backgroundThreadHandler;
     public static Bitmap bitmap = null;
+    public static int IMAGE_COUNT = 0;
+    private static Utils utils;
+    private static ProgressDialog mProgress = null;
+    private static Handler backgroundThreadHandler;
     private static boolean isImageChanged=false;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> hallbitmaps = new ArrayList<>();
@@ -82,13 +61,27 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private static ArrayList<ImageModel> kitchenimageModels = new ArrayList<>();
     private static ArrayList<ImageModel> washroomimageModels = new ArrayList<>();
     private static ArrayList<ImageModel> bedroomimageModels = new ArrayList<>();
-    public static int IMAGE_COUNT = 0;
-    private int hallImageCount,kitchenImageCount,washroomImageCount,bedroomImageCount,mImageUploadCount;
     private static String strName;
     private static boolean bLoad, isCompleted = false;
+    private static boolean bViewLoaded, mImageChanged;
+    public String item = "";
+    int isClicked = 0;
+    int isHallFlag = 0;
+    private ImageView pick_date, pick_date2, pick_date3, pick_date4;
+    private ImageView client;
+    private Spinner spinner, spinner1, spinner2, spinner3;
+    private Button btn_submit, buttonHallAdd, buttonKitchenAdd, buttonWashroomAdd, buttonBedroomAdd;
+    private EditText electronic, homeapplience, automobile, maidservices, kitchen_equipments, grocery, mediacomment;
+    private TextView txtwater, txtgas, txtelectricity, txttelephone, clientnametxt;
+    private TextView utilitystatus, waterstatus, gasstatus, electricitystatus, telephonestatus,
+            equipmentstatus, grocerystatus, kitchenequipmentstatus, domestichelpstatus, uploadmediastatus, hallstatus,
+            kitchenstatus, washroomstatus, bedroomstatus, homeessentialstatus;
+    private String strwaterDate, strelectricityDate, strtelephoneDate, strgasDate, _strwaterDate,
+            _strelectricityDate, _strtelephoneDate, _strgasDate;
+    private ProgressDialog progressDialog;
+    private int hallImageCount, kitchenImageCount, washroomImageCount, bedroomImageCount, mImageUploadCount;
     private boolean success;
     private MultiBitmapLoader multiBitmapLoader;
-    private static boolean bViewLoaded, mImageChanged;
     private LinearLayout layouthall,layoutkitchen,layoutwashroom,layoutbedroom;
     private CheckBox electrocheck,homecheck,autocheck,kitchenequipcheck,grocerycheck,domesticcheck;
 
@@ -578,345 +571,6 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    private class BackgroundThreadHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-
-            if(isHallFlag ==1) {
-            addHallImages();
-            }
-            if(isHallFlag ==2) {
-                addKitchenImages();
-            }
-            if(isHallFlag ==3) {
-                addWashroomImages();
-            }
-            if(isHallFlag ==4) {
-                addBedroomImages();
-            }
-        }
-    }
-
-    private class BackgroundThread extends Thread {
-        @Override
-        public void run() {
-
-                if(isHallFlag==1) {
-                try {
-                    for (int i = 0; i < imagePaths.size(); i++) {
-                        Calendar calendar = Calendar.getInstance();
-                        String strTime = String.valueOf(calendar.getTimeInMillis());
-                        String strFileName = strTime + ".jpeg";
-
-                        Date date = new Date();
-
-                        File mCopyFile = utils.getInternalFileImages(strTime);
-                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
-
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-
-                        imageModel.setmIsNew(true);
-
-                        hallimageModels.add(imageModel);
-
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-                        hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                        IMAGE_COUNT++;
-
-                        hallImageCount++;
-                    }
-                    backgroundThreadHandler.sendEmptyMessage(0);
-                } catch (OutOfMemoryError | Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            if(isHallFlag==2) {
-                try {
-                    for (int i = 0; i < imagePaths.size(); i++) {
-                        Calendar calendar = Calendar.getInstance();
-                        String strTime = String.valueOf(calendar.getTimeInMillis());
-                        String strFileName = strTime + ".jpeg";
-
-                        Date date = new Date();
-
-                        File mCopyFile = utils.getInternalFileImages(strTime);
-                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
-
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-
-                        imageModel.setmIsNew(true);
-
-                            kitchenimageModels.add(imageModel);
-
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-
-                        kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                        IMAGE_COUNT++;
-
-                        kitchenImageCount++;
-                    }
-                    backgroundThreadHandler.sendEmptyMessage(0);
-                } catch (OutOfMemoryError | Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            if(isHallFlag==3) {
-                try {
-                    for (int i = 0; i < imagePaths.size(); i++) {
-                        Calendar calendar = Calendar.getInstance();
-                        String strTime = String.valueOf(calendar.getTimeInMillis());
-                        String strFileName = strTime + ".jpeg";
-
-                        Date date = new Date();
-
-                        File mCopyFile = utils.getInternalFileImages(strTime);
-                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
-
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-
-                        imageModel.setmIsNew(true);
-
-                        washroomimageModels.add(imageModel);
-
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-
-                        washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                        IMAGE_COUNT++;
-
-                        washroomImageCount++;
-                    }
-                    backgroundThreadHandler.sendEmptyMessage(0);
-                } catch (OutOfMemoryError | Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            if(isHallFlag==4) {
-                try {
-                    for (int i = 0; i < imagePaths.size(); i++) {
-                        Calendar calendar = Calendar.getInstance();
-                        String strTime = String.valueOf(calendar.getTimeInMillis());
-                        String strFileName = strTime + ".jpeg";
-
-                        Date date = new Date();
-
-                        File mCopyFile = utils.getInternalFileImages(strTime);
-                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
-
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-
-                        imageModel.setmIsNew(true);
-
-                        bedroomimageModels.add(imageModel);
-
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-
-                        bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                        IMAGE_COUNT++;
-
-                        bedroomImageCount++;
-                    }
-                    backgroundThreadHandler.sendEmptyMessage(0);
-                } catch (OutOfMemoryError | Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private class BackgroundThreadCamera extends Thread {
-        @Override
-        public void run() {
-            if(isHallFlag==1) {
-                try {
-                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
-
-                        File mCopyFile = utils.getInternalFileImages(strName);
-
-                        utils.copyFile(new File(strImageName), mCopyFile);
-
-                        Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-                        imageModel.setmIsNew(true);
-
-                            hallimageModels.add(imageModel);
-
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-                        hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                        hallImageCount++;
-
-                        IMAGE_COUNT++;
-                    }
-
-                } catch (Exception | OutOfMemoryError e) {
-                    e.printStackTrace();
-                }
-            }
-            if(isHallFlag==2) {
-                try {
-                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
-
-                        File mCopyFile = utils.getInternalFileImages(strName);
-
-                        utils.copyFile(new File(strImageName), mCopyFile);
-
-                        Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-                        imageModel.setmIsNew(true);
-
-                        kitchenimageModels.add(imageModel);
-
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-                        kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                        kitchenImageCount++;
-
-                        IMAGE_COUNT++;
-                    }
-
-                } catch (Exception | OutOfMemoryError e) {
-                    e.printStackTrace();
-                }
-            }
-            if(isHallFlag==3) {
-                try {
-                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
-
-                        File mCopyFile = utils.getInternalFileImages(strName);
-
-                        utils.copyFile(new File(strImageName), mCopyFile);
-
-                        Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-                        imageModel.setmIsNew(true);
-
-                        washroomimageModels.add(imageModel);
-
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-                        washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                        washroomImageCount++;
-
-                        IMAGE_COUNT++;
-                    }
-
-                } catch (Exception | OutOfMemoryError e) {
-                    e.printStackTrace();
-                }
-            }
-            if(isHallFlag==4) {
-                try {
-                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
-
-                        File mCopyFile = utils.getInternalFileImages(strName);
-
-                        utils.copyFile(new File(strImageName), mCopyFile);
-
-                        Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-                        imageModel.setmIsNew(true);
-
-                        bedroomimageModels.add(imageModel);
-
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-                        bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                        bedroomImageCount++;
-
-                        IMAGE_COUNT++;
-                    }
-
-                } catch (Exception | OutOfMemoryError e) {
-                    e.printStackTrace();
-                }
-            }
-            backgroundThreadHandler.sendEmptyMessage(0);
-        }
-    }
-
-    private class BackgroundThreadImages extends Thread {
-        @Override
-        public void run() {
-            if(isHallFlag==1) {
-                try {
-
-                    for (ImageModel imageModel : hallimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                            hallbitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                            imageModel.setmIsNew(false);
-
-                            IMAGE_COUNT++;
-                        }
-                    }
-                } catch (Exception | OutOfMemoryError e) {
-                    e.printStackTrace();
-                }
-            }
-            if(isHallFlag==2) {
-                try {
-
-                    for (ImageModel imageModel : kitchenimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                            kitchenbitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                            imageModel.setmIsNew(false);
-
-                            IMAGE_COUNT++;
-                        }
-                    }
-                } catch (Exception | OutOfMemoryError e) {
-                    e.printStackTrace();
-                }
-            }
-            if(isHallFlag==3) {
-                try {
-
-                    for (ImageModel imageModel : washroomimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                            washroombitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                            imageModel.setmIsNew(false);
-
-                            IMAGE_COUNT++;
-                        }
-                    }
-                } catch (Exception | OutOfMemoryError e) {
-                    e.printStackTrace();
-                }
-            }
-            if(isHallFlag==4) {
-                try {
-
-                    for (ImageModel imageModel : bedroomimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                            bedroombitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                            imageModel.setmIsNew(false);
-
-                            IMAGE_COUNT++;
-                        }
-                    }
-                } catch (Exception | OutOfMemoryError e) {
-                    e.printStackTrace();
-                }
-            }
-            backgroundThreadHandler.sendEmptyMessage(0);
         }
     }
 
@@ -1651,9 +1305,6 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
     }
 
-
-
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -1837,8 +1488,6 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
         super.onResume();
 
-        //todo bad design redo
-
 
         utils = new Utils(CheckInCareProcess.this);
 
@@ -1934,5 +1583,344 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             uploadmediastatus.setTextColor(Color.RED);
         }
 
+    }
+
+    private class BackgroundThreadHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+
+            if (isHallFlag == 1) {
+                addHallImages();
+            }
+            if (isHallFlag == 2) {
+                addKitchenImages();
+            }
+            if (isHallFlag == 3) {
+                addWashroomImages();
+            }
+            if (isHallFlag == 4) {
+                addBedroomImages();
+            }
+        }
+    }
+
+    private class BackgroundThread extends Thread {
+        @Override
+        public void run() {
+
+            if (isHallFlag == 1) {
+                try {
+                    for (int i = 0; i < imagePaths.size(); i++) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strTime = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strTime + ".jpeg";
+
+                        Date date = new Date();
+
+                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
+
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+
+                        imageModel.setmIsNew(true);
+
+                        hallimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+                        hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        IMAGE_COUNT++;
+
+                        hallImageCount++;
+                    }
+                    backgroundThreadHandler.sendEmptyMessage(0);
+                } catch (OutOfMemoryError | Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (isHallFlag == 2) {
+                try {
+                    for (int i = 0; i < imagePaths.size(); i++) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strTime = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strTime + ".jpeg";
+
+                        Date date = new Date();
+
+                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
+
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+
+                        imageModel.setmIsNew(true);
+
+                        kitchenimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+
+                        kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        IMAGE_COUNT++;
+
+                        kitchenImageCount++;
+                    }
+                    backgroundThreadHandler.sendEmptyMessage(0);
+                } catch (OutOfMemoryError | Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (isHallFlag == 3) {
+                try {
+                    for (int i = 0; i < imagePaths.size(); i++) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strTime = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strTime + ".jpeg";
+
+                        Date date = new Date();
+
+                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
+
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+
+                        imageModel.setmIsNew(true);
+
+                        washroomimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+
+                        washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        IMAGE_COUNT++;
+
+                        washroomImageCount++;
+                    }
+                    backgroundThreadHandler.sendEmptyMessage(0);
+                } catch (OutOfMemoryError | Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (isHallFlag == 4) {
+                try {
+                    for (int i = 0; i < imagePaths.size(); i++) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strTime = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strTime + ".jpeg";
+
+                        Date date = new Date();
+
+                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
+
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+
+                        imageModel.setmIsNew(true);
+
+                        bedroomimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+
+                        bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        IMAGE_COUNT++;
+
+                        bedroomImageCount++;
+                    }
+                    backgroundThreadHandler.sendEmptyMessage(0);
+                } catch (OutOfMemoryError | Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private class BackgroundThreadCamera extends Thread {
+        @Override
+        public void run() {
+            if (isHallFlag == 1) {
+                try {
+                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+
+                        File mCopyFile = utils.getInternalFileImages(strName);
+
+                        utils.copyFile(new File(strImageName), mCopyFile);
+
+                        Date date = new Date();
+                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        imageModel.setmIsNew(true);
+
+                        hallimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+                        hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        hallImageCount++;
+
+                        IMAGE_COUNT++;
+                    }
+
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if (isHallFlag == 2) {
+                try {
+                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+
+                        File mCopyFile = utils.getInternalFileImages(strName);
+
+                        utils.copyFile(new File(strImageName), mCopyFile);
+
+                        Date date = new Date();
+                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        imageModel.setmIsNew(true);
+
+                        kitchenimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+                        kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        kitchenImageCount++;
+
+                        IMAGE_COUNT++;
+                    }
+
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if (isHallFlag == 3) {
+                try {
+                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+
+                        File mCopyFile = utils.getInternalFileImages(strName);
+
+                        utils.copyFile(new File(strImageName), mCopyFile);
+
+                        Date date = new Date();
+                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        imageModel.setmIsNew(true);
+
+                        washroomimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+                        washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        washroomImageCount++;
+
+                        IMAGE_COUNT++;
+                    }
+
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if (isHallFlag == 4) {
+                try {
+                    if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+
+                        File mCopyFile = utils.getInternalFileImages(strName);
+
+                        utils.copyFile(new File(strImageName), mCopyFile);
+
+                        Date date = new Date();
+                        ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        imageModel.setmIsNew(true);
+
+                        bedroomimageModels.add(imageModel);
+
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+
+                        bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                        bedroomImageCount++;
+
+                        IMAGE_COUNT++;
+                    }
+
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            backgroundThreadHandler.sendEmptyMessage(0);
+        }
+    }
+
+    private class BackgroundThreadImages extends Thread {
+        @Override
+        public void run() {
+            if (isHallFlag == 1) {
+                try {
+
+                    for (ImageModel imageModel : hallimageModels) {
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                            hallbitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                            imageModel.setmIsNew(false);
+
+                            IMAGE_COUNT++;
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if (isHallFlag == 2) {
+                try {
+
+                    for (ImageModel imageModel : kitchenimageModels) {
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                            kitchenbitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                            imageModel.setmIsNew(false);
+
+                            IMAGE_COUNT++;
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if (isHallFlag == 3) {
+                try {
+
+                    for (ImageModel imageModel : washroomimageModels) {
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                            washroombitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                            imageModel.setmIsNew(false);
+
+                            IMAGE_COUNT++;
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            if (isHallFlag == 4) {
+                try {
+
+                    for (ImageModel imageModel : bedroomimageModels) {
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                            bedroombitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+
+                            imageModel.setmIsNew(false);
+
+                            IMAGE_COUNT++;
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            backgroundThreadHandler.sendEmptyMessage(0);
+        }
     }
 }

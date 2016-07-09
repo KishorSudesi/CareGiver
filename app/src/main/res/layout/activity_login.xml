@@ -87,4 +87,19 @@
         android:scaleType="fitXY"
         android:src="@drawable/app_bg" />
 
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        style="@style/GenericProgressBackground"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_above="@+id/editEmail"
+        android:layout_alignEnd="@+id/editEmail"
+        android:layout_alignRight="@+id/editEmail"
+        android:layout_marginBottom="45dp"
+        android:padding="5dp"
+        android:visibility="gone">
+
+        <ProgressBar style="@style/GenericProgressIndicator" />
+    </RelativeLayout>
+
 </RelativeLayout>

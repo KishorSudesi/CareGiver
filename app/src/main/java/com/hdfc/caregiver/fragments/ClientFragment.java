@@ -6,11 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hdfc.adapters.ClientAdapter;
 import com.hdfc.adapters.ExpandableListAdapter;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
@@ -118,7 +116,6 @@ public class ClientFragment extends Fragment {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                // TODO Auto-generated method stub
                 Toast.makeText(
                         getActivity(),
                         listDataHeader.get(groupPosition)

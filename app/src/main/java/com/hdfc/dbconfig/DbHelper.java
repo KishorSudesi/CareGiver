@@ -12,26 +12,33 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Date;
 
 public class DbHelper extends SQLiteOpenHelper {
 
     public static final String strTableNameCollection = "collections";
+    public static final String strTableNameMilestone = "milestones";
     public static final String strTableNameFiles = "files";
-    private static final int DATABASE_VERSION = 5;
+    public static final String DEFAULT_DB_DATE = "2016-01-01T06:04:57.691Z";
+    public static final String COLUMN_OBJECT_ID = "object_id";
+    public static final String COLUMN_UPDATE_DATE = "updated_date";
+    public static final String COLUMN_DOCUMENT = "document";
+    public static final String COLUMN_COLLECTION_NAME = "collection_name";
+    public static final String COLUMN_DOC_DATE = "doc_date";
+    public static final String COLLECTION_FIELDS[] = {"object_id", "updated_date", "document", "collection_name", "status", "doc_date"};
+    private static final int DATABASE_VERSION = 6;
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
     private static String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
     private static SQLiteDatabase db;
     //private Utils utils;
-
     private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection + " ( id integer primary key autoincrement," +
-            " object_id VARCHAR(50), updated_date datetime, document text, collection_name VARCHAR(50), status integer)";
+            " object_id VARCHAR(50), updated_date datetime, document text, collection_name VARCHAR(50), status integer, doc_date datetime)";
+
+    private String strMilestoneQuery = "CREATE TABLE " + strTableNameMilestone + " ( id integer primary key autoincrement," +
+            " object_id VARCHAR(50), milestone_id integer, milestone_date datetime)";
 
     private String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
             " name VARCHAR(100), url VARCHAR(300), file_type VARCHAR(10),  file_hash VARCHAR(50))";
@@ -42,9 +49,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this._ctxt = context;
         //utils = new Utils(context);
-        originalFile = _ctxt.getDatabasePath(DATABASE_NAME);
+        originalFile = context.getDatabasePath(DATABASE_NAME);
+        this._ctxt = context;
 
         try {
             dbPass = AESCrypt.decrypt(Config.string, "IqSKDxDO7p2HjCs+8R4Z0A==");
@@ -78,7 +85,7 @@ public class DbHelper extends SQLiteOpenHelper {
         Utils.log("DB", "open");
     }
 
-    public void close() {
+    public synchronized void close() {
         try {
             if (db != null && db.isOpen())
                 db.close();
@@ -91,6 +98,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(strCollectionsQuery);
         db.execSQL(strFilesQuery);
+        db.execSQL(strMilestoneQuery);
         Utils.log("DB", "onCreate");
     }
 
@@ -107,6 +115,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void dropDb(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + strTableNameCollection);
         db.execSQL("DROP TABLE IF EXISTS " + strTableNameFiles);
+        db.execSQL("DROP TABLE IF EXISTS " + strTableNameMilestone);
     }
 
     void closeCursor(Cursor cursor) {
@@ -180,8 +189,38 @@ public class DbHelper extends SQLiteOpenHelper {
         return isUpdated;
     }
 
+    Cursor rawQuery(String query) {
 
-    public boolean backupDatabase() {
+        if (db != null && !db.isOpen())
+            open();
+        //Cursor cur = null;
+        //try {
+        return db.rawQuery(query, null);
+        /*} catch (Exception e) {
+            return null;
+        }*/
+    }
+
+    void beginDBTransaction() {
+        if (db != null && !db.isOpen())
+            open();
+        db.beginTransaction();
+    }
+
+    void endDBTransaction() {
+        if (db != null && !db.isOpen())
+            open();
+        db.endTransaction();
+    }
+
+    void dbTransactionSuccessFull() {
+        if (db != null && !db.isOpen())
+            open();
+        db.setTransactionSuccessful();
+    }
+
+
+   /* public boolean backupDatabase() {
 
         boolean isSuccess = false;
 
@@ -212,7 +251,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
 
         return isSuccess;
-    }
+    }*/
 
     private void encrypt(boolean isToOpen) throws IOException {
 

@@ -2,7 +2,7 @@ package com.hdfc.caregiver;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,8 +10,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hdfc.app42service.StorageService;
@@ -19,11 +21,12 @@ import com.hdfc.app42service.UserService;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbCon;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.CrashLogger;
+import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
 import com.hdfc.views.CheckView;
-import com.scottyab.aescrypt.AESCrypt;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
@@ -44,10 +47,14 @@ public class LoginActivity extends AppCompatActivity {
     //private RelativeLayout relLayout;
     private EditText editEmail, editPassword, editTextCaptcha, forgotPassUsername;
     private CheckView checkView;
-    private SharedPreferences sharedPreferences;
+    //private SharedPreferences sharedPreferences;
     private char[] res = new char[4];
+    private Button button;
     private String email;
     private AlertDialog alertdialog;
+    private SessionManager sessionManager;
+    private RelativeLayout loadingPanel;
+    private TextView textView;
 
 
     @Override
@@ -55,15 +62,21 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         //relLayout = (RelativeLayout) findViewById(R.id.relativePass);
         //RelativeLayout layoutLogin = (RelativeLayout) findViewById(R.id.layoutLogin);
+        loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
         editEmail = (EditText) findViewById(R.id.editEmail);
         editPassword = (EditText) findViewById(R.id.editPassword);
-        TextView forgotpass = (TextView) findViewById(R.id.id_forgot);
+        textView = (TextView) findViewById(R.id.id_forgot);
+        button = (Button) findViewById(R.id.button);
         utils = new Utils();
         appUtils = new AppUtils(LoginActivity.this);
 
-        sharedPreferences = getSharedPreferences(Config.strPreferenceName, MODE_PRIVATE);
+        // sharedPreferences = getSharedPreferences(Config.strPreferenceName, MODE_PRIVATE);
+
+        sessionManager = new SessionManager(LoginActivity.this);
 
         progressDialog = new ProgressDialog(LoginActivity.this);
 
@@ -104,20 +117,19 @@ public class LoginActivity extends AppCompatActivity {
             }
         });*/
 
-        if (forgotpass != null) {
-            forgotpass.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showForgotPassword();
-                }
-            });
-        }
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showForgotPassword();
+            }
+        });
+
 
         CrashLogger.getInstance().init(LoginActivity.this);
 
-        CareGiver.dbCon = DbCon.getInstance(getApplicationContext());
-        //CareGiver.dbCon.open();
-
+        loadingPanel.setVisibility(View.VISIBLE);
+        new LoadDataTask().execute();
     }
 
     private void showForgotPassword(){
@@ -326,7 +338,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     Config.feedBackModels.clear();
                     //Config.fileModels.clear();
-                    CareGiver.dbCon.deleteFiles();
+                    CareGiver.getDbCon().deleteFiles();
 
                     Config.activityModels.clear();
                     Config.customerModels.clear();
@@ -403,14 +415,24 @@ public class LoginActivity extends AppCompatActivity {
 
                                         Storage.JSONDocument jsonDocument = storage.getJsonDocList().
                                                 get(0);
-                                        String strDocument = jsonDocument.getJsonDoc();
-                                        String _strProviderId = jsonDocument.getDocId();
 
-                                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                                        editor.putString("PROVIDER_ID", AESCrypt.encrypt(
-                                                Config.string, _strProviderId));
-                                        editor.apply();
-                                        appUtils.createProviderModel(strDocument, _strProviderId);
+                                        sessionManager.createLoginSession(userName, jsonDocument.getDocId());
+
+                                        try {
+                                            //CareGiver.getDbCon().beginDBTransaction();
+                                            String values[] = {jsonDocument.getDocId(),
+                                                    jsonDocument.getUpdatedAt(),
+                                                    jsonDocument.getJsonDoc(),
+                                                    Config.collectionProvider, "1", ""};
+
+                                            CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values, DbHelper.COLLECTION_FIELDS);
+                                            //CareGiver.getDbCon().dbTransactionSucessFull();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }/*finally {
+                                            CareGiver.getDbCon().endDBTransaction();
+                                        }*/
+                                        appUtils.createProviderModel(jsonDocument.getJsonDoc(), jsonDocument.getDocId());
                                         //Config.providerModel.setStrProviderId(_strProviderId);
                                         goToDashboard();
                                     } else {
@@ -478,9 +500,53 @@ public class LoginActivity extends AppCompatActivity {
     public void onBackPressed() {
         //super.onBackPressed();
         moveTaskToBack(true);
-        if (CareGiver.dbCon != null) {
-            CareGiver.dbCon.close();
+        if (CareGiver.getDbCon() != null) {
+            CareGiver.getDbCon().close();
         }
         finish();
+    }
+
+    private class LoadDataTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                //CareGiver.dbCon = DbCon.getInstance(getApplicationContext());
+
+                CareGiver.setDbCon(new DbCon(getApplicationContext()));
+
+                //exportDB();
+            } catch (Exception e) {
+                e.getMessage();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            loadingPanel.setVisibility(View.GONE);
+
+            try {
+                if (sessionManager.isLoggedIn() && !sessionManager.getEmail().equalsIgnoreCase("")
+                        && !sessionManager.getProviderId().equalsIgnoreCase("")) {
+
+                    /*editEmail.setVisibility(View.INVISIBLE);
+                    editPassword.setVisibility(View.INVISIBLE);
+                    textView.setVisibility(View.INVISIBLE);
+                    button.setVisibility(View.INVISIBLE);
+                    goToDashboard();*/
+
+                } else {
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

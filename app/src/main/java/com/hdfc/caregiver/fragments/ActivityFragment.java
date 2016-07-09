@@ -16,19 +16,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.CreatingTaskActivity;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
-import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
-import java.io.File;
 import java.util.ArrayList;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 
 public class ActivityFragment extends Fragment
@@ -39,7 +40,7 @@ public class ActivityFragment extends Fragment
 
     //private static final int PICK_CONTACT = 979;
     public static ArrayList<ActivityModel> activityModels = Config.activityModels;
-    private static MultiBitmapLoader multiBitmapLoader;
+    //private static MultiBitmapLoader multiBitmapLoader;
     private static Utils utils;
     private static Context context;
 
@@ -158,16 +159,31 @@ public class ActivityFragment extends Fragment
 
                 //Utils.log(activityModel.getStrDependentID(), " IMG ");
 
-                File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(
-                        activityModel.getStrDependentID().trim()));
+                /*File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(
+                        activityModel.getStrDependentID().trim()));*/
 
-                if (fileImage.exists()) {
-                    String filename = fileImage.getAbsolutePath();
-                    multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
-                } else {
+                //if (fileImage.exists()) {
+                //String filename = fileImage.getAbsolutePath();
+                //multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
+
+                int iPosition = Config.dependentIdsAdded.indexOf(activityModel.getStrDependentID());
+
+                if (iPosition > -1) {
+
+                    String strUrl = Config.dependentModels.get(iPosition).getStrImageUrl();
+
+                    Glide.with(context)
+                            .load(strUrl)
+                            .centerCrop()
+                            .bitmapTransform(new CropCircleTransformation(context))
+                            .placeholder(R.drawable.person_icon)
+                            .crossFade()
+                            .into(cvh.imagePerson);
+                }
+               /* } else {
                     cvh.imagePerson.setImageDrawable(context.getResources().getDrawable(
                             R.drawable.person_icon));
-                }
+                }*/
             }
             return convertView;
         }
@@ -214,7 +230,7 @@ public class ActivityFragment extends Fragment
         initMenu();
         //progressDialog = new ProgressDialog(getActivity());
         utils = new Utils(getActivity());
-        multiBitmapLoader = new MultiBitmapLoader(getActivity());
+        //multiBitmapLoader = new MultiBitmapLoader(getActivity());
 
         context = getActivity();
 

@@ -93,7 +93,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     public static void refreshClientsData() {
 
-        if (utils.isConnectingToInternet()) {
+        if (utils.isConnectingToInternet(appCompatActivity)) {
 
             //loadingPanel.setVisibility(View.VISIBLE);
 
@@ -110,7 +110,7 @@ public class DashboardActivity extends AppCompatActivity implements
             appUtils.fetchClients(2);
 
         } else {
-            utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet));
+            utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet), appCompatActivity);
             loadingPanel.setVisibility(View.GONE);
         }
     }
@@ -157,7 +157,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
         try {
             appUtils = new AppUtils(DashboardActivity.this);
-            utils = new Utils(DashboardActivity.this);
+            utils = new Utils();
 
             mytask = (ImageView) findViewById(R.id.buttonMyTasks);
             clients = (ImageView) findViewById(R.id.buttonClients);
@@ -416,9 +416,9 @@ public class DashboardActivity extends AppCompatActivity implements
             e.printStackTrace();
         }
 
-        if (Config.providerModel == null || Config.providerModel.getStrName() == null) {
+       /* if (Config.providerModel == null || Config.providerModel.getStrName() == null) {
             AppUtils.logout();
-        }
+        }*/
     }
 
     @Override
@@ -448,7 +448,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void refreshDashboardData() {
 
-        if (utils.isConnectingToInternet()) {
+        if (utils.isConnectingToInternet(appCompatActivity)) {
 
             loadingPanel.setVisibility(View.VISIBLE);
 
@@ -533,8 +533,8 @@ public class DashboardActivity extends AppCompatActivity implements
         @Override
         public void handleMessage(Message msg) {
 
-            if (!utils.isConnectingToInternet())
-                utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet));
+            if (!utils.isConnectingToInternet(appCompatActivity))
+                utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet), appCompatActivity);
 
            /* if (Config.intSelectedMenu == Config.intClientScreen) {
                 ClientFragment.prepareListData();
@@ -548,8 +548,8 @@ public class DashboardActivity extends AppCompatActivity implements
         @Override
         public void run() {
             try {
-                if (utils.isConnectingToInternet())
-                    appUtils.loadAllFiles();
+                /*if (utils.isConnectingToInternet())
+                    appUtils.loadAllFiles();*/
 
                 threadHandler.sendEmptyMessage(0);
             } catch (Exception e) {

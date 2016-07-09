@@ -330,8 +330,8 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
 
         try {
 
-            if (CareGiver.dbCon != null) {
-                CareGiver.dbCon.close();
+            if (CareGiver.getDbCon() != null) {
+                CareGiver.getDbCon().close();
             }
 
 

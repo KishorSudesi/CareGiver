@@ -104,8 +104,8 @@ public class AppUtils {
             Config.boolIsLoggedIn = false;
 
             //Config.fileModels.clear();
-            if (CareGiver.dbCon != null)
-                CareGiver.dbCon.deleteFiles();
+            if (CareGiver.getDbCon() != null)
+                CareGiver.getDbCon().deleteFiles();
 
             SharedPreferences.Editor editor = _ctxt.getSharedPreferences(Config.strPreferenceName,
                     Context.MODE_PRIVATE).edit();
@@ -149,8 +149,6 @@ public class AppUtils {
 
             if (jsonObject.has("provider_email")) {
 
-                //
-                //todo insert or update
 
                 /*
                 *String strUrl = jsonObject.getString("provider_profile_url");
@@ -209,7 +207,7 @@ public class AppUtils {
 
                 String strUrlHash = Utils.sha512(strUrl);
 
-                Cursor cur = CareGiver.dbCon.fetch(
+                Cursor cur = CareGiver.getDbCon().fetch(
                         DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
                         new String[]{strProviderId}, null, "0, 1", true, null, null
                 );
@@ -217,7 +215,7 @@ public class AppUtils {
                 String strHashLocal = "";
 
                 if (cur.getCount() <= 0) {
-                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{strProviderId,
+                    CareGiver.getDbCon().insert(DbHelper.strTableNameFiles, new String[]{strProviderId,
                                     strUrl, "IMAGE", strUrlHash},
                             new String[]{"name", "url", "file_type", "file_hash"});
                 } else {
@@ -233,7 +231,7 @@ public class AppUtils {
                     //CareGiver.dbCon.closeCursor(cur);
 
                     if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                        CareGiver.dbCon.update(
+                        CareGiver.getDbCon().update(
                                 DbHelper.strTableNameFiles, "name=?",
                                 new String[]{strUrl, strUrlHash},
                                 new String[]{"url", "file_hash"}, new String[]{strProviderId}
@@ -241,7 +239,7 @@ public class AppUtils {
                     }
                 }
 
-                CareGiver.dbCon.closeCursor(cur);
+                CareGiver.getDbCon().closeCursor(cur);
 
                 //Config.fileModels.add(new FileModel(strProviderId, strUrl, "IMAGE"));
 
@@ -575,7 +573,7 @@ public class AppUtils {
                         int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.getString("customer_id"));
 
                         if (Config.clientModels.size() > 0) {
-                            if (iPosition > -1 && iPosition < Config.clientModels.size())//todo check
+                            if (iPosition > -1 && iPosition < Config.clientModels.size())
                                 Config.clientModels.get(iPosition).setDependentModel(dependentModel);
                         }
 
@@ -597,7 +595,7 @@ public class AppUtils {
 
                     String strUrlHash = Utils.sha512(strUrl);
 
-                    Cursor cur = CareGiver.dbCon.fetch(
+                    Cursor cur = CareGiver.getDbCon().fetch(
                             DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
                             new String[]{strDocumentId}, null, "0, 1", true, null, null
                     );
@@ -608,7 +606,7 @@ public class AppUtils {
                     String strHashLocal = "";
 
                     if (cur.getCount() <= 0) {
-                        CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{strDocumentId,
+                        CareGiver.getDbCon().insert(DbHelper.strTableNameFiles, new String[]{strDocumentId,
                                         strUrl, "IMAGE", strUrlHash},
                                 new String[]{"name", "url", "file_type", "file_hash"});
                     } else {
@@ -616,10 +614,10 @@ public class AppUtils {
                         cur.moveToFirst();
                         strHashLocal = cur.getString(0);
                         cur.moveToNext();
-                        CareGiver.dbCon.closeCursor(cur);
+                        CareGiver.getDbCon().closeCursor(cur);
 
                         if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                            CareGiver.dbCon.update(
+                            CareGiver.getDbCon().update(
                                     DbHelper.strTableNameFiles, "name=?",
                                     new String[]{strUrl, strUrlHash},
                                     new String[]{"url", "file_hash"}, new String[]{strDocumentId}
@@ -627,11 +625,11 @@ public class AppUtils {
                         }
                     }
 
-                    CareGiver.dbCon.closeCursor(cur);
+                    CareGiver.getDbCon().closeCursor(cur);
                 }
             } else {
                 if (iFlag == 2) {
-//todo
+
                     if (!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name"))) {
                         Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
 
@@ -715,7 +713,7 @@ public class AppUtils {
 
                     String strUrlHash = Utils.sha512(strUrl);
 
-                    Cursor cur = CareGiver.dbCon.fetch(
+                    Cursor cur = CareGiver.getDbCon().fetch(
                             DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
                             new String[]{strDocumentId}, null, "0, 1", true, null, null
                     );
@@ -724,7 +722,7 @@ public class AppUtils {
                     String strHashLocal = "";
 
                     if (cur.getCount() <= 0) {
-                        CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{strDocumentId,
+                        CareGiver.getDbCon().insert(DbHelper.strTableNameFiles, new String[]{strDocumentId,
                                         strUrl, "IMAGE", strUrlHash},
                                 new String[]{"name", "url", "file_type", "file_hash"});
                     } else {
@@ -735,7 +733,7 @@ public class AppUtils {
 
 
                         if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                            CareGiver.dbCon.update(
+                            CareGiver.getDbCon().update(
                                     DbHelper.strTableNameFiles, "name=?",
                                     new String[]{strUrl, strUrlHash},
                                     new String[]{"url", "file_hash"}, new String[]{strDocumentId}
@@ -743,7 +741,7 @@ public class AppUtils {
                         }
                     }
 
-                    CareGiver.dbCon.closeCursor(cur);
+                    CareGiver.getDbCon().closeCursor(cur);
 
                 } else {
                     if (iFlag == 2) {
@@ -779,35 +777,16 @@ public class AppUtils {
 
     public void fetchActivities() {
 
-      /*  String strDate = Config.UPDATE_DATE;
+      /* String strDate = DbHelper.DEFAULT_DB_DATE;
 
-        Cursor cur = CareGiver.dbCon.fetch(
-                DbHelper.strTableNameCollection, new String[]{"updated_date"}, "collection_name=?",
-                new String[]{Config.collectionActivity}, "updated_date DESC", "0, 1", true, null, null
-        );
+       Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionServiceCustomer);
 
-        if (cur.getCount() > 0) {
-
-            cur.moveToFirst();
-
-            while (!cur.isAfterLast()) {
-                //strUrlLocal=cur.getString(0);
-                strHashLocal = cur.getString(0);
-                cur.moveToNext();
-            }
-
-            //CareGiver.dbCon.closeCursor(cur);
-
-            if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                CareGiver.dbCon.update(
-                        DbHelper.strTableNameFiles, "name=?",
-                        new String[]{strUrl, strUrlHash},
-                        new String[]{"url", "file_hash"}, new String[]{strProviderId}
-                );
-            }
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            strDate = cursor.getString(0);
         }
 
-        CareGiver.dbCon.closeCursor(cur);*/
+        CareGiver.getDbCon().closeCursor(cursor);*/
 
 
         Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
@@ -838,6 +817,16 @@ public class AppUtils {
 
         Query q6 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q5);
 
+      /*  Query finalQuery;
+
+        if (strDate!=null&&!strDate.equalsIgnoreCase("")) {
+            Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.GREATER_THAN_EQUALTO);
+
+            finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
+        } else {
+            finalQuery = q1;
+        }*/
+
         try {
             Utils.log(q6.get(), " QUERY ");
         } catch (Exception e) {
@@ -858,12 +847,32 @@ public class AppUtils {
 
                             ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
 
-                            for (int i = 0; i < jsonDocList.size(); i++) {
+                            try {
+                                CareGiver.getDbCon().beginDBTransaction();
+                                for (int i = 0; i < jsonDocList.size(); i++) {
 
-                                Storage.JSONDocument jsonDocument = jsonDocList.get(i);
-                                String strDocumentId = jsonDocument.getDocId();
-                                String strActivities = jsonDocument.getJsonDoc();
-                                createActivityModel(strDocumentId, strActivities, 1);
+                                    Storage.JSONDocument jsonDocument = jsonDocList.get(i);
+
+                                    ///
+                                    String values[] = {jsonDocument.getDocId(), jsonDocument.getUpdatedAt(),
+                                            jsonDocument.getJsonDoc(), Config.collectionActivity, "0", ""};
+
+                                    String selection = DbHelper.COLUMN_OBJECT_ID + " = ?";
+
+                                    // WHERE clause arguments
+                                    String[] selectionArgs = {jsonDocument.getDocId()};
+                                    CareGiver.getDbCon().updateActivity(DbHelper.strTableNameCollection,
+                                            selection, values, DbHelper.COLLECTION_FIELDS,
+                                            selectionArgs);
+
+                                    createActivityModel(jsonDocument.getDocId(),
+                                            jsonDocument.getJsonDoc(), 1);
+                                }
+                                CareGiver.getDbCon().dbTransactionSuccessFull();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                CareGiver.getDbCon().endDBTransaction();
                             }
                         }
                         fetchCustomers(1);
@@ -885,7 +894,7 @@ public class AppUtils {
 
         try {
 
-            cur = CareGiver.dbCon.fetch(
+            cur = CareGiver.getDbCon().fetch(
                     DbHelper.strTableNameFiles, new String[]{"name", "url"}, null,
                     null, null, null, true, null, null
             );
@@ -898,11 +907,11 @@ public class AppUtils {
                 }
             }
 
-            CareGiver.dbCon.closeCursor(cur);
+            CareGiver.getDbCon().closeCursor(cur);
 
         } catch (Exception e) {
             e.printStackTrace();
-            CareGiver.dbCon.closeCursor(cur);
+            CareGiver.getDbCon().closeCursor(cur);
         }
 
         /*for (int i = 0; i < Config.fileModels.size(); i++) {
@@ -1046,7 +1055,7 @@ public class AppUtils {
 
                                 String strUrlHash = Utils.sha512(jsonObjectVideo.getString("video_url"));
 
-                                Cursor cur = CareGiver.dbCon.fetch(
+                                Cursor cur = CareGiver.getDbCon().fetch(
                                         DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
                                         new String[]{jsonObjectVideo.getString("video_name")}, null, "0, 1", true, null, null
                                 );
@@ -1054,7 +1063,7 @@ public class AppUtils {
                                 String strHashLocal = "";
 
                                 if (cur.getCount() <= 0) {
-                                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectVideo.getString("video_name"),
+                                    CareGiver.getDbCon().insert(DbHelper.strTableNameFiles, new String[]{jsonObjectVideo.getString("video_name"),
                                                     jsonObjectVideo.getString("video_url"), "VIDEO", strUrlHash},
                                             new String[]{"name", "url", "file_type", "file_hash"});
                                 } else {
@@ -1062,10 +1071,10 @@ public class AppUtils {
                                     cur.moveToFirst();
                                     strHashLocal = cur.getString(0);
                                     cur.moveToNext();
-                                    CareGiver.dbCon.closeCursor(cur);
+                                    CareGiver.getDbCon().closeCursor(cur);
 
                                     if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                                        CareGiver.dbCon.update(
+                                        CareGiver.getDbCon().update(
                                                 DbHelper.strTableNameFiles, "name=?",
                                                 new String[]{jsonObjectVideo.getString("video_url"), strUrlHash},
                                                 new String[]{"url", "file_hash"}, new String[]{jsonObjectVideo.getString("video_name")}
@@ -1073,7 +1082,7 @@ public class AppUtils {
                                     }
                                 }
 
-                                CareGiver.dbCon.closeCursor(cur);
+                                CareGiver.getDbCon().closeCursor(cur);
                                 videoModels.add(videoModel);
                             }
                         }
@@ -1101,7 +1110,7 @@ public class AppUtils {
 
                                 String strUrlHash = Utils.sha512(jsonObjectImage.getString("image_url"));
 
-                                Cursor cur = CareGiver.dbCon.fetch(
+                                Cursor cur = CareGiver.getDbCon().fetch(
                                         DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
                                         new String[]{jsonObjectImage.getString("image_name")}, null, "0, 1", true, null, null
                                 );
@@ -1109,7 +1118,7 @@ public class AppUtils {
                                 String strHashLocal = "";
 
                                 if (cur.getCount() <= 0) {
-                                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectImage.getString("image_name"),
+                                    CareGiver.getDbCon().insert(DbHelper.strTableNameFiles, new String[]{jsonObjectImage.getString("image_name"),
                                                     jsonObjectImage.getString("image_url"), "IMAGE", strUrlHash},
                                             new String[]{"name", "url", "file_type", "file_hash"});
                                 } else {
@@ -1117,10 +1126,10 @@ public class AppUtils {
                                     cur.moveToFirst();
                                     strHashLocal = cur.getString(0);
                                     cur.moveToNext();
-                                    CareGiver.dbCon.closeCursor(cur);
+                                    CareGiver.getDbCon().closeCursor(cur);
 
                                     if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                                        CareGiver.dbCon.update(
+                                        CareGiver.getDbCon().update(
                                                 DbHelper.strTableNameFiles, "name=?",
                                                 new String[]{jsonObjectImage.getString("image_url"), strUrlHash},
                                                 new String[]{"url", "file_hash"}, new String[]{jsonObjectImage.getString("image_name")}
@@ -1128,7 +1137,7 @@ public class AppUtils {
                                     }
                                 }
 
-                                CareGiver.dbCon.closeCursor(cur);
+                                CareGiver.getDbCon().closeCursor(cur);
 
                                 imageModels.add(imageModel);
                             }
@@ -1237,7 +1246,7 @@ public class AppUtils {
                                         ///
                                         String strUrlHash = Utils.sha512(jsonObjectMsFile.getString("file_url"));
 
-                                        Cursor cur = CareGiver.dbCon.fetch(
+                                        Cursor cur = CareGiver.getDbCon().fetch(
                                                 DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
                                                 new String[]{jsonObjectMsFile.getString("file_name")}, null, "0, 1", true, null, null
                                         );
@@ -1245,7 +1254,7 @@ public class AppUtils {
                                         String strHashLocal = "";
 
                                         if (cur.getCount() <= 0) {
-                                            CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectMsFile.getString("file_name"),
+                                            CareGiver.getDbCon().insert(DbHelper.strTableNameFiles, new String[]{jsonObjectMsFile.getString("file_name"),
                                                             jsonObjectMsFile.getString("file_url"), "IMAGE", strUrlHash},
                                                     new String[]{"name", "url", "file_type", "file_hash"});
                                         } else {
@@ -1253,10 +1262,10 @@ public class AppUtils {
                                             cur.moveToFirst();
                                             strHashLocal = cur.getString(0);
                                             cur.moveToNext();
-                                            CareGiver.dbCon.closeCursor(cur);
+                                            CareGiver.getDbCon().closeCursor(cur);
 
                                             if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                                                CareGiver.dbCon.update(
+                                                CareGiver.getDbCon().update(
                                                         DbHelper.strTableNameFiles, "name=?",
                                                         new String[]{jsonObjectMsFile.getString("file_url"), strUrlHash},
                                                         new String[]{"url", "file_hash"}, new String[]{jsonObjectMsFile.getString("file_name")}
@@ -1264,7 +1273,7 @@ public class AppUtils {
                                             }
                                         }
 
-                                        CareGiver.dbCon.closeCursor(cur);
+                                        CareGiver.getDbCon().closeCursor(cur);
                                     }
                                 }
                             }
@@ -1546,7 +1555,7 @@ public class AppUtils {
 
                                 String strUrlHash = Utils.sha512(jsonObjectVideo.getString("video_url"));
 
-                                Cursor cur = CareGiver.dbCon.fetch(
+                                Cursor cur = CareGiver.getDbCon().fetch(
                                         DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
                                         new String[]{jsonObjectVideo.getString("video_name")}, null, "0, 1", true, null, null
                                 );
@@ -1554,7 +1563,7 @@ public class AppUtils {
                                 String strHashLocal = "";
 
                                 if (cur.getCount() <= 0) {
-                                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectVideo.getString("video_name"),
+                                    CareGiver.getDbCon().insert(DbHelper.strTableNameFiles, new String[]{jsonObjectVideo.getString("video_name"),
                                                     jsonObjectVideo.getString("video_url"), "VIDEO", strUrlHash},
                                             new String[]{"name", "url", "file_type", "file_hash"});
                                 } else {
@@ -1562,10 +1571,10 @@ public class AppUtils {
                                     cur.moveToFirst();
                                     strHashLocal = cur.getString(0);
                                     cur.moveToNext();
-                                    CareGiver.dbCon.closeCursor(cur);
+                                    CareGiver.getDbCon().closeCursor(cur);
 
                                     if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                                        CareGiver.dbCon.update(
+                                        CareGiver.getDbCon().update(
                                                 DbHelper.strTableNameFiles, "name=?",
                                                 new String[]{jsonObjectVideo.getString("video_url"), strUrlHash},
                                                 new String[]{"url", "file_hash"}, new String[]{jsonObjectVideo.getString("video_name")}
@@ -1573,7 +1582,7 @@ public class AppUtils {
                                     }
                                 }
 
-                                CareGiver.dbCon.closeCursor(cur);
+                                CareGiver.getDbCon().closeCursor(cur);
 
                                 videoModels.add(videoModel);
                             }
@@ -1601,7 +1610,7 @@ public class AppUtils {
 
                                 String strUrlHash = Utils.sha512(jsonObjectImage.getString("image_url"));
 
-                                Cursor cur = CareGiver.dbCon.fetch(
+                                Cursor cur = CareGiver.getDbCon().fetch(
                                         DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
                                         new String[]{jsonObjectImage.getString("image_name")}, null, "0, 1", true, null, null
                                 );
@@ -1609,7 +1618,7 @@ public class AppUtils {
                                 String strHashLocal = "";
 
                                 if (cur.getCount() <= 0) {
-                                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{jsonObjectImage.getString("image_name"),
+                                    CareGiver.getDbCon().insert(DbHelper.strTableNameFiles, new String[]{jsonObjectImage.getString("image_name"),
                                                     jsonObjectImage.getString("image_url"), "IMAGE", strUrlHash},
                                             new String[]{"name", "url", "file_type", "file_hash"});
                                 } else {
@@ -1617,10 +1626,10 @@ public class AppUtils {
                                     cur.moveToFirst();
                                     strHashLocal = cur.getString(0);
                                     cur.moveToNext();
-                                    CareGiver.dbCon.closeCursor(cur);
+                                    CareGiver.getDbCon().closeCursor(cur);
 
                                     if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                                        CareGiver.dbCon.update(
+                                        CareGiver.getDbCon().update(
                                                 DbHelper.strTableNameFiles, "name=?",
                                                 new String[]{jsonObjectImage.getString("image_url"), strUrlHash},
                                                 new String[]{"url", "file_hash"}, new String[]{jsonObjectImage.getString("image_name")}
@@ -1628,7 +1637,7 @@ public class AppUtils {
                                     }
                                 }
 
-                                CareGiver.dbCon.closeCursor(cur);
+                                CareGiver.getDbCon().closeCursor(cur);
 
                                 imageModels.add(imageModel);
 
@@ -2154,7 +2163,7 @@ public class AppUtils {
                     if (!strProviderId.equalsIgnoreCase("")) {
 
                         strProviderId = AESCrypt.decrypt(Config.string, strProviderId);
-                        cur = CareGiver.dbCon.fetch(DbHelper.strTableNameCollection,
+                        cur = CareGiver.getDbCon().fetch(DbHelper.strTableNameCollection,
                                 new String[]{"updated_date", "document"}, "object_id=?",
                                 new String[]{strProviderId}, null, "0, 1", true, null, null);
 
@@ -2166,10 +2175,10 @@ public class AppUtils {
                             /*    cur.moveToNext();
                             }*/
                         }
-                        CareGiver.dbCon.closeCursor(cur);
+                        CareGiver.getDbCon().closeCursor(cur);
                     }
                 } catch (Exception e) {
-                    CareGiver.dbCon.closeCursor(cur);
+                    CareGiver.getDbCon().closeCursor(cur);
                     e.printStackTrace();
                 }
             }
@@ -2218,14 +2227,14 @@ public class AppUtils {
 
                                         try {
 
-                                            cur = CareGiver.dbCon.fetch(
+                                            cur = CareGiver.getDbCon().fetch(
                                                     DbHelper.strTableNameCollection,
                                                     new String[]{"id"}, "object_id=?",
                                                     new String[]{_strProviderId}, null, null, false,
                                                     null, null);
 
                                             if (cur.getCount() <= 0) {
-                                                CareGiver.dbCon.insert(
+                                                CareGiver.getDbCon().insert(
                                                         DbHelper.strTableNameCollection,
                                                         new String[]{_strProviderId, strUpdatedDate,
                                                                 strDocument,
@@ -2234,7 +2243,7 @@ public class AppUtils {
                                                                 "document", "collection_name",
                                                                 "status"});
                                             } else {
-                                                CareGiver.dbCon.update(
+                                                CareGiver.getDbCon().update(
                                                         DbHelper.strTableNameCollection,
                                                         "object_id=? and collection_name=?",
                                                         new String[]{strUpdatedDate, strDocument},
@@ -2243,9 +2252,9 @@ public class AppUtils {
                                                                 Config.collectionProvider});
                                             }
 
-                                            CareGiver.dbCon.closeCursor(cur);
+                                            CareGiver.getDbCon().closeCursor(cur);
                                         } catch (Exception e) {
-                                            CareGiver.dbCon.closeCursor(cur);
+                                            CareGiver.getDbCon().closeCursor(cur);
                                             e.printStackTrace();
                                         }
 

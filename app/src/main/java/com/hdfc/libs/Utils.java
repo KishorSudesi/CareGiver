@@ -1015,6 +1015,20 @@ public class Utils {
         return false;
     }
 
+    public boolean isConnectingToInternet(Context _ctxt) {
+        ConnectivityManager connectivity = (ConnectivityManager)
+                _ctxt.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            if (info != null)
+                for (NetworkInfo anInfo : info)
+                    if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+        }
+        return false;
+    }
+
     /*public boolean isPasswordValid(String password) {
         return password.length() > 1;
     }*/

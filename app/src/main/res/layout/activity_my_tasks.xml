@@ -24,6 +24,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="2">
+
         <FrameLayout
             android:id="@+id/frameLayout"
             android:layout_width="match_parent"

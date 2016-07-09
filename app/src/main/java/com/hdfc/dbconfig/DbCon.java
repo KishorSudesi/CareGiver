@@ -1,37 +1,34 @@
 package com.hdfc.dbconfig;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 
 import net.sqlcipher.Cursor;
 
 public class DbCon {
 
     public static boolean isDbOpened = false;
-    private static DbHelper dbHelper;
-    private static DbCon dbConInstance = null;
-    private static Handler dbOpenHandler;
-    private Context context;
+    private DbHelper dbHelper;
+    //private DbCon dbConInstance = null;
 
-    private DbCon(Context context) {
-        this.context = context;
-        open();
+    public DbCon(Context context) {
+        open(context);
     }
 
-    public static synchronized DbCon getInstance(Context ctx) {
+   /* public static synchronized DbCon getInstance() {
 
         if (dbConInstance == null) {
-            dbConInstance = new DbCon(ctx);
+            dbConInstance = new DbCon();
         }
         return dbConInstance;
-    }
+    }*/
 
-    public DbCon open() {
+    public DbCon open(Context context) {
         try {
-            dbOpenHandler = new DbOpenHandler();
+            /*dbOpenHandler = new DbOpenHandler();
             Thread dbOpenThread = new DbOpenThread();
-            dbOpenThread.start();
+            dbOpenThread.start();*/
+            dbHelper = DbHelper.getInstance(context);
+            dbHelper.open();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,79 +60,50 @@ public class DbCon {
         return dbHelper.update(where, values, names, tbl, args);
     }
 
+    public boolean updateActivity(String tbl, String where, String values[], String names[], String args[]) {
+
+        boolean isUpdated;
+
+        isUpdated = dbHelper.update(where, values, names, tbl, args);
+
+        if (!isUpdated)
+            insert(tbl, values, names);
+
+        return isUpdated;
+    }
+
+    public Cursor rawQuery(String query) {
+        return dbHelper.rawQuery(query);
+    }
+
+    //app specific functions
     public void deleteFiles() {
         delete(DbHelper.strTableNameFiles, null, null);
     }
 
-    /*public void deleteTempUsers() {
+    public Cursor getMaxDate(String strCollectionName) {
 
-        if (isDbOpened) {
-            try {
-                dbHelper.delete("dependant", "status<=?", new String[]{"1"});
-                //dbHelper.delete("user", "status=?", new String[]{"0"});
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
+        String query = "Select MAX(" + DbHelper.COLUMN_UPDATE_DATE + ") from "
+                + DbHelper.strTableNameCollection +
+                " where " + DbHelper.COLUMN_COLLECTION_NAME + " = '" + strCollectionName + "'";
 
-   /*
-    public String retrieveDependantPersonal(String strCustomerEmail, EditText editName, EditText editContactNo, EditText editAddress, EditText editRelation, String strName, EditText editEmail) {
-
-        String strImg = "";
-
-        if (isDbOpened && !strCustomerEmail.equalsIgnoreCase("")) {
-            Cursor cur = null;
-
-            try {
-
-                cur = dbHelper.fetch("dependant", new String[]{"name", "contact_no", "address", "relationship", "image_path", "email"}, "customer_email=? and name=?", new String[]{strCustomerEmail, strName}, "name DESC", "0,1", true, null, null);
-
-                if (cur.getCount() > 0) {
-                    cur.moveToFirst();
-
-                    while (!cur.isAfterLast()) {
-
-                        strImg = cur.getString(4);
-                        editName.setText(cur.getString(0));
-                        editContactNo.setText(cur.getString(1));
-                        editAddress.setText(cur.getString(2));
-                        editRelation.setText(cur.getString(3));
-                        editEmail.setText(cur.getString(5));
-
-                        Libs.log(strImg + " 2", "Image 2");
-
-                        cur.moveToNext();
-                    }
-                }
-
-                dbHelper.closeCursor(cur);
-            } catch (Exception e) {
-                dbHelper.closeCursor(cur);
-            }
-        }
-        return strImg;
+        return dbHelper.rawQuery(query);
     }
 
-    public boolean updateDependantMedicalDetails(String strName, String strAge, String strDiseases, String strNotes, String strCustomerEmail, String strImagePathServer) {
+    public void beginDBTransaction() {
+        dbHelper.beginDBTransaction();
+    }
 
-        boolean isUpdated = false;
+    public void endDBTransaction() {
+        dbHelper.endDBTransaction();
+    }
 
-        if (isDbOpened) {
-
-            try {
-                isUpdated = dbHelper.update("name=? and customer_email=?", new String[]{strAge, strDiseases, strNotes, "1", strImagePathServer},
-                        new String[]{"age", "diseases", "notes", "status", "image_path_server"}, "dependant", new String[]{strName, strCustomerEmail});
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return isUpdated;
-    }*/
+    public void dbTransactionSuccessFull() {
+        dbHelper.dbTransactionSuccessFull();
+    }
 
 
-    private static class DbOpenHandler extends Handler {
+  /*  private static class DbOpenHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             //
@@ -154,5 +122,5 @@ public class DbCon {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 }
