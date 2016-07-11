@@ -75,14 +75,15 @@ public class ClientFragment extends Fragment {
         expListView.setEmptyView(textViewEmpty);
 
         // Listview Group click listener
-       /* expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+       /*expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-                // Toast.makeText(getApplicationContext(),
-                // "Group Clicked " + listDataHeader.get(groupPosition),
-                // Toast.LENGTH_SHORT).show();
+                 Toast.makeText(getActivity(),
+                 "Group Clicked " + listDataHeader.get(groupPosition),
+                 Toast.LENGTH_SHORT).show();
+                expListView.expandGroup(groupPosition);
                 return true;
             }
         });
@@ -95,11 +96,12 @@ public class ClientFragment extends Fragment {
                 Toast.makeText(getActivity(),
                         listDataHeader.get(groupPosition) + " Expanded",
                         Toast.LENGTH_SHORT).show();
+                expListView.expandGroup(groupPosition);
             }
-        });
+        });*/
 
         // Listview Group collasped listener
-        expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+        /*expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
 
             @Override
             public void onGroupCollapse(int groupPosition) {

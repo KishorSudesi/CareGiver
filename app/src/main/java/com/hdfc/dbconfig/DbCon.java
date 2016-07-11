@@ -60,7 +60,7 @@ public class DbCon {
         return dbHelper.update(where, values, names, tbl, args);
     }
 
-    public boolean updateActivity(String tbl, String where, String values[], String names[], String args[]) {
+    public boolean updateInsert(String tbl, String where, String values[], String names[], String args[]) {
 
         boolean isUpdated;
 

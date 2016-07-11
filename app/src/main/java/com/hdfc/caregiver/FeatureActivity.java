@@ -126,7 +126,11 @@ public class FeatureActivity extends AppCompatActivity {
 
 
             int iPosition = Config.dependentIdsAdded.indexOf(act.getStrDependentID());
-            String name = Config.dependentModels.get(iPosition).getStrName();
+
+            String name = "";
+
+            if (iPosition > -1 && iPosition < Config.dependentModels.size())
+                name = Config.dependentModels.get(iPosition).getStrName();
 
             strDependentUrl = Config.dependentModels.get(iPosition).getStrImageUrl();
 

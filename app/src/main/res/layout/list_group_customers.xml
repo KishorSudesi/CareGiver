@@ -20,12 +20,19 @@
         android:background="@drawable/header_border"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/imageClients"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_margin="15dp"
-            android:padding="@dimen/padding_general" />
+        <LinearLayout
+            android:id="@+id/imageWrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageClients"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="15dp"
+                android:padding="@dimen/padding_general" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearText"

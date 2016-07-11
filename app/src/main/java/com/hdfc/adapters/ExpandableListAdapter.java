@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,6 +37,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<CustomerModel> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<CustomerModel, List<DependentModel>> _listDataChild;
+    private boolean bool[];
     //private Utils utils;
     //private MultiBitmapLoader multiBitmapLoader;
 
@@ -46,6 +48,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         //multiBitmapLoader = new MultiBitmapLoader(_context);
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
+        bool = new boolean[listDataHeader.size()];
         inf = LayoutInflater.from(_context);
     }
 
@@ -81,6 +84,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
             viewHolder.customer = (ImageView) convertView.findViewById(R.id.imageClients);
             viewHolder.linearTextChild = (LinearLayout) convertView.findViewById(R.id.linearTextChild);
+
 
             convertView.setTag(viewHolder);
         } else {
@@ -154,8 +158,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
-                             View convertView, ViewGroup parent) {
+    public View getGroupView(final int groupPosition, boolean isExpanded,
+                             View convertView, final ViewGroup parent) {
 
         final CustomerModel customerModel = (CustomerModel)getGroup(groupPosition);
         ViewHolder viewHolder;
@@ -172,6 +176,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);
             viewHolder.insert = (ImageButton)convertView.findViewById(R.id.insert);
             viewHolder.linearTextHeader = (LinearLayout) convertView.findViewById(R.id.linearText);
+
+            viewHolder.imageWrapper = (LinearLayout) convertView.findViewById(R.id.imageWrapper);
 
             convertView.setTag(viewHolder);
         }else {
@@ -201,6 +207,23 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .placeholder(R.drawable.person_icon)
                 .crossFade()
                 .into(viewHolder.client);
+
+        viewHolder.imageWrapper.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (bool[groupPosition]) {
+                    bool[groupPosition] = false;
+                    ((ExpandableListView) parent).collapseGroup(groupPosition);
+                } else {
+                    bool[groupPosition] = true;
+                    ((ExpandableListView) parent).expandGroup(groupPosition, true);
+                }
+
+            }
+        });
+
 
         viewHolder.linearTextHeader.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,6 +264,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView name, age, address, contact;
         ImageView client, customer;
         ImageButton insert;
-        LinearLayout linearTextHeader, linearTextChild;
+        LinearLayout linearTextHeader, linearTextChild, imageWrapper;
     }
 }

@@ -837,7 +837,7 @@ public class AppUtils {
 
                                     // WHERE clause arguments
                                     String[] selectionArgs = {jsonDocument.getDocId()};
-                                    CareGiver.getDbCon().updateActivity(DbHelper.strTableNameCollection,
+                                    CareGiver.getDbCon().updateInsert(DbHelper.strTableNameCollection,
                                             selection, values, DbHelper.COLLECTION_FIELDS,
                                             selectionArgs);
 

@@ -208,7 +208,6 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             strClientName = Config.customerModel.getStrName();
             //strImageName = Config.customerModel.getStrCustomerID();
             strImageName = Config.customerModel.getStrImgUrl();
-
         }
 
         clientnametxt.setText(strClientName);

@@ -416,12 +416,14 @@ public class LoginActivity extends AppCompatActivity {
                                 if (storage.isResponseSuccess() && storage.getJsonDocList().
                                         size() > 0) {
 
-                                    if (iFlag == 1) {
+                                    if (iFlag == 1 || iFlag == 3) {
 
                                         Storage.JSONDocument jsonDocument = storage.getJsonDocList().
                                                 get(0);
 
-                                        sessionManager.createLoginSession(userName, jsonDocument.getDocId());
+                                        if (iFlag == 1)
+                                            sessionManager.createLoginSession(userName,
+                                                    jsonDocument.getDocId());
 
                                         try {
                                             //CareGiver.getDbCon().beginDBTransaction();
@@ -430,7 +432,20 @@ public class LoginActivity extends AppCompatActivity {
                                                     jsonDocument.getJsonDoc(),
                                                     Config.collectionProvider, "1", ""};
 
-                                            CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values, DbHelper.COLLECTION_FIELDS);
+                                            String selection = DbHelper.COLUMN_OBJECT_ID +
+                                                    " = ? and " + DbHelper.COLUMN_COLLECTION_NAME
+                                                    + " = ? ";
+
+                                            // WHERE clause arguments
+                                            String[] selectionArgs = {jsonDocument.getDocId(),
+                                                    Config.collectionProvider};
+
+                                            CareGiver.getDbCon().updateInsert(
+                                                    DbHelper.strTableNameCollection,
+                                                    selection, values, DbHelper.COLLECTION_FIELDS,
+                                                    selectionArgs);
+
+                                            //CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values, DbHelper.COLLECTION_FIELDS);
                                             //CareGiver.getDbCon().dbTransactionSucessFull();
                                         } catch (Exception e) {
                                             e.printStackTrace();
@@ -450,6 +465,8 @@ public class LoginActivity extends AppCompatActivity {
                                     if (iFlag == 1)
                                         utils.toast(2, 2, getString(R.string.invalid_credentials),
                                                 LoginActivity.this);
+                                    else if (iFlag == 3)
+                                        goToDashboard();
                                     else
                                         utils.toast(2, 2, getString(R.string.error_invalid_email),
                                                 LoginActivity.this);
@@ -473,6 +490,8 @@ public class LoginActivity extends AppCompatActivity {
                                     if (iFlag == 1)
                                         utils.toast(2, 2, getString(R.string.invalid_credentials),
                                                 LoginActivity.this);
+                                    else if (iFlag == 3)
+                                        goToDashboard();
                                     else
                                         utils.toast(2, 2, getString(R.string.error_invalid_email),
                                                 LoginActivity.this);
@@ -485,6 +504,13 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
                     });
+        } else {
+            if (iFlag == 3)
+                goToDashboard();
+            else {
+                utils.toast(2, 2, getString(R.string.warning_internet),
+                        LoginActivity.this);
+            }
         }
     }
 
@@ -544,7 +570,17 @@ public class LoginActivity extends AppCompatActivity {
                 if (sessionManager.isLoggedIn() && !sessionManager.getEmail().equalsIgnoreCase("")
                         && !sessionManager.getProviderId().equalsIgnoreCase("")) {
 
-                    goToDashboard();
+
+                    if (utils.isConnectingToInternet()) {
+
+                        progressDialog.setMessage(getString(R.string.process_login));
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
+                        fetchProviders(progressDialog, sessionManager.getEmail(), 3);
+                    } else {
+                        goToDashboard();
+                    }
 
                 } else {
 
