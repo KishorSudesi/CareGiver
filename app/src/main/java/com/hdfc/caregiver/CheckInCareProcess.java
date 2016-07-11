@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.config.Config;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Admin on 01-07-2016.
@@ -203,20 +206,29 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
         if (Config.customerModel != null) {
             strClientName = Config.customerModel.getStrName();
-            strImageName = Config.customerModel.getStrCustomerID();
+            //strImageName = Config.customerModel.getStrCustomerID();
+            strImageName = Config.customerModel.getStrImgUrl();
 
         }
 
         clientnametxt.setText(strClientName);
 
-        File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(strImageName));
+       /* File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(strImageName));
 
         if(fileImage.exists()) {
             String filename = fileImage.getAbsolutePath();
             multiBitmapLoader.loadBitmap(filename, client);
         }else{
             client.setImageDrawable(this.getResources().getDrawable(R.drawable.person_icon));
-        }
+        }*/
+
+        Glide.with(CheckInCareProcess.this)
+                .load(strImageName)
+                .centerCrop()
+                .bitmapTransform(new CropCircleTransformation(CheckInCareProcess.this))
+                .placeholder(R.drawable.person_icon)
+                .crossFade()
+                .into(client);
 
         if(electrocheck.isChecked()==true
                 &&homecheck.isChecked()==true
@@ -331,6 +343,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
         Button backImage = (Button) findViewById(R.id.buttonBack);
         if (backImage != null) {
+            backImage.setVisibility(View.VISIBLE);
             backImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

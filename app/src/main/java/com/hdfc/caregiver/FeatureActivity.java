@@ -22,10 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
-import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ImageModel;
@@ -45,6 +45,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
+
 public class FeatureActivity extends AppCompatActivity {
 
     public static int IMAGE_COUNT = 0;
@@ -54,7 +56,7 @@ public class FeatureActivity extends AppCompatActivity {
     private static Handler backgroundThreadHandler;
 
     private static ActivityModel act;
-    private static String strName;
+    private static String strName, strDependentUrl;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
     private static boolean bLoad, isCompleted = false;
@@ -67,7 +69,7 @@ public class FeatureActivity extends AppCompatActivity {
     private boolean bWhichScreen = false;
     private boolean success;
     private TextView textViewTime;
-    private MultiBitmapLoader multiBitmapLoader;
+    //private MultiBitmapLoader multiBitmapLoader;
     private ImageView imgLogoHeaderTaskDetail;
     private LinearLayout linearLayoutAttach;
     private Button done;
@@ -91,7 +93,7 @@ public class FeatureActivity extends AppCompatActivity {
 
         IMAGE_COUNT = 0;
         mImageUploadCount = 0;
-        multiBitmapLoader = new MultiBitmapLoader(FeatureActivity.this);
+        //multiBitmapLoader = new MultiBitmapLoader(FeatureActivity.this);
 
         TextView dependentName = (TextView) findViewById(R.id.textViewHeaderTaskDetail);
 
@@ -100,47 +102,6 @@ public class FeatureActivity extends AppCompatActivity {
         mImageCount = 0;
         mImageChanged = false;
         bitmaps.clear();
-
-        if (linearName != null) {
-            linearName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(FeatureActivity.this);
-                    LayoutInflater inflater = getLayoutInflater();
-                    View dialogView = inflater.inflate(R.layout.name_popup, null);
-                    builder.setView(dialogView);
-
-                    TextView textName = (TextView) dialogView.findViewById(R.id.textPopupName);
-                    ImageView imageDialog = (ImageView) dialogView.findViewById(R.id.popupImage);
-
-                    int iCustomerPosition = Config.customerIdsAdded.indexOf(act.getStrCustomerID());
-
-                    String name = Config.customerModels.get(iCustomerPosition).getStrName();
-                    textName.setText(name);
-
-                    File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrCustomerID()));
-
-                    if (fileImage.exists()) {
-                        String filename = fileImage.getAbsolutePath();
-                        multiBitmapLoader.loadBitmap(filename, imageDialog);
-                    } else {
-                        if (imageDialog != null) {
-                            imageDialog.setImageDrawable(getResources().getDrawable(R.drawable.person_icon));
-                        }
-                    }
-
-                    builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog alertDialog = builder.create();
-                    //builder.show();
-                    alertDialog.show();
-                }
-            });
-        }
 
         try {
             Bundle b = getIntent().getExtras();
@@ -166,6 +127,60 @@ public class FeatureActivity extends AppCompatActivity {
 
             int iPosition = Config.dependentIdsAdded.indexOf(act.getStrDependentID());
             String name = Config.dependentModels.get(iPosition).getStrName();
+
+            strDependentUrl = Config.dependentModels.get(iPosition).getStrImageUrl();
+
+            if (linearName != null) {
+                linearName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(FeatureActivity.this);
+                        LayoutInflater inflater = getLayoutInflater();
+                        View dialogView = inflater.inflate(R.layout.name_popup, null);
+                        builder.setView(dialogView);
+
+                        TextView textName = (TextView) dialogView.findViewById(R.id.textPopupName);
+                        ImageView imageDialog = (ImageView) dialogView.findViewById(R.id.popupImage);
+
+                        int iCustomerPosition = Config.customerIdsAdded.indexOf(act.getStrCustomerID());
+
+                        String name = Config.customerModels.get(iCustomerPosition).getStrName();
+                        String strUrl = Config.customerModels.get(iCustomerPosition).getStrImgUrl();
+
+                        textName.setText(name);
+
+                   /* File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrCustomerID()));
+
+                    if (fileImage.exists()) {
+                        String filename = fileImage.getAbsolutePath();
+                        multiBitmapLoader.loadBitmap(filename, imageDialog);
+                    } else {
+                        if (imageDialog != null) {
+                            imageDialog.setImageDrawable(getResources().getDrawable(R.drawable.person_icon));
+                        }
+                    }*/
+
+                        Glide.with(FeatureActivity.this)
+                                .load(strUrl)
+                                .centerCrop()
+                                .bitmapTransform(new CropCircleTransformation(FeatureActivity.this))
+                                .placeholder(R.drawable.person_icon)
+                                .crossFade()
+                                .into(imageDialog);
+
+                        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog alertDialog = builder.create();
+                        //builder.show();
+                        alertDialog.show();
+                    }
+                });
+            }
+
 
             if (name.length() > 20)
                 name = name.substring(0, 18) + "..";
@@ -721,7 +736,7 @@ public class FeatureActivity extends AppCompatActivity {
                 textViewTime.setText(utils.formatDate(act.getStrActivityDate()));
             }
 
-            File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrDependentID()));
+           /* File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrDependentID()));
 
             if (fileImage.exists()) {
                 String filename = fileImage.getAbsolutePath();
@@ -730,7 +745,15 @@ public class FeatureActivity extends AppCompatActivity {
                 if (imgLogoHeaderTaskDetail != null) {
                     imgLogoHeaderTaskDetail.setImageDrawable(getResources().getDrawable(R.drawable.person_icon));
                 }
-            }
+            }*/
+
+            Glide.with(FeatureActivity.this)
+                    .load(strDependentUrl)
+                    .centerCrop()
+                    .bitmapTransform(new CropCircleTransformation(FeatureActivity.this))
+                    .placeholder(R.drawable.person_icon)
+                    .crossFade()
+                    .into(imgLogoHeaderTaskDetail);
 
             if (done != null) {
 
@@ -1000,15 +1023,18 @@ public class FeatureActivity extends AppCompatActivity {
                     utils.copyFile(new File(strImageName), mCopyFile);
 
                     Date date = new Date();
-                    ImageModel imageModel = new ImageModel(strName, "", strName, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                    ImageModel imageModel = new ImageModel(strName, "", strName,
+                            utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                     imageModel.setmIsNew(true);
                     //arrayListImageModel.add(imageModel);
 
                     imageModels.add(imageModel);
 
-                    utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                    utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth,
+                            Config.intCompressHeight, Config.iQuality);
 
-                    bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                    bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth,
+                            Config.intHeight));
 
                     mImageCount++;
 
@@ -1028,8 +1054,11 @@ public class FeatureActivity extends AppCompatActivity {
             try {
 
                 for (ImageModel imageModel : imageModels) {
-                    if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                        bitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+                    if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().
+                            equalsIgnoreCase("")) {
+                        bitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(
+                                imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth,
+                                Config.intHeight));
 
                         imageModel.setmIsNew(false);
 

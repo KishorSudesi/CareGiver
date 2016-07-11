@@ -57,8 +57,8 @@
 
         <ImageView
             android:id="@+id/person_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
             android:layout_gravity="center_horizontal"
             android:paddingTop="12dp"
             android:src="@drawable/person_icon" />

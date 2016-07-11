@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -20,12 +21,9 @@ import com.hdfc.caregiver.CheckInCareProcess;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
-import com.hdfc.libs.MultiBitmapLoader;
-import com.hdfc.libs.Utils;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,14 +36,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<CustomerModel> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<CustomerModel, List<DependentModel>> _listDataChild;
-    private Utils utils;
-    private MultiBitmapLoader multiBitmapLoader;
+    //private Utils utils;
+    //private MultiBitmapLoader multiBitmapLoader;
 
     public ExpandableListAdapter(Context context, List<CustomerModel> listDataHeader,
                                  HashMap<CustomerModel, List<DependentModel>> listChildData) {
         this._context = context;
-        utils = new Utils(_context);
-        multiBitmapLoader = new MultiBitmapLoader(_context);
+        //utils = new Utils(_context);
+        //multiBitmapLoader = new MultiBitmapLoader(_context);
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
         inf = LayoutInflater.from(_context);
@@ -82,14 +80,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             //viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
             viewHolder.customer = (ImageView) convertView.findViewById(R.id.imageClients);
-
+            viewHolder.linearTextChild = (LinearLayout) convertView.findViewById(R.id.linearTextChild);
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.customer.setTag(dependentModel);
+        viewHolder.linearTextChild.setTag(dependentModel);
 
         viewHolder.name.setText(dependentModel.getStrName());
         //viewHolder.age.setText(dependentModel.getIntAge());
@@ -118,7 +116,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         viewHolder.address.setText(dependentModel.getStrAddress());
 
-        viewHolder.customer.setOnClickListener(new View.OnClickListener() {
+        viewHolder.linearTextChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //
@@ -130,10 +128,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             }
         });
 
-//        TextView txtListChild = (TextView) convertView
-//                .findViewById(R.id.lblListItem);
-//
-//        txtListChild.setText(childText);
         return convertView;
 
     }
@@ -177,6 +171,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             viewHolder.contact = (TextView)convertView.findViewById(R.id.textViewContact);
             viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);
             viewHolder.insert = (ImageButton)convertView.findViewById(R.id.insert);
+            viewHolder.linearTextHeader = (LinearLayout) convertView.findViewById(R.id.linearText);
 
             convertView.setTag(viewHolder);
         }else {
@@ -187,19 +182,27 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.contact.setText(customerModel.getStrContacts());
         viewHolder.address.setText(customerModel.getStrAddress());
 
-        viewHolder.client.setTag(customerModel);
+        viewHolder.linearTextHeader.setTag(customerModel);
         viewHolder.insert.setTag(customerModel);
 
-        File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(customerModel.getStrCustomerID()));
+        /*File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(customerModel.getStrCustomerID()));
 
         if(fileImage.exists()) {
             String filename = fileImage.getAbsolutePath();
             multiBitmapLoader.loadBitmap(filename, viewHolder.client);
         }else{
             viewHolder.client.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
-        }
+        }*/
 
-        viewHolder.client.setOnClickListener(new View.OnClickListener() {
+        Glide.with(_context)
+                .load(customerModel.getStrImgUrl())
+                .centerCrop()
+                .bitmapTransform(new CropCircleTransformation(_context))
+                .placeholder(R.drawable.person_icon)
+                .crossFade()
+                .into(viewHolder.client);
+
+        viewHolder.linearTextHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //
@@ -238,5 +241,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView name, age, address, contact;
         ImageView client, customer;
         ImageButton insert;
+        LinearLayout linearTextHeader, linearTextChild;
     }
 }

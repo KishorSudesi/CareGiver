@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hdfc.adapters.ExpandableListAdapter;
 import com.hdfc.caregiver.R;
@@ -76,7 +75,7 @@ public class ClientFragment extends Fragment {
         expListView.setEmptyView(textViewEmpty);
 
         // Listview Group click listener
-        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+       /* expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
@@ -84,7 +83,7 @@ public class ClientFragment extends Fragment {
                 // Toast.makeText(getApplicationContext(),
                 // "Group Clicked " + listDataHeader.get(groupPosition),
                 // Toast.LENGTH_SHORT).show();
-                return false;
+                return true;
             }
         });
 
@@ -127,7 +126,7 @@ public class ClientFragment extends Fragment {
                         .show();
                 return false;
             }
-        });
+        });*/
 
 
        /* ImageButton add = (ImageButton) view.findViewById(R.id.add_button);

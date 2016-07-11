@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
-import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.NotificationModel;
 
@@ -31,13 +30,13 @@ public class NotificationAdapter extends BaseAdapter {
     private Context _context;
     private ArrayList<NotificationModel> adapterNotificationModels;
     private Utils utils;
-    private MultiBitmapLoader multiBitmapLoader;
+    //private MultiBitmapLoader multiBitmapLoader;
 
     public NotificationAdapter(Context ctxt, ArrayList<NotificationModel> d) {
         _context = ctxt;
         adapterNotificationModels = d;
         utils = new Utils(ctxt);
-        multiBitmapLoader = new MultiBitmapLoader(ctxt);
+        //multiBitmapLoader = new MultiBitmapLoader(ctxt);
     }
 
     @Override
@@ -87,7 +86,7 @@ public class NotificationAdapter extends BaseAdapter {
 
             String strId = adapterNotificationModels.get(position).getStrCreatedByID();
 
-            String strName = "", strMess = "", strUrl = "";
+            String strName = "", strMess, strUrl = "";
           //  String readMore = " READ MORE..";
             strMess = adapterNotificationModels.get(position).getStrMessage();
 
@@ -120,12 +119,14 @@ public class NotificationAdapter extends BaseAdapter {
                 }
             });
 
-            if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("provider")) {
+            if (adapterNotificationModels.get(position).getStrCreatedByType().
+                    equalsIgnoreCase("provider")) {
                 strName = Config.providerModel.getStrName();
                 strUrl = Config.providerModel.getStrImgUrl();
             }
 
-            if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("dependent")) {
+            if (adapterNotificationModels.get(position).getStrCreatedByType().
+                    equalsIgnoreCase("dependent")) {
                 if (Config.dependentIdsAdded.contains(strId)) {
                     strName = Config.dependentModels.get(Config.dependentIdsAdded.
                             indexOf(strId)).getStrName();
@@ -134,7 +135,8 @@ public class NotificationAdapter extends BaseAdapter {
                 }
             }
 
-            if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("customer")) {
+            if (adapterNotificationModels.get(position).getStrCreatedByType().
+                    equalsIgnoreCase("customer")) {
                 if (Config.customerIdsAdded.contains(strId)) {
                     strName = Config.customerModels.get(Config.customerIdsAdded.
                             indexOf(strId)).getStrName();

@@ -9,7 +9,7 @@
         android:id="@+id/buttonBack"
         android:layout_width="30dp"
         android:layout_height="25dp"
-        android:layout_marginTop="10dp"
+        android:layout_margin="10dp"
         android:background="@mipmap/back_arrow"
         android:onClick="backToSelection"
         android:textAllCaps="false"

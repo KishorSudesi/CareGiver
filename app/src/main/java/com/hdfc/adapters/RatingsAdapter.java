@@ -8,14 +8,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.R;
-import com.hdfc.libs.MultiBitmapLoader;
+import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.FeedBackModel;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 
 /**
@@ -24,15 +26,15 @@ import java.util.List;
 public class RatingsAdapter extends BaseAdapter {
 
     private static LayoutInflater inflater = null;
-    Context _context;
-    List<FeedBackModel> data1 = new ArrayList<>();
+    private Context _context;
+    private List<FeedBackModel> data1 = new ArrayList<>();
     private Utils utils;
-    private MultiBitmapLoader multiBitmapLoader;
+    //private MultiBitmapLoader multiBitmapLoader;
 
     public RatingsAdapter(Context context, List<FeedBackModel> rating_models) {
         _context = context;
         utils = new Utils(context);
-        multiBitmapLoader = new MultiBitmapLoader(_context);
+        //multiBitmapLoader = new MultiBitmapLoader(_context);
         data1 = rating_models;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -88,44 +90,39 @@ public class RatingsAdapter extends BaseAdapter {
             }
 
             //
-            File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(feedBackModel.getStrFeedBackBy()));
+           /* File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(feedBackModel.getStrFeedBackBy()));
 
             if(fileImage.exists()) {
                 String strFilePath = fileImage.getAbsolutePath();
                 multiBitmapLoader.loadBitmap(strFilePath, viewHolder.image);
             }else{
                 viewHolder.image.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
-            }
-
-
-            //
-         /*   if (feedBackModel.getStrFeedBackBy().equalsIgnoreCase("provider")) {
-                strName = Config.providerModel.getStrName();
-                strUrl=Config.providerModel.getStrImgUrl();
-            }
-
-            if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("dependent")) {
-                if (Config.dependentIdsAdded.contains(strId)) {
-                    strName = Config.dependentModels.get(Config.dependentIdsAdded.
-                            indexOf(strId)).getStrName();
-                    strUrl=Config.dependentModels.get(Config.dependentIdsAdded.
-                            indexOf(strId)).getStrImageUrl();
-                }
-            }
-
-            if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("customer")) {
-                if (Config.customerIdsAdded.contains(strId)) {
-                    strName = Config.customerModels.get(Config.customerIdsAdded.
-                            indexOf(strId)).getStrName();
-                    strUrl=Config.customerModels.get(Config.customerIdsAdded.
-                            indexOf(strId)).getStrImgUrl();
-                }
             }*/
+
+            //todo add for dependent
+
+            String strUrl = "";
+
+            if (!feedBackModel.getStrFeedBackBy().equalsIgnoreCase("")) {
+                if (Config.customerIdsAdded.contains(feedBackModel.getStrFeedBackBy())) {
+                    strUrl = Config.customerModels.get(Config.customerIdsAdded.
+                            indexOf(feedBackModel.getStrFeedBackBy())).getStrImgUrl();
+                }
+            }
+
+            Glide.with(_context)
+                    .load(strUrl)
+                    .centerCrop()
+                    .bitmapTransform(new CropCircleTransformation(_context))
+                    .placeholder(R.drawable.person_icon)
+                    .crossFade()
+                    .into(viewHolder.image);
 
         }
         return convertView;
     }
-    public class ViewHolder{
+
+    private class ViewHolder {
         TextView feedback, time;
         ImageView image,smily;
     }
