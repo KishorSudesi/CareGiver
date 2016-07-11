@@ -65,7 +65,7 @@
     <string name="services">Service</string>
     <string name="dateAndTime">Date and Time</string>
 
-    <string name="hintPwd">*****</string>
+    <string name="hintPwd">Password</string>
     <string name="name">Name of service giver</string>
     <string name="place">Place</string>
     <string name="signOut">SIGN OUT</string>
@@ -165,6 +165,7 @@
     <string name="confirm_unsaved_files">Some Files are not Saved, Delete Them?</string>
     <string name="file_deleted">File Deleted</string>
     <string name="attach_file">Attach File</string>
+    <string name="click_attach">Click to Attach</string>
 
     <!--Mislestone Related-->
     <string name="medicine_name">Medicine Name</string>
@@ -237,5 +238,7 @@
     <string name="google_app_id">910502819263</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="save_settings">Save Settings</string>
+    <string name="edit_settings">Edit Settings</string>
 
 </resources>

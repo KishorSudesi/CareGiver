@@ -10,7 +10,7 @@
 
         <include
             android:id="@+id/header"
-            layout="@layout/header_login" />
+            layout="@layout/header_common" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -54,7 +54,7 @@
                 android:orientation="horizontal"
                 android:weightSum="2">
 
-                <com.hdfc.views.RoundedImageView
+                <ImageView
                     android:id="@+id/img"
                     android:layout_width="0dp"
                     android:layout_height="80dp"

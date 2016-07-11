@@ -7,7 +7,6 @@ package com.hdfc.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.CheckInCareProcess;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
@@ -29,15 +29,17 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
+
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
+    private final LayoutInflater inf;
     private Context _context;
     private List<CustomerModel> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<CustomerModel, List<DependentModel>> _listDataChild;
     private Utils utils;
     private MultiBitmapLoader multiBitmapLoader;
-    private final LayoutInflater inf;
 
     public ExpandableListAdapter(Context context, List<CustomerModel> listDataHeader,
                                  HashMap<CustomerModel, List<DependentModel>> listChildData) {
@@ -97,14 +99,22 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         // viewHolder.problem.setText(dependentModel.getStrIllness().length()>8 ? dependentModel.getStrIllness().substring(0,5)+"..":dependentModel.getStrIllness());
         //viewHolder.premium.setText(dependentModel.getStrNotes().length()>8 ? dependentModel.getStrNotes().substring(0,5)+"..":dependentModel.getStrNotes());
 
-        File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(dependentModel.getStrDependentID()));
+        /*File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(dependentModel.getStrDependentID()));
 
         if(fileImage.exists()) {
             String filename = fileImage.getAbsolutePath();
             multiBitmapLoader.loadBitmap(filename, viewHolder.customer);
         }else{
             viewHolder.customer.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
-        }
+        }*/
+
+        Glide.with(_context)
+                .load(dependentModel.getStrImageUrl())
+                .centerCrop()
+                .bitmapTransform(new CropCircleTransformation(_context))
+                .placeholder(R.drawable.person_icon)
+                .crossFade()
+                .into(viewHolder.customer);
 
         viewHolder.address.setText(dependentModel.getStrAddress());
 
@@ -223,7 +233,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
-    public  class ViewHolder{
+
+    private class ViewHolder {
         TextView name, age, address, contact;
         ImageView client, customer;
         ImageButton insert;

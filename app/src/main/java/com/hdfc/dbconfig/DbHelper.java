@@ -11,8 +11,6 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
-import java.io.File;
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 public class DbHelper extends SQLiteOpenHelper {
@@ -45,12 +43,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private Context _ctxt;
 
-    private File originalFile = null;
+    //private File originalFile = null;
 
     private DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         //utils = new Utils(context);
-        originalFile = context.getDatabasePath(DATABASE_NAME);
+        //originalFile = context.getDatabasePath(DATABASE_NAME);
         this._ctxt = context;
 
         try {
@@ -74,13 +72,14 @@ public class DbHelper extends SQLiteOpenHelper {
             SQLiteDatabase.loadLibs(_ctxt);
             db = this.getWritableDatabase(dbPass);
         } catch (Exception | UnsatisfiedLinkError e1) {
-            try {
+           /* try {
                 if (originalFile.exists())
                     encrypt(true);
                 e1.printStackTrace();
             } catch (Exception e2) {
                 e2.printStackTrace();
-            }
+            }*/
+            e1.printStackTrace();
         }
         Utils.log("DB", "open");
     }
@@ -90,6 +89,7 @@ public class DbHelper extends SQLiteOpenHelper {
             if (db != null && db.isOpen())
                 db.close();
         } catch (Exception e) {
+            e.printStackTrace();
         }
         Utils.log("DB", "close");
     }
@@ -106,7 +106,17 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         try {
-            encrypt(false);
+            /*if(db!=null&&db.isOpen())
+                db.close();
+
+            encrypt(false);*/
+
+            //use ALTER for updating without losing data
+
+            if (oldVersion < newVersion) {
+                dropDb(db);
+                onCreate(db);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -253,16 +263,18 @@ public class DbHelper extends SQLiteOpenHelper {
         return isSuccess;
     }*/
 
-    private void encrypt(boolean isToOpen) throws IOException {
+  /*  private void encrypt(boolean isToOpen) throws IOException {
 
         if (originalFile.exists()) {
+
+            //for encrypting the unencrypted database
 
             File newFile = File.createTempFile("database", "_tmp_", _ctxt.getFilesDir());
 
             String dbPath = originalFile.getAbsolutePath();
 
             SQLiteDatabase db = SQLiteDatabase.openDatabase(originalFile.getAbsolutePath(), "",
-                    null, SQLiteDatabase.OPEN_READWRITE);
+                    null, SQLiteDatabase.OPEN_READWRITE); //dbPass
 
             db.rawExecSQL(String.format("ATTACH DATABASE '%s' AS encrypted KEY '%s';",
                     newFile.getAbsolutePath(), dbPass));
@@ -291,5 +303,5 @@ public class DbHelper extends SQLiteOpenHelper {
                         SQLiteDatabase.OPEN_READWRITE);
             }
         }
-    }
+    }*/
 }

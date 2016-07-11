@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         //relLayout = (RelativeLayout) findViewById(R.id.relativePass);
         //RelativeLayout layoutLogin = (RelativeLayout) findViewById(R.id.layoutLogin);
@@ -127,6 +127,11 @@ public class LoginActivity extends AppCompatActivity {
 
 
         CrashLogger.getInstance().init(LoginActivity.this);
+
+        editEmail.setVisibility(View.INVISIBLE);
+        editPassword.setVisibility(View.INVISIBLE);
+        textView.setVisibility(View.INVISIBLE);
+        button.setVisibility(View.INVISIBLE);
 
         loadingPanel.setVisibility(View.VISIBLE);
         new LoadDataTask().execute();
@@ -432,7 +437,6 @@ public class LoginActivity extends AppCompatActivity {
                                         }/*finally {
                                             CareGiver.getDbCon().endDBTransaction();
                                         }*/
-                                        appUtils.createProviderModel(jsonDocument.getJsonDoc(), jsonDocument.getDocId());
                                         //Config.providerModel.setStrProviderId(_strProviderId);
                                         goToDashboard();
                                     } else {
@@ -531,16 +535,19 @@ public class LoginActivity extends AppCompatActivity {
             loadingPanel.setVisibility(View.GONE);
 
             try {
+
+                editEmail.setVisibility(View.VISIBLE);
+                editPassword.setVisibility(View.VISIBLE);
+                textView.setVisibility(View.VISIBLE);
+                button.setVisibility(View.VISIBLE);
+                
                 if (sessionManager.isLoggedIn() && !sessionManager.getEmail().equalsIgnoreCase("")
                         && !sessionManager.getProviderId().equalsIgnoreCase("")) {
 
-                    /*editEmail.setVisibility(View.INVISIBLE);
-                    editPassword.setVisibility(View.INVISIBLE);
-                    textView.setVisibility(View.INVISIBLE);
-                    button.setVisibility(View.INVISIBLE);
-                    goToDashboard();*/
+                    goToDashboard();
 
                 } else {
+
 
                 }
             } catch (Exception e) {

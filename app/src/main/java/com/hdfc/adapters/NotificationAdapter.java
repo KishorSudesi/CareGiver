@@ -11,14 +11,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.NotificationModel;
 
-import java.io.File;
 import java.util.ArrayList;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Sudesi infotech on 5/26/2016.
@@ -85,7 +87,7 @@ public class NotificationAdapter extends BaseAdapter {
 
             String strId = adapterNotificationModels.get(position).getStrCreatedByID();
 
-            String strName = "", strMess = "";
+            String strName = "", strMess = "", strUrl = "";
           //  String readMore = " READ MORE..";
             strMess = adapterNotificationModels.get(position).getStrMessage();
 
@@ -120,12 +122,15 @@ public class NotificationAdapter extends BaseAdapter {
 
             if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("provider")) {
                 strName = Config.providerModel.getStrName();
+                strUrl = Config.providerModel.getStrImgUrl();
             }
 
             if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("dependent")) {
                 if (Config.dependentIdsAdded.contains(strId)) {
                     strName = Config.dependentModels.get(Config.dependentIdsAdded.
                             indexOf(strId)).getStrName();
+                    strUrl = Config.dependentModels.get(Config.dependentIdsAdded.
+                            indexOf(strId)).getStrImageUrl();
                 }
             }
 
@@ -133,6 +138,8 @@ public class NotificationAdapter extends BaseAdapter {
                 if (Config.customerIdsAdded.contains(strId)) {
                     strName = Config.customerModels.get(Config.customerIdsAdded.
                             indexOf(strId)).getStrName();
+                    strUrl = Config.customerModels.get(Config.customerIdsAdded.
+                            indexOf(strId)).getStrImgUrl();
                 }
             }
 
@@ -151,12 +158,20 @@ public class NotificationAdapter extends BaseAdapter {
             viewHolder.textViewName.setText(strName);
 
             try {
-                File f = utils.getInternalFileImages(utils.replaceSpace(strId));
+               /* File f = utils.getInternalFileImages(utils.replaceSpace(strId));
 
                 //Utils.log(f.getAbsolutePath(), " P ");
 
                 if (f.exists())
-                    multiBitmapLoader.loadBitmap(f.getAbsolutePath(), viewHolder.roundedImageView);
+                    multiBitmapLoader.loadBitmap(f.getAbsolutePath(), viewHolder.roundedImageView);*/
+
+                Glide.with(_context)
+                        .load(strUrl)
+                        .centerCrop()
+                        .bitmapTransform(new CropCircleTransformation(_context))
+                        .placeholder(R.drawable.person_icon)
+                        .crossFade()
+                        .into(viewHolder.roundedImageView);
 
             } catch (Exception e) {
                 e.printStackTrace();

@@ -134,6 +134,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         Button backImage = (Button) findViewById(R.id.buttonBack);
         if (backImage != null) {
+            backImage.setVisibility(View.VISIBLE);
             backImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

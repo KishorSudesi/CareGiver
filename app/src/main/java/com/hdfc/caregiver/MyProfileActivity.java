@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,14 +16,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.Utils;
-import com.hdfc.views.RoundedImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
@@ -34,12 +32,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Admin on 28-01-2016.
@@ -47,22 +46,21 @@ import java.util.GregorianCalendar;
 public class MyProfileActivity extends AppCompatActivity {
 
     //private static int intWhichScreen;
-    public static String strCustomerImgName = "";
-    public static Bitmap bitmap = null;
-    public static Uri uri;
-    static RoundedImageView profileImage;
+    private static String strCustomerImgName = "";
+    //public static Bitmap bitmap = null;
+    private static Uri uri;
     private static Handler backgroundThreadHandler;
-    private static Utils utils;
-    private static AppUtils appUtils;
+    //private AppUtils appUtils;
     private static ProgressDialog mProgress = null;
     private static boolean isImageChanged=false;
-    ImageView backbutton, edit, imageplace;
-    EditText phone, place, name, email;
-    TextView textViewName;
-    Button buttonContinue, buttonBack;
-    int Flag = 0;
+    private ImageView profileImage;
+    private Utils utils;
+    //ImageView backbutton, edit, imageplace;
+    private EditText phone, place, name, email;
+    //TextView textViewName;
+    private Button buttonContinue;
+    private int Flag = 0;
     private ProgressDialog progressDialog;
-    private ImageView pen;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,20 +71,23 @@ public class MyProfileActivity extends AppCompatActivity {
         name = (EditText) findViewById(R.id.input_name);
         phone = (EditText) findViewById(R.id.input_mobile);
         place = (EditText) findViewById(R.id.input_place);
-        profileImage = (RoundedImageView) findViewById(R.id.person_icon);
+        profileImage = (ImageView) findViewById(R.id.person_icon);
 
         email = (EditText) findViewById(R.id.input_email);
         Button signOut = (Button) findViewById(R.id.buttonLogOut);
         buttonContinue = (Button) findViewById(R.id.buttonContinue);
-        pen = (ImageView) findViewById(R.id.imgPen);
-        buttonBack = (Button) findViewById(R.id.buttonBack);
+        //ImageView pen = (ImageView) findViewById(R.id.imgPen);
+        Button buttonBack = (Button) findViewById(R.id.buttonBack);
 
-        buttonBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goBack();
-            }
-        });
+        if (buttonBack != null) {
+            buttonBack.setVisibility(View.VISIBLE);
+            buttonBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goBack();
+                }
+            });
+        }
 
         //Bundle b = getIntent().getExtras();
         //intWhichScreen = b.getInt("WHICH_SCREEN", Config.intRatingsScreen);
@@ -94,7 +95,7 @@ public class MyProfileActivity extends AppCompatActivity {
         utils = new Utils(MyProfileActivity.this);
         progressDialog = new ProgressDialog(MyProfileActivity.this);
         mProgress = new ProgressDialog(MyProfileActivity.this);
-        appUtils = new AppUtils(MyProfileActivity.this);
+        //appUtils = new AppUtils(MyProfileActivity.this);
 
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +119,7 @@ public class MyProfileActivity extends AppCompatActivity {
         });
 */
 
+        if (signOut != null) {
             signOut.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -127,7 +129,7 @@ public class MyProfileActivity extends AppCompatActivity {
                     builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            AppUtils.logout();
+                            AppUtils.logout(MyProfileActivity.this);
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -139,9 +141,9 @@ public class MyProfileActivity extends AppCompatActivity {
                     builder.show();
                 }
             });
+        }
 
 
-        //TODO set in xml
         name.setEnabled(false);
         name.setFocusableInTouchMode(false);
         name.clearFocus();
@@ -171,7 +173,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 View focusView = null;
 
                 if (Flag == 0) {
-                    buttonContinue.setText("Save Settings");
+                    buttonContinue.setText(R.string.save_settings);
                     // edit.setImageResource(R.mipmap.done);
 
                     name.setEnabled(true);
@@ -191,7 +193,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
                 } else if (Flag == 1) {
 
-                    buttonContinue.setText("Edit Settings");
+                    buttonContinue.setText(R.string.edit_settings);
                     name.setError(null);
                     phone.setError(null);
                     place.setError(null);
@@ -227,7 +229,7 @@ public class MyProfileActivity extends AppCompatActivity {
                         focusView.requestFocus();
                     }else {
 
-                        progressDialog.setMessage("Loading...");
+                        progressDialog.setMessage(getString(R.string.loading));
                         progressDialog.setCancelable(false);
                         progressDialog.show();
 
@@ -299,6 +301,14 @@ public class MyProfileActivity extends AppCompatActivity {
             //textViewName.setText(Config.providerModel.getStrName());
             name.setText(Config.providerModel.getStrName());
         }
+
+        Glide.with(MyProfileActivity.this)
+                .load(Config.strProviderUrl)
+                .centerCrop()
+                .bitmapTransform(new CropCircleTransformation(MyProfileActivity.this))
+                .placeholder(R.drawable.person_icon)
+                .crossFade()
+                .into(profileImage);
     }
 
 
@@ -337,12 +347,12 @@ public class MyProfileActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        BackgroundThread backgroundThread = new BackgroundThread();
+       /* BackgroundThread backgroundThread = new BackgroundThread();
         backgroundThread.start();
         backgroundThreadHandler = new BackgroundThreadHandler();
 
         mProgress.setMessage(getResources().getString(R.string.loading));
-        mProgress.show();
+        mProgress.show();*/
     }
 
     private void goBack() {
@@ -352,7 +362,7 @@ public class MyProfileActivity extends AppCompatActivity {
         finish();
     }
 
-    public void checkImage() {
+    private void checkImage() {
 
         try {
 
@@ -367,7 +377,8 @@ public class MyProfileActivity extends AppCompatActivity {
                 if (progressDialog.isShowing())
                     progressDialog.setProgress(1);
 
-                uploadService.removeImage(Config.strCustomerImageName, Config.providerModel.getStrEmail(),
+                uploadService.removeImage(Config.strCustomerImageName, Config.providerModel.
+                                getStrEmail(),
                         new App42CallBack() {
                             public void onSuccess(Object response) {
 
@@ -413,7 +424,7 @@ public class MyProfileActivity extends AppCompatActivity {
         }
     }
 
-    public void uploadImage(){
+    private void uploadImage() {
 
         try {
 
@@ -432,7 +443,7 @@ public class MyProfileActivity extends AppCompatActivity {
                                     Upload upload = (Upload) response;
                                     ArrayList<Upload.File> fileList = upload.getFileList();
 
-                                    if (fileList.size() > 0 && bitmap != null) {
+                                    if (fileList.size() > 0) {//&& bitmap != null
 
                                         Upload.File file = fileList.get(0);
 
@@ -445,7 +456,19 @@ public class MyProfileActivity extends AppCompatActivity {
 
                                         try {
 
+                                            Config.providerModel.setStrImgUrl(url);
+                                            Config.strProviderUrl = url;
+
                                             jsonToUpdate.put("provider_profile_url", url);
+
+                                            Glide.with(MyProfileActivity.this)
+                                                    .load(strCustomerImgName)
+                                                    .centerCrop()
+                                                    .bitmapTransform(new CropCircleTransformation(MyProfileActivity.this))
+                                                    .placeholder(R.drawable.person_icon)
+                                                    .crossFade()
+                                                    .into(profileImage);
+
                                             //
                                             storageService.updateDocs(jsonToUpdate,
                                                     Config.providerModel.getStrProviderId(),
@@ -455,7 +478,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
                                                     if (o != null) {
 
-                                                        File f = utils.getInternalFileImages(Config.providerModel.getStrProviderId());
+                                                       /* File f = utils.getInternalFileImages(Config.providerModel.getStrProviderId());
 
                                                         if (f.exists())
                                                             f.delete();
@@ -467,9 +490,9 @@ public class MyProfileActivity extends AppCompatActivity {
                                                             utils.moveFile(newFile, renameFile);
                                                         } catch (IOException e) {
                                                             e.printStackTrace();
-                                                        }
+                                                        }*/
 
-                                                        profileImage.setImageBitmap(bitmap);
+                                                        // profileImage.setImageBitmap(bitmap);
 
                                                         if (progressDialog.isShowing())
                                                             progressDialog.dismiss();
@@ -482,11 +505,15 @@ public class MyProfileActivity extends AppCompatActivity {
                                                             }
                                                         }*/
 
-                                                        utils.toast(2, 2, getString(R.string.update_profile_image));
+                                                        utils.toast(2, 2,
+                                                                getString(R.string.
+                                                                        update_profile_image));
                                                         isImageChanged = false;
 
                                                     } else {
-                                                        utils.toast(2, 2, getString(R.string.warning_internet));
+                                                        utils.toast(2, 2,
+                                                                getString(R.string.
+                                                                        warning_internet));
                                                     }
                                                 }
 
@@ -499,7 +526,8 @@ public class MyProfileActivity extends AppCompatActivity {
                                                         Utils.log(e.toString(), "response onException 1 ");
                                                         utils.toast(2, 2, e.getMessage());
                                                     } else {
-                                                        utils.toast(2, 2, getString(R.string.warning_internet));
+                                                        utils.toast(2, 2,
+                                                                getString(R.string.warning_internet));
                                                     }
                                                 }
                                             });
@@ -561,17 +589,20 @@ public class MyProfileActivity extends AppCompatActivity {
             if (mProgress.isShowing())
                 mProgress.dismiss();
 
-            if (profileImage != null && strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("") && bitmap != null)
-                profileImage.setImageBitmap(bitmap);
+            /*if (profileImage != null && strCustomerImgName != null
+                    && !strCustomerImgName.equalsIgnoreCase("") && bitmap != null)
+                profileImage.setImageBitmap(bitmap);*/
 
-            if (!isImageChanged) {
+            /*if (!isImageChanged) {
                 if (bitmap != null)
-                    profileImage.setImageBitmap(bitmap);
+                    if (profileImage != null) {
+                        profileImage.setImageBitmap(bitmap);
+                    }
                 else
                     utils.toast(2, 2, getString(R.string.error));
-            }
+            }*/
 
-            if (isImageChanged && bitmap != null) {
+            if (isImageChanged) { //&& bitmap != nul
                 try {
                     checkImage();
                 } catch (Exception e) {
@@ -581,7 +612,7 @@ public class MyProfileActivity extends AppCompatActivity {
         }
     }
 
-    public class BackgroundThread extends Thread {
+   /* private class BackgroundThread extends Thread {
         @Override
         public void run() {
             try {
@@ -595,10 +626,10 @@ public class MyProfileActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     //
-    public class BackgroundThreadGallery extends Thread {
+    private class BackgroundThreadGallery extends Thread {
         @Override
         public void run() {
 
@@ -610,8 +641,10 @@ public class MyProfileActivity extends AppCompatActivity {
                     strCustomerImgName = galleryFile.getAbsolutePath();
                     InputStream is = getContentResolver().openInputStream(uri);
                     utils.copyInputStreamToFile(is, galleryFile);
-                    utils.compressImageFromPath(strCustomerImgName, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-                    bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
+                    utils.compressImageFromPath(strCustomerImgName, Config.intCompressWidth,
+                            Config.intCompressHeight, Config.iQuality);
+                   /* bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth,
+                            Config.intHeight);*/
                     isImageChanged = true;
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
@@ -621,13 +654,15 @@ public class MyProfileActivity extends AppCompatActivity {
         }
     }
 
-    public class BackgroundThreadCamera extends Thread {
+    private class BackgroundThreadCamera extends Thread {
         @Override
         public void run() {
             try {
                 if (strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("")) {
-                    utils.compressImageFromPath(strCustomerImgName, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-                    bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth, Config.intHeight);
+                    utils.compressImageFromPath(strCustomerImgName, Config.intCompressWidth,
+                            Config.intCompressHeight, Config.iQuality);
+                    /*bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth,
+                            Config.intHeight);*/
                     isImageChanged = true;
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);

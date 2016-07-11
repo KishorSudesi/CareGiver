@@ -148,6 +148,7 @@ public class FeatureActivity extends AppCompatActivity {
             bWhichScreen = b.getBoolean("WHICH_SCREEN", false);
 
             if (cancel != null) {
+                cancel.setVisibility(View.VISIBLE);
                 cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

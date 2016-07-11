@@ -1,6 +1,5 @@
 package com.hdfc.caregiver.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,10 +33,8 @@ import java.util.ArrayList;
 
 public class NotificationFragment extends Fragment {
 
-    private static NotificationAdapter notificationAdapter;
-    private static ProgressDialog progressDialog;
-  //  private static RelativeLayout loadingPanel;
-    private ListView listViewActivities;
+    private NotificationAdapter notificationAdapter;
+    //private static ProgressDialog progressDialog;
     private Utils utils;
     private AppUtils appUtils;
 
@@ -63,7 +60,7 @@ public class NotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
-        listViewActivities = (ListView) view.findViewById(R.id.listViewActivity);
+        ListView listViewActivities = (ListView) view.findViewById(R.id.listViewActivity);
         TextView emptyTextView = (TextView) view.findViewById(android.R.id.empty);
         listViewActivities.setEmptyView(emptyTextView);
         utils = new Utils(getActivity());
@@ -90,7 +87,7 @@ public class NotificationFragment extends Fragment {
         return view;
     }
 
-    public void loadNotifications() {
+    private void loadNotifications() {
 
         if (utils.isConnectingToInternet()) {
 
@@ -98,8 +95,8 @@ public class NotificationFragment extends Fragment {
 
             StorageService storageService = new StorageService(getContext());
 
-            Query q1 = QueryBuilder.build("user_id", Config.providerModel.getStrProviderId(), QueryBuilder.
-                    Operator.EQUALS);
+            Query q1 = QueryBuilder.build("user_id", Config.providerModel.getStrProviderId(),
+                    QueryBuilder.Operator.EQUALS);
 
             storageService.findDocsByQueryOrderBy(Config.collectionNotification, q1, 3000, 0,
                     "time", 1, new App42CallBack() {
@@ -156,7 +153,7 @@ public class NotificationFragment extends Fragment {
         }
     }
 
-    public void hideLoader() {
+    private void hideLoader() {
         refreshNotifications();
         DashboardActivity.loadingPanel.setVisibility(View.GONE);
     }
@@ -186,7 +183,8 @@ public class NotificationFragment extends Fragment {
 
             StorageService storageService = new StorageService(getContext());
 
-            storageService.findDocsById(strActivityId, Config.collectionActivity, new AsyncApp42ServiceApi.App42StorageServiceListener() {
+            storageService.findDocsById(strActivityId, Config.collectionActivity,
+                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
                 @Override
                 public void onDocumentInserted(Storage response) {
 
@@ -207,12 +205,14 @@ public class NotificationFragment extends Fragment {
 
                             for (int i = 0; i < jsonDocList.size(); i++) {
 //                                    utils.createNotificationModel(jsonDocList.get(i).getDocId(), jsonDocList.get(i).getJsonDoc());
-                                appUtils.createActivityModel(jsonDocList.get(i).getDocId(),jsonDocList.get(i).getJsonDoc(),2);
+                                appUtils.createActivityModel(jsonDocList.get(i).getDocId(),
+                                        jsonDocList.get(i).getJsonDoc(), 2);
                             }
 
                             int iPosition = Config.strNotificationIds.indexOf(strActivityId);
                             if (iPosition > -1) {
-                                ActivityModel activityModel = Config.activityModelsNotifications.get(iPosition);
+                                ActivityModel activityModel = Config.activityModelsNotifications.
+                                        get(iPosition);
                                /* Bundle args = new Bundle();
                                 Intent intent = new Intent(getActivity(), FeatureActivity.class);
                                 args.putSerializable("ACTIVITY", activityModel);

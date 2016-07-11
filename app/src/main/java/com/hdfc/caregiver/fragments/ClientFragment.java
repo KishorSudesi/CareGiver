@@ -23,10 +23,9 @@ import java.util.List;
 
 public class ClientFragment extends Fragment {
 
-    private static ExpandableListView expListView;
     private static List<CustomerModel> listDataHeader = new ArrayList<>();
     private static HashMap<CustomerModel, List<DependentModel>> listDataChild = new HashMap<>();
-    private static ExpandableListAdapter listAdapter;
+    private ExpandableListView expListView;
 
     public static ClientFragment newInstance() {
         ClientFragment fragment = new ClientFragment();
@@ -35,7 +34,7 @@ public class ClientFragment extends Fragment {
         return fragment;
     }
 
-    public static void prepareListData() {
+    private void prepareListData() {
         try {
             if (expListView != null) {
                 listDataHeader.clear();
@@ -45,7 +44,8 @@ public class ClientFragment extends Fragment {
                     for (ClientModel clientModel : Config.clientModels) {
                         listDataHeader.add(clientModel.getCustomerModel());
                         //Utils.log(String.valueOf(clientModel.getCustomerModel().getStrAddress()), " 1 ");
-                        listDataChild.put(clientModel.getCustomerModel(), clientModel.getDependentModels());
+                        listDataChild.put(clientModel.getCustomerModel(),
+                                clientModel.getDependentModels());
                     }
                 }
             }
@@ -70,7 +70,8 @@ public class ClientFragment extends Fragment {
 
         prepareListData();
 
-        listAdapter = new ExpandableListAdapter(getActivity(), listDataHeader, listDataChild);
+        ExpandableListAdapter listAdapter = new ExpandableListAdapter(getActivity(), listDataHeader,
+                listDataChild);
         expListView.setAdapter(listAdapter);
         expListView.setEmptyView(textViewEmpty);
 

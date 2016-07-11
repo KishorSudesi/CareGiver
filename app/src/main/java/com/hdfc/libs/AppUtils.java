@@ -10,11 +10,9 @@ import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.LoginActivity;
-import com.hdfc.caregiver.R;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
-import com.hdfc.dbconfig.DbCon;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ClientModel;
@@ -30,7 +28,6 @@ import com.hdfc.models.MilestoneViewModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
 import com.hdfc.models.VideoModel;
-import com.scottyab.aescrypt.AESCrypt;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
@@ -54,27 +51,27 @@ import java.util.Set;
  * Created by Admin on 4/25/2016.
  */
 public class AppUtils {
-    private static Context _ctxt;
     private static StorageService storageService;
-    //private static ProgressDialog progressDialog;
-    private static Utils utils;
-
     private static Date startDate, endDate;
+    private Context context;
+    //private static ProgressDialog progressDialog;
+    private Utils utils;
 
-    private static SharedPreferences sharedPreferences;
-
-    private static String strDocumentLocal = "", strProviderId = "";
+    //private static SharedPreferences sharedPreferences;
+    // private static String strDocumentLocal = "";//, strProviderId = "";
     //MS
     private Set<String> categorySet = new HashSet<>();
 
     public AppUtils(Context context) {
-        _ctxt = context;
-        utils = new Utils(_ctxt);
-        //progressDialog = new ProgressDialog(_ctxt);
-        storageService = new StorageService(_ctxt);
-        sharedPreferences = _ctxt.getSharedPreferences(Config.strPreferenceName, Context.MODE_PRIVATE);
 
-        strProviderId = sharedPreferences.getString("PROVIDER_ID", "");
+        utils = new Utils(context);
+        //progressDialog = new ProgressDialog(context);
+        storageService = new StorageService(context);
+       /* sharedPreferences = context.getSharedPreferences(Config.strPreferenceName, Context.MODE_PRIVATE);
+
+        strProviderId = sharedPreferences.getString("PROVIDER_ID", "");*/
+
+        this.context = context;
 
         Calendar calendar = Calendar.getInstance();
 
@@ -94,7 +91,7 @@ public class AppUtils {
         ///
     }
 
-    public static void logout() {
+    public static void logout(Context _context) {
         try {
             Config.jsonObject = null;
 
@@ -107,7 +104,7 @@ public class AppUtils {
             if (CareGiver.getDbCon() != null)
                 CareGiver.getDbCon().deleteFiles();
 
-            SharedPreferences.Editor editor = _ctxt.getSharedPreferences(Config.strPreferenceName,
+            SharedPreferences.Editor editor = _context.getSharedPreferences(Config.strPreferenceName,
                     Context.MODE_PRIVATE).edit();
             editor.clear();
             editor.apply();
@@ -115,14 +112,14 @@ public class AppUtils {
             File fileImage = Utils.createFileInternal("images/");
             Utils.deleteAllFiles(fileImage);
 
-            unregisterGcm();
+            unregisterGcm(_context);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void unregisterGcm() {
+    private static void unregisterGcm(final Context _context) {
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -130,9 +127,9 @@ public class AppUtils {
                 try {
                     App42GCMService.unRegisterGcm();
 
-                    Intent dashboardIntent = new Intent(_ctxt, LoginActivity.class);
-                    _ctxt.startActivity(dashboardIntent);
-                    ((Activity) _ctxt).finish();
+                    Intent dashboardIntent = new Intent(_context, LoginActivity.class);
+                    _context.startActivity(dashboardIntent);
+                    ((Activity) _context).finish();
 
                 } catch (Exception bug) {
                     bug.printStackTrace();
@@ -142,70 +139,48 @@ public class AppUtils {
         thread.start();
     }
 
-    public void createProviderModel(String strDocument, String strProviderId) {
+    public void createProviderModel(String strProviderId) {
 
         try {
-            JSONObject jsonObject = new JSONObject(strDocument);
 
-            if (jsonObject.has("provider_email")) {
+            Cursor cursor = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                    new String[]{Config.collectionProvider, strProviderId}, null, "0, 1", true,
+                    null, null
+            );
 
+            String strDocument = "";
 
-                /*
-                *String strUrl = jsonObject.getString("provider_profile_url");
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                strDocument = cursor.getString(0);
+            }
+            CareGiver.getDbCon().closeCursor(cursor);
 
-                String strUrlHash = Utils.sha512(strUrl);
+            if (!strDocument.equalsIgnoreCase("")) {
 
-                Cursor cur = CareGiver.dbCon.fetch(
-                        DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
-                        new String[]{strProviderId}, null, "0, 1", true, null, null
-                );
+                JSONObject jsonObject = new JSONObject(strDocument);
 
-                String strHashLocal = "";
+                if (jsonObject.has("provider_email")) {
 
-                if (cur.getCount() <= 0) {
-                    CareGiver.dbCon.insert(DbHelper.strTableNameFiles, new String[]{strProviderId,
-                                    strUrl, "IMAGE", strUrlHash},
-                            new String[]{"name", "url", "file_type", "file_hash"});
-                } else {
+                    Config.providerModel = new ProviderModel(
+                            jsonObject.getString("provider_name"),
+                            jsonObject.getString("provider_profile_url"),
+                            "",
+                            jsonObject.getString("provider_address"),
+                            jsonObject.getString("provider_contact_no"),
+                            jsonObject.getString("provider_email"),
+                            strProviderId);
 
-                    cur.moveToFirst();
+                    Config.providerModel.setStrCountry(jsonObject.getString("provider_country"));
+                    Config.providerModel.setStrState(jsonObject.getString("provider_state"));
+                    Config.providerModel.setStrCity(jsonObject.getString("provider_city"));
+                    Config.providerModel.setStrPinCode(jsonObject.getString("provider_pin_code"));
 
-                    while (!cur.isAfterLast()) {
-                        //strUrlLocal=cur.getString(0);
-                        strHashLocal = cur.getString(0);
-                        cur.moveToNext();
-                    }
+                    Config.strProviderUrl = jsonObject.getString("provider_profile_url");
 
-                    //CareGiver.dbCon.closeCursor(cur);
-
-                    if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                        CareGiver.dbCon.update(
-                                DbHelper.strTableNameFiles, "name=?",
-                                new String[]{strUrl, strUrlHash},
-                                new String[]{"url", "file_hash"}, new String[]{strProviderId}
-                        );
-                    }
-                }
-
-                CareGiver.dbCon.closeCursor(cur);
-                */
-                Config.providerModel = new ProviderModel(
-                        jsonObject.getString("provider_name"),
-                        jsonObject.getString("provider_profile_url"),
-                        "",
-                        jsonObject.getString("provider_address"),
-                        jsonObject.getString("provider_contact_no"),
-                        jsonObject.getString("provider_email"),
-                        strProviderId);
-
-                Config.providerModel.setStrCountry(jsonObject.getString("provider_country"));
-                Config.providerModel.setStrState(jsonObject.getString("provider_state"));
-                Config.providerModel.setStrCity(jsonObject.getString("provider_city"));
-                Config.providerModel.setStrPinCode(jsonObject.getString("provider_pin_code"));
-
-                String strUrl = jsonObject.getString("provider_profile_url");
-
-                String strUrlHash = Utils.sha512(strUrl);
+                /*String strUrlHash = Utils.sha512(strUrl);
 
                 Cursor cur = CareGiver.getDbCon().fetch(
                         DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
@@ -239,10 +214,11 @@ public class AppUtils {
                     }
                 }
 
-                CareGiver.getDbCon().closeCursor(cur);
+                CareGiver.getDbCon().closeCursor(cur);*/
 
-                //Config.fileModels.add(new FileModel(strProviderId, strUrl, "IMAGE"));
+                    //Config.fileModels.add(new FileModel(strProviderId, strUrl, "IMAGE"));
 
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -2148,7 +2124,7 @@ public class AppUtils {
     }
 
     //refresh Providers
-    private void fetchProviders(final String strUserName) {
+    /*private void fetchProviders(final String strUserName) {
 
         if (utils.isConnectingToInternet()) {
 
@@ -2169,11 +2145,11 @@ public class AppUtils {
 
                         if (cur.getCount() > 0) {
                             cur.moveToFirst();
-                           /* while (!cur.isAfterLast()) {*/
+                           *//* while (!cur.isAfterLast()) {*//*
                             strUpdatedDate = cur.getString(0);
                             strDocumentLocal = cur.getString(1);
-                            /*    cur.moveToNext();
-                            }*/
+                            *//*    cur.moveToNext();
+                            }*//*
                         }
                         CareGiver.getDbCon().closeCursor(cur);
                     }
@@ -2183,7 +2159,7 @@ public class AppUtils {
                 }
             }
 
-            StorageService storageService = new StorageService(_ctxt);
+            StorageService storageService = new StorageService(context);
 
             Query q1 = QueryBuilder.build("provider_email", strUserName, QueryBuilder.
                     Operator.EQUALS);
@@ -2267,13 +2243,13 @@ public class AppUtils {
 
                                         } else {
 
-                                            utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                            utils.toast(2, 2, context.getString(R.string.error));
                                         }
                                     }
 
                                 } else {
 
-                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                    utils.toast(2, 2, context.getString(R.string.warning_internet));
                                 }
                             } catch (Exception e1) {
                                 e1.printStackTrace();
@@ -2286,9 +2262,9 @@ public class AppUtils {
 
                             try {
                                 if (e != null) {
-                                    utils.toast(2, 2, _ctxt.getString(R.string.error));
+                                    utils.toast(2, 2, context.getString(R.string.error));
                                 } else {
-                                    utils.toast(2, 2, _ctxt.getString(R.string.warning_internet));
+                                    utils.toast(2, 2, context.getString(R.string.warning_internet));
                                 }
                             } catch (Exception e1) {
                                 e1.printStackTrace();
@@ -2296,14 +2272,14 @@ public class AppUtils {
                         }
                     });
         }
-    }
+    }*/
 
     //refresh Providers
     public void fetchClients(final int iFlag) {
 
         if (utils.isConnectingToInternet()) {
             //fetchCustomers(2);
-            StorageService storageService = new StorageService(_ctxt);
+            StorageService storageService = new StorageService(context);
 
             Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
                     QueryBuilder.Operator.EQUALS);

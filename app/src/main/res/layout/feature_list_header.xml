@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
-            android:text="Click to Attach"
+           android:text="@string/click_attach"
             android:textColor="@color/blue" />
 
     </LinearLayout>
@@ -46,10 +46,10 @@
         android:id="@+id/linearName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginLeft="15dp"
         android:layout_centerVertical="true"
-        android:layout_marginStart="15dp">
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:orientation="horizontal">
         <ImageView
             android:id="@+id/imgLogoHeaderTaskDetail"
             android:layout_width="40dp"
@@ -63,9 +63,8 @@
             android:layout_marginLeft="11dp"
             android:layout_marginStart="11dp"
             android:gravity="center"
-            android:textColor="@color/blue"
-            android:text="Rushikesh Belavalekar"
-            android:textSize="20dp" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/blue" />
     </LinearLayout>
 
 

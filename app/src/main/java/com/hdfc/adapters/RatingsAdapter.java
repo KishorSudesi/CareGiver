@@ -86,6 +86,8 @@ public class RatingsAdapter extends BaseAdapter {
             }else {
                 viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_5));
             }
+
+            //
             File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(feedBackModel.getStrFeedBackBy()));
 
             if(fileImage.exists()) {
@@ -94,6 +96,31 @@ public class RatingsAdapter extends BaseAdapter {
             }else{
                 viewHolder.image.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
             }
+
+
+            //
+         /*   if (feedBackModel.getStrFeedBackBy().equalsIgnoreCase("provider")) {
+                strName = Config.providerModel.getStrName();
+                strUrl=Config.providerModel.getStrImgUrl();
+            }
+
+            if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("dependent")) {
+                if (Config.dependentIdsAdded.contains(strId)) {
+                    strName = Config.dependentModels.get(Config.dependentIdsAdded.
+                            indexOf(strId)).getStrName();
+                    strUrl=Config.dependentModels.get(Config.dependentIdsAdded.
+                            indexOf(strId)).getStrImageUrl();
+                }
+            }
+
+            if (adapterNotificationModels.get(position).getStrCreatedByType().equalsIgnoreCase("customer")) {
+                if (Config.customerIdsAdded.contains(strId)) {
+                    strName = Config.customerModels.get(Config.customerIdsAdded.
+                            indexOf(strId)).getStrName();
+                    strUrl=Config.customerModels.get(Config.customerIdsAdded.
+                            indexOf(strId)).getStrImgUrl();
+                }
+            }*/
 
         }
         return convertView;

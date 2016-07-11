@@ -28,6 +28,7 @@ import com.hdfc.caregiver.fragments.RatingsFragment;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
+import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42API;
 
@@ -46,7 +47,6 @@ public class DashboardActivity extends AppCompatActivity implements
     private static AppUtils appUtils;
     private static Utils utils;
     private static AppCompatActivity appCompatActivity;
-
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -68,7 +68,7 @@ public class DashboardActivity extends AppCompatActivity implements
             }
         }
     };
-
+    private SessionManager sessionManager;
     private LinearLayout net_error_layout;
     private NetworkStateReceiver networkStateReceiver;
     private ImageView mytask, clients, feedback, notification;
@@ -251,6 +251,10 @@ public class DashboardActivity extends AppCompatActivity implements
             if (Config.intSelectedMenu == Config.intNotificationScreen) {
                 menuNotification(false);
             }
+
+            sessionManager = new SessionManager(DashboardActivity.this);
+
+            appUtils.createProviderModel(sessionManager.getProviderId());
 
 
             if (Config.providerModel != null)
