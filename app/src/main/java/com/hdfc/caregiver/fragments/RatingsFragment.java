@@ -125,7 +125,7 @@ public class RatingsFragment extends Fragment {
         //Utils.log(String.valueOf(i + " ! " + k), " R ");
 
         Glide.with(getActivity())
-                .load(Config.strProviderUrl)
+                .load(Config.providerModel.getStrImgUrl())
                 .centerCrop()
                 .bitmapTransform(new CropCircleTransformation(getActivity()))
                 .placeholder(R.drawable.person_icon)

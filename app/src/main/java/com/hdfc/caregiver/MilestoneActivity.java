@@ -85,8 +85,8 @@ public class MilestoneActivity extends AppCompatActivity {
     private LinearLayout layout;
     private SimpleTooltip simpleTooltip;
     private Utils utils;
-    private byte editTextType = 0;
-    private byte TYPE_FROM = 1, TYPE_TO = 2;
+  /*  private byte editTextType = 0;
+    private byte TYPE_FROM = 1, TYPE_TO = 2;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -458,9 +458,9 @@ public class LoginActivity extends AppCompatActivity {
                                         resetPasswordApp42(strUserName);
                                     }
 
-                                    } else {
-                                        if (progressDialog.isShowing())
-                                            progressDialog.dismiss();
+                                } else {
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
 
                                     if (iFlag == 1)
                                         utils.toast(2, 2, getString(R.string.invalid_credentials),
