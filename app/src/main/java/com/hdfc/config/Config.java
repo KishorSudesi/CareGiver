@@ -41,6 +41,8 @@ public class Config {
     public static final String collectionActivity = "activity";
     public static final String collectionDependent = "dependent";
     public static final String collectionNotification = "notification";
+    public static final String collectionCheckInCare = "checkincare";
+
 
     public static final String UPDATE_DATE = "2016-01-01T00:00:00.000Z";
 
