@@ -118,7 +118,7 @@ public class Config {
     public static ArrayList<String> strDependentNames = new ArrayList<>();
     public static ArrayList<String> strCustomerNames = new ArrayList<>();
 
-    public static String strProviderUrl = "";
+    //public static String strProviderUrl = "";
 
     public enum ActivityStatus {NEW, OPEN, INPROCESS, COMPLETED}
 

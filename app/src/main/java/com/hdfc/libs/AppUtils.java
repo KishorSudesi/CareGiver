@@ -178,7 +178,7 @@ public class AppUtils {
                     Config.providerModel.setStrCity(jsonObject.getString("provider_city"));
                     Config.providerModel.setStrPinCode(jsonObject.getString("provider_pin_code"));
 
-                    Config.strProviderUrl = jsonObject.getString("provider_profile_url");
+                    //Config.strProviderUrl = jsonObject.getString("provider_profile_url");
 
                 /*String strUrlHash = Utils.sha512(strUrl);
 

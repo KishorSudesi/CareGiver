@@ -25,7 +25,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_COLLECTION_NAME = "collection_name";
     public static final String COLUMN_DOC_DATE = "doc_date";
     public static final String COLLECTION_FIELDS[] = {"object_id", "updated_date", "document", "collection_name", "status", "doc_date"};
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
@@ -33,7 +33,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static SQLiteDatabase db;
     //private Utils utils;
     private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection + " ( id integer primary key autoincrement," +
-            " object_id VARCHAR(50), updated_date datetime, document text, collection_name VARCHAR(50), status integer, doc_date datetime)";
+            " object_id VARCHAR(50), updated_date datetime, document text, collection_name VARCHAR(50), status integer, doc_date datetime, updated integer)";
 
     private String strMilestoneQuery = "CREATE TABLE " + strTableNameMilestone + " ( id integer primary key autoincrement," +
             " object_id VARCHAR(50), milestone_id integer, milestone_date datetime)";
