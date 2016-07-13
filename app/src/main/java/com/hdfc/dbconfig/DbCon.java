@@ -90,6 +90,12 @@ public class DbCon {
         return dbHelper.rawQuery(query);
     }
 
+    public boolean updateCustomer(String values[], String names[], String args[]) {
+        return dbHelper.update(DbHelper.COLUMN_OBJECT_ID + "=? and " +
+                        DbHelper.COLUMN_COLLECTION_NAME + "=?", values, names,
+                DbHelper.strTableNameCollection, args);
+    }
+
     public void beginDBTransaction() {
         dbHelper.beginDBTransaction();
     }

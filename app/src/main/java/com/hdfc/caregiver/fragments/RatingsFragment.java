@@ -19,6 +19,8 @@ import com.hdfc.caregiver.MyProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 
+import java.io.File;
+
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 
@@ -124,8 +126,25 @@ public class RatingsFragment extends Fragment {
 */
         //Utils.log(String.valueOf(i + " ! " + k), " R ");
 
+        File file = null;
+
+        String strImage;
+
+        try {
+            file = new File(Config.providerModel.getStrImgPath());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (file != null && file.exists()) {
+            strImage = Config.providerModel.getStrImgPath();
+        } else {
+            strImage = Config.providerModel.getStrImgUrl();
+        }
+
         Glide.with(getActivity())
-                .load(Config.providerModel.getStrImgUrl())
+                .load(strImage)
                 .centerCrop()
                 .bitmapTransform(new CropCircleTransformation(getActivity()))
                 .placeholder(R.drawable.person_icon)
