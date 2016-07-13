@@ -225,6 +225,51 @@ public class AppUtils {
         }
     }
 
+    public void updateProviderJson(String strProviderId, boolean bWhich) {
+
+        try {
+
+            Cursor cursor = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                    new String[]{Config.collectionProvider, strProviderId}, null, "0, 1", true,
+                    null, null
+            );
+
+            String strDocument = "";
+
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                strDocument = cursor.getString(0);
+            }
+            CareGiver.getDbCon().closeCursor(cursor);
+
+            if (!strDocument.equalsIgnoreCase("")) {
+
+                JSONObject jsonObject = new JSONObject(strDocument);
+
+                if (jsonObject.has("provider_email")) {
+
+                    if (bWhich) {
+                        jsonObject.put("provider_contact_no", Config.providerModel.getStrContacts());
+                        jsonObject.put("provider_address", Config.providerModel.getStrAddress());
+                        jsonObject.put("provider_name", Config.providerModel.getStrName());
+                    } else {
+                        jsonObject.put("provider_profile_url", Config.providerModel.getStrImgUrl());
+                    }
+
+                    CareGiver.getDbCon().updateCustomer(
+                            new String[]{"DateTime('now')", jsonObject.toString(), "1"},
+                            new String[]{"updated_date", "document", "updated"},
+                            new String[]{Config.providerModel.getStrProviderId(),
+                                    Config.collectionProvider});
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void fetchDependents(final int iFlag) {
 
         if (Config.dependentIds.size() > 0) {

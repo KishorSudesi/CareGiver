@@ -156,7 +156,7 @@
         android:layout_marginRight="@dimen/edit_text_margin"
         android:layout_marginTop="15dp"
         android:background="@drawable/button_success"
-        android:text="Edit Settings"
+        android:text="@string/edit_settings"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite" />
 
@@ -171,7 +171,7 @@
         android:layout_marginRight="@dimen/edit_text_margin"
         android:layout_marginTop="0dp"
         android:background="@drawable/button_success"
-        android:text="Log Out"
+        android:text="@string/logout"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite" />
         </LinearLayout>

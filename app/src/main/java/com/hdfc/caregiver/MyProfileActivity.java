@@ -20,12 +20,16 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
+
+import net.sqlcipher.Cursor;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +55,7 @@ public class MyProfileActivity extends AppCompatActivity {
     private static Handler backgroundThreadHandler;
     //private AppUtils appUtils;
     private static ProgressDialog mProgress = null;
-    private static boolean isImageChanged=false;
+    //private static boolean isImageChanged=false;
     private ImageView profileImage;
     private Utils utils;
     //ImageView backbutton, edit, imageplace;
@@ -62,7 +66,7 @@ public class MyProfileActivity extends AppCompatActivity {
     private Button buttonContinue;
     private int Flag = 0;
     private ProgressDialog progressDialog;
-    private StorageService storageService;
+    private AppUtils appUtils;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +99,7 @@ public class MyProfileActivity extends AppCompatActivity {
         //intWhichScreen = b.getInt("WHICH_SCREEN", Config.intRatingsScreen);
 
         utils = new Utils(MyProfileActivity.this);
+        appUtils = new AppUtils(MyProfileActivity.this);
         progressDialog = new ProgressDialog(MyProfileActivity.this);
         mProgress = new ProgressDialog(MyProfileActivity.this);
         //appUtils = new AppUtils(MyProfileActivity.this);
@@ -102,7 +107,7 @@ public class MyProfileActivity extends AppCompatActivity {
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Flag == 0) {
+                if (Flag == 1) {
                     utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                             + ".jpeg", null, MyProfileActivity.this, true);
                 }
@@ -240,6 +245,7 @@ public class MyProfileActivity extends AppCompatActivity {
                         Config.providerModel.setStrAddress(place.getText().toString());
                         Config.providerModel.setStrName(name.getText().toString());
 
+                        appUtils.updateProviderJson(Config.providerModel.getStrProviderId(), true);
 
                         // edit.setImageResource(R.mipmap.edit);
                         Flag = 0;
@@ -271,7 +277,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 goBack();
             }
         });
-*/
+        */
         if(Config.providerModel!=null) {
             if (email != null) {
                 email.setText(Config.providerModel.getStrEmail());
@@ -281,8 +287,25 @@ public class MyProfileActivity extends AppCompatActivity {
             //textViewName.setText(Config.providerModel.getStrName());
             name.setText(Config.providerModel.getStrName());
 
+            File file = null;
+
+            String strImage;
+
+            try {
+                file = new File(Config.providerModel.getStrImgPath());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (file != null && file.exists()) {
+                strImage = Config.providerModel.getStrImgPath();
+            } else {
+                strImage = Config.providerModel.getStrImgUrl();
+            }
+
             Glide.with(MyProfileActivity.this)
-                    .load(Config.providerModel.getStrImgUrl())
+                    .load(strImage)
                     .centerCrop()
                     .bitmapTransform(new CropCircleTransformation(MyProfileActivity.this))
                     .placeholder(R.drawable.person_icon)
@@ -299,39 +322,63 @@ public class MyProfileActivity extends AppCompatActivity {
             progressDialog.show();
         }
 
-        storageService = new StorageService(MyProfileActivity.this);
+        StorageService storageService = new StorageService(MyProfileActivity.this);
 
-        JSONObject jsonToUpdate = new JSONObject();
+        Cursor cursor = CareGiver.getDbCon().fetch(
+                DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                new String[]{Config.collectionProvider, Config.providerModel.getStrProviderId()},
+                null, "0, 1", true,
+                null, null
+        );
 
+        String strDocument = "";
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            strDocument = cursor.getString(0);
+        }
+        CareGiver.getDbCon().closeCursor(cursor);
+
+        JSONObject jsonObject = null;
         try {
-            jsonToUpdate.put("provider_name", Config.providerModel.getStrName());
-            jsonToUpdate.put("provider_contact_no", Config.providerModel.getStrContacts());
-            jsonToUpdate.put("provider_address", Config.providerModel.getStrAddress());
-
+            jsonObject = new JSONObject(strDocument);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        storageService.updateDocs(jsonToUpdate,
-                Config.providerModel.getStrProviderId(),
-                Config.collectionProvider, new App42CallBack() {
-                    @Override
-                    public void onSuccess(Object o) {
-                        if (!isBackground) {
-                            progressDialog.dismiss();
-                            utils.toast(1, 1, getString(R.string.account_updated));
-                        }
-                    }
+        if (jsonObject != null) {
 
-                    @Override
-                    public void onException(Exception e) {
-                        progressDialog.dismiss();
-                        if (!isBackground) {
-                            progressDialog.dismiss();
-                            utils.toast(1, 1, getString(R.string.error));
+            storageService.updateDocs(jsonObject,
+                    Config.providerModel.getStrProviderId(),
+                    Config.collectionProvider, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
+
+                            CareGiver.getDbCon().updateCustomer(
+                                    new String[]{"DateTime('now')", "0"},
+                                    new String[]{"updated_date", "updated"},
+                                    new String[]{Config.providerModel.getStrProviderId(),
+                                            Config.collectionProvider});
+
+                            if (!isBackground) {
+                                progressDialog.dismiss();
+                                utils.toast(1, 1, getString(R.string.account_updated));
+                            }
                         }
-                    }
-                });
+
+                        @Override
+                        public void onException(Exception e) {
+                            if (!isBackground) {
+                                progressDialog.dismiss();
+                                if (e == null)
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                else
+                                    utils.toast(1, 1, getString(R.string.error));
+                            }
+                        }
+                    });
+        }
     }
 
 
@@ -389,7 +436,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
         try {
 
-            if (isBackground) {
+            if (!isBackground) {
                 progressDialog.setMessage(getResources().getString(R.string.uploading_image));
                 progressDialog.setCancelable(false);
                 progressDialog.show();
@@ -401,16 +448,20 @@ public class MyProfileActivity extends AppCompatActivity {
                             getStrEmail(),
                     new App42CallBack() {
                         public void onSuccess(Object response) {
-                            if (isBackground && utils.isConnectingToInternet()) {
-                                uploadImage();
-                            }
+                            uploadImage(isBackground);
                         }
 
                         @Override
                         public void onException(Exception e) {
                             if (!isBackground) {
-                                progressDialog.dismiss();
-                                utils.toast(1, 1, getString(R.string.error));
+
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
+
+                                if (e == null)
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                else
+                                    utils.toast(1, 1, getString(R.string.error));
                             }
                         }
                     });
@@ -420,7 +471,7 @@ public class MyProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadImage() {
+    private void uploadImage(final boolean isBackground) {
 
         try {
             UploadService uploadService = new UploadService(this);
@@ -431,39 +482,46 @@ public class MyProfileActivity extends AppCompatActivity {
 
                         public void onSuccess(Object response) {
 
+                            if (!isBackground) {
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
+                            }
+
                             if (response != null) {
                                 Upload upload = (Upload) response;
                                 ArrayList<Upload.File> fileList = upload.getFileList();
 
                                 if (fileList.size() > 0) {
 
-                                    Upload.File file = fileList.get(0);
-                                    final String url = file.getUrl();
-                                    updateProviderJson(url);
+                                    Config.providerModel.setStrImgUrl(fileList.get(0).getUrl());
+                                    appUtils.updateProviderJson(Config.providerModel.getStrProviderId(), false);
+
+                                    if (utils.isConnectingToInternet()) {
+                                        updateProviderDoc(false);
+                                    }
 
                                 } else {
-                                    if (progressDialog.isShowing())
-                                        progressDialog.dismiss();
-                                    utils.toast(2, 2, getString(R.string.error));
+                                    if (!isBackground)
+                                        utils.toast(2, 2, getString(R.string.error));
                                 }
                             } else {
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
-                                utils.toast(2, 2, getString(R.string.warning_internet));
+                                if (!isBackground)
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                         }
 
                         @Override
                         public void onException(Exception e) {
 
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
+                            if (!isBackground) {
 
-                            if (e != null) {
-                                Utils.log(e.toString(), "response onException 1 ");
-                                utils.toast(2, 2, e.getMessage());
-                            } else {
-                                utils.toast(2, 2, getString(R.string.warning_internet));
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
+
+                                if (e == null)
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                else
+                                    utils.toast(1, 1, getString(R.string.error));
                             }
                         }
                     });
@@ -477,87 +535,6 @@ public class MyProfileActivity extends AppCompatActivity {
     public void onBackPressed() {
         //super.onBackPressed();]
         goBack();
-    }
-
-    private void updateProviderJson(String strUrl) {
-        JSONObject jsonToUpdate = new JSONObject();
-
-        StorageService storageService = new StorageService(
-                MyProfileActivity.this);
-
-        try {
-
-            Config.providerModel.setStrImgUrl(strUrl);
-            //Config.strProviderUrl = url;
-
-            jsonToUpdate.put("provider_profile_url", strUrl);
-
-            //
-            storageService.updateDocs(jsonToUpdate,
-                    Config.providerModel.getStrProviderId(),
-                    Config.collectionProvider, new App42CallBack() {
-                        @Override
-                        public void onSuccess(Object o) {
-
-                            if (o != null) {
-
-                                                       /* File f = utils.getInternalFileImages(Config.providerModel.getStrProviderId());
-
-                                                        if (f.exists())
-                                                            f.delete();
-
-                                                        File newFile = new File(strCustomerImgName);
-                                                        File renameFile = utils.getInternalFileImages(Config.providerModel.getStrProviderId());
-
-                                                        try {
-                                                            utils.moveFile(newFile, renameFile);
-                                                        } catch (IOException e) {
-                                                            e.printStackTrace();
-                                                        }*/
-
-                                // profileImage.setImageBitmap(bitmap);
-
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
-
-                                                        /*if (Config.jsonObject.has("provider_profile_url")) {
-                                                            try {
-                                                                Config.jsonObject.put("provider_profile_url", url);
-                                                            } catch (JSONException e) {
-                                                                e.printStackTrace();
-                                                            }
-                                                        }*/
-
-                                utils.toast(2, 2,
-                                        getString(R.string.
-                                                update_profile_image));
-                                isImageChanged = false;
-
-                            } else {
-                                utils.toast(2, 2,
-                                        getString(R.string.
-                                                warning_internet));
-                            }
-                        }
-
-                        @Override
-                        public void onException(Exception e) {
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
-
-                            if (e != null) {
-                                Utils.log(e.toString(), "response onException 1 ");
-                                utils.toast(2, 2, e.getMessage());
-                            } else {
-                                utils.toast(2, 2,
-                                        getString(R.string.warning_internet));
-                            }
-                        }
-                    });
-            //
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
    /* private class BackgroundThread extends Thread {
@@ -596,16 +573,21 @@ public class MyProfileActivity extends AppCompatActivity {
                     utils.toast(2, 2, getString(R.string.error));
             }*/
 
-            Glide.with(MyProfileActivity.this)
-                    .load(strCustomerImgName)
-                    .centerCrop()
-                    .bitmapTransform(new CropCircleTransformation(MyProfileActivity.this))
-                    .placeholder(R.drawable.person_icon)
-                    .crossFade()
-                    .into(profileImage);
 
-            if (isImageChanged) { //&& bitmap != nul
+            //if (isImageChanged) { //&& bitmap != nul
                 try {
+
+                    Config.providerModel.setStrImgPath(strCustomerImgName);
+
+                    Glide.with(MyProfileActivity.this)
+                            .load(Config.providerModel.getStrImgPath())
+                            .centerCrop()
+                            .bitmapTransform(new CropCircleTransformation(MyProfileActivity.this))
+                            .placeholder(R.drawable.person_icon)
+                            .crossFade()
+                            .into(profileImage);
+
+                    //appUtils.updateProviderJson(Config.providerModel.getStrProviderId(), true);
 
                     if (utils.isConnectingToInternet())
                         checkImage(false);
@@ -613,7 +595,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            //}
         }
     }
 
@@ -634,7 +616,7 @@ public class MyProfileActivity extends AppCompatActivity {
                             Config.intCompressHeight, Config.iQuality);
                    /* bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth,
                             Config.intHeight);*/
-                    isImageChanged = true;
+                    //isImageChanged = true;
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
@@ -652,7 +634,7 @@ public class MyProfileActivity extends AppCompatActivity {
                             Config.intCompressHeight, Config.iQuality);
                     /*bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth,
                             Config.intHeight);*/
-                    isImageChanged = true;
+                    //isImageChanged = true;
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
