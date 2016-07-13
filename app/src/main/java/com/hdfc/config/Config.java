@@ -5,6 +5,7 @@ import android.os.Build;
 import com.hdfc.caregiver.BuildConfig;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
+import com.hdfc.models.CheckInCareModel;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.ClientNameModel;
 import com.hdfc.models.CustomerModel;
@@ -103,6 +104,8 @@ public class Config {
 
     public static ArrayList<NotificationModel> notificationModels = new ArrayList<>();
     public static ArrayList<String> strNotificationIds = new ArrayList<>();
+
+    public static ArrayList<CheckInCareModel> checkInCareModels = new ArrayList<>();
 
 
     public static ArrayList<ClientNameModel> clientNameModels = new ArrayList<>();
