@@ -355,7 +355,7 @@ public class MyProfileActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Object o) {
 
-                            CareGiver.getDbCon().updateCustomer(
+                            CareGiver.getDbCon().updateProvider(
                                     new String[]{"DateTime('now')", "0"},
                                     new String[]{"updated_date", "updated"},
                                     new String[]{Config.providerModel.getStrProviderId(),

@@ -19,19 +19,29 @@ import android.widget.TextView;
 
 import com.hdfc.app42service.App42GCMController;
 import com.hdfc.app42service.App42GCMService;
+import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.fragments.ActivityFragment;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.caregiver.fragments.MileStoneFragment;
 import com.hdfc.caregiver.fragments.NotificationFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42API;
+import com.shephertz.app42.paas.sdk.android.App42CallBack;
+import com.shephertz.app42.paas.sdk.android.storage.Query;
+import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
+import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
+import net.sqlcipher.Cursor;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -54,20 +64,11 @@ public class DashboardActivity extends AppCompatActivity implements
                     .getStringExtra(App42GCMService.ExtraMessage);
 
             if (message != null && !message.equalsIgnoreCase("")) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
-                builder.setTitle(getString(R.string.app_name));
-                builder.setMessage(message);
-                builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.show();
+                showPushDialog(message);
             }
         }
     };
+    private Bundle bundle;
     private SessionManager sessionManager;
     private LinearLayout net_error_layout;
     private NetworkStateReceiver networkStateReceiver;
@@ -93,7 +94,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     public static void refreshClientsData() {
 
-        if (utils.isConnectingToInternet(appCompatActivity)) {
+        if (Utils.isConnectingToInternet(appCompatActivity)) {
 
             //loadingPanel.setVisibility(View.VISIBLE);
 
@@ -128,6 +129,31 @@ public class DashboardActivity extends AppCompatActivity implements
         }*/
 
         loadingPanel.setVisibility(View.GONE);
+    }
+
+    private void showPushDialog(final String strMessage) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+        builder.setTitle(getString(R.string.app_name));
+        builder.setMessage(strMessage);
+        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                //if(Config.intSelectedMenu!=Config.intNotificationScreen)
+                loadNotifications();
+                //menuNotification(true);
+                /*else {
+                    //todo
+                }*/
+            }
+        });
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     private void gotoSimpleActivity() {
@@ -215,14 +241,14 @@ public class DashboardActivity extends AppCompatActivity implements
             notification.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    menuNotification(true);
+                    menuNotification(false);
                 }
             });
 
             textViewNotification.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    menuNotification(true);
+                    menuNotification(false);
                 }
             });
 
@@ -265,7 +291,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
             appCompatActivity = DashboardActivity.this;
 
-            Bundle bundle = getIntent().getExtras();
+            bundle = getIntent().getExtras();
 
             boolean b = false;
 
@@ -404,6 +430,15 @@ public class DashboardActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null && intent.getStringExtra(App42GCMService.ExtraMessage) != null) {
+            String strMess = intent.getStringExtra(App42GCMService.ExtraMessage);
+            showPushDialog(strMess);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -415,6 +450,12 @@ public class DashboardActivity extends AppCompatActivity implements
 
             registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.
                     CONNECTIVITY_ACTION));
+
+
+            /*if (bundle != null && bundle.getString("message")!=null) {
+                String strMess = bundle.getString("message");
+                showPushDialog(strMess);
+            }*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -452,7 +493,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void refreshDashboardData() {
 
-        if (utils.isConnectingToInternet(appCompatActivity)) {
+        if (Utils.isConnectingToInternet(appCompatActivity)) {
 
             loadingPanel.setVisibility(View.VISIBLE);
 
@@ -533,11 +574,91 @@ public class DashboardActivity extends AppCompatActivity implements
         loadingPanel.setVisibility(View.GONE);
     }
 
+    private void loadNotifications() {
+
+        if (utils.isConnectingToInternet()) {
+
+            String strDate = DbHelper.DEFAULT_DB_DATE;
+
+            Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionNotification);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                strDate = cursor.getString(0);
+            }
+
+            CareGiver.getDbCon().closeCursor(cursor);
+
+            StorageService storageService = new StorageService(DashboardActivity.this);
+
+            Query q1 = QueryBuilder.build("user_id", Config.providerModel.getStrProviderId(),
+                    QueryBuilder.Operator.EQUALS);
+
+            Query finalQuery;
+
+            if (strDate != null && !strDate.equalsIgnoreCase("")) {
+                Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.GREATER_THAN_EQUALTO);
+
+                finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
+            } else {
+                finalQuery = q1;
+            }
+
+            storageService.findDocsByQueryOrderBy(Config.collectionNotification, finalQuery, 30000,
+                    0, "time", 1, new App42CallBack() {
+
+                        @Override
+                        public void onSuccess(Object o) {
+                            if (o != null) {
+
+                                Storage storage = (Storage) o;
+
+                                Utils.log(storage.toString(), "not ");
+
+                                if (storage.getJsonDocList().size() > 0) {
+
+                                    ArrayList<Storage.JSONDocument> jsonDocList = storage.
+                                            getJsonDocList();
+
+                                    try {
+
+                                        CareGiver.getDbCon().beginDBTransaction();
+
+                                        for (int i = 0; i < jsonDocList.size(); i++) {
+
+                                            String values[] = {jsonDocList.get(i).getDocId(),
+                                                    jsonDocList.get(i).getUpdatedAt(),
+                                                    jsonDocList.get(i).getJsonDoc(), Config.collectionNotification,
+                                                    "1", ""};
+
+                                            CareGiver.getDbCon().insert(DbHelper.strTableNameCollection,
+                                                    values,
+                                                    DbHelper.COLLECTION_FIELDS);
+
+                                        }
+                                        CareGiver.getDbCon().dbTransactionSuccessFull();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    } finally {
+                                        CareGiver.getDbCon().endDBTransaction();
+                                    }
+                                    menuNotification(true);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                        }
+                    });
+        }
+    }
+
     private static class ThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
 
-            if (!utils.isConnectingToInternet(appCompatActivity))
+            if (!Utils.isConnectingToInternet(appCompatActivity))
                 utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet), appCompatActivity);
 
            /* if (Config.intSelectedMenu == Config.intClientScreen) {

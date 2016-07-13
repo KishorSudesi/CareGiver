@@ -125,7 +125,8 @@ public class App42GCMService extends IntentService {
 
     private void sendNotification(String msg) {
         long when = System.currentTimeMillis();
-        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = (NotificationManager) this.
+                getSystemService(Context.NOTIFICATION_SERVICE);
 
         Intent notificationIntent;
 
@@ -133,7 +134,9 @@ public class App42GCMService extends IntentService {
 
         notificationIntent.putExtra("message_delivered", true);
         notificationIntent.putExtra("message", msg);
-        notificationIntent.setFlags(603979776);//603979776 Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        //notificationIntent.setFlags(603979776);//603979776 Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP
 
         //
         // The stack builder object will contain an artificial back stack for the
@@ -168,7 +171,7 @@ public class App42GCMService extends IntentService {
     /**
      * @param message
      */
-    public void broadCastMessage(String message) {
+    private void broadCastMessage(String message) {
         Intent intent = new Intent(DisplayMessageAction);
         intent.putExtra(ExtraMessage, message);
         this.sendBroadcast(intent);

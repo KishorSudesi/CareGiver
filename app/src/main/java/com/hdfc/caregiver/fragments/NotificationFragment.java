@@ -15,18 +15,18 @@ import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AppUtils;
-import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
-import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
-import org.json.JSONException;
+import net.sqlcipher.Cursor;
 
 import java.util.ArrayList;
 
@@ -64,11 +64,13 @@ public class NotificationFragment extends Fragment {
         TextView emptyTextView = (TextView) view.findViewById(android.R.id.empty);
         listViewActivities.setEmptyView(emptyTextView);
         utils = new Utils(getActivity());
-        appUtils = new AppUtils(getContext());
+        appUtils = new AppUtils(getActivity());
      //   loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
 
         Bundle bundle = this.getArguments();
         boolean b = bundle.getBoolean("RELOAD", false);
+
+        appUtils.createNotificationModel();
 
         notificationAdapter = new NotificationAdapter(getActivity(), Config.notificationModels);
         listViewActivities.setAdapter(notificationAdapter);
@@ -81,26 +83,61 @@ public class NotificationFragment extends Fragment {
             }
         });
 
-        if (b)
-            loadNotifications();
+        if (Config.notificationModels.size() <= 0 || b) {
+
+          /*  boolean isBackground=false;
+
+            if(b)*/
+
+
+            loadNotifications(b);
+        }
 
         return view;
     }
 
-    private void loadNotifications() {
+    private void loadNotifications(final boolean isBackground) {
 
         if (utils.isConnectingToInternet()) {
 
-            DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
+            if (!isBackground)
+                DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
+
+            String strDate = DbHelper.DEFAULT_DB_DATE;
+
+            Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionNotification);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                strDate = cursor.getString(0);
+            }
+
+            CareGiver.getDbCon().closeCursor(cursor);
 
             StorageService storageService = new StorageService(getContext());
 
             Query q1 = QueryBuilder.build("user_id", Config.providerModel.getStrProviderId(),
                     QueryBuilder.Operator.EQUALS);
 
-            storageService.findDocsByQueryOrderBy(Config.collectionNotification, q1, 3000, 0,
-                    "time", 1, new App42CallBack() {
+            Query finalQuery;
 
+            if (strDate != null && !strDate.equalsIgnoreCase("")) {
+                Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.GREATER_THAN_EQUALTO);
+
+                finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
+            } else {
+                finalQuery = q1;
+            }
+
+          /*  try {
+                Utils.log(finalQuery.get(), " QUERY ");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
+
+
+            storageService.findDocsByQueryOrderBy(Config.collectionNotification, finalQuery, 30000,
+                    0, "time", 1, new App42CallBack() {
 
                         @Override
                         public void onSuccess(Object o) {
@@ -108,57 +145,69 @@ public class NotificationFragment extends Fragment {
 
                                 Storage storage = (Storage) o;
 
-                                //Utils.log(storage.toString(), "not ");
+                                Utils.log(storage.toString(), "not ");
 
                                 if (storage.getJsonDocList().size() > 0) {
 
                                     ArrayList<Storage.JSONDocument> jsonDocList = storage.
                                             getJsonDocList();
 
-                                    for (int i = 0; i < jsonDocList.size(); i++) {
+                                    try {
 
-                                        utils.createNotificationModel(jsonDocList.get(i).getDocId(),
-                                                jsonDocList.get(i).getJsonDoc());
+                                        CareGiver.getDbCon().beginDBTransaction();
+
+                                        for (int i = 0; i < jsonDocList.size(); i++) {
+
+                                            String values[] = {jsonDocList.get(i).getDocId(),
+                                                    jsonDocList.get(i).getUpdatedAt(),
+                                                    jsonDocList.get(i).getJsonDoc(), Config.collectionNotification,
+                                                    "1", ""};
+
+                                            //String selection = DbHelper.COLUMN_OBJECT_ID + " = ?";
+
+                                            // WHERE clause arguments
+                                            //String[] selectionArgs = {jsonDocList.get(i).getDocId()};
+                                            CareGiver.getDbCon().insert(DbHelper.strTableNameCollection,
+                                                    values,
+                                                    DbHelper.COLLECTION_FIELDS);
+
+                                        }
+                                        CareGiver.getDbCon().dbTransactionSuccessFull();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    } finally {
+                                        CareGiver.getDbCon().endDBTransaction();
                                     }
                                 }
+                                refreshNotifications();
+                            } else {
+                                if (!isBackground)
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
                             }
-                            hideLoader();
+
+                            if (!isBackground)
+                                DashboardActivity.loadingPanel.setVisibility(View.GONE);
                         }
 
                         @Override
                         public void onException(Exception e) {
-                            hideLoader();
 
-                           /* if (ex != null) {
-                                try {
-                                       *//* JSONObject jsonObject = new JSONObject(ex.getMessage());
-                                        JSONObject jsonObjectError = jsonObject.
-                                                getJSONObject("app42Fault");
-                                        String strMess = jsonObjectError.getString("details");
+                            if (!isBackground) {
 
-                                        toast(2, 2, strMess);*//*
-                                    //toast(2, 2, _ctxt.getString(R.string.error));
-                                } catch (Exception e1) {
-                                    e1.printStackTrace();
-                                }
-                            } else {
-                                utils.toast(2, 2, getString(R.string.warning_internet));
+                                DashboardActivity.loadingPanel.setVisibility(View.GONE);
+
+                                if (e == null)
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                else
+                                    utils.toast(1, 1, getString(R.string.error));
                             }
-                            refreshNotifications();*/
                         }
                     });
-
-        } else {
-            hideLoader();
         }
     }
 
-    private void hideLoader() {
-        refreshNotifications();
-        DashboardActivity.loadingPanel.setVisibility(View.GONE);
-    }
-
     private void refreshNotifications() {
+        appUtils.createNotificationModel();
         notificationAdapter.notifyDataSetChanged();
     }
 
@@ -181,7 +230,7 @@ public class NotificationFragment extends Fragment {
 
         }else {
 
-            StorageService storageService = new StorageService(getContext());
+           /* StorageService storageService = new StorageService(getContext());
 
             storageService.findDocsById(strActivityId, Config.collectionActivity,
                     new AsyncApp42ServiceApi.App42StorageServiceListener() {
@@ -213,11 +262,11 @@ public class NotificationFragment extends Fragment {
                             if (iPosition > -1) {
                                 ActivityModel activityModel = Config.activityModelsNotifications.
                                         get(iPosition);
-                               /* Bundle args = new Bundle();
+                               *//* Bundle args = new Bundle();
                                 Intent intent = new Intent(getActivity(), FeatureActivity.class);
                                 args.putSerializable("ACTIVITY", activityModel);
                                 intent.putExtras(args);
-                                startActivity(intent);*/
+                                startActivity(intent);*//*
 
                                 Bundle args = new Bundle();
                                 //
@@ -245,7 +294,7 @@ public class NotificationFragment extends Fragment {
                 public void onUpdateDocFailed(App42Exception ex) {
 
                 }
-            });
+            });*/
         }
     }
 }
