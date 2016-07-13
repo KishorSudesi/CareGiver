@@ -17,6 +17,8 @@ public class CheckInCareModel {
     private String strDependentID;
 
     private ArrayList<PictureModel> pictureModels = new ArrayList<>();
+    private ArrayList<ImageModel> imageModels = new ArrayList<>();
+
     private ArrayList<CheckInCareActivityModel> checkInCareActivityModels = new ArrayList<>();
 
     public CheckInCareModel(String strStatus, String strMonth, String strYear,
@@ -113,6 +115,16 @@ public class CheckInCareModel {
         this.pictureModels.clear();
     }
 
+    public ArrayList<ImageModel> getImageModels() {
+        return imageModels;
+    }
+
+    public void setImageModels(ArrayList<ImageModel> imageModels) {
+        this.imageModels = imageModels;
+    }
+    public void clearImageModel() {
+        this.imageModels.clear();
+    }
 
 
     public ArrayList<CheckInCareActivityModel> getCheckInCareActivityModels() {

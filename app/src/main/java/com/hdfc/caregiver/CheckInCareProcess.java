@@ -28,11 +28,23 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+import com.hdfc.app42service.StorageService;
+import com.hdfc.app42service.UploadService;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ImageModel;
 import com.hdfc.views.TouchImageView;
+import com.shephertz.app42.paas.sdk.android.App42CallBack;
+import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.storage.Storage;
+import com.shephertz.app42.paas.sdk.android.upload.Upload;
+import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,18 +87,19 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private Spinner spinner, spinner1, spinner2, spinner3;
     private Button btn_submit, buttonHallAdd, buttonKitchenAdd, buttonWashroomAdd, buttonBedroomAdd;
     private EditText electronic, homeapplience, automobile, maidservices, kitchen_equipments, grocery, mediacomment;
-    private TextView txtwater, txtgas, txtelectricity, txttelephone, clientnametxt;
+    private TextView datetxt,txtwater, txtgas, txtelectricity, txttelephone, clientnametxt;
     private TextView utilitystatus, waterstatus, gasstatus, electricitystatus, telephonestatus,
             equipmentstatus, grocerystatus, kitchenequipmentstatus, domestichelpstatus, uploadmediastatus, hallstatus,
             kitchenstatus, washroomstatus, bedroomstatus, homeessentialstatus;
     private String strwaterDate, strelectricityDate, strtelephoneDate, strgasDate, _strwaterDate,
-            _strelectricityDate, _strtelephoneDate, _strgasDate;
+            _strelectricityDate, _strtelephoneDate, _strgasDate,strDate;
     private ProgressDialog progressDialog;
     private int hallImageCount, kitchenImageCount, washroomImageCount, bedroomImageCount, mImageUploadCount;
     private boolean success;
     private MultiBitmapLoader multiBitmapLoader;
     private LinearLayout layouthall,layoutkitchen,layoutwashroom,layoutbedroom;
     private CheckBox electrocheck,homecheck,autocheck,kitchenequipcheck,grocerycheck,domesticcheck;
+    private static StorageService storageService;
 
 
 
@@ -99,6 +112,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             // date.getTime();
             // Do something with the date. This Date object contains
             // the date and time that the user has selected.
+
 
             strwaterDate = Utils.writeFormat.format(date);
             strelectricityDate = Utils.writeFormat.format(date);
@@ -138,6 +152,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_in_care);
 
+        mImageUploadCount = 0;
 
         layouthall = (LinearLayout) findViewById(R.id.linear_hall);
         layoutkitchen = (LinearLayout)findViewById(R.id.linear_kitchen);
@@ -149,6 +164,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         utils = new Utils(CheckInCareProcess.this);
         progressDialog = new ProgressDialog(CheckInCareProcess.this);
         mProgress = new ProgressDialog(CheckInCareProcess.this);
+
+        Date mydate = new Date();
+        strDate = Utils.writeFormatDateMY.format(mydate);
+        datetxt = (TextView)findViewById(R.id.datetxt);
+        datetxt.setText(strDate);
 
         electrocheck = (CheckBox)findViewById(R.id.electrocheck);
         homecheck = (CheckBox)findViewById(R.id.homecheck);
@@ -172,7 +192,6 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         buttonKitchenAdd = (Button)findViewById(R.id.buttonKitchenAdd);
         buttonWashroomAdd = (Button)findViewById(R.id.buttonWashroomAdd);
         buttonBedroomAdd = (Button)findViewById(R.id.buttonBedroomAdd);
-        btn_submit = (Button)findViewById(R.id.btn_submit);
 
         txtwater = (TextView)findViewById(R.id.water_propertytxt);
         txtgas = (TextView)findViewById(R.id.gastxt);
@@ -203,6 +222,14 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         kitchen_equipments = (EditText)findViewById(R.id.kitchen_equipments);
         grocery  =(EditText)findViewById(R.id.grocery);
         mediacomment = (EditText)findViewById(R.id.mediacomment);
+
+        btn_submit = (Button)findViewById(R.id.btn_submit);
+        btn_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadHallImage();
+            }
+        });
 
         if (Config.customerModel != null) {
             strClientName = Config.customerModel.getStrName();
@@ -545,6 +572,202 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         finish();
     }
 
+    private void uploadHallImage() {
+
+        if (hallImageCount > 0) {
+
+            bLoad = false;
+
+            if (mImageUploadCount < hallimageModels.size()) {
+
+                final ImageModel mUploadImageModel = hallimageModels.get(mImageUploadCount);
+
+                if (mUploadImageModel.ismIsNew()) {
+
+                    UploadService uploadService = new UploadService(this);
+
+                    uploadService.uploadImageCommon(mUploadImageModel.getStrImagePath(),
+                            mUploadImageModel.getStrImageDesc(), mUploadImageModel.getStrImageDesc(),
+                            Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
+                            new App42CallBack() {
+                                public void onSuccess(Object response) {
+
+                                    if (response != null) {
+
+
+
+                                        Upload upload = (Upload) response;
+                                        ArrayList<Upload.File> fileList = upload.getFileList();
+
+                                        if (fileList.size() > 0) {
+
+                                            Upload.File file = fileList.get(0);
+
+                                            hallimageModels.get(mImageUploadCount).setmIsNew(false);
+                                            hallimageModels.get(mImageUploadCount).setStrImageUrl(file.getUrl());
+
+                                            try {
+                                                mImageUploadCount++;
+                                                if (mImageUploadCount >= hallimageModels.size()) {
+                                                    updateHallImages();
+                                                } else {
+                                                    uploadHallImage();
+                                                }
+
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
+                                        } else {
+                                            mImageUploadCount++;
+                                            if (mImageUploadCount >= hallimageModels.size()) {
+                                                updateHallImages();
+                                            } else {
+                                                uploadHallImage();
+                                            }
+                                        }
+                                    } else {
+                                        utils.toast(2, 2, getString(R.string.warning_internet));
+                                    }
+                                }
+
+                                @Override
+                                public void onException(Exception e) {
+
+                                    if (e != null) {
+                                        Utils.log(e.getMessage(), " Failure ");
+                                        mImageUploadCount++;
+                                        if (mImageUploadCount >= hallimageModels.size()) {
+                                            updateHallImages();
+                                        } else {
+                                            uploadHallImage();
+                                        }
+                                    } else {
+                                        utils.toast(2, 2, getString(R.string.warning_internet));
+                                    }
+                                }
+                            });
+                } else {
+                    mImageUploadCount++;
+
+                    if (mImageUploadCount >= hallimageModels.size()) {
+                        updateHallImages();
+                    } else {
+                        uploadHallImage();
+                    }
+                }
+            } else {
+                updateHallImages();
+            }
+        } else {
+
+            if (mImageChanged) {
+                bLoad = false;
+                updateHallImages();
+            }
+        }
+    }
+
+    private void updateHallImages() {
+
+        if (utils.isConnectingToInternet()) {
+
+            JSONObject jsonToUpdate = null;
+
+            JSONArray jsonArrayImagesAdded = new JSONArray();
+
+            try {
+                jsonToUpdate = new JSONObject();
+
+                ArrayList<ImageModel> mTHallImageModels = new ArrayList<>();
+
+                if (hallimageModels.size() > 0) {
+
+                    for (ImageModel mUpdateImageModel : hallimageModels) {
+
+                        JSONObject jsonObjectImages = new JSONObject();
+
+                        jsonObjectImages.put("image_url", mUpdateImageModel.getStrImageUrl());
+                        jsonObjectImages.put("description", mUpdateImageModel.getStrImageDesc());
+                        jsonObjectImages.put("date_time", mUpdateImageModel.getStrImageTime());
+
+                        jsonArrayImagesAdded.put(jsonObjectImages);
+                        mTHallImageModels.add(mUpdateImageModel);
+                    }
+                } else {
+
+                    jsonArrayImagesAdded.put("{\"0\":\"empty\"}");
+                }
+
+               jsonToUpdate.put("pictures_details", jsonArrayImagesAdded);
+
+               /* Config.checkInCareModels.get(mImageUploadCount).clearImageModel();
+                Config.checkInCareModels.get(mImageUploadCount).setImageModels(mTHallImageModels);*/
+
+                hallimageModels = mTHallImageModels;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            storageService.insertDocs(Config.collectionCheckInCare, jsonToUpdate,
+                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+
+                        @Override
+                        public void onDocumentInserted(Storage response) {
+                            try {
+                                if (response.isResponseSuccess()) {
+                                    IMAGE_COUNT = 0;
+                                    utils.toast(2, 2, getString(R.string.image_upload));
+                                } else {
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                utils.toast(2, 2, getString(R.string.warning_internet));
+                            }
+                        }
+
+                        @Override
+                        public void onUpdateDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onFindDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onInsertionFailed(App42Exception ex) {
+                            try {
+                                if (ex != null) {
+                                    JSONObject jsonObject = new JSONObject(ex.getMessage());
+                                    JSONObject jsonObjectError = jsonObject.
+                                            getJSONObject("app42Fault");
+                                    String strMess = jsonObjectError.getString("details");
+                                    utils.toast(2, 2, strMess);
+                                } else {
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                }
+
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                                utils.toast(2, 2, getString(R.string.error));
+                            }                        }
+
+                        @Override
+                        public void onFindDocFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onUpdateDocFailed(App42Exception ex) {
+                        }
+                    });
+
+                    } else {
+            utils.toast(2, 2, getString(R.string.warning_internet));
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

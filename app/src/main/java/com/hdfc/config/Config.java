@@ -5,6 +5,7 @@ import android.os.Build;
 import com.hdfc.caregiver.BuildConfig;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
+import com.hdfc.models.CheckInCareModel;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.ClientNameModel;
 import com.hdfc.models.CustomerModel;
@@ -41,6 +42,8 @@ public class Config {
     public static final String collectionActivity = "activity";
     public static final String collectionDependent = "dependent";
     public static final String collectionNotification = "notification";
+    public static final String collectionCheckInCare = "checkincare";
+
 
     public static final String UPDATE_DATE = "2016-01-01T00:00:00.000Z";
 
@@ -101,6 +104,8 @@ public class Config {
 
     public static ArrayList<NotificationModel> notificationModels = new ArrayList<>();
     public static ArrayList<String> strNotificationIds = new ArrayList<>();
+
+    public static ArrayList<CheckInCareModel> checkInCareModels = new ArrayList<>();
 
 
     public static ArrayList<ClientNameModel> clientNameModels = new ArrayList<>();
