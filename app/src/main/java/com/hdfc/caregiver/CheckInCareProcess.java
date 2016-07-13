@@ -79,6 +79,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private static String strName;
     private static boolean bLoad, isCompleted = false;
     private static boolean bViewLoaded, mImageChanged;
+    private static StorageService storageService;
     public String item = "";
     int isClicked = 0;
     int isHallFlag = 0;
@@ -99,11 +100,6 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private MultiBitmapLoader multiBitmapLoader;
     private LinearLayout layouthall,layoutkitchen,layoutwashroom,layoutbedroom;
     private CheckBox electrocheck,homecheck,autocheck,kitchenequipcheck,grocerycheck,domesticcheck;
-    private static StorageService storageService;
-
-
-
-
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
@@ -153,6 +149,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.check_in_care);
 
         mImageUploadCount = 0;
+        storageService = new StorageService(CheckInCareProcess.this);
 
         layouthall = (LinearLayout) findViewById(R.id.linear_hall);
         layoutkitchen = (LinearLayout)findViewById(R.id.linear_kitchen);
@@ -700,6 +697,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 }
 
                jsonToUpdate.put("pictures_details", jsonArrayImagesAdded);
+                jsonToUpdate.put("pictures_details", jsonArrayImagesAdded);
+                jsonToUpdate.put("pictures_details", jsonArrayImagesAdded);
+
 
                /* Config.checkInCareModels.get(mImageUploadCount).clearImageModel();
                 Config.checkInCareModels.get(mImageUploadCount).setImageModels(mTHallImageModels);*/
