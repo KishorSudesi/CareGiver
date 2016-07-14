@@ -36,16 +36,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hdfc.app42service.App42GCMService;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.Action;
-import com.hdfc.models.NotificationModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -615,6 +612,20 @@ public class Utils {
         return strLastDateMonth;
     }*/
 
+    public static boolean isConnectingToInternet(Context _ctxt) {
+        ConnectivityManager connectivity = (ConnectivityManager)
+                _ctxt.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            if (info != null)
+                for (NetworkInfo anInfo : info)
+                    if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+        }
+        return false;
+    }
+
     //
     public boolean compressImageFromPath(String strPath, int reqWidth, int reqHeight, int iQuality) {
 
@@ -675,45 +686,6 @@ public class Utils {
         }
 
         return b;
-    }
-
-    public void createNotificationModel(String strDocumentId, String strDocument) {
-        try {
-
-            JSONObject jsonObjectProvider = new JSONObject(strDocument);
-
-            if (jsonObjectProvider.has(App42GCMService.ExtraMessage)) {
-
-                NotificationModel notificationModel = new NotificationModel(
-                        jsonObjectProvider.getString(App42GCMService.ExtraMessage),
-                        jsonObjectProvider.getString("time"),
-                        jsonObjectProvider.getString("user_type"),
-                        jsonObjectProvider.getString("created_by_type"),
-                        jsonObjectProvider.getString("user_id"),
-                        jsonObjectProvider.getString("created_by"), strDocumentId);
-
-                if(jsonObjectProvider.has("activity_id"))
-                    notificationModel.setStrActivityId(jsonObjectProvider.getString("activity_id"));
-
-                if (jsonObjectProvider.getString("created_by_type").equalsIgnoreCase("customer")) {
-                    if (!Config.customerIdsAdded.contains(jsonObjectProvider.getString("created_by")))
-                        Config.customerIds.add(jsonObjectProvider.getString("created_by"));
-                }
-
-                if (jsonObjectProvider.getString("created_by_type").equalsIgnoreCase("dependent")) {
-                    if (!Config.dependentIdsAdded.contains(jsonObjectProvider.getString("created_by")))
-                        Config.dependentIds.add(jsonObjectProvider.getString("created_by"));
-                }
-
-                if (!Config.strNotificationIds.contains(strDocumentId)) {
-                    Config.strNotificationIds.add(strDocumentId);
-                    Config.notificationModels.add(notificationModel);
-                }
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     public void toast(int type, int duration, String message) {
@@ -840,22 +812,6 @@ public class Utils {
         }
     }
 
-    public void moveFile(File file, File newFile) throws IOException {
-        //File newFile = new File(dir, file.getName());
-        FileChannel outputChannel = null;
-        FileChannel inputChannel = null;
-        try {
-            outputChannel = new FileOutputStream(newFile).getChannel();
-            inputChannel = new FileInputStream(file).getChannel();
-            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
-            inputChannel.close();
-            file.delete();
-        } finally {
-            if (inputChannel != null) inputChannel.close();
-            if (outputChannel != null) outputChannel.close();
-        }
-    }
-
   /*  public void moveFileDir(File file, File dir) throws IOException {
         File newFile = new File(dir, file.getName());
         FileChannel outputChannel = null;
@@ -873,6 +829,22 @@ public class Utils {
         }
     }*/
 
+    public void moveFile(File file, File newFile) throws IOException {
+        //File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+    }
+
     public void copyFile(File file, File newFile) throws IOException {
         //File newFile = new File(dir, file.getName());
         FileChannel outputChannel = null;
@@ -887,21 +859,6 @@ public class Utils {
             if (inputChannel != null) inputChannel.close();
             if (outputChannel != null) outputChannel.close();
         }
-    }
-
-    public boolean isEmailValid(String email) {
-        boolean b;
-
-        b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-
-        if (b) {
-            //^[\w\-]([\.\w])+[\w]+@([\w\-]+\.)+[A-Z]{2,4}$
-            Pattern p = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+", Pattern.CASE_INSENSITIVE);
-            Matcher m = p.matcher(email);
-            b = m.matches();
-        }
-
-        return b;
     }
 
 
@@ -947,6 +904,21 @@ public class Utils {
             e.printStackTrace();
         }
     }*/
+
+    public boolean isEmailValid(String email) {
+        boolean b;
+
+        b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
+        if (b) {
+            //^[\w\-]([\.\w])+[\w]+@([\w\-]+\.)+[A-Z]{2,4}$
+            Pattern p = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+", Pattern.CASE_INSENSITIVE);
+            Matcher m = p.matcher(email);
+            b = m.matches();
+        }
+
+        return b;
+    }
 
     public String convertDateToString(Date dtDate) {
 
@@ -1004,20 +976,6 @@ public class Utils {
     }
 
     public boolean isConnectingToInternet() {
-        ConnectivityManager connectivity = (ConnectivityManager)
-                _ctxt.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivity != null) {
-            NetworkInfo[] info = connectivity.getAllNetworkInfo();
-            if (info != null)
-                for (NetworkInfo anInfo : info)
-                    if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
-                        return true;
-                    }
-        }
-        return false;
-    }
-
-    public boolean isConnectingToInternet(Context _ctxt) {
         ConnectivityManager connectivity = (ConnectivityManager)
                 _ctxt.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {

@@ -24,7 +24,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DOCUMENT = "document";
     public static final String COLUMN_COLLECTION_NAME = "collection_name";
     public static final String COLUMN_DOC_DATE = "doc_date";
-    public static final String COLLECTION_FIELDS[] = {"object_id", "updated_date", "document", "collection_name", "status", "doc_date"};
+    public static final String COLLECTION_FIELDS[] = {"object_id", "updated_date", "document",
+            "collection_name", "status", "doc_date"};
     private static final int DATABASE_VERSION = 7;
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//

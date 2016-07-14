@@ -25,6 +25,7 @@ import com.hdfc.models.FileModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.models.MilestoneViewModel;
+import com.hdfc.models.NotificationModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
 import com.hdfc.models.VideoModel;
@@ -258,7 +259,7 @@ public class AppUtils {
                         jsonObject.put("provider_profile_url", Config.providerModel.getStrImgUrl());
                     }
 
-                    CareGiver.getDbCon().updateCustomer(
+                    CareGiver.getDbCon().updateProvider(
                             new String[]{"DateTime('now')", jsonObject.toString(), "1"},
                             new String[]{"updated_date", "document", "updated"},
                             new String[]{Config.providerModel.getStrProviderId(),
@@ -679,6 +680,68 @@ public class AppUtils {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void createNotificationModel() {
+
+        Cursor cursor = null;
+        try {
+
+            String strDocument;
+
+            cursor = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                    DbHelper.COLUMN_COLLECTION_NAME + "=?",
+                    new String[]{Config.collectionNotification}, DbHelper.COLUMN_UPDATE_DATE + " desc",
+                    null, true, null, null
+            );
+
+            if (cursor != null && cursor.getCount() > 0) {
+                Config.notificationModels.clear();
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    strDocument = cursor.getString(0);
+
+                    JSONObject jsonObjectProvider = new JSONObject(strDocument);
+
+                    if (jsonObjectProvider.has(App42GCMService.ExtraMessage)) {
+
+                        NotificationModel notificationModel = new NotificationModel(
+                                jsonObjectProvider.getString(App42GCMService.ExtraMessage),
+                                jsonObjectProvider.getString("time"),
+                                jsonObjectProvider.getString("user_type"),
+                                jsonObjectProvider.getString("created_by_type"),
+                                jsonObjectProvider.getString("user_id"),
+                                jsonObjectProvider.getString("created_by"), "");
+
+                        if (jsonObjectProvider.has("activity_id"))
+                            notificationModel.setStrActivityId(jsonObjectProvider.getString("activity_id"));
+
+                        if (jsonObjectProvider.getString("created_by_type").equalsIgnoreCase("customer")) {
+                            if (!Config.customerIdsAdded.contains(jsonObjectProvider.getString("created_by")))
+                                Config.customerIds.add(jsonObjectProvider.getString("created_by"));
+                        }
+
+                        if (jsonObjectProvider.getString("created_by_type").equalsIgnoreCase("dependent")) {
+                            if (!Config.dependentIdsAdded.contains(jsonObjectProvider.getString("created_by")))
+                                Config.dependentIds.add(jsonObjectProvider.getString("created_by"));
+                        }
+
+                        /*if (!Config.strNotificationIds.contains(strDocumentId)) {
+                            Config.strNotificationIds.add(strDocumentId);*/
+                        Config.notificationModels.add(notificationModel);
+                        //}
+                    }
+                    cursor.moveToNext();
+                }
+
+                CareGiver.getDbCon().closeCursor(cursor);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            CareGiver.getDbCon().closeCursor(cursor);
         }
     }
 
