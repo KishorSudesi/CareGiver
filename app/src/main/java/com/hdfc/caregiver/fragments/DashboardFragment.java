@@ -7,13 +7,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
-import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
@@ -34,6 +33,7 @@ public class DashboardFragment extends Fragment {
     private TextView textView;
     private Utils utils;
     private AppUtils appUtils;
+    private RelativeLayout loadingPanel;
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
@@ -46,14 +46,16 @@ public class DashboardFragment extends Fragment {
             strDate = Utils.writeFormatDateDB.format(date);
             _strDate = Utils.writeFormatDateDB.format(date);
 
-            strEndDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T23:59:59.999"));
-            strStartDate = utils.convertDateToStringQuery(utils.convertStringToDateQuery(strDate + "T00:00:00.000"));
+            strEndDate = Utils.convertDateToStringQuery(Utils.convertStringToDateQuery(strDate +
+                    "T23:59:59.999"));
+            strStartDate = Utils.convertDateToStringQuery(Utils.convertStringToDateQuery(strDate +
+                    "T00:00:00.000"));
 
             textView.setText(Utils.writeFormatDate.format(date));
 
             if (utils.isConnectingToInternet()) {
 
-                DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
+                loadingPanel.setVisibility(View.VISIBLE);
 
                 Config.dependentIds.clear();
                 Config.strActivityIds.clear();
@@ -117,6 +119,8 @@ public class DashboardFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
+        loadingPanel = (RelativeLayout) getActivity().findViewById(R.id.loadingPanel);
 /*
         buttonActivity = (Button) view.findViewById(R.id.buttonActivity);
         buttonTask = (Button) view.findViewById(R.id.buttonTask);*/
@@ -181,7 +185,8 @@ public class DashboardFragment extends Fragment {
                 buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));*/
 
                 ActivityFragment fragment = ActivityFragment.newInstance();
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().
+                        beginTransaction();
                 transaction.replace(R.id.frameLayoutDashboard, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
@@ -190,9 +195,9 @@ public class DashboardFragment extends Fragment {
                 ActivityFragment.mAdapter.notifyDataSetChanged();
             }
 
-            if (iPosition == 1) {
-                /*buttonTask.setBackgroundResource(R.drawable.one_side_border);
-                buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));*/
+           /* if (iPosition == 1) {
+                *//*buttonTask.setBackgroundResource(R.drawable.one_side_border);
+                buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));*//*
 
                 MileStoneFragment fragment = MileStoneFragment.newInstance();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -204,9 +209,9 @@ public class DashboardFragment extends Fragment {
                 MileStoneFragment.milestoneModels = Config.milestoneModels;
                 MileStoneFragment.mAdapter.notifyDataSetChanged();
 
-                /*DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
-                appUtils.fetchMileStone(DashboardActivity.loadingPanel);*/
-            }
+                *//*DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
+                appUtils.fetchMileStone(DashboardActivity.loadingPanel);*//*
+            }*/
 
         } catch (Exception e) {
             e.printStackTrace();

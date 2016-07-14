@@ -494,7 +494,8 @@ public class MyProfileActivity extends AppCompatActivity {
                                 if (fileList.size() > 0) {
 
                                     Config.providerModel.setStrImgUrl(fileList.get(0).getUrl());
-                                    appUtils.updateProviderJson(Config.providerModel.getStrProviderId(), false);
+                                    appUtils.updateProviderJson(Config.providerModel.
+                                            getStrProviderId(), false);
 
                                     if (utils.isConnectingToInternet()) {
                                         updateProviderDoc(false);

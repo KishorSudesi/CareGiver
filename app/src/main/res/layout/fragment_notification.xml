@@ -35,7 +35,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/imageViewLine"
         android:divider="@color/blue"
-        android:dividerHeight="1dp" />
+        android:dividerHeight="1dp"
+        android:layoutAnimation="@anim/listviewanim" />
 
     <TextView
         android:id="@android:id/empty"

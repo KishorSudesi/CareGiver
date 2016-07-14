@@ -2,11 +2,13 @@ package com.hdfc.dbconfig;
 
 import android.content.Context;
 
+import com.hdfc.config.Config;
+
 import net.sqlcipher.Cursor;
 
 public class DbCon {
 
-    public static boolean isDbOpened = false;
+    //public static boolean isDbOpened = false;
     private DbHelper dbHelper;
     //private DbCon dbConInstance = null;
 
@@ -52,7 +54,7 @@ public class DbCon {
         return dbHelper.fetch(tbl, names, where, args, order, limit, isDistinct, groupBy, having);
     }
 
-    public boolean delete(String tbl, String where, String args[]) {
+    private boolean delete(String tbl, String where, String args[]) {
         return dbHelper.delete(tbl, where, args);
     }
 
@@ -72,6 +74,10 @@ public class DbCon {
         return isUpdated;
     }
 
+    public void truncateDatabase() {
+        dbHelper.truncateDatabase();
+    }
+
     public Cursor rawQuery(String query) {
         return dbHelper.rawQuery(query);
     }
@@ -79,6 +85,12 @@ public class DbCon {
     //app specific functions
     public void deleteFiles() {
         delete(DbHelper.strTableNameFiles, null, null);
+    }
+
+    public void deleteDuplicateNotifications() {
+        delete(DbHelper.strTableNameCollection,
+                DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                new String[]{Config.collectionNotification, ""});
     }
 
     public Cursor getMaxDate(String strCollectionName) {

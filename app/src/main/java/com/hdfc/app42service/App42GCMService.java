@@ -19,7 +19,7 @@ import com.hdfc.libs.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.util.Random;
 
 import static android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC;
 
@@ -33,25 +33,24 @@ public class App42GCMService extends IntentService {
     public static final String ExtraMessage = "message";
     private static final String App42GeoTag = "app42_geoBase";
     private static final String Alert = "alert";
-    private static GoogleCloudMessaging gcm = null;
     private static int msgCount = 0;
 
     public App42GCMService() {
         super("GcmIntentService");
     }
 
-    public static void unRegisterGcm() {
+    /*public static void unRegisterGcm() {
         try {
             if (gcm != null)
                 gcm.unregister();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     protected void onHandleIntent(Intent intent) {
         Bundle extras = intent.getExtras();
-        gcm = GoogleCloudMessaging.getInstance(this);
+        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         String messageType = gcm.getMessageType(intent);
         if (!extras.isEmpty()) {
             if ("send_error".equals(messageType)) {
@@ -64,6 +63,7 @@ public class App42GCMService extends IntentService {
                 String message = intent.getExtras().getString("message");
                 //App42Log.debug("Received: " + extras.toString());
                 //App42Log.debug("Message: " + message);
+                //AppUtils.loadNotifications(this);
                 this.validatePushIfRequired(message, intent);
             }
         }
@@ -96,7 +96,19 @@ public class App42GCMService extends IntentService {
                 try {
                     strMessage = jsonObject.getString(App42GCMService.ExtraMessage)
                             + "\n" +
-                            " Created On: " + Utils.writeFormat.format(Utils.readFormat.parse(jsonObject.getString("time")));
+                            " Created On: "
+                            + Utils.writeFormat.format(Utils.readFormat.parse(
+                            jsonObject.getString("time")));
+
+
+                  /*  String values[] = {"",
+                            "",
+                            jsonObject.toString(), Config.collectionNotification,
+                            "1", ""};
+
+                    CareGiver.getDbCon().insert(DbHelper.strTableNameCollection,
+                            values,
+                            DbHelper.COLLECTION_FIELDS);*/
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -165,7 +177,10 @@ public class App42GCMService extends IntentService {
 
         mBuilder.setContentIntent(contentIntent);
 
-        mNotificationManager.notify(1, mBuilder.build());
+        Random random = new Random();
+        int m = random.nextInt(9999 - 1000) + 1000;
+
+        mNotificationManager.notify(m, mBuilder.build());
     }
 
     /**
@@ -176,6 +191,4 @@ public class App42GCMService extends IntentService {
         intent.putExtra(ExtraMessage, message);
         this.sendBroadcast(intent);
     }
-
-
 }

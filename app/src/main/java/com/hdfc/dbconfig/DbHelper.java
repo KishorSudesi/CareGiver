@@ -123,7 +123,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void dropDb(SQLiteDatabase db) {
+    private void dropDb(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + strTableNameCollection);
         db.execSQL("DROP TABLE IF EXISTS " + strTableNameFiles);
         db.execSQL("DROP TABLE IF EXISTS " + strTableNameMilestone);
@@ -156,6 +156,11 @@ public class DbHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
         }
         return inserted;
+    }
+
+    void truncateDatabase() {
+        dropDb(db);
+        onCreate(db);
     }
 
     Cursor fetch(String tbl, String names[], String where, String args[], String order, String limit,

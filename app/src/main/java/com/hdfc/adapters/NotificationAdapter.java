@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
-import com.hdfc.libs.Utils;
 import com.hdfc.models.NotificationModel;
 
 import java.util.ArrayList;
@@ -29,13 +28,13 @@ public class NotificationAdapter extends BaseAdapter {
     private LayoutInflater inflater = null;
     private Context _context;
     private ArrayList<NotificationModel> adapterNotificationModels;
-    private Utils utils;
+    //private Utils utils;
     //private MultiBitmapLoader multiBitmapLoader;
 
     public NotificationAdapter(Context ctxt, ArrayList<NotificationModel> d) {
         _context = ctxt;
         adapterNotificationModels = d;
-        utils = new Utils(ctxt);
+        //utils = new Utils(ctxt);
         //multiBitmapLoader = new MultiBitmapLoader(ctxt);
     }
 
@@ -107,7 +106,7 @@ public class NotificationAdapter extends BaseAdapter {
                 public void onClick(View v) {
                     String strMessage = (String) v.getTag();
                     final AlertDialog.Builder builder = new AlertDialog.Builder(_context);
-                    builder.setTitle("Notification");
+                    builder.setTitle(_context.getString(R.string.menu_notification));
                     builder.setMessage(strMessage);
                     builder.setPositiveButton(_context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
@@ -146,11 +145,11 @@ public class NotificationAdapter extends BaseAdapter {
             }
 
             try {
-                String strDate = adapterNotificationModels.get(position).getStrDateTime();
+                //String strDate = adapterNotificationModels.get(position).getStrDateTime();
                 String strDisplayDate = _context.getResources().getString(R.string.space) +
                         _context.getResources().getString(R.string.at) +
                         _context.getResources().getString(R.string.space) +
-                        utils.formatDate(strDate);
+                        adapterNotificationModels.get(position).getStrDisplayDate();
 
                 viewHolder.textViewTime.setText(strDisplayDate);
             } catch (Exception e) {
