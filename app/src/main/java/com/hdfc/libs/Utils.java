@@ -626,6 +626,184 @@ public class Utils {
         return false;
     }
 
+    public static void toast(int type, int duration, String message, Context context) {
+
+        String strColor = "#ffffff";
+
+        if (type == 2)
+            strColor = "#fcc485";
+
+        try {
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) ((Activity) context).
+                    findViewById(R.id.toast_layout_root));
+
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            text.setText(message);
+            text.setTextColor(Color.parseColor(strColor));
+
+            Toast toast = new Toast(context);
+            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+
+            //if (duration == 2)
+            toast.setDuration(Toast.LENGTH_LONG);
+           /* else
+                toast.setDuration(Toast.LENGTH_SHORT);*/
+
+            toast.setView(layout);
+            toast.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            log(" 1 ", " 1 ");
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static boolean isEmailValid(String email) {
+        boolean b;
+
+        b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
+        if (b) {
+            //^[\w\-]([\.\w])+[\w]+@([\w\-]+\.)+[A-Z]{2,4}$
+            Pattern p = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+", Pattern.CASE_INSENSITIVE);
+            Matcher m = p.matcher(email);
+            b = m.matches();
+        }
+
+        return b;
+    }
+
+    public static String convertDateToString(Date dtDate) {
+
+        String date = null;
+
+        try {
+            date = readFormat.format(dtDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
+        return date; //
+    }
+
+    public static String convertDateToStringQuery(Date dtDate) {
+
+        String date = null;
+
+        try {
+            date = readFormat.format(dtDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
+        return date; //
+    }
+
+    public static Date convertStringToDateQuery(String strDate) {
+
+        Date date = null;
+
+        try {
+            date = queryFormat.parse(strDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
+        return date; //
+    }
+
+  /*  public void moveFileDir(File file, File dir) throws IOException {
+        File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+    }*/
+
+    public static Date convertStringToDate(String strDate) {
+
+        Date date = null;
+        try {
+            //log("erro r", String.valueOf(strDate));
+            date = readFormat.parse(strDate);
+            log("error", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date; //
+    }
+
+    public static String formatDate(String strDate) {
+
+        String strDisplayDate = "06-03-2016 20:55:00";
+
+        if (strDate != null && !strDate.equalsIgnoreCase("")) {
+            Date date = convertStringToDate(strDate);
+
+            if (date != null)
+                strDisplayDate = writeFormat.format(date);
+        }
+
+        return strDisplayDate;
+    }
+
+
+   /* public String getUUID() {
+        final TelephonyManager tm = (TelephonyManager) _ctxt.getSystemService(Context.TELEPHONY_SERVICE);
+
+        final String tmDevice, tmSerial, androidId;
+
+
+        tmDevice = "" + tm.getDeviceId();
+        tmSerial = "" + tm.getSimSerialNumber();
+        androidId = "" + android.provider.Settings.Secure.getString(_ctxt.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+
+        UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
+        String deviceId = deviceUuid.toString();
+
+        return deviceId;
+    }*/
+
+
+    /*public void getMemory() {
+        Runtime rt = Runtime.getRuntime();
+        int maxMemory = (int) rt.maxMemory() / (1024 * 1024);
+        int totalMemory = (int) rt.totalMemory() / (1024 * 1024);
+    }
+
+    public void createFolder(String path) {
+        File root = new File(path);
+        if (!root.exists()) {
+            root.mkdirs();
+        }
+    }
+
+    public void setExifData(String pathName) throws Exception {
+
+        try {
+            //working for Exif defined attributes
+            ExifInterface exif = new ExifInterface(pathName);
+            exif.setAttribute(ExifInterface.TAG_MAKE, "1000");
+            exif.saveAttributes();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+
     //
     public boolean compressImageFromPath(String strPath, int reqWidth, int reqHeight, int iQuality) {
 
@@ -721,39 +899,6 @@ public class Utils {
         }
     }
 
-    public void toast(int type, int duration, String message, Context context) {
-
-        String strColor = "#ffffff";
-
-        if (type == 2)
-            strColor = "#fcc485";
-
-        try {
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-            View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) ((Activity) context).
-                    findViewById(R.id.toast_layout_root));
-
-            TextView text = (TextView) layout.findViewById(R.id.text);
-            text.setText(message);
-            text.setTextColor(Color.parseColor(strColor));
-
-            Toast toast = new Toast(context);
-            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-
-            //if (duration == 2)
-            toast.setDuration(Toast.LENGTH_LONG);
-           /* else
-                toast.setDuration(Toast.LENGTH_SHORT);*/
-
-            toast.setView(layout);
-            toast.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            log(" 1 ", " 1 ");
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     public File getInternalFileImages(String strFileName) {
 
         File file = null;
@@ -812,23 +957,6 @@ public class Utils {
         }
     }
 
-  /*  public void moveFileDir(File file, File dir) throws IOException {
-        File newFile = new File(dir, file.getName());
-        FileChannel outputChannel = null;
-        FileChannel inputChannel = null;
-        try {
-            outputChannel = new FileOutputStream(newFile).getChannel();
-            inputChannel = new FileInputStream(file).getChannel();
-            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
-            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
-            inputChannel.close();
-            file.delete();
-        } finally {
-            if (inputChannel != null) inputChannel.close();
-            if (outputChannel != null) outputChannel.close();
-        }
-    }*/
-
     public void moveFile(File file, File newFile) throws IOException {
         //File newFile = new File(dir, file.getName());
         FileChannel outputChannel = null;
@@ -861,119 +989,9 @@ public class Utils {
         }
     }
 
-
-   /* public String getUUID() {
-        final TelephonyManager tm = (TelephonyManager) _ctxt.getSystemService(Context.TELEPHONY_SERVICE);
-
-        final String tmDevice, tmSerial, androidId;
-
-
-        tmDevice = "" + tm.getDeviceId();
-        tmSerial = "" + tm.getSimSerialNumber();
-        androidId = "" + android.provider.Settings.Secure.getString(_ctxt.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-
-        UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
-        String deviceId = deviceUuid.toString();
-
-        return deviceId;
+    /*public boolean isPasswordValid(String password) {
+        return password.length() > 1;
     }*/
-
-
-    /*public void getMemory() {
-        Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int) rt.maxMemory() / (1024 * 1024);
-        int totalMemory = (int) rt.totalMemory() / (1024 * 1024);
-    }
-
-    public void createFolder(String path) {
-        File root = new File(path);
-        if (!root.exists()) {
-            root.mkdirs();
-        }
-    }
-
-    public void setExifData(String pathName) throws Exception {
-
-        try {
-            //working for Exif defined attributes
-            ExifInterface exif = new ExifInterface(pathName);
-            exif.setAttribute(ExifInterface.TAG_MAKE, "1000");
-            exif.saveAttributes();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
-    public boolean isEmailValid(String email) {
-        boolean b;
-
-        b = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-
-        if (b) {
-            //^[\w\-]([\.\w])+[\w]+@([\w\-]+\.)+[A-Z]{2,4}$
-            Pattern p = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+", Pattern.CASE_INSENSITIVE);
-            Matcher m = p.matcher(email);
-            b = m.matches();
-        }
-
-        return b;
-    }
-
-    public String convertDateToString(Date dtDate) {
-
-        String date = null;
-
-        try {
-            date = readFormat.format(dtDate);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
-        return date; //
-    }
-
-    public String convertDateToStringQuery(Date dtDate) {
-
-        String date = null;
-
-        try {
-            date = readFormat.format(dtDate);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
-        return date; //
-    }
-
-    public Date convertStringToDateQuery(String strDate) {
-
-        Date date = null;
-
-        try {
-            date = queryFormat.parse(strDate);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
-        return date; //
-    }
-
-    public Date convertStringToDate(String strDate) {
-
-        Date date = null;
-        try {
-            //log("erro r", String.valueOf(strDate));
-            date = readFormat.parse(strDate);
-            log("error", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date; //
-    }
 
     public boolean isConnectingToInternet() {
         ConnectivityManager connectivity = (ConnectivityManager)
@@ -988,10 +1006,6 @@ public class Utils {
         }
         return false;
     }
-
-    /*public boolean isPasswordValid(String password) {
-        return password.length() > 1;
-    }*/
 
     /**
      * Shows the progress UI and hides the login form.
@@ -1207,13 +1221,6 @@ public class Utils {
         return invalid;
     }
 
-    public void setEditTextDrawable(EditText editText, Drawable drw) {
-        if (Build.VERSION.SDK_INT <= 16)
-            editText.setBackgroundDrawable(drw);
-        else
-            editText.setBackground(drw);
-    }
-
  /*public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for ( int j = 0; j < bytes.length; j++ ) {
@@ -1240,6 +1247,13 @@ public class Utils {
         }
     }*/
 
+    public void setEditTextDrawable(EditText editText, Drawable drw) {
+        if (Build.VERSION.SDK_INT <= 16)
+            editText.setBackgroundDrawable(drw);
+        else
+            editText.setBackground(drw);
+    }
+
     public Bitmap roundedBitmap(Bitmap bmp){
         Bitmap output = null;
 
@@ -1264,11 +1278,6 @@ public class Utils {
             e.printStackTrace();
         }
         return output;
-    }
-
-    public String replaceSpace(String string) {
-        string = string.replace(" ", "_");
-        return string;
     }
 
     /*public static String bytesToHex(byte[] bytes) {
@@ -1302,6 +1311,11 @@ public class Utils {
 
 
     //Application Specig=fic End
+
+    public String replaceSpace(String string) {
+        string = string.replace(" ", "_");
+        return string;
+    }
 
     public Bitmap getBitmapFromFile(String strPath, int intWidth, int intHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -1366,20 +1380,6 @@ public class Utils {
             }
         }
         return strValues;
-    }
-
-    public String formatDate(String strDate){
-
-        String strDisplayDate="06-03-2016 20:55:00";
-
-        if(strDate!=null&&!strDate.equalsIgnoreCase("")) {
-            Date date = convertStringToDate(strDate);
-
-            if(date!=null)
-                strDisplayDate = writeFormat.format(date);
-        }
-
-        return strDisplayDate;
     }
 
     public String formatDateTime(String strDate) {

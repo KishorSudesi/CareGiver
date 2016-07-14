@@ -22,7 +22,6 @@ import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbCon;
 import com.hdfc.dbconfig.DbHelper;
-import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
@@ -43,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
     private static String userName;
     private static ProgressDialog progressDialog;
     private Utils utils;
-    private AppUtils appUtils;
     //private RelativeLayout relLayout;
     private EditText editEmail, editPassword, editTextCaptcha, forgotPassUsername;
     private CheckView checkView;
@@ -72,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.id_forgot);
         button = (Button) findViewById(R.id.button);
         utils = new Utils();
-        appUtils = new AppUtils(LoginActivity.this);
+        //AppUtils appUtils = new AppUtils(LoginActivity.this);
 
         // sharedPreferences = getSharedPreferences(Config.strPreferenceName, MODE_PRIVATE);
 
@@ -176,15 +174,15 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(email)) {
 
-                    utils.toast(2, 2, getString(R.string.error_invalid_email), LoginActivity.this);
+                    Utils.toast(2, 2, getString(R.string.error_invalid_email), LoginActivity.this);
 
-                } else if (!utils.isEmailValid(email)) {
+                } else if (!Utils.isEmailValid(email)) {
 
-                    utils.toast(2, 2, getString(R.string.error_invalid_email), LoginActivity.this);
+                    Utils.toast(2, 2, getString(R.string.error_invalid_email), LoginActivity.this);
 
                 } else if (!b) {
 
-                    utils.toast(2, 2, getString(R.string.enter_captcha), LoginActivity.this);
+                    Utils.toast(2, 2, getString(R.string.enter_captcha), LoginActivity.this);
 
                 } else {
                     resetPassword(email);
@@ -195,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void resetPassword(String userEmail){
 
-        if (utils.isConnectingToInternet()) {
+        if (Utils.isConnectingToInternet(LoginActivity.this)) {
 
             progressDialog.setMessage(getString(R.string.verify_identity_password));
             progressDialog.setCancelable(false);
@@ -203,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
 
             fetchProviders(progressDialog, userEmail, 2);
 
-        } else utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
+        } else Utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
 
     }
 
@@ -219,9 +217,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (o != null) {
                     alertdialog.dismiss();
 
-                    utils.toast(1, 1, getString(R.string.resetted_password), LoginActivity.this);
+                    Utils.toast(1, 1, getString(R.string.resetted_password), LoginActivity.this);
                 } else {
-                    utils.toast(1, 1, getString(R.string.warning_internet), LoginActivity.this);
+                    Utils.toast(1, 1, getString(R.string.warning_internet), LoginActivity.this);
                 }
             }
 
@@ -239,7 +237,7 @@ public class LoginActivity extends AppCompatActivity {
                         e1.printStackTrace();
                     }
                 } else {
-                    utils.toast(1, 1, getString(R.string.warning_internet), LoginActivity.this);
+                    Utils.toast(1, 1, getString(R.string.warning_internet), LoginActivity.this);
                 }
             }
         });
@@ -309,7 +307,7 @@ public class LoginActivity extends AppCompatActivity {
             if (cancel) {
                 focusView.requestFocus();
             } else {
-                if (utils.isConnectingToInternet()) {
+                if (Utils.isConnectingToInternet(LoginActivity.this)) {
 
                     if (progressDialog != null) {
                         progressDialog.setMessage(getString(R.string.process_login));
@@ -319,7 +317,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     verifyLogin(password);
 
-                } else utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
+                } else Utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
             }
         //} //
     }
@@ -363,14 +361,14 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         if (progressDialog.isShowing())
                             progressDialog.dismiss();
-                        utils.toast(2, 2, getString(R.string.invalid_credentials),
+                        Utils.toast(2, 2, getString(R.string.invalid_credentials),
                                 LoginActivity.this);
                     }
 
                 } else {
                     if (progressDialog.isShowing())
                         progressDialog.dismiss();
-                    utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
+                    Utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
                 }
             }
 
@@ -387,10 +385,10 @@ public class LoginActivity extends AppCompatActivity {
 
                         utils.toast(2, 2, strMess);
                     } else
-                        utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
+                        Utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
                 } catch (JSONException e1) {
                     e1.printStackTrace();
-                    utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
+                    Utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
                 }
             }
         });
@@ -399,7 +397,7 @@ public class LoginActivity extends AppCompatActivity {
     private void fetchProviders(final ProgressDialog progressDialog, final String strUserName,
                                 final int iFlag) {
 
-        if (utils.isConnectingToInternet()) {
+        if (Utils.isConnectingToInternet(LoginActivity.this)) {
 
             StorageService storageService = new StorageService(LoginActivity.this);
 
@@ -463,19 +461,19 @@ public class LoginActivity extends AppCompatActivity {
                                         progressDialog.dismiss();
 
                                     if (iFlag == 1)
-                                        utils.toast(2, 2, getString(R.string.invalid_credentials),
+                                        Utils.toast(2, 2, getString(R.string.invalid_credentials),
                                                 LoginActivity.this);
                                     else if (iFlag == 3)
                                         goToDashboard();
                                     else
-                                        utils.toast(2, 2, getString(R.string.error_invalid_email),
+                                        Utils.toast(2, 2, getString(R.string.error_invalid_email),
                                                 LoginActivity.this);
                                 }
                             } catch (Exception e1) {
                                 e1.printStackTrace();
                                 if (progressDialog.isShowing())
                                     progressDialog.dismiss();
-                                utils.toast(2, 2, getString(R.string.warning_internet),
+                                Utils.toast(2, 2, getString(R.string.warning_internet),
                                         LoginActivity.this);
                             }
                         }
@@ -488,15 +486,15 @@ public class LoginActivity extends AppCompatActivity {
                                 if (e != null) {
                                     Utils.log(e.getMessage(), " Failure ");
                                     if (iFlag == 1)
-                                        utils.toast(2, 2, getString(R.string.invalid_credentials),
+                                        Utils.toast(2, 2, getString(R.string.invalid_credentials),
                                                 LoginActivity.this);
                                     else if (iFlag == 3)
                                         goToDashboard();
                                     else
-                                        utils.toast(2, 2, getString(R.string.error_invalid_email),
+                                        Utils.toast(2, 2, getString(R.string.error_invalid_email),
                                                 LoginActivity.this);
                                 } else {
-                                    utils.toast(2, 2, getString(R.string.warning_internet),
+                                    Utils.toast(2, 2, getString(R.string.warning_internet),
                                             LoginActivity.this);
                                 }
                             } catch (Exception e1) {
@@ -508,7 +506,7 @@ public class LoginActivity extends AppCompatActivity {
             if (iFlag == 3)
                 goToDashboard();
             else {
-                utils.toast(2, 2, getString(R.string.warning_internet),
+                Utils.toast(2, 2, getString(R.string.warning_internet),
                         LoginActivity.this);
             }
         }
@@ -570,8 +568,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (sessionManager.isLoggedIn() && !sessionManager.getEmail().equalsIgnoreCase("")
                         && !sessionManager.getProviderId().equalsIgnoreCase("")) {
 
-
-                    if (utils.isConnectingToInternet()) {
+                    if (Utils.isConnectingToInternet(LoginActivity.this)) {
 
                         progressDialog.setMessage(getString(R.string.process_login));
                         progressDialog.setCancelable(false);

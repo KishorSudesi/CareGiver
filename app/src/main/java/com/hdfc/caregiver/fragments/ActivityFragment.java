@@ -113,7 +113,7 @@ public class ActivityFragment extends Fragment
 
                 cvh.textMessage.setText(strMessage);
 
-                cvh.textTime.setText(utils.formatDate(activityModel.getStrActivityDate()));
+                cvh.textTime.setText(Utils.formatDate(activityModel.getStrActivityDate()));
 
                 if (activityModel.getStrCreatedBy() != null
                         && !activityModel.getStrCreatedBy().equalsIgnoreCase("")
@@ -228,9 +228,8 @@ public class ActivityFragment extends Fragment
         //
 
         initMenu();
-        //progressDialog = new ProgressDialog(getActivity());
+
         utils = new Utils(getActivity());
-        //multiBitmapLoader = new MultiBitmapLoader(getActivity());
 
         context = getActivity();
 
@@ -284,7 +283,7 @@ public class ActivityFragment extends Fragment
     }
 
 
-    public void initMenu() {
+    private void initMenu() {
 
         mMenu = new Menu(new ColorDrawable(Color.LTGRAY), true);
 
@@ -295,25 +294,6 @@ public class ActivityFragment extends Fragment
                 .setIcon(getActivity().getResources().getDrawable(R.drawable.pen))
                 .build());
 
-        /*mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
-                .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
-                .setText("Done")
-                .setTextColor(Color.WHITE)
-                .setTextSize((int) getResources().getDimension(R.dimen.txt_size))
-                .build());*/
-
-       /* mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width) * 2)
-                .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
-                .setText("Undo")
-                .setTextColor(Color.WHITE)
-                .setTextSize((int) getResources().getDimension(R.dimen.txt_size))
-                .build());*/
-
-        /*mMenu.addItem(new MenuItem.Builder()
-                .setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)+50 )
-                .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
-                .setIcon(getActivity().getResources().getDrawable(R.drawable.circle))
-                .build());*/
 
         //swipe left
 
@@ -334,12 +314,6 @@ public class ActivityFragment extends Fragment
                 .setDirection(MenuItem.DIRECTION_RIGHT)
                 .setIcon(getResources().getDrawable(R.mipmap.call_action))
                 .build());
-
-       /* mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
-                .setBackground(getActivity().getResources().getDrawable(R.color.polygonViewCircleStrokeColor))
-                .setDirection(MenuItem.DIRECTION_RIGHT)
-                .setIcon(getResources().getDrawable(R.drawable.person_icon))
-                .build());*/
     }
 
     @Override
@@ -382,37 +356,6 @@ public class ActivityFragment extends Fragment
                             startActivity(intent);
                         }
                         return Menu.ITEM_SCROLL_BACK;
-                    case 1:
-                      /*  if (activityModels.size() > 0) {
-                            Bundle args = new Bundle();
-                            args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
-
-                            if (!activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("completed")) {
-                                ActivityModel obj = activityModels.get(itemPosition);
-                                Intent intent = new Intent(getActivity(), FeatureActivity.class);
-                                args.putSerializable("ACTIVITY", obj);
-                                intent.putExtras(args);
-                                startActivity(intent);
-                            } else {
-                                utils.toast(2, 2, "Activity is Closed");
-                            }
-                        }*/
-                        return Menu.ITEM_SCROLL_BACK;
-                    case 2:
-
-                       /* if (activityModels.size() > 0) {
-                            Bundle args = new Bundle();
-                            args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
-                            if (activityModels.get(itemPosition).getStrActivityStatus().equalsIgnoreCase("completed")) {
-                                //  updateData();
-                            } else {
-                                utils.toast(2, 2, "Error. Try Again!!!");
-                            }
-                        }*/
-
-                        return Menu.ITEM_SCROLL_BACK;
-                    case 3:
-                        return Menu.ITEM_NOTHING;
                 }
                 break;
             case MenuItem.DIRECTION_RIGHT:
@@ -460,11 +403,6 @@ public class ActivityFragment extends Fragment
                             startActivity(callIntent);
                         }
                         return Menu.ITEM_SCROLL_BACK;
-                    case 3:
-                        /*Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                        startActivityForResult(intent, PICK_CONTACT);*/
-
-                        return Menu.ITEM_SCROLL_BACK;
                 }
 
 
@@ -479,19 +417,6 @@ public class ActivityFragment extends Fragment
 
     @Override
     public void onListItemClick(View v, int position) {
-      /*  if (activityModels.size() > 0) {
-            Bundle args = new Bundle();
-            args.putSerializable("ACTIVITY", activityModels.get(position));
 
-            if (!activityModels.get(position).getStrActivityStatus().equalsIgnoreCase("completed")){
-                //ActivityModel obj = activityModels.get(position);
-                Intent intent = new Intent(getActivity(), FeatureActivity.class);
-                //args.putSerializable("ACTIVITY", obj);
-                intent.putExtras(args);
-                startActivity(intent);
-            } else {
-                utils.toast(2, 2, "Activity is Closed");
-            }
-        }*/
     }
 }

@@ -1,18 +1,24 @@
 package com.hdfc.caregiver.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hdfc.adapters.NotificationAdapter;
+import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.StorageService;
-import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.CareGiver;
@@ -35,8 +41,22 @@ public class NotificationFragment extends Fragment {
 
     private NotificationAdapter notificationAdapter;
     //private static ProgressDialog progressDialog;
+    private RelativeLayout loadingPanel;
     private Utils utils;
     private AppUtils appUtils;
+    private ListView listViewActivities;
+
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent
+                    .getStringExtra(App42GCMService.ExtraMessage);
+
+            if (message != null && !message.equalsIgnoreCase("")) {
+                showPushDialog(message);
+            }
+        }
+    };
 
     public NotificationFragment() {
         // Required empty public constructor
@@ -50,6 +70,35 @@ public class NotificationFragment extends Fragment {
         return fragment;
     }
 
+    private void showPushDialog(final String strMessage) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.app_name));
+        builder.setMessage(strMessage);
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                refreshNotifications();
+            }
+        });
+        builder.show();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(mBroadcastReceiver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(
+                App42GCMService.DisplayMessageAction);
+        filter.setPriority(2);
+        getActivity().registerReceiver(mBroadcastReceiver, filter);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,9 +109,12 @@ public class NotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
-        ListView listViewActivities = (ListView) view.findViewById(R.id.listViewActivity);
+        listViewActivities = (ListView) view.findViewById(R.id.listViewActivity);
         TextView emptyTextView = (TextView) view.findViewById(android.R.id.empty);
         listViewActivities.setEmptyView(emptyTextView);
+
+        loadingPanel = (RelativeLayout) getActivity().findViewById(R.id.loadingPanel);
+
         utils = new Utils(getActivity());
         appUtils = new AppUtils(getActivity());
      //   loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
@@ -70,7 +122,8 @@ public class NotificationFragment extends Fragment {
         Bundle bundle = this.getArguments();
         boolean b = bundle.getBoolean("RELOAD", false);
 
-        appUtils.createNotificationModel();
+        if (!b || !utils.isConnectingToInternet())
+            appUtils.createNotificationModel();
 
         notificationAdapter = new NotificationAdapter(getActivity(), Config.notificationModels);
         listViewActivities.setAdapter(notificationAdapter);
@@ -101,7 +154,7 @@ public class NotificationFragment extends Fragment {
         if (utils.isConnectingToInternet()) {
 
             if (!isBackground)
-                DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
+                loadingPanel.setVisibility(View.VISIBLE);
 
             String strDate = DbHelper.DEFAULT_DB_DATE;
 
@@ -122,7 +175,8 @@ public class NotificationFragment extends Fragment {
             Query finalQuery;
 
             if (strDate != null && !strDate.equalsIgnoreCase("")) {
-                Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.GREATER_THAN_EQUALTO);
+                Query q12 = QueryBuilder.build("_$updatedAt", strDate,
+                        QueryBuilder.Operator.GREATER_THAN_EQUALTO);
 
                 finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
             } else {
@@ -160,19 +214,24 @@ public class NotificationFragment extends Fragment {
 
                                             String values[] = {jsonDocList.get(i).getDocId(),
                                                     jsonDocList.get(i).getUpdatedAt(),
-                                                    jsonDocList.get(i).getJsonDoc(), Config.collectionNotification,
-                                                    "1", ""};
+                                                    jsonDocList.get(i).getJsonDoc(),
+                                                    Config.collectionNotification, "1", ""};
 
                                             //String selection = DbHelper.COLUMN_OBJECT_ID + " = ?";
 
                                             // WHERE clause arguments
                                             //String[] selectionArgs = {jsonDocList.get(i).getDocId()};
-                                            CareGiver.getDbCon().insert(DbHelper.strTableNameCollection,
+
+                                            Utils.log(" 1 ", " 2 ");
+                                            CareGiver.getDbCon().insert(
+                                                    DbHelper.strTableNameCollection,
                                                     values,
-                                                    DbHelper.COLLECTION_FIELDS);
+                                                    DbHelper.COLLECTION_FIELDS
+                                            );
 
                                         }
                                         CareGiver.getDbCon().dbTransactionSuccessFull();
+                                        //CareGiver.getDbCon().deleteDuplicateNotifications();
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     } finally {
@@ -186,7 +245,7 @@ public class NotificationFragment extends Fragment {
                             }
 
                             if (!isBackground)
-                                DashboardActivity.loadingPanel.setVisibility(View.GONE);
+                                loadingPanel.setVisibility(View.GONE);
                         }
 
                         @Override
@@ -194,7 +253,7 @@ public class NotificationFragment extends Fragment {
 
                             if (!isBackground) {
 
-                                DashboardActivity.loadingPanel.setVisibility(View.GONE);
+                                loadingPanel.setVisibility(View.GONE);
 
                                 if (e == null)
                                     utils.toast(2, 2, getString(R.string.warning_internet));
@@ -209,6 +268,7 @@ public class NotificationFragment extends Fragment {
     private void refreshNotifications() {
         appUtils.createNotificationModel();
         notificationAdapter.notifyDataSetChanged();
+        listViewActivities.scheduleLayoutAnimation();
     }
 
     private void findActivities(final String strActivityId) {
@@ -227,74 +287,6 @@ public class NotificationFragment extends Fragment {
             args.putBoolean("WHICH_SCREEN", true);
             intent.putExtras(args);
             startActivity(intent);
-
-        }else {
-
-           /* StorageService storageService = new StorageService(getContext());
-
-            storageService.findDocsById(strActivityId, Config.collectionActivity,
-                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
-                @Override
-                public void onDocumentInserted(Storage response) {
-
-                }
-
-                @Override
-                public void onUpdateDocSuccess(Storage response) {
-
-                }
-
-                @Override
-                public void onFindDocSuccess(Storage storage) throws JSONException {
-                    if (storage != null) {
-
-                        if (storage.getJsonDocList().size() > 0) {
-
-                            ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
-
-                            for (int i = 0; i < jsonDocList.size(); i++) {
-//                                    utils.createNotificationModel(jsonDocList.get(i).getDocId(), jsonDocList.get(i).getJsonDoc());
-                                appUtils.createActivityModel(jsonDocList.get(i).getDocId(),
-                                        jsonDocList.get(i).getJsonDoc(), 2);
-                            }
-
-                            int iPosition = Config.strNotificationIds.indexOf(strActivityId);
-                            if (iPosition > -1) {
-                                ActivityModel activityModel = Config.activityModelsNotifications.
-                                        get(iPosition);
-                               *//* Bundle args = new Bundle();
-                                Intent intent = new Intent(getActivity(), FeatureActivity.class);
-                                args.putSerializable("ACTIVITY", activityModel);
-                                intent.putExtras(args);
-                                startActivity(intent);*//*
-
-                                Bundle args = new Bundle();
-                                //
-                                Intent intent = new Intent(getActivity(), FeatureActivity.class);
-                                args.putSerializable("ACTIVITY", activityModel);
-                                args.putBoolean("WHICH_SCREEN", true);
-                                intent.putExtras(args);
-                                startActivity(intent);
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onInsertionFailed(App42Exception ex) {
-
-                }
-
-                @Override
-                public void onFindDocFailed(App42Exception ex) {
-
-                }
-
-                @Override
-                public void onUpdateDocFailed(App42Exception ex) {
-
-                }
-            });*/
         }
     }
 }

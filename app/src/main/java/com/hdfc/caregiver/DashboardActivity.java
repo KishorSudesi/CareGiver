@@ -6,8 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -19,29 +17,18 @@ import android.widget.TextView;
 
 import com.hdfc.app42service.App42GCMController;
 import com.hdfc.app42service.App42GCMService;
-import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.fragments.ActivityFragment;
 import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
-import com.hdfc.caregiver.fragments.MileStoneFragment;
 import com.hdfc.caregiver.fragments.NotificationFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
-import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
-import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42API;
-import com.shephertz.app42.paas.sdk.android.App42CallBack;
-import com.shephertz.app42.paas.sdk.android.storage.Query;
-import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
-import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
-import net.sqlcipher.Cursor;
-
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -52,11 +39,15 @@ public class DashboardActivity extends AppCompatActivity implements
         App42GCMController.App42GCMListener, NetworkStateReceiver.NetworkStateReceiverListener {
 
 
-    public static RelativeLayout loadingPanel;
-    private static Handler threadHandler;
-    private static AppUtils appUtils;
-    private static Utils utils;
+    private static RelativeLayout loadingPanel;
+    //private Utils utils;
     private static AppCompatActivity appCompatActivity;
+    //private static Handler threadHandler;
+    private AppUtils appUtils;
+    private LinearLayout net_error_layout;
+    private NetworkStateReceiver networkStateReceiver;
+    private ImageView mytask, clients, feedback, notification;
+    private TextView textViewTasks, textViewClients, textViewFeedback, textViewNotification;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -64,39 +55,24 @@ public class DashboardActivity extends AppCompatActivity implements
                     .getStringExtra(App42GCMService.ExtraMessage);
 
             if (message != null && !message.equalsIgnoreCase("")) {
-                showPushDialog(message);
+                AppUtils.loadNotifications(DashboardActivity.this);
+
+                if (Config.intSelectedMenu != Config.intNotificationScreen)
+                    showPushDialog(message);
             }
         }
     };
-    private Bundle bundle;
-    private SessionManager sessionManager;
-    private LinearLayout net_error_layout;
-    private NetworkStateReceiver networkStateReceiver;
-    private ImageView mytask, clients, feedback, notification;
-    private TextView textViewTasks, textViewClients, textViewFeedback, textViewNotification;
 
     public static void gotoSimpleActivityMenu() {
-
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
         }
-
-        if (Config.intSelectedMenu == Config.intMileStoneScreen) {
-            MileStoneFragment.milestoneModels = Config.milestoneModels;
-            MileStoneFragment.mAdapter.notifyDataSetChanged();
-        }
-
-        threadHandler = new ThreadHandler();
-        Thread backgroundThread = new BackgroundThread();
-        backgroundThread.start();
     }
 
     public static void refreshClientsData() {
 
         if (Utils.isConnectingToInternet(appCompatActivity)) {
-
-            //loadingPanel.setVisibility(View.VISIBLE);
 
             Config.dependentIds.clear();
             Config.customerIds.clear();
@@ -108,10 +84,12 @@ public class DashboardActivity extends AppCompatActivity implements
             Config.strCustomerNames.clear();
             Config.customerIdsCopy.clear();
 
-            appUtils.fetchClients(2);
+            AppUtils appUtils = new AppUtils(appCompatActivity);
+            appUtils.fetchClients(2, appCompatActivity);
 
         } else {
-            utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet), appCompatActivity);
+            Utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet),
+                    appCompatActivity);
             loadingPanel.setVisibility(View.GONE);
         }
     }
@@ -123,11 +101,6 @@ public class DashboardActivity extends AppCompatActivity implements
             ActivityFragment.mAdapter.notifyDataSetChanged();
         }
 
-      /*  if (Config.intSelectedMenu == Config.intMileStoneScreen) {
-            MileStoneFragment.milestoneModels = Config.milestoneModels;
-            MileStoneFragment.mAdapter.notifyDataSetChanged();
-        }*/
-
         loadingPanel.setVisibility(View.GONE);
     }
 
@@ -135,16 +108,11 @@ public class DashboardActivity extends AppCompatActivity implements
         AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
         builder.setTitle(getString(R.string.app_name));
         builder.setMessage(strMessage);
-        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.menu_notification), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                //if(Config.intSelectedMenu!=Config.intNotificationScreen)
-                loadNotifications();
-                //menuNotification(true);
-                /*else {
-                    //todo
-                }*/
+                menuNotification(false);
             }
         });
         builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -157,10 +125,7 @@ public class DashboardActivity extends AppCompatActivity implements
     }
 
     private void gotoSimpleActivity() {
-
-        /*if (Config.intSelectedMenu != Config.intDashboardScreen) {*/
         goToDashboard();
-        //}
         refreshDashboardData();
     }
 
@@ -183,7 +148,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
         try {
             appUtils = new AppUtils(DashboardActivity.this);
-            utils = new Utils();
+            //utils = new Utils();
 
             mytask = (ImageView) findViewById(R.id.buttonMyTasks);
             clients = (ImageView) findViewById(R.id.buttonClients);
@@ -278,7 +243,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 menuNotification(false);
             }
 
-            sessionManager = new SessionManager(DashboardActivity.this);
+            SessionManager sessionManager = new SessionManager(DashboardActivity.this);
 
             appUtils.createProviderModel(sessionManager.getProviderId());
 
@@ -291,7 +256,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
             appCompatActivity = DashboardActivity.this;
 
-            bundle = getIntent().getExtras();
+            Bundle bundle = getIntent().getExtras();
 
             boolean b = false;
 
@@ -343,8 +308,6 @@ public class DashboardActivity extends AppCompatActivity implements
     private void goToNotification(boolean b) {
         Config.intSelectedMenu = Config.intNotificationScreen;
         NotificationFragment fragment = NotificationFragment.newInstance(b);
-      /*  Bundle args = new Bundle();
-        fragment.setArguments(args);*/
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frameLayout,fragment);
         transaction.addToBackStack(null);
@@ -371,9 +334,8 @@ public class DashboardActivity extends AppCompatActivity implements
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task));
         textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         Config.intSelectedMenu = Config.intDashboardScreen;
-        goToDashboard();
-        //to refresh
-        refreshDashboardData();
+        //todo check and remove
+        gotoSimpleActivity();
     }
 
     private void menuClients() {
@@ -399,8 +361,10 @@ public class DashboardActivity extends AppCompatActivity implements
     @Override
     public void onGCMRegistrationId(String gcmRegId) {
         App42GCMController.storeRegistrationId(this, gcmRegId);
-        if (!App42GCMController.isApp42Registerd(DashboardActivity.this))
+        if (!App42GCMController.isApp42Registerd(DashboardActivity.this)) {
             App42GCMController.registerOnApp42(App42API.getLoggedInUser(), gcmRegId, this);
+            Utils.log(gcmRegId, " GCM ");
+        }
     }
 
     @Override
@@ -434,6 +398,10 @@ public class DashboardActivity extends AppCompatActivity implements
         super.onNewIntent(intent);
         if (intent != null && intent.getStringExtra(App42GCMService.ExtraMessage) != null) {
             String strMess = intent.getStringExtra(App42GCMService.ExtraMessage);
+
+            AppUtils.loadNotifications(DashboardActivity.this);
+
+            //if(Config.intSelectedMenu!=Config.intNotificationScreen)
             showPushDialog(strMess);
         }
     }
@@ -442,28 +410,24 @@ public class DashboardActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
 
-        try {
-            IntentFilter filter = new IntentFilter(
-                    App42GCMService.DisplayMessageAction);
-            filter.setPriority(2);
-            registerReceiver(mBroadcastReceiver, filter);
+        if (Config.providerModel == null || Config.providerModel.getStrName() == null) {
+            AppUtils.logout(DashboardActivity.this);
+        } else {
 
-            registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.
-                    CONNECTIVITY_ACTION));
+            try {
+                IntentFilter filter = new IntentFilter(
+                        App42GCMService.DisplayMessageAction);
+                filter.setPriority(2);
+                registerReceiver(mBroadcastReceiver, filter);
 
+                registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.
+                        CONNECTIVITY_ACTION));
 
-            /*if (bundle != null && bundle.getString("message")!=null) {
-                String strMess = bundle.getString("message");
-                showPushDialog(strMess);
-            }*/
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
-       /* if (Config.providerModel == null || Config.providerModel.getStrName() == null) {
-            AppUtils.logout();
-        }*/
     }
 
     @Override
@@ -528,9 +492,9 @@ public class DashboardActivity extends AppCompatActivity implements
 
             String strDate = Utils.writeFormatDateDB.format(date);
 
-            DashboardFragment.strEndDate = utils.convertDateToStringQuery(utils.
+            DashboardFragment.strEndDate = Utils.convertDateToStringQuery(Utils.
                     convertStringToDateQuery(strDate + "T23:59:59.999"));
-            DashboardFragment.strStartDate = utils.convertDateToStringQuery(utils.
+            DashboardFragment.strStartDate = Utils.convertDateToStringQuery(Utils.
                     convertStringToDateQuery(strDate + "T00:00:00.000"));
 
 
@@ -544,7 +508,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
         } else {
             reloadActivities();
-            utils.toast(2, 2, getString(R.string.warning_internet), DashboardActivity.this);
+            Utils.toast(2, 2, getString(R.string.warning_internet), DashboardActivity.this);
         }
     }
 
@@ -572,114 +536,5 @@ public class DashboardActivity extends AppCompatActivity implements
     public void networkUnavailable() {
         net_error_layout.setVisibility(View.VISIBLE);
         loadingPanel.setVisibility(View.GONE);
-    }
-
-    private void loadNotifications() {
-
-        if (utils.isConnectingToInternet()) {
-
-            String strDate = DbHelper.DEFAULT_DB_DATE;
-
-            Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionNotification);
-
-            if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                strDate = cursor.getString(0);
-            }
-
-            CareGiver.getDbCon().closeCursor(cursor);
-
-            StorageService storageService = new StorageService(DashboardActivity.this);
-
-            Query q1 = QueryBuilder.build("user_id", Config.providerModel.getStrProviderId(),
-                    QueryBuilder.Operator.EQUALS);
-
-            Query finalQuery;
-
-            if (strDate != null && !strDate.equalsIgnoreCase("")) {
-                Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.GREATER_THAN_EQUALTO);
-
-                finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
-            } else {
-                finalQuery = q1;
-            }
-
-            storageService.findDocsByQueryOrderBy(Config.collectionNotification, finalQuery, 30000,
-                    0, "time", 1, new App42CallBack() {
-
-                        @Override
-                        public void onSuccess(Object o) {
-                            if (o != null) {
-
-                                Storage storage = (Storage) o;
-
-                                Utils.log(storage.toString(), "not ");
-
-                                if (storage.getJsonDocList().size() > 0) {
-
-                                    ArrayList<Storage.JSONDocument> jsonDocList = storage.
-                                            getJsonDocList();
-
-                                    try {
-
-                                        CareGiver.getDbCon().beginDBTransaction();
-
-                                        for (int i = 0; i < jsonDocList.size(); i++) {
-
-                                            String values[] = {jsonDocList.get(i).getDocId(),
-                                                    jsonDocList.get(i).getUpdatedAt(),
-                                                    jsonDocList.get(i).getJsonDoc(), Config.collectionNotification,
-                                                    "1", ""};
-
-                                            CareGiver.getDbCon().insert(DbHelper.strTableNameCollection,
-                                                    values,
-                                                    DbHelper.COLLECTION_FIELDS);
-
-                                        }
-                                        CareGiver.getDbCon().dbTransactionSuccessFull();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        CareGiver.getDbCon().endDBTransaction();
-                                    }
-                                    menuNotification(true);
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onException(Exception e) {
-                        }
-                    });
-        }
-    }
-
-    private static class ThreadHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-
-            if (!Utils.isConnectingToInternet(appCompatActivity))
-                utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet), appCompatActivity);
-
-           /* if (Config.intSelectedMenu == Config.intClientScreen) {
-                ClientFragment.prepareListData();
-            }*/
-
-            loadingPanel.setVisibility(View.GONE);
-        }
-    }
-
-    private static class BackgroundThread extends Thread {
-        @Override
-        public void run() {
-            try {
-                /*if (utils.isConnectingToInternet())
-                    appUtils.loadAllFiles();*/
-
-                threadHandler.sendEmptyMessage(0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
