@@ -6,7 +6,9 @@ package com.hdfc.adapters;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -238,10 +240,32 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         viewHolder.insert.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Config.customerModel = (CustomerModel) v.getTag();
-                Intent next = new Intent(_context, CheckInCareProcess.class);
-                _context.startActivity(next);
+            public void onClick(final View v) {
+
+                try {
+                    final CharSequence[] items = {"Create New", "Cancel"};
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+
+                    builder.setTitle("Check In Care");
+                    builder.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int item) {
+
+                            if (items[item].equals("Create New")) {
+                                Config.customerModel = (CustomerModel) v.getTag();
+                                Intent next = new Intent(_context, CheckInCareProcess.class);
+                                _context.startActivity(next);
+
+                            } else if (items[item].equals("Cancel")) {
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+                    builder.show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
         });

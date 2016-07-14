@@ -42,9 +42,9 @@
                 android:id="@+id/clientimg"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@+id/clientnametxt"
-                android:layout_centerVertical="true"
                 android:src="@drawable/person_icon"
                />
 
@@ -58,12 +58,30 @@
 
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/datetxt"
+            <LinearLayout
+                android:id="@+id/linearDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/calendar"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/calendar_date_picker"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/datetxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
 
             <TextView
                 android:layout_width="match_parent"
@@ -79,8 +97,8 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:gravity="left"
                     android:layout_weight="0.8"
+                    android:gravity="left"
                     android:text="Home Essentials"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -88,11 +106,11 @@
                     android:id="@+id/homeessentialstatus"
                     android:layout_width="0dp"
                     android:layout_height="25dp"
-                    android:gravity="left"
-                    android:textSize="15sp"
                     android:layout_weight="0.2"
-                    android:visibility="gone"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:gravity="left"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -106,20 +124,20 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="25dp"
+                android:layout_weight="0.8"
                 android:gravity="left"
                 android:text="Utility Bills"
-                android:layout_weight="0.8"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
                     android:id="@+id/utilitystatus"
                     android:layout_width="0dp"
                     android:layout_height="25dp"
-                    android:gravity="left"
-                    android:textSize="15sp"
                     android:layout_weight="0.2"
-                    android:visibility="gone"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:gravity="left"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
 
             </LinearLayout>
             <LinearLayout
@@ -183,8 +201,8 @@
                     android:background="@drawable/one_side_border"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:textSize="10sp"
-                    android:text="Water/Property tax" />
+                    android:text="Water/Property tax"
+                    android:textSize="10sp" />
 
                 <Spinner
                     android:id="@+id/spinner"
@@ -209,8 +227,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:textSize="10sp"
-                        android:text="Due Date" />
+                        android:text="Due Date"
+                        android:textSize="10sp" />
 
                     <ImageView
                         android:id="@+id/pick_date"
@@ -227,8 +245,8 @@
                     android:background="@drawable/one_side_border"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:textSize="10sp"
-                    android:text="Status" />
+                    android:text="Status"
+                    android:textSize="10sp" />
 
             </LinearLayout>
             <LinearLayout
@@ -244,8 +262,8 @@
                     android:background="@drawable/one_side_border"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:textSize="10sp"
-                    android:text="Gas" />
+                    android:text="Gas"
+                    android:textSize="10sp" />
 
                 <Spinner
                     android:id="@+id/spinner1"
@@ -270,8 +288,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:textSize="10sp"
-                        android:text="Due Date" />
+                        android:text="Due Date"
+                        android:textSize="10sp" />
 
                     <ImageView
                         android:id="@+id/pick_date2"
@@ -288,8 +306,8 @@
                     android:background="@drawable/one_side_border"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:textSize="10sp"
-                    android:text="Status" />
+                    android:text="Status"
+                    android:textSize="10sp" />
 
             </LinearLayout>
             <LinearLayout
@@ -305,8 +323,8 @@
                     android:background="@drawable/one_side_border"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:textSize="10sp"
-                    android:text="Electricity" />
+                    android:text="Electricity"
+                    android:textSize="10sp" />
 
                 <Spinner
                     android:id="@+id/spinner2"
@@ -331,8 +349,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:textSize="10sp"
-                        android:text="Due Date" />
+                        android:text="Due Date"
+                        android:textSize="10sp" />
 
                     <ImageView
                         android:id="@+id/pick_date3"
@@ -349,8 +367,8 @@
                     android:background="@drawable/one_side_border"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:textSize="10sp"
-                    android:text="Status" />
+                    android:text="Status"
+                    android:textSize="10sp" />
 
             </LinearLayout>
             <LinearLayout
@@ -366,8 +384,8 @@
                     android:background="@drawable/one_side_border"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:textSize="10sp"
-                    android:text="Telephone/Mobile" />
+                    android:text="Telephone/Mobile"
+                    android:textSize="10sp" />
 
                 <Spinner
                     android:id="@+id/spinner3"
@@ -392,8 +410,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:textSize="10sp"
-                        android:text="Due Date" />
+                        android:text="Due Date"
+                        android:textSize="10sp" />
 
                     <ImageView
                         android:id="@+id/pick_date4"
@@ -410,8 +428,8 @@
                     android:background="@drawable/one_side_border"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:textSize="10sp"
-                    android:text="Status" />
+                    android:text="Status"
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -419,15 +437,15 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_margin="10dp"
-            android:weightSum="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="1">
 
 
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="25dp"
-                android:gravity="left"
                 android:layout_weight="0.8"
+            android:gravity="left"
                 android:text="Kitchen Equipments"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -435,11 +453,11 @@
                 android:id="@+id/kitchenequipmentstatus"
                 android:layout_width="0dp"
                 android:layout_height="25dp"
-                android:gravity="left"
                 android:layout_weight="0.2"
+                android:gravity="left"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="15sp"
-                android:visibility="gone"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:visibility="gone" />
 
             </LinearLayout>
 
@@ -456,8 +474,8 @@
                     android:layout_weight="0.3"
                     android:gravity="left|center"
                     android:padding="10dp"
-                    android:textSize="12sp"
-                    android:text="Kitchen Equipments" />
+                    android:text="Kitchen Equipments"
+                    android:textSize="12sp" />
 
                 <CheckBox
                     android:id="@+id/kitchenequipcheck"
@@ -479,15 +497,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="25dp"
-                    android:gravity="left"
                     android:layout_weight="0.8"
+                    android:gravity="left"
                     android:text="Grocery"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -495,11 +513,11 @@
                     android:id="@+id/grocerystatus"
                     android:layout_width="0dp"
                     android:layout_height="25dp"
-                    android:gravity="left"
                     android:layout_weight="0.2"
+                    android:gravity="left"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="15sp"
-                    android:visibility="gone"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -516,8 +534,8 @@
                     android:layout_weight="0.3"
                     android:gravity="left|center"
                     android:padding="10dp"
-                    android:textSize="12sp"
-                    android:text="Grocery" />
+                    android:text="Grocery"
+                    android:textSize="12sp" />
 
                 <CheckBox
                     android:id="@+id/grocerycheck"
@@ -544,14 +562,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="30dp"
-                android:gravity="left"
                 android:layout_weight="0.8"
+                android:gravity="left"
                 android:text="Equipment Working Status"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -559,11 +577,11 @@
                     android:id="@+id/equipmentstatus"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:gravity="left"
                     android:layout_weight="0.2"
+                    android:gravity="left"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="15sp"
-                    android:visibility="gone"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -580,8 +598,8 @@
                     android:layout_weight="0.3"
                     android:gravity="left|center"
                     android:padding="10dp"
-                    android:textSize="15sp"
-                    android:text="Electronics" />
+                    android:text="Electronics"
+                    android:textSize="15sp" />
                 
                 <CheckBox
                     android:id="@+id/electrocheck"
@@ -611,8 +629,8 @@
                     android:layout_weight="0.3"
                     android:gravity="left|center"
                     android:padding="10dp"
-                    android:textSize="15sp"
-                    android:text="Home Appliances" />
+                    android:text="Home Appliances"
+                    android:textSize="15sp" />
 
                 <CheckBox
                     android:id="@+id/homecheck"
@@ -641,9 +659,9 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
                     android:gravity="left|center"
-                    android:textSize="15sp"
                     android:padding="10dp"
-                    android:text="Automobile" />
+                    android:text="Automobile"
+                    android:textSize="15sp" />
 
                 <CheckBox
                     android:id="@+id/autocheck"
@@ -669,14 +687,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:gravity="left"
                     android:layout_weight="0.8"
+                    android:gravity="left"
                     android:text="Domestic Help Status"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -684,11 +702,11 @@
                     android:id="@+id/domestichelpstatus"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:gravity="left"
                     android:layout_weight="0.2"
+                    android:gravity="left"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="15sp"
-                    android:visibility="gone"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -705,8 +723,8 @@
                     android:layout_weight="0.3"
                     android:gravity="left|center"
                     android:padding="10dp"
-                    android:textSize="15sp"
-                    android:text="Maid Services" />
+                    android:text="Maid Services"
+                    android:textSize="15sp" />
 
                 <CheckBox
                     android:id="@+id/domesticcheck"
@@ -732,14 +750,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:gravity="left"
                     android:layout_weight="0.8"
+                    android:gravity="left"
                     android:text="Upload Media"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -747,11 +765,11 @@
                     android:id="@+id/uploadmediastatus"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:gravity="left"
                     android:layout_weight="0.2"
+                    android:gravity="left"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="15sp"
-                    android:visibility="gone"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -765,8 +783,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:layout_toLeftOf="@+id/hallstatus"
+                    android:gravity="center"
                     android:text="Hall"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -774,12 +792,12 @@
                     android:id="@+id/hallstatus"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@+id/buttonHallAdd"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="15sp"
-                    android:visibility="gone"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:visibility="gone" />
 
 
                 <Button
@@ -788,8 +806,8 @@
                     android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_margin="10dp"
-                    android:gravity="center"
-                    android:background="@drawable/add_icon" />
+                    android:background="@drawable/add_icon"
+                    android:gravity="center" />
 
             </RelativeLayout>
             <LinearLayout
@@ -814,8 +832,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:layout_toLeftOf="@+id/kitchenstatus"
+                    android:gravity="center"
                     android:text="Kitchen"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -823,12 +841,12 @@
                     android:id="@+id/kitchenstatus"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@+id/buttonKitchenAdd"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="15sp"
-                    android:visibility="gone"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:visibility="gone" />
 
 
                 <Button
@@ -837,8 +855,8 @@
                     android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_margin="10dp"
-                    android:gravity="center"
-                    android:background="@drawable/add_icon" />
+                    android:background="@drawable/add_icon"
+                    android:gravity="center" />
 
             </RelativeLayout>
             <LinearLayout
@@ -862,8 +880,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:layout_toLeftOf="@+id/washroomstatus"
+                    android:gravity="center"
                     android:text="Washroom"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -871,12 +889,12 @@
                     android:id="@+id/washroomstatus"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@+id/buttonWashroomAdd"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="15sp"
-                    android:visibility="gone"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:visibility="gone" />
 
 
                 <Button
@@ -885,8 +903,8 @@
                     android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_margin="10dp"
-                    android:gravity="center"
-                    android:background="@drawable/add_icon" />
+                    android:background="@drawable/add_icon"
+                    android:gravity="center" />
 
             </RelativeLayout>
             <LinearLayout
@@ -911,8 +929,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:layout_toLeftOf="@+id/bedroomstatus"
+                    android:gravity="center"
                     android:text="Bedroom"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -920,12 +938,12 @@
                     android:id="@+id/bedroomstatus"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@+id/buttonBedroomAdd"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="15sp"
-                    android:visibility="gone"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:visibility="gone" />
 
 
                 <Button
@@ -934,8 +952,8 @@
                     android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_margin="10dp"
-                    android:gravity="center"
-                    android:background="@drawable/add_icon" />
+                    android:background="@drawable/add_icon"
+                    android:gravity="center" />
 
             </RelativeLayout>
             <LinearLayout
@@ -969,8 +987,8 @@
                     android:layout_weight="0.4"
                     android:gravity="left|center"
                     android:padding="10dp"
-                    android:textSize="15sp"
-                    android:text="Media Comment" />
+                    android:text="Media Comment"
+                    android:textSize="15sp" />
 
 
 
@@ -1002,10 +1020,10 @@
                     android:layout_height="60dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_success"
-                    android:textColor="@color/colorWhite"
                     android:gravity="center"
                     android:text="Submit"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/colorWhite" />
             </LinearLayout>
 
             <LinearLayout

@@ -21,6 +21,9 @@ public class CheckInCareModel {
 
     private ArrayList<CheckInCareActivityModel> checkInCareActivityModels = new ArrayList<>();
 
+    public CheckInCareModel() {
+    }
+
     public CheckInCareModel(String strStatus, String strMonth, String strYear,
                              String strHouseName, String strCreatedDate, String strUpdatedDate,
                              String strCustomerID,String strDependentID,ArrayList<PictureModel> pictureModels,

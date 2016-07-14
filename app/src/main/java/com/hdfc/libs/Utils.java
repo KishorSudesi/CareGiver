@@ -83,6 +83,10 @@ public class Utils {
             SimpleDateFormat("dd-MMM-yyyy", locale);
     public final static SimpleDateFormat writeFormatDateDB = new
             SimpleDateFormat("yyyy-MM-dd", locale);
+    public final static SimpleDateFormat writeFormatDateMonth = new
+            SimpleDateFormat("MMM", locale);
+    public final static SimpleDateFormat writeFormatDateYear = new
+            SimpleDateFormat("yyyy", locale);
     public final static SimpleDateFormat writeFormatDateMY = new
             SimpleDateFormat("MMM yyyy", locale);
     public final static SimpleDateFormat writeFormatTime = new

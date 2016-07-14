@@ -215,7 +215,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 valSearchService = serviceCategoryList.getSelectedItem().toString();
-                System.out.println("Gurujiiiiiiiiiiiiiiii" + valSearchService);
             }
 
             @Override
@@ -628,7 +627,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                         endDate = Utils.queryFormat.parse(strEndDateCopy);
                                         startDate = Utils.queryFormat.parse(strStartDateCopy);
-                                        strDateNow = utils.convertDateToString(dateNow);
+                                        strDateNow = Utils.convertDateToString(dateNow);
 
                                         Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED ");
 
