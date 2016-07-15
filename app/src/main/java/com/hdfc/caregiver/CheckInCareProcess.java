@@ -97,7 +97,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private String strwaterDate, strelectricityDate, strtelephoneDate, strgasDate, _strwaterDate,
             _strelectricityDate, _strtelephoneDate, _strgasDate, strDate, _strDate;
     private ProgressDialog progressDialog;
-    private int hallImageCount, kitchenImageCount, washroomImageCount, bedroomImageCount, mImageUploadCount;
+    private int hallImageCount, kitchenImageCount, washroomImageCount,
+            bedroomImageCount, hallImageUploadCount, kitchenImageUploadCount,
+            washroomImageUploadCount, bedroomImageUploadCount;
     private boolean success;
     private MultiBitmapLoader multiBitmapLoader;
     private LinearLayout layouthall,layoutkitchen,layoutwashroom,layoutbedroom;
@@ -158,7 +160,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_in_care);
 
-        mImageUploadCount = 0;
+        hallImageUploadCount = 0;
+        kitchenImageUploadCount = 0;
+        washroomImageUploadCount = 0;
+        bedroomImageUploadCount = 0;
+
         storageService = new StorageService(CheckInCareProcess.this);
 
         layouthall = (LinearLayout) findViewById(R.id.linear_hall);
@@ -439,46 +445,66 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     valmediacomment = mediacomment.getText().toString().trim();
 
 
-                    if (TextUtils.isEmpty(valkitchen)) {
+                    if (TextUtils.isEmpty(valkitchen)
+                            || kitchenequipcheck.isChecked() == false) {
                         kitchen_equipments.setError(getString(R.string.error_field_required));
+                        utils.toast(2, 2, getString(R.string.select_checkbox));
                         focusView = kitchen_equipments;
                         cancel = true;
                     }
 
-                    if (TextUtils.isEmpty(valgrocery)) {
+                    if (TextUtils.isEmpty(valgrocery)
+                            || grocerycheck.isChecked() == false) {
                         grocery.setError(getString(R.string.error_field_required));
+                        utils.toast(2, 2, getString(R.string.select_checkbox));
                         focusView = grocery;
                         cancel = true;
                     }
-                    if (TextUtils.isEmpty(valelectronic)) {
+                    if (TextUtils.isEmpty(valelectronic)
+                            || electrocheck.isChecked() == false) {
                         electronic.setError(getString(R.string.error_field_required));
+                        utils.toast(2, 2, getString(R.string.select_checkbox));
                         focusView = electronic;
                         cancel = true;
                     }
-                    if (TextUtils.isEmpty(valhomeapplience)) {
+                    if (TextUtils.isEmpty(valhomeapplience)
+                            || homecheck.isChecked() == false) {
                         homeapplience.setError(getString(R.string.error_field_required));
+                        utils.toast(2, 2, getString(R.string.select_checkbox));
                         focusView = homeapplience;
                         cancel = true;
                     }
-                    if (TextUtils.isEmpty(valautomobile)) {
+                    if (TextUtils.isEmpty(valautomobile)
+                            || autocheck.isChecked() == false) {
                         automobile.setError(getString(R.string.error_field_required));
+                        utils.toast(2, 2, getString(R.string.select_checkbox));
                         focusView = automobile;
                         cancel = true;
                     }
-                    if (TextUtils.isEmpty(valmaidservices)) {
+                    if (TextUtils.isEmpty(valmaidservices)
+                            || domesticcheck.isChecked() == false) {
                         maidservices.setError(getString(R.string.error_field_required));
+                        utils.toast(2, 2, getString(R.string.select_checkbox));
                         focusView = maidservices;
                         cancel = true;
                     }
                     if (hallimageModels.size() <= 0
-                            && kitchenimageModels.size() <= 0
-                            && washroomimageModels.size() <= 0
-                            && bedroomimageModels.size() <= 0) {
+                            || kitchenimageModels.size() <= 0
+                            || washroomimageModels.size() <= 0
+                            || bedroomimageModels.size() <= 0) {
                         if (TextUtils.isEmpty(valmediacomment)) {
                             mediacomment.setError(getString(R.string.error_field_required));
                             focusView = mediacomment;
                             cancel = true;
                         }
+                    }
+                    if (hallimageModels.size() > 0
+                            || kitchenimageModels.size() > 0
+                            || washroomimageModels.size() > 0
+                            || bedroomimageModels.size() > 0) {
+
+                        mediacomment.setFocusable(false);
+                        mediacomment.setFocusableInTouchMode(false);
                     }
 
                     if (cancel) {
@@ -495,8 +521,18 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                             if (bFuture) {
 
                                 //  CheckInCareModel checkInCareModel = new CheckInCareModel();
-                                uploadHallImage();
-
+                                if (hallimageModels != null && hallimageModels.size() > 0) {
+                                    uploadHallImage();
+                                }
+                                if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
+                                    uploadKitchenImage();
+                                }
+                                if (washroomimageModels != null && washroomimageModels.size() > 0) {
+                                    uploadWashroomImage();
+                                }
+                                if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
+                                    uploadBedroomImage();
+                                }
                             } else {
                                 isClick = false;
                                 // utils.toast(2, 2, getString(R.string.invalid_date));
@@ -694,16 +730,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
             bLoad = false;
 
-            if (mImageUploadCount < hallimageModels.size()) {
+            if (hallImageUploadCount < hallimageModels.size()) {
 
-                final ImageModel mUploadImageModel = hallimageModels.get(mImageUploadCount);
+                final ImageModel mhallImageModel = hallimageModels.get(hallImageUploadCount);
 
-                if (mUploadImageModel.ismIsNew()) {
+                if (mhallImageModel.ismIsNew()) {
 
                     UploadService uploadService = new UploadService(this);
 
-                    uploadService.uploadImageCommon(mUploadImageModel.getStrImagePath(),
-                            mUploadImageModel.getStrImageDesc(), mUploadImageModel.getStrImageDesc(),
+                    uploadService.uploadImageCommon(mhallImageModel.getStrImagePath(),
+                            mhallImageModel.getStrImageDesc(), mhallImageModel.getStrImageDesc(),
                             Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
                             new App42CallBack() {
                                 public void onSuccess(Object response) {
@@ -719,13 +755,13 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                             Upload.File file = fileList.get(0);
 
-                                            hallimageModels.get(mImageUploadCount).setmIsNew(false);
-                                            hallimageModels.get(mImageUploadCount).setStrImageUrl(file.getUrl());
+                                            hallimageModels.get(hallImageUploadCount).setmIsNew(false);
+                                            hallimageModels.get(hallImageUploadCount).setStrImageUrl(file.getUrl());
 
                                             try {
-                                                mImageUploadCount++;
-                                                if (mImageUploadCount >= hallimageModels.size()) {
-                                                    updateHallImages();
+                                                hallImageUploadCount++;
+                                                if (hallImageUploadCount >= hallimageModels.size()) {
+                                                    updateJson();
                                                 } else {
                                                     uploadHallImage();
                                                 }
@@ -735,9 +771,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                             }
 
                                         } else {
-                                            mImageUploadCount++;
-                                            if (mImageUploadCount >= hallimageModels.size()) {
-                                                updateHallImages();
+                                            hallImageUploadCount++;
+                                            if (hallImageUploadCount >= hallimageModels.size()) {
+                                                updateJson();
                                             } else {
                                                 uploadHallImage();
                                             }
@@ -752,9 +788,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                     if (e != null) {
                                         Utils.log(e.getMessage(), " Failure ");
-                                        mImageUploadCount++;
-                                        if (mImageUploadCount >= hallimageModels.size()) {
-                                            updateHallImages();
+                                        hallImageUploadCount++;
+                                        if (hallImageUploadCount >= hallimageModels.size()) {
+                                            updateJson();
                                         } else {
                                             uploadHallImage();
                                         }
@@ -764,27 +800,312 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                 }
                             });
                 } else {
-                    mImageUploadCount++;
+                    hallImageUploadCount++;
 
-                    if (mImageUploadCount >= hallimageModels.size()) {
-                        updateHallImages();
+                    if (hallImageUploadCount >= hallimageModels.size()) {
+                        updateJson();
                     } else {
                         uploadHallImage();
                     }
                 }
             } else {
-                updateHallImages();
+                updateJson();
             }
         } else {
 
             if (mImageChanged) {
                 bLoad = false;
-                updateHallImages();
+                updateJson();
             }
         }
     }
 
-    private void updateHallImages() {
+    private void uploadKitchenImage() {
+
+        if (kitchenImageCount > 0) {
+
+            bLoad = false;
+
+            if (kitchenImageUploadCount < kitchenimageModels.size()) {
+
+                final ImageModel mkitchenImageModel = kitchenimageModels.get(kitchenImageUploadCount);
+
+                if (mkitchenImageModel.ismIsNew()) {
+
+                    UploadService uploadService = new UploadService(this);
+
+                    uploadService.uploadImageCommon(mkitchenImageModel.getStrImagePath(),
+                            mkitchenImageModel.getStrImageDesc(), mkitchenImageModel.getStrImageDesc(),
+                            Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
+                            new App42CallBack() {
+                                public void onSuccess(Object response) {
+
+                                    if (response != null) {
+
+
+                                        Upload upload = (Upload) response;
+                                        ArrayList<Upload.File> fileList = upload.getFileList();
+
+                                        if (fileList.size() > 0) {
+
+                                            Upload.File file = fileList.get(0);
+
+                                            kitchenimageModels.get(kitchenImageUploadCount).setmIsNew(false);
+                                            kitchenimageModels.get(kitchenImageUploadCount).setStrImageUrl(file.getUrl());
+
+                                            try {
+                                                kitchenImageUploadCount++;
+                                                if (kitchenImageUploadCount >= kitchenimageModels.size()) {
+                                                    updateJson();
+                                                } else {
+                                                    uploadKitchenImage();
+                                                }
+
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
+                                        } else {
+                                            kitchenImageUploadCount++;
+                                            if (kitchenImageUploadCount >= kitchenimageModels.size()) {
+                                                updateJson();
+                                            } else {
+                                                uploadKitchenImage();
+                                            }
+                                        }
+                                    } else {
+                                        utils.toast(2, 2, getString(R.string.warning_internet));
+                                    }
+                                }
+
+                                @Override
+                                public void onException(Exception e) {
+
+                                    if (e != null) {
+                                        Utils.log(e.getMessage(), " Failure ");
+                                        kitchenImageUploadCount++;
+                                        if (kitchenImageUploadCount >= kitchenimageModels.size()) {
+                                            updateJson();
+                                        } else {
+                                            uploadKitchenImage();
+                                        }
+                                    } else {
+                                        utils.toast(2, 2, getString(R.string.warning_internet));
+                                    }
+                                }
+                            });
+                } else {
+                    kitchenImageUploadCount++;
+
+                    if (kitchenImageUploadCount >= kitchenimageModels.size()) {
+                        updateJson();
+                    } else {
+                        uploadKitchenImage();
+                    }
+                }
+            } else {
+                updateJson();
+            }
+        } else {
+
+            if (mImageChanged) {
+                bLoad = false;
+                updateJson();
+            }
+        }
+    }
+
+    private void uploadWashroomImage() {
+
+        if (washroomImageCount > 0) {
+
+            bLoad = false;
+
+            if (washroomImageUploadCount < washroomimageModels.size()) {
+
+                final ImageModel mwashroomImageModel = washroomimageModels.get(washroomImageUploadCount);
+
+                if (mwashroomImageModel.ismIsNew()) {
+
+                    UploadService uploadService = new UploadService(this);
+
+                    uploadService.uploadImageCommon(mwashroomImageModel.getStrImagePath(),
+                            mwashroomImageModel.getStrImageDesc(), mwashroomImageModel.getStrImageDesc(),
+                            Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
+                            new App42CallBack() {
+                                public void onSuccess(Object response) {
+
+                                    if (response != null) {
+
+
+                                        Upload upload = (Upload) response;
+                                        ArrayList<Upload.File> fileList = upload.getFileList();
+
+                                        if (fileList.size() > 0) {
+
+                                            Upload.File file = fileList.get(0);
+
+                                            washroomimageModels.get(washroomImageUploadCount).setmIsNew(false);
+                                            washroomimageModels.get(washroomImageUploadCount).setStrImageUrl(file.getUrl());
+
+                                            try {
+                                                washroomImageUploadCount++;
+                                                if (washroomImageUploadCount >= washroomimageModels.size()) {
+                                                    updateJson();
+                                                } else {
+                                                    uploadWashroomImage();
+                                                }
+
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
+                                        } else {
+                                            washroomImageUploadCount++;
+                                            if (washroomImageUploadCount >= washroomimageModels.size()) {
+                                                updateJson();
+                                            } else {
+                                                uploadWashroomImage();
+                                            }
+                                        }
+                                    } else {
+                                        utils.toast(2, 2, getString(R.string.warning_internet));
+                                    }
+                                }
+
+                                @Override
+                                public void onException(Exception e) {
+
+                                    if (e != null) {
+                                        Utils.log(e.getMessage(), " Failure ");
+                                        washroomImageUploadCount++;
+                                        if (washroomImageUploadCount >= washroomimageModels.size()) {
+                                            updateJson();
+                                        } else {
+                                            uploadWashroomImage();
+                                        }
+                                    } else {
+                                        utils.toast(2, 2, getString(R.string.warning_internet));
+                                    }
+                                }
+                            });
+                } else {
+                    washroomImageUploadCount++;
+
+                    if (washroomImageUploadCount >= washroomimageModels.size()) {
+                        updateJson();
+                    } else {
+                        uploadWashroomImage();
+                    }
+                }
+            } else {
+                updateJson();
+            }
+        } else {
+
+            if (mImageChanged) {
+                bLoad = false;
+                updateJson();
+            }
+        }
+    }
+
+    private void uploadBedroomImage() {
+
+        if (bedroomImageCount > 0) {
+
+            bLoad = false;
+
+            if (bedroomImageUploadCount < bedroomimageModels.size()) {
+
+                final ImageModel mbedroomImageModel = bedroomimageModels.get(bedroomImageUploadCount);
+
+                if (mbedroomImageModel.ismIsNew()) {
+
+                    UploadService uploadService = new UploadService(this);
+
+                    uploadService.uploadImageCommon(mbedroomImageModel.getStrImagePath(),
+                            mbedroomImageModel.getStrImageDesc(), mbedroomImageModel.getStrImageDesc(),
+                            Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
+                            new App42CallBack() {
+                                public void onSuccess(Object response) {
+
+                                    if (response != null) {
+
+
+                                        Upload upload = (Upload) response;
+                                        ArrayList<Upload.File> fileList = upload.getFileList();
+
+                                        if (fileList.size() > 0) {
+
+                                            Upload.File file = fileList.get(0);
+
+                                            bedroomimageModels.get(bedroomImageUploadCount).setmIsNew(false);
+                                            bedroomimageModels.get(bedroomImageUploadCount).setStrImageUrl(file.getUrl());
+
+                                            try {
+                                                bedroomImageUploadCount++;
+                                                if (bedroomImageUploadCount >= bedroomimageModels.size()) {
+                                                    updateJson();
+                                                } else {
+                                                    uploadBedroomImage();
+                                                }
+
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
+                                        } else {
+                                            bedroomImageUploadCount++;
+                                            if (bedroomImageUploadCount >= bedroomimageModels.size()) {
+                                                updateJson();
+                                            } else {
+                                                uploadBedroomImage();
+                                            }
+                                        }
+                                    } else {
+                                        utils.toast(2, 2, getString(R.string.warning_internet));
+                                    }
+                                }
+
+                                @Override
+                                public void onException(Exception e) {
+
+                                    if (e != null) {
+                                        Utils.log(e.getMessage(), " Failure ");
+                                        bedroomImageUploadCount++;
+                                        if (bedroomImageUploadCount >= bedroomimageModels.size()) {
+                                            updateJson();
+                                        } else {
+                                            uploadBedroomImage();
+                                        }
+                                    } else {
+                                        utils.toast(2, 2, getString(R.string.warning_internet));
+                                    }
+                                }
+                            });
+                } else {
+                    bedroomImageUploadCount++;
+
+                    if (bedroomImageUploadCount >= bedroomimageModels.size()) {
+                        updateJson();
+                    } else {
+                        uploadBedroomImage();
+                    }
+                }
+            } else {
+                updateJson();
+            }
+        } else {
+
+            if (mImageChanged) {
+                bLoad = false;
+                updateJson();
+            }
+        }
+    }
+
+    private void updateJson() {
 
         if (utils.isConnectingToInternet()) {
 
@@ -806,7 +1127,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectCheckinCare.put("month", strMonth);
                 jsonObjectCheckinCare.put("year", strYear);
                 jsonObjectCheckinCare.put("house_name", "Our House");
-                jsonObjectCheckinCare.put("customer_id", "");
+                jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
 
                 JSONArray jsonArrayPicture = new JSONArray();
 
@@ -886,7 +1207,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectWashroomPicture.put("status", "status");
                 jsonObjectWashroomPicture.put("room_name", "washroom");
 
-                jsonArrayPicture.put(jsonObjectKitchenPicture);
+                jsonArrayPicture.put(jsonObjectWashroomPicture);
                 //   }
 
                 jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
@@ -919,7 +1240,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectBedroomPicture.put("status", "status");
                 jsonObjectBedroomPicture.put("room_name", "bedroom");
 
-                jsonArrayPicture.put(jsonObjectKitchenPicture);
+                jsonArrayPicture.put(jsonObjectBedroomPicture);
                 //   }
 
                 jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
@@ -977,7 +1298,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectSubActivitiesHome2.put("sub_activity_name", "utility_bills");
                 jsonObjectSubActivitiesHome2.put("utility_name", "water ");
                 jsonObjectSubActivitiesHome2.put("due_status", item);
-                jsonObjectSubActivitiesHome2.put("due_date", strwaterDate);
+                jsonObjectSubActivitiesHome2.put("due_date", txtwater.getText().toString());
                 jsonObjectSubActivitiesHome2.put("status", waterstatus.getText().toString());
 
 
@@ -987,7 +1308,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectSubActivitiesHome3.put("sub_activity_name", "utility_bills");
                 jsonObjectSubActivitiesHome3.put("utility_name", "gas");
                 jsonObjectSubActivitiesHome3.put("due_status", item);
-                jsonObjectSubActivitiesHome3.put("due_date", strgasDate);
+                jsonObjectSubActivitiesHome3.put("due_date", txtgas.getText().toString());
                 jsonObjectSubActivitiesHome3.put("status", gasstatus.getText().toString());
 
 
@@ -997,7 +1318,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectSubActivitiesHome4.put("sub_activity_name", "utility_bills");
                 jsonObjectSubActivitiesHome4.put("utility_name", "electricity");
                 jsonObjectSubActivitiesHome4.put("due_status", item);
-                jsonObjectSubActivitiesHome4.put("due_date", strelectricityDate);
+                jsonObjectSubActivitiesHome4.put("due_date", txtelectricity.getText().toString());
                 jsonObjectSubActivitiesHome4.put("status", electricitystatus.getText().toString());
 
 
@@ -1007,7 +1328,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectSubActivitiesHome5.put("sub_activity_name", "utility_bills");
                 jsonObjectSubActivitiesHome5.put("utility_name", "telephone");
                 jsonObjectSubActivitiesHome5.put("due_status", item);
-                jsonObjectSubActivitiesHome5.put("due_date", strtelephoneDate);
+                jsonObjectSubActivitiesHome5.put("due_date", txttelephone.getText().toString());
                 jsonObjectSubActivitiesHome5.put("status", telephonestatus.getText().toString());
 
 
