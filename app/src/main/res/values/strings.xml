@@ -181,6 +181,8 @@
     <string name="activity_updated">Activity Updated Successfully</string>
     <string name="milestone_updated">Milestone Saved</string>
     <string name="image_upload">Images Saved</string>
+    <string name="data_upload">Data Upload Successfully</string>
+
 
     <!--Process Strings-->
     <string name="uploading">Uploading…</string>

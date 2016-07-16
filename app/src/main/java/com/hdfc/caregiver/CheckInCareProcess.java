@@ -59,6 +59,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
  * Created by Admin on 01-07-2016.
  */
 public class CheckInCareProcess extends AppCompatActivity implements View.OnClickListener,AdapterView.OnItemSelectedListener {
+    public static final int DIALOG_DOWNLOAD_PROGRESS1 = 1;
     private static final String[]option = {"N", "Y"};
     public static String strImageName = "",strClientName = "";
     public static Uri uri;
@@ -88,8 +89,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private ImageView pick_date, pick_date2, pick_date3, pick_date4;
     private ImageView client;
     private Spinner spinner, spinner1, spinner2, spinner3;
-    private Button btn_submit, buttonHallAdd, buttonKitchenAdd, buttonWashroomAdd, buttonBedroomAdd;
-    private EditText electronic, homeapplience, automobile, maidservices, kitchen_equipments, grocery, mediacomment;
+    private Button btn_submit, btn_close, buttonHallAdd, buttonKitchenAdd, buttonWashroomAdd, buttonBedroomAdd;
+    private EditText electronic, homeapplience, automobile, maidservices, kitchen_equipments, grocery, mediacomment, checkincarename;
     private TextView datetxt,txtwater, txtgas, txtelectricity, txttelephone, clientnametxt;
     private TextView utilitystatus, waterstatus, gasstatus, electricitystatus, telephonestatus,
             equipmentstatus, grocerystatus, kitchenequipmentstatus, domestichelpstatus, uploadmediastatus, hallstatus,
@@ -104,9 +105,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private MultiBitmapLoader multiBitmapLoader;
     private LinearLayout layouthall,layoutkitchen,layoutwashroom,layoutbedroom;
     private CheckBox electrocheck,homecheck,autocheck,kitchenequipcheck,grocerycheck,domesticcheck;
-    private String valkitchen, valgrocery, valelectronic, valhomeapplience, valautomobile, valmaidservices, valmediacomment;
+    private String valkitchen, valgrocery, valelectronic, valhomeapplience, valautomobile, valmaidservices, valmediacomment, valcheckincarename;
     private View focusView = null;
-
+    private ProgressDialog mProgressDialog;
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
@@ -154,6 +155,21 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
     };
 
+    //display progress dialog
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG_DOWNLOAD_PROGRESS1:
+                mProgressDialog = new ProgressDialog(this);
+                mProgressDialog.setMessage("Processing request, Please wait ...");
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.show();
+
+                return mProgressDialog;
+
+            default:
+                return null;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +196,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
         Date mydate = new Date();
         strDate = Utils.writeFormatDateMY.format(mydate);
+        String stDate = Utils.queryFormatday.format(mydate);
         datetxt = (TextView)findViewById(R.id.datetxt);
         datetxt.setText(strDate);
 
@@ -198,6 +215,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         .show();
             }
         });
+
+        checkincarename = (EditText) findViewById(R.id.checkincarename);
+        checkincarename.setText(stDate);
+        checkincarename.setTextSize(12);
 
         electrocheck = (CheckBox)findViewById(R.id.electrocheck);
         homecheck = (CheckBox)findViewById(R.id.homecheck);
@@ -417,6 +438,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         buttonWashroomAdd.setOnClickListener(this);
         buttonBedroomAdd.setOnClickListener(this);
 
+        btn_close = (Button) findViewById(R.id.btn_close);
         btn_submit = (Button) findViewById(R.id.btn_submit);
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -434,6 +456,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     automobile.setError(null);
                     maidservices.setError(null);
                     mediacomment.setError(null);
+                    checkincarename.setError(null);
 
 
                     valkitchen = kitchen_equipments.getText().toString().trim();
@@ -443,6 +466,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     valautomobile = automobile.getText().toString().trim();
                     valmaidservices = maidservices.getText().toString().trim();
                     valmediacomment = mediacomment.getText().toString().trim();
+                    valcheckincarename = mediacomment.getText().toString().trim();
 
 
                     if (TextUtils.isEmpty(valkitchen)
@@ -524,15 +548,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                 if (hallimageModels != null && hallimageModels.size() > 0) {
                                     uploadHallImage();
                                 }
-                                if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
-                                    uploadKitchenImage();
-                                }
-                                if (washroomimageModels != null && washroomimageModels.size() > 0) {
-                                    uploadWashroomImage();
-                                }
-                                if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
-                                    uploadBedroomImage();
-                                }
+
                             } else {
                                 isClick = false;
                                 // utils.toast(2, 2, getString(R.string.invalid_date));
@@ -728,6 +744,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
         if (hallImageCount > 0) {
 
+            onCreateDialog(DIALOG_DOWNLOAD_PROGRESS1);
+
             bLoad = false;
 
             if (hallImageUploadCount < hallimageModels.size()) {
@@ -746,7 +764,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                     if (response != null) {
 
-
+                                        Utils.log(response.toString(), " Hall Images ");
 
                                         Upload upload = (Upload) response;
                                         ArrayList<Upload.File> fileList = upload.getFileList();
@@ -761,7 +779,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                             try {
                                                 hallImageUploadCount++;
                                                 if (hallImageUploadCount >= hallimageModels.size()) {
-                                                    updateJson();
+                                                    if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
+                                                        uploadKitchenImage();
+                                                    }
                                                 } else {
                                                     uploadHallImage();
                                                 }
@@ -773,7 +793,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         } else {
                                             hallImageUploadCount++;
                                             if (hallImageUploadCount >= hallimageModels.size()) {
-                                                updateJson();
+                                                if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
+                                                    uploadKitchenImage();
+                                                }
                                             } else {
                                                 uploadHallImage();
                                             }
@@ -785,12 +807,15 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                 @Override
                                 public void onException(Exception e) {
-
+                                    if (mProgressDialog != null)
+                                        mProgressDialog.dismiss();
                                     if (e != null) {
                                         Utils.log(e.getMessage(), " Failure ");
                                         hallImageUploadCount++;
                                         if (hallImageUploadCount >= hallimageModels.size()) {
-                                            updateJson();
+                                            if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
+                                                uploadKitchenImage();
+                                            }
                                         } else {
                                             uploadHallImage();
                                         }
@@ -803,16 +828,23 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     hallImageUploadCount++;
 
                     if (hallImageUploadCount >= hallimageModels.size()) {
-                        updateJson();
+                        if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
+                            uploadKitchenImage();
+                        }
                     } else {
                         uploadHallImage();
                     }
                 }
+
             } else {
+                if (mProgressDialog != null)
+                    mProgressDialog.dismiss();
                 updateJson();
             }
-        } else {
 
+        } else {
+            if (mProgressDialog != null)
+                mProgressDialog.dismiss();
             if (mImageChanged) {
                 bLoad = false;
                 updateJson();
@@ -842,6 +874,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                     if (response != null) {
 
+                                        Utils.log(response.toString(), " Kitchen Images ");
 
                                         Upload upload = (Upload) response;
                                         ArrayList<Upload.File> fileList = upload.getFileList();
@@ -856,7 +889,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                             try {
                                                 kitchenImageUploadCount++;
                                                 if (kitchenImageUploadCount >= kitchenimageModels.size()) {
-                                                    updateJson();
+                                                    if (washroomimageModels != null && washroomimageModels.size() > 0) {
+                                                        uploadWashroomImage();
+                                                    }
                                                 } else {
                                                     uploadKitchenImage();
                                                 }
@@ -868,7 +903,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         } else {
                                             kitchenImageUploadCount++;
                                             if (kitchenImageUploadCount >= kitchenimageModels.size()) {
-                                                updateJson();
+                                                if (washroomimageModels != null && washroomimageModels.size() > 0) {
+                                                    uploadWashroomImage();
+                                                }
                                             } else {
                                                 uploadKitchenImage();
                                             }
@@ -885,7 +922,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         Utils.log(e.getMessage(), " Failure ");
                                         kitchenImageUploadCount++;
                                         if (kitchenImageUploadCount >= kitchenimageModels.size()) {
-                                            updateJson();
+                                            if (washroomimageModels != null && washroomimageModels.size() > 0) {
+                                                uploadWashroomImage();
+                                            }
                                         } else {
                                             uploadKitchenImage();
                                         }
@@ -898,7 +937,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     kitchenImageUploadCount++;
 
                     if (kitchenImageUploadCount >= kitchenimageModels.size()) {
-                        updateJson();
+                        if (washroomimageModels != null && washroomimageModels.size() > 0) {
+                            uploadWashroomImage();
+                        }
                     } else {
                         uploadKitchenImage();
                     }
@@ -937,6 +978,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                     if (response != null) {
 
+                                        Utils.log(response.toString(), " Washroom Images ");
 
                                         Upload upload = (Upload) response;
                                         ArrayList<Upload.File> fileList = upload.getFileList();
@@ -951,7 +993,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                             try {
                                                 washroomImageUploadCount++;
                                                 if (washroomImageUploadCount >= washroomimageModels.size()) {
-                                                    updateJson();
+                                                    if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
+                                                        uploadBedroomImage();
+                                                    }
                                                 } else {
                                                     uploadWashroomImage();
                                                 }
@@ -963,7 +1007,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         } else {
                                             washroomImageUploadCount++;
                                             if (washroomImageUploadCount >= washroomimageModels.size()) {
-                                                updateJson();
+                                                if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
+                                                    uploadBedroomImage();
+                                                }
                                             } else {
                                                 uploadWashroomImage();
                                             }
@@ -980,7 +1026,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         Utils.log(e.getMessage(), " Failure ");
                                         washroomImageUploadCount++;
                                         if (washroomImageUploadCount >= washroomimageModels.size()) {
-                                            updateJson();
+                                            if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
+                                                uploadBedroomImage();
+                                            }
                                         } else {
                                             uploadWashroomImage();
                                         }
@@ -993,7 +1041,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     washroomImageUploadCount++;
 
                     if (washroomImageUploadCount >= washroomimageModels.size()) {
-                        updateJson();
+                        if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
+                            uploadBedroomImage();
+                        }
                     } else {
                         uploadWashroomImage();
                     }
@@ -1032,6 +1082,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                     if (response != null) {
 
+                                        Utils.log(response.toString(), " Bedroom Images ");
 
                                         Upload upload = (Upload) response;
                                         ArrayList<Upload.File> fileList = upload.getFileList();
@@ -1116,7 +1167,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectCheckinCare = new JSONObject();
 
                 Date mydate = new Date();
-                String strCreateDate = Utils.writeFormatDateDB.format(mydate);
+                String strCreateDate = Utils.readFormat.format(mydate);
                 String strMonth = Utils.writeFormatDateMonth.format(mydate);
                 String strYear = Utils.writeFormatDateYear.format(mydate);
 
@@ -1128,10 +1179,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectCheckinCare.put("year", strYear);
                 jsonObjectCheckinCare.put("house_name", "Our House");
                 jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
+                jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
+                jsonObjectCheckinCare.put("check_in_care_name", checkincarename.getText().toString());
 
                 JSONArray jsonArrayPicture = new JSONArray();
-
-                //  for (PictureModel pictureModel : checkInCareModel.getPictureModels()) {
 
                 ///////////////////////Hallimage
                 JSONObject jsonObjectHallPicture = new JSONObject();
@@ -1139,12 +1190,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectHallPicture.put("status", "status");
                 jsonObjectHallPicture.put("room_name", "hall");
 
-                jsonArrayPicture.put(jsonObjectHallPicture);
-                //   }
+                //  jsonArrayPicture.put(jsonObjectHallPicture);
+                //   jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
 
-                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
-
-                JSONArray jsonArrayPictureDetails = new JSONArray();
+                JSONArray jsonArrayHallPictureDetails = new JSONArray();
 
                 ArrayList<ImageModel> mTHallImageModels = new ArrayList<>();
 
@@ -1158,13 +1207,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         jsonObjectHallImages.put("description", hallImageModel.getStrImageDesc());
                         jsonObjectHallImages.put("date_time", hallImageModel.getStrImageTime());
 
-                        jsonArrayPictureDetails.put(jsonObjectHallImages);
+                        jsonArrayHallPictureDetails.put(jsonObjectHallImages);
                         mTHallImageModels.add(hallImageModel);
                     }
                 } else {
 
-                    jsonArrayPictureDetails.put("{\"0\":\"empty\"}");
+                    jsonArrayHallPictureDetails.put("{\"0\":\"empty\"}");
                 }
+
+                jsonObjectHallPicture.put("pictures_details", jsonArrayHallPictureDetails);
+                jsonArrayPicture.put(jsonObjectHallPicture);
                 ////////////////////////Hallimage
 
                 //////////////////////kitchenimage
@@ -1173,11 +1225,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectKitchenPicture.put("status", "status");
                 jsonObjectKitchenPicture.put("room_name", "kitchen");
 
-                jsonArrayPicture.put(jsonObjectKitchenPicture);
-                //   }
+              /*  jsonArrayPicture.put(jsonObjectKitchenPicture);
+                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);*/
 
-                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
-
+                JSONArray jsonArrayKitchenPictureDetails = new JSONArray();
 
                 ArrayList<ImageModel> mTKitchenImageModels = new ArrayList<>();
 
@@ -1191,13 +1242,15 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         jsonObjectKitchenImages.put("description", kitchenImageModel.getStrImageDesc());
                         jsonObjectKitchenImages.put("date_time", kitchenImageModel.getStrImageTime());
 
-                        jsonArrayPictureDetails.put(jsonObjectKitchenImages);
+                        jsonArrayKitchenPictureDetails.put(jsonObjectKitchenImages);
                         mTKitchenImageModels.add(kitchenImageModel);
                     }
                 } else {
 
-                    jsonArrayPictureDetails.put("{\"0\":\"empty\"}");
+                    jsonArrayKitchenPictureDetails.put("{\"0\":\"empty\"}");
                 }
+                jsonObjectKitchenPicture.put("pictures_details", jsonArrayKitchenPictureDetails);
+                jsonArrayPicture.put(jsonObjectKitchenPicture);
                 ////////////////////////kitchenimage
 
 
@@ -1207,11 +1260,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectWashroomPicture.put("status", "status");
                 jsonObjectWashroomPicture.put("room_name", "washroom");
 
-                jsonArrayPicture.put(jsonObjectWashroomPicture);
-                //   }
-
-                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
-
+               /* jsonArrayPicture.put(jsonObjectWashroomPicture);
+                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);*/
+                JSONArray jsonArrayWashroomPictureDetails = new JSONArray();
 
                 ArrayList<ImageModel> mTWashroomImageModels = new ArrayList<>();
 
@@ -1225,13 +1276,15 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         jsonObjectWashroomImages.put("description", washroomImageModel.getStrImageDesc());
                         jsonObjectWashroomImages.put("date_time", washroomImageModel.getStrImageTime());
 
-                        jsonArrayPictureDetails.put(jsonObjectWashroomImages);
+                        jsonArrayWashroomPictureDetails.put(jsonObjectWashroomImages);
                         mTWashroomImageModels.add(washroomImageModel);
                     }
                 } else {
 
-                    jsonArrayPictureDetails.put("{\"0\":\"empty\"}");
+                    jsonArrayWashroomPictureDetails.put("{\"0\":\"empty\"}");
                 }
+                jsonObjectWashroomPicture.put("pictures_details", jsonArrayWashroomPictureDetails);
+                jsonArrayPicture.put(jsonObjectWashroomPicture);
                 ////////////////////////washroomimage
 
                 //////////////////////bedroomimage
@@ -1240,11 +1293,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectBedroomPicture.put("status", "status");
                 jsonObjectBedroomPicture.put("room_name", "bedroom");
 
-                jsonArrayPicture.put(jsonObjectBedroomPicture);
-                //   }
-
-                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
-
+                //  jsonArrayPicture.put(jsonObjectBedroomPicture);
+                // jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
+                JSONArray jsonArrayBedroomPictureDetails = new JSONArray();
 
                 ArrayList<ImageModel> mTBedroomImageModels = new ArrayList<>();
 
@@ -1258,16 +1309,18 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         jsonObjectBedroomImages.put("description", bedroomImageModel.getStrImageDesc());
                         jsonObjectBedroomImages.put("date_time", bedroomImageModel.getStrImageTime());
 
-                        jsonArrayPictureDetails.put(jsonObjectBedroomImages);
+                        jsonArrayBedroomPictureDetails.put(jsonObjectBedroomImages);
                         mTBedroomImageModels.add(bedroomImageModel);
                     }
                 } else {
 
-                    jsonArrayPictureDetails.put("{\"0\":\"empty\"}");
+                    jsonArrayBedroomPictureDetails.put("{\"0\":\"empty\"}");
                 }
+                jsonObjectBedroomPicture.put("pictures_details", jsonArrayBedroomPictureDetails);
+                jsonArrayPicture.put(jsonObjectBedroomPicture);
                 ////////////////////////bedroomimage
 
-                jsonObjectCheckinCare.put("pictures_details", jsonArrayPictureDetails);
+                jsonObjectCheckinCare.put("picture", jsonArrayPicture);
 
                 ////
 
@@ -1415,7 +1468,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                             try {
                                 if (response.isResponseSuccess()) {
                                     IMAGE_COUNT = 0;
-                                    utils.toast(2, 2, getString(R.string.image_upload));
+                                    utils.toast(2, 2, getString(R.string.data_upload));
+                                    Intent intent = new Intent(CheckInCareProcess.this, DashboardActivity.class);
+                                    Config.intSelectedMenu = Config.intClientScreen;
+                                    startActivity(intent);
                                 } else {
                                     utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
@@ -2431,7 +2487,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     public void onClick(View v) {
                         isHallFlag = 1;
                         if (IMAGE_COUNT < 20) {
-
+                            hallimageModels.clear();
+                            hallbitmaps.clear();
                             utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                                     + ".jpeg", null, CheckInCareProcess.this, false);
                         } else {
@@ -2446,7 +2503,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     public void onClick(View v) {
                         isHallFlag = 2;
                         if (IMAGE_COUNT < 20) {
-
+                            kitchenimageModels.clear();
+                            kitchenbitmaps.clear();
                             utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                                     + ".jpeg", null, CheckInCareProcess.this, false);
                         } else {
@@ -2461,7 +2519,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     public void onClick(View v) {
                         isHallFlag = 3;
                         if (IMAGE_COUNT < 20) {
-
+                            washroomimageModels.clear();
+                            washroombitmaps.clear();
                             utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                                     + ".jpeg", null, CheckInCareProcess.this, false);
                         } else {
@@ -2476,7 +2535,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     public void onClick(View v) {
                         isHallFlag = 4;
                         if (IMAGE_COUNT < 20) {
-
+                            bedroomimageModels.clear();
+                            bedroombitmaps.clear();
                             utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                                     + ".jpeg", null, CheckInCareProcess.this, false);
                         } else {
@@ -2677,6 +2737,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 try {
                     if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
 
+                        Calendar calendar = Calendar.getInstance();
+                        String strName = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strName + ".jpeg";
+
                         File mCopyFile = utils.getInternalFileImages(strName);
 
                         utils.copyFile(new File(strImageName), mCopyFile);
@@ -2703,6 +2767,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             if (isHallFlag == 2) {
                 try {
                     if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strName = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strName + ".jpeg";
 
                         File mCopyFile = utils.getInternalFileImages(strName);
 
@@ -2730,6 +2797,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             if (isHallFlag == 3) {
                 try {
                     if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strName = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strName + ".jpeg";
 
                         File mCopyFile = utils.getInternalFileImages(strName);
 
@@ -2757,6 +2827,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             if (isHallFlag == 4) {
                 try {
                     if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
+                        Calendar calendar = Calendar.getInstance();
+                        String strName = String.valueOf(calendar.getTimeInMillis());
+                        String strFileName = strName + ".jpeg";
 
                         File mCopyFile = utils.getInternalFileImages(strName);
 

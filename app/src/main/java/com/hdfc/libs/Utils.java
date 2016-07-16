@@ -84,7 +84,7 @@ public class Utils {
     public final static SimpleDateFormat writeFormatDateDB = new
             SimpleDateFormat("yyyy-MM-dd", locale);
     public final static SimpleDateFormat writeFormatDateMonth = new
-            SimpleDateFormat("MMM", locale);
+            SimpleDateFormat("M", locale);
     public final static SimpleDateFormat writeFormatDateYear = new
             SimpleDateFormat("yyyy", locale);
     public final static SimpleDateFormat writeFormatDateMY = new
@@ -93,6 +93,8 @@ public class Utils {
             SimpleDateFormat("kk:mm", locale); // aa
     public final static SimpleDateFormat queryFormat =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
+    public final static SimpleDateFormat queryFormatday =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", locale);
 
   /*  public final static SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd", Config.locale);*/
