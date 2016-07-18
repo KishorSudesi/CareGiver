@@ -43,4 +43,5 @@ dependencies {
     compile 'jp.wasabeef:glide-transformations:2.0.1'
 
     compile 'com.nononsenseapps:filepicker:3.0.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.2.1'
 }

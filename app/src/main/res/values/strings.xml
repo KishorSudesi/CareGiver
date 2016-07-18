@@ -206,6 +206,7 @@
     <string name="close_date_error">Future Date. Cannot close this task</string>
     <string name="select_dependent">Select a Care Receipent</string>
     <string name="select_checkbox">Please Select Checkbox</string>
+    <string name="select_date">Please Select Date</string>
 
 
     <!--Dashboard Menu Strings-->

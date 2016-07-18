@@ -88,13 +88,13 @@ public class Utils {
     public final static SimpleDateFormat writeFormatDateYear = new
             SimpleDateFormat("yyyy", locale);
     public final static SimpleDateFormat writeFormatDateMY = new
-            SimpleDateFormat("MMM yyyy", locale);
+            SimpleDateFormat("dd MMM yyyy", locale);
     public final static SimpleDateFormat writeFormatTime = new
             SimpleDateFormat("kk:mm", locale); // aa
     public final static SimpleDateFormat queryFormat =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
     public final static SimpleDateFormat queryFormatday =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", locale);
+            new SimpleDateFormat("yyyyMMddHHmmss", locale);
 
   /*  public final static SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd", Config.locale);*/

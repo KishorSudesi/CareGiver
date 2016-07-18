@@ -101,7 +101,7 @@
                     android:layout_weight="0.5"
                     android:gravity="left|center"
                     android:padding="10dp"
-                    android:text="CheckInCare Name"
+                    android:text="CheckInCare ID"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <EditText

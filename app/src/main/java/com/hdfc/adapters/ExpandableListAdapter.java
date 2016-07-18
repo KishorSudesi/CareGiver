@@ -247,6 +247,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(_context);
 
+                    //items[0] =items[0].toString().replaceAll("CheckInCare Name","");
+
                     builder.setTitle("Check In Care");
                     builder.setItems(items, new DialogInterface.OnClickListener() {
                         @Override
@@ -273,6 +275,96 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
 
     }
+
+   /* private void fetchCheckInCareName(final ProgressDialog progressDialog,final boolean isBackground) {
+
+        if (Utils.isConnectingToInternet(_context)) {
+
+            Date mydate = new Date();
+            String strDate = Utils.writeFormatDateMY.format(mydate);
+
+            StorageService storageService = new StorageService(_context);
+
+            Query q1 = QueryBuilder.build("customer_id", Config.customerModel.getStrCustomerID(), QueryBuilder.
+                    Operator.EQUALS);
+
+            Query q2 = QueryBuilder.build("current_date", strDate,
+                    QueryBuilder.Operator.GREATER_THAN_EQUALTO);
+
+            Query q3 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
+
+
+            storageService.findDocsByQueryOrderBy(Config.collectionCheckInCare, q3, 1,
+                    0, "time", 1, new App42CallBack() {
+
+                        @Override
+                        public void onSuccess(Object o) {
+                            if (o != null) {
+
+                                Storage storage = (Storage) o;
+
+                                Utils.log(storage.toString(), "not ");
+
+                                if (storage.getJsonDocList().size() > 0) {
+
+                                    ArrayList<Storage.JSONDocument> jsonDocList = storage.
+                                            getJsonDocList();
+
+                                    try {
+
+                                        CareGiver.getDbCon().beginDBTransaction();
+
+                                        for (int i = 0; i < jsonDocList.size(); i++) {
+
+                                            String values[] = {jsonDocList.get(i).getDocId(),
+                                                    jsonDocList.get(i).getUpdatedAt(),
+                                                    jsonDocList.get(i).getJsonDoc(),
+                                                    Config.collectionCheckInCare, "1", ""};
+
+
+                                            Utils.log(" 1 ", " 2 ");
+                                            CareGiver.getDbCon().insert(
+                                                    DbHelper.strTableNameCollection,
+                                                    values,
+                                                    DbHelper.COLLECTION_FIELDS
+                                            );
+
+                                        }
+                                        CareGiver.getDbCon().dbTransactionSuccessFull();
+                                        //CareGiver.getDbCon().deleteDuplicateNotifications();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    } finally {
+                                        CareGiver.getDbCon().endDBTransaction();
+                                    }
+                                }
+                                refreshNotifications();
+                            } else {
+                                if (!isBackground)
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                            }
+
+                            if (!isBackground)
+                                loadingPanel.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+
+                            if (!isBackground) {
+
+                                loadingPanel.setVisibility(View.GONE);
+
+                                if (e == null)
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                else
+                                    utils.toast(1, 1, getString(R.string.error));
+                            }
+                        }
+                   });
+
+        }
+    }*/
 
     @Override
     public boolean hasStableIds() {
