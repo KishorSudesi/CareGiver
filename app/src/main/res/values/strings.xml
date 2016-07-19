@@ -168,6 +168,8 @@
     <string name="attach_file">Attach File</string>
     <string name="click_attach">Click to Attach</string>
 
+    <string name="access_storage">Access to External Storage</string>
+
     <!--Mislestone Related-->
     <string name="medicine_name">Medicine Name</string>
     <string name="qunatity">Quantity</string>

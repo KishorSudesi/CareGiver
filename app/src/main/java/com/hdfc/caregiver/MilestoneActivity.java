@@ -1,5 +1,6 @@
 package com.hdfc.caregiver;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -27,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.app42service.App42GCMService;
@@ -60,6 +62,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
+import pl.tajchert.nammu.PermissionCallback;
+
 public class MilestoneActivity extends AppCompatActivity {
 
     private static int IMAGE_COUNT = 0;
@@ -79,12 +83,14 @@ public class MilestoneActivity extends AppCompatActivity {
     private static int iActivityPosition;
     private static boolean bEnabled, mImageChanged;
     private static boolean isToDate = false, isFromDate = false;
+    private static boolean isAllowed;
     private final Context context = this;
     private RelativeLayout loadingPanel;
     private int mImageCount, mImageUploadCount;
     private LinearLayout layout;
     private SimpleTooltip simpleTooltip;
     private Utils utils;
+    private PermissionHelper permissionHelper;
   /*  private byte editTextType = 0;
     private byte TYPE_FROM = 1, TYPE_TO = 2;*/
 
@@ -95,6 +101,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
         Bundle b = getIntent().getExtras();
+
+        permissionHelper = PermissionHelper.getInstance(this);
 
         act = (ActivityModel) b.getSerializable("Act");
 
@@ -760,7 +768,26 @@ public class MilestoneActivity extends AppCompatActivity {
                         strName1 = String.valueOf(new Date().getDate() + "" + new Date().getTime());
                         strImageName1 = strName1 + ".jpeg";
 
-                        utils.selectImage(strImageName1, null, MilestoneActivity.this, false);
+                        permissionHelper.verifyPermission(
+                                new String[]{getString(R.string.access_storage)},
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                new PermissionCallback() {
+                                    @Override
+                                    public void permissionGranted() {
+                                        //action to perform when permission granteed
+                                        isAllowed = true;
+                                    }
+
+                                    @Override
+                                    public void permissionRefused() {
+                                        //action to perform when permission refused
+                                        isAllowed = false;
+                                    }
+                                }
+                        );
+
+                        if (isAllowed)
+                            utils.selectImage(strImageName1, null, MilestoneActivity.this, false);
 
                     }
                 });
@@ -1110,7 +1137,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                             String strDateNow = "";
                             Date dateNow = calendar.getTime();
-                            strDateNow = utils.convertDateToString(dateNow);
+                            strDateNow = Utils.convertDateToString(dateNow);
 
                             int iCustomerPosition = Config.customerIdsAdded.indexOf(act.
                                     getStrCustomerID());
@@ -1132,7 +1159,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     }
 
                     if (b) {
-                        milestoneModel.setStrMilestoneDate(utils.convertDateToString(date));
+                        milestoneModel.setStrMilestoneDate(Utils.convertDateToString(date));
                     }
 
                     //break;
@@ -1631,10 +1658,23 @@ public class MilestoneActivity extends AppCompatActivity {
         }
     }
 
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+   /* @Override
+    protected void onDestroy() {
+        permissionHelper.finish();
+        super.onDestroy();
+    }*/
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
+
+        permissionHelper.onActivityResult(requestCode, resultCode, intent);
 
         if (resultCode == Activity.RESULT_OK) { //&& data != null
             try {
@@ -2224,6 +2264,7 @@ public class MilestoneActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        permissionHelper.finish();
         mImageCount = 0;
         mImageChanged = false;
         mImageUploadCount = 0;
@@ -2275,7 +2316,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     File mCopyFile = utils.getInternalFileImages(strTime);
                     utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                    FileModel fileModel = new FileModel(strTime, "", "IMAGE", utils.
+                    FileModel fileModel = new FileModel(strTime, "", "IMAGE", Utils.
                             convertDateToString(date), "DESC", mCopyFile.getAbsolutePath());
 
                     fileModel.setNew(true);
@@ -2322,7 +2363,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     utils.copyFile(new File(strImageName1), mCopyFile);
                     Date date = new Date();
                     //ImageModel imageModel = new ImageModel(strName1, "", strName1, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
-                    FileModel fileModel = new FileModel(strName1, "", "IMAGE", utils.
+                    FileModel fileModel = new FileModel(strName1, "", "IMAGE", Utils.
                             convertDateToString(date), "DESC", mCopyFile.getAbsolutePath());
                     fileModel.setNew(true);
                     //arrayListImageModel.add(imageModel);

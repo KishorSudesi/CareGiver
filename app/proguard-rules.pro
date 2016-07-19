@@ -105,3 +105,13 @@
    **[] $VALUES;
    public *;
  }
+
+  #sql cipher
+  -dontwarn com.ayz4sci.androidfactory.**
+  -keep class com.ayz4sci.androidfactory.** { *; }
+  -keep interface com.ayz4sci.androidfactory.** { *; }
+
+  #sql cipher
+  -dontwarn jp.wasabeef.**
+  -keep class com.jp.wasabeef.** { *; }
+  -keep interface jp.wasabeef.** { *; }

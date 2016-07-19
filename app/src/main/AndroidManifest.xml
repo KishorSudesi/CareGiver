@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.hdfc.caregiver">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,6 +16,8 @@
     <uses-permission android:name="com.hdfc.caregiver.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
+
+    <uses-sdk tools:overrideLibrary="com.ayz4sci.androidfactory.permissionhelper" />
 
     <supports-screens
         android:anyDensity="true"
@@ -123,30 +126,6 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
-        <activity
-            android:name=".UpdateUtilityBills"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
-        <activity
-            android:name=".UpdatePhoto"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
-
-        <activity
-            android:name=".UpdateEquipmentStatus"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
-        <activity
-            android:name=".UpdateDomesticHelpStatus"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
     </application>
 

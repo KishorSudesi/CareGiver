@@ -1,5 +1,6 @@
 package com.hdfc.caregiver;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -22,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
 import com.bumptech.glide.Glide;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
@@ -46,6 +48,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import pl.tajchert.nammu.PermissionCallback;
 
 public class FeatureActivity extends AppCompatActivity {
 
@@ -73,6 +76,8 @@ public class FeatureActivity extends AppCompatActivity {
     private ImageView imgLogoHeaderTaskDetail;
     private LinearLayout linearLayoutAttach;
     private Button done;
+    private PermissionHelper permissionHelper;
+    private boolean isAllowed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +90,8 @@ public class FeatureActivity extends AppCompatActivity {
         Button cancel = (Button) findViewById(R.id.buttonBack);
         TextView textViewActivityName = (TextView) findViewById(R.id.txtActivityName);
         textViewTime = (TextView) findViewById(R.id.txtActivityTime);
+
+        permissionHelper = PermissionHelper.getInstance(this);
 
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
         layout = (LinearLayout) findViewById(R.id.linear);
@@ -213,6 +220,11 @@ public class FeatureActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void goBack() {
@@ -415,6 +427,8 @@ public class FeatureActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
+        permissionHelper.onActivityResult(requestCode, resultCode, intent);
+
         if (resultCode == Activity.RESULT_OK) {
             try {
 
@@ -553,6 +567,7 @@ public class FeatureActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        permissionHelper.finish();
         IMAGE_COUNT = 0;
         mImageCount = 0;
         mImageChanged = false;
@@ -806,7 +821,26 @@ public class FeatureActivity extends AppCompatActivity {
                             strName = String.valueOf(calendar.getTimeInMillis());
                             strImageName = strName + ".jpeg";
 
-                            utils.selectFile(strImageName, null, FeatureActivity.this, false);
+                            permissionHelper.verifyPermission(
+                                    new String[]{getString(R.string.access_storage)},
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    new PermissionCallback() {
+                                        @Override
+                                        public void permissionGranted() {
+                                            //action to perform when permission granteed
+                                            isAllowed = true;
+                                        }
+
+                                        @Override
+                                        public void permissionRefused() {
+                                            //action to perform when permission refused
+                                            isAllowed = false;
+                                        }
+                                    }
+                            );
+
+                            if (isAllowed)
+                                utils.selectFile(strImageName, null, FeatureActivity.this, false);
                         } else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }

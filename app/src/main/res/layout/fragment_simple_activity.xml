@@ -16,7 +16,8 @@
       android:id="@+id/listViewEdit"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:clickable="true" />
+      android:clickable="true"
+      android:layoutAnimation="@anim/listviewanim" />
 
   <ImageButton
       android:id="@+id/fab"

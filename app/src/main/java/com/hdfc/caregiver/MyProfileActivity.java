@@ -1,5 +1,6 @@
 package com.hdfc.caregiver;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
 import com.bumptech.glide.Glide;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
@@ -42,6 +44,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import pl.tajchert.nammu.PermissionCallback;
 
 /**
  * Created by Admin on 28-01-2016.
@@ -55,6 +58,7 @@ public class MyProfileActivity extends AppCompatActivity {
     private static Handler backgroundThreadHandler;
     //private AppUtils appUtils;
     private static ProgressDialog mProgress = null;
+    private static boolean isAllowed;
     //private static boolean isImageChanged=false;
     private ImageView profileImage;
     private Utils utils;
@@ -67,12 +71,15 @@ public class MyProfileActivity extends AppCompatActivity {
     private int Flag = 0;
     private ProgressDialog progressDialog;
     private AppUtils appUtils;
+    private PermissionHelper permissionHelper;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_profile);
         // textViewName = (TextView) findViewById(R.id.textCaregiverName);
+
+        isAllowed = false;
 
         name = (EditText) findViewById(R.id.input_name);
         phone = (EditText) findViewById(R.id.input_mobile);
@@ -84,6 +91,8 @@ public class MyProfileActivity extends AppCompatActivity {
         buttonContinue = (Button) findViewById(R.id.buttonContinue);
         //ImageView pen = (ImageView) findViewById(R.id.imgPen);
         Button buttonBack = (Button) findViewById(R.id.buttonBack);
+
+        permissionHelper = PermissionHelper.getInstance(this);
 
         if (buttonBack != null) {
             buttonBack.setVisibility(View.VISIBLE);
@@ -104,12 +113,34 @@ public class MyProfileActivity extends AppCompatActivity {
         mProgress = new ProgressDialog(MyProfileActivity.this);
         //appUtils = new AppUtils(MyProfileActivity.this);
 
+
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Flag == 1) {
-                    utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                            + ".jpeg", null, MyProfileActivity.this, true);
+
+                //permissionHelper.getAllowButton()
+
+                permissionHelper.verifyPermission(
+                        new String[]{getString(R.string.access_storage)},
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        new PermissionCallback() {
+                            @Override
+                            public void permissionGranted() {
+                                //action to perform when permission granteed
+                                isAllowed = true;
+                            }
+
+                            @Override
+                            public void permissionRefused() {
+                                //action to perform when permission refused
+                                isAllowed = false;
+                            }
+                        }
+                );
+
+                if (Flag == 1 && isAllowed) {
+                    utils.selectImage(String.valueOf(new Date().getDate() + ""
+                            + new Date().getTime()) + ".jpeg", null, MyProfileActivity.this, true);
                 }
             }
         });
@@ -314,6 +345,21 @@ public class MyProfileActivity extends AppCompatActivity {
         }
     }
 
+    /*@Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }*/
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onDestroy() {
+        permissionHelper.finish();
+        super.onDestroy();
+    }
+
     private void updateProviderDoc(final boolean isBackground) {
 
         if (!isBackground) {
@@ -385,6 +431,8 @@ public class MyProfileActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
+
+        permissionHelper.onActivityResult(requestCode, resultCode, intent);
 
         if (resultCode == Activity.RESULT_OK) { //&& data != null
             try {
