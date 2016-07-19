@@ -319,7 +319,6 @@ public class LoginActivity extends AppCompatActivity {
 
                 } else Utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
             }
-        //} //
     }
 
     private void verifyLogin(String strPassword) {
@@ -340,8 +339,7 @@ public class LoginActivity extends AppCompatActivity {
                     Config.customerIdsAdded.clear();
 
                     Config.feedBackModels.clear();
-                    //Config.fileModels.clear();
-                    CareGiver.getDbCon().deleteFiles();
+                    //CareGiver.getDbCon().deleteFiles();
 
                     Config.activityModels.clear();
                     Config.customerModels.clear();
@@ -383,7 +381,7 @@ public class LoginActivity extends AppCompatActivity {
                                 getJSONObject("app42Fault");
                         String strMess = jsonObjectError.getString("details");
 
-                        utils.toast(2, 2, strMess);
+                        Utils.toast(2, 2, strMess, LoginActivity.this);
                     } else
                         Utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
                 } catch (JSONException e1) {
@@ -451,7 +449,10 @@ public class LoginActivity extends AppCompatActivity {
                                             CareGiver.getDbCon().endDBTransaction();
                                         }*/
                                         //Config.providerModel.setStrProviderId(_strProviderId);
-                                        goToDashboard();
+                                        if (iFlag == 1)
+                                            goToDashboard(true);
+                                        if (iFlag == 3)
+                                            goToDashboard(false);
                                     } else {
                                         resetPasswordApp42(strUserName);
                                     }
@@ -464,7 +465,7 @@ public class LoginActivity extends AppCompatActivity {
                                         Utils.toast(2, 2, getString(R.string.invalid_credentials),
                                                 LoginActivity.this);
                                     else if (iFlag == 3)
-                                        goToDashboard();
+                                        goToDashboard(false);
                                     else
                                         Utils.toast(2, 2, getString(R.string.error_invalid_email),
                                                 LoginActivity.this);
@@ -489,7 +490,7 @@ public class LoginActivity extends AppCompatActivity {
                                         Utils.toast(2, 2, getString(R.string.invalid_credentials),
                                                 LoginActivity.this);
                                     else if (iFlag == 3)
-                                        goToDashboard();
+                                        goToDashboard(false);
                                     else
                                         Utils.toast(2, 2, getString(R.string.error_invalid_email),
                                                 LoginActivity.this);
@@ -504,7 +505,7 @@ public class LoginActivity extends AppCompatActivity {
                     });
         } else {
             if (iFlag == 3)
-                goToDashboard();
+                goToDashboard(false);
             else {
                 Utils.toast(2, 2, getString(R.string.warning_internet),
                         LoginActivity.this);
@@ -512,12 +513,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void goToDashboard() {
+    private void goToDashboard(boolean isFirst) {
         if (progressDialog.isShowing())
             progressDialog.dismiss();
 
         Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-        intent.putExtra("LOAD", true);
+        intent.putExtra("LOAD", isFirst);
         Config.intSelectedMenu = Config.intDashboardScreen;
         startActivity(intent);
         finish();
@@ -526,7 +527,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         moveTaskToBack(true);
         if (CareGiver.getDbCon() != null) {
             CareGiver.getDbCon().close();
@@ -539,11 +539,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                //CareGiver.dbCon = DbCon.getInstance(getApplicationContext());
-
                 CareGiver.setDbCon(new DbCon(getApplicationContext()));
-
-                //exportDB();
             } catch (Exception e) {
                 e.getMessage();
             }
@@ -576,12 +572,11 @@ public class LoginActivity extends AppCompatActivity {
 
                         fetchProviders(progressDialog, sessionManager.getEmail(), 3);
                     } else {
-                        goToDashboard();
+                        progressDialog.setMessage(getString(R.string.log_in));
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+                        goToDashboard(false);
                     }
-
-                } else {
-
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();

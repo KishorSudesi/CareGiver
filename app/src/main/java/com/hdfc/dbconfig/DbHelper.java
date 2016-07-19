@@ -2,6 +2,7 @@ package com.hdfc.dbconfig;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.os.Environment;
 
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
@@ -11,26 +12,38 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.security.GeneralSecurityException;
+import java.text.SimpleDateFormat;
 
 public class DbHelper extends SQLiteOpenHelper {
 
     public static final String strTableNameCollection = "collections";
     public static final String strTableNameMilestone = "milestones";
-    public static final String strTableNameFiles = "files";
+    //public static final String strTableNameFiles = "files";
     public static final String DEFAULT_DB_DATE = "2016-01-01T06:04:57.691Z";
     public static final String COLUMN_OBJECT_ID = "object_id";
+    public static final String COLUMN_MILESTONE_DATE = "milestone_date";
+    public static final String COLUMN_MILESTONE_ID = "milestone_id";
     public static final String COLUMN_UPDATE_DATE = "updated_date";
     public static final String COLUMN_DOCUMENT = "document";
     public static final String COLUMN_COLLECTION_NAME = "collection_name";
     public static final String COLUMN_DOC_DATE = "doc_date";
     public static final String COLLECTION_FIELDS[] = {"object_id", "updated_date", "document",
             "collection_name", "status", "doc_date"};
+
+    public static final String MILESTONE_FIELDS[] = {"object_id", "milestone_id", "milestone_date"};
+    public static final String DATE_FORMAT_DB = "yyyy-MM-dd HH:mm:ss.SSS";
+    //CREATE INDEX indexname ON tablename(columnname);
+    public static final SimpleDateFormat sqlQueryFormat =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Utils.locale);
     private static final int DATABASE_VERSION = 7;
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
-    private static String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
     private static SQLiteDatabase db;
     //private Utils utils;
     private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection + " ( id integer primary key autoincrement," +
@@ -39,9 +52,9 @@ public class DbHelper extends SQLiteOpenHelper {
     private String strMilestoneQuery = "CREATE TABLE " + strTableNameMilestone + " ( id integer primary key autoincrement," +
             " object_id VARCHAR(50), milestone_id integer, milestone_date datetime)";
 
-    private String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
+    /*private String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
             " name VARCHAR(100), url VARCHAR(300), file_type VARCHAR(10),  file_hash VARCHAR(50))";
-
+*/
     private Context _ctxt;
 
     //private File originalFile = null;
@@ -98,7 +111,7 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(strCollectionsQuery);
-        db.execSQL(strFilesQuery);
+        //db.execSQL(strFilesQuery);
         db.execSQL(strMilestoneQuery);
         Utils.log("DB", "onCreate");
     }
@@ -125,7 +138,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private void dropDb(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + strTableNameCollection);
-        db.execSQL("DROP TABLE IF EXISTS " + strTableNameFiles);
+        //db.execSQL("DROP TABLE IF EXISTS " + strTableNameFiles);
         db.execSQL("DROP TABLE IF EXISTS " + strTableNameMilestone);
     }
 
@@ -310,4 +323,28 @@ public class DbHelper extends SQLiteOpenHelper {
             }
         }
     }*/
+
+    public void moveToExternal() {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            //File data = Environment.getDataDirectory();
+
+            if (sd.canWrite()) {
+                String currentDBPath = _ctxt.getDatabasePath(DATABASE_NAME).getAbsolutePath();
+                String backupDBPath = "backupname.db";
+                File currentDB = new File(currentDBPath);
+                File backupDB = new File(sd, backupDBPath);
+
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

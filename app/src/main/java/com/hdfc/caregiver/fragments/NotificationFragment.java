@@ -34,6 +34,9 @@ import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
 import net.sqlcipher.Cursor;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 
@@ -273,20 +276,39 @@ public class NotificationFragment extends Fragment {
 
     private void findActivities(final String strActivityId) {
 
-        int iPosition = Config.strActivityIdsNotifications.indexOf(strActivityId);
+        try {
 
-        ActivityModel activityModel;
+            Cursor cursor = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameCollection,
+                    new String[]{DbHelper.COLUMN_DOCUMENT},
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=? ",
+                    new String[]{Config.collectionActivity, strActivityId},
+                    DbHelper.COLUMN_UPDATE_DATE + " desc",
+                    null, true, null, null);
 
-        if(iPosition>-1) {
-            activityModel = Config.activityModelsNotifications.get(iPosition);
+            if (cursor.getCount() > 0) {
 
-            Bundle args = new Bundle();
-            //
-            Intent intent = new Intent(getActivity(), FeatureActivity.class);
-            args.putSerializable("ACTIVITY", activityModel);
-            args.putBoolean("WHICH_SCREEN", true);
-            intent.putExtras(args);
-            startActivity(intent);
+                cursor.moveToFirst();
+                JSONObject jsonObject = new JSONObject(cursor.getString(0));
+                ActivityModel activityModel = appUtils.createActivityModelNotification(jsonObject,
+                        strActivityId);
+
+
+                if (activityModel != null) {
+                    Bundle args = new Bundle();
+                    //
+                    Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                    args.putSerializable("ACTIVITY", activityModel);
+                    args.putBoolean("WHICH_SCREEN", true);
+                    intent.putExtras(args);
+                    startActivity(intent);
+                }
+            }
+
+            CareGiver.getDbCon().closeCursor(cursor);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

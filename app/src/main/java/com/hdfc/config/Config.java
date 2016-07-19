@@ -11,7 +11,6 @@ import com.hdfc.models.ClientNameModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
-import com.hdfc.models.MilestoneViewModel;
 import com.hdfc.models.NotificationModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
@@ -79,16 +78,16 @@ public class Config {
     //public static ArrayList<FileModel> fileModels = new ArrayList<>();
 
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
-    public static ArrayList<ActivityModel> activityModelsNotifications = new ArrayList<>();
+    //public static ArrayList<ActivityModel> activityModelsNotifications = new ArrayList<>();
 
-    public static ArrayList<MilestoneViewModel> milestoneModels = new ArrayList<>();
+    // static ArrayList<MilestoneViewModel> milestoneModels = new ArrayList<>();
     public static ArrayList<String> dependentIds = new ArrayList<>();
     //public static ArrayList<String> strProviderIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
     public static ArrayList<String> customerIdsCopy = new ArrayList<>();
 
     public static ArrayList<String> strActivityIds = new ArrayList<>();
-    public static ArrayList<String> strActivityIdsNotifications = new ArrayList<>();
+    //public static ArrayList<String> strActivityIdsNotifications = new ArrayList<>();
 
     public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
     public static ArrayList<String> customerIdsAdded = new ArrayList<>();

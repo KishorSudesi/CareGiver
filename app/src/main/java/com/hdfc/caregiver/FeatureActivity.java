@@ -129,10 +129,12 @@ public class FeatureActivity extends AppCompatActivity {
 
             String name = "";
 
-            if (iPosition > -1 && iPosition < Config.dependentModels.size())
+            if (iPosition > -1 && iPosition < Config.dependentModels.size()) {
                 name = Config.dependentModels.get(iPosition).getStrName();
+                strDependentUrl = Config.dependentModels.get(iPosition).getStrImageUrl();
+            }
 
-            strDependentUrl = Config.dependentModels.get(iPosition).getStrImageUrl();
+
 
             if (linearName != null) {
                 linearName.setOnClickListener(new View.OnClickListener() {
@@ -737,7 +739,7 @@ public class FeatureActivity extends AppCompatActivity {
         try {
 
             if (textViewTime != null && act.getStrActivityDate() != null) {
-                textViewTime.setText(utils.formatDate(act.getStrActivityDate()));
+                textViewTime.setText(Utils.formatDate(act.getStrActivityDate()));
             }
 
            /* File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrDependentID()));
@@ -876,7 +878,7 @@ public class FeatureActivity extends AppCompatActivity {
                     try {
                         strdateCopy = Utils.readFormat.format(calendar.getTime());
                         date = Utils.readFormat.parse(strdateCopy);
-                        milestoneDate = utils.convertStringToDate(strDate);
+                        milestoneDate = Utils.convertStringToDate(strDate);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -993,7 +995,7 @@ public class FeatureActivity extends AppCompatActivity {
                     //utils.copyFile(new File(strImageName), mCopyFile);
                     //
 
-                    ImageModel imageModel = new ImageModel(strTime, "", strTime, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                    ImageModel imageModel = new ImageModel(strTime, "", strTime, Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                     imageModel.setmIsNew(true);
 
@@ -1028,7 +1030,7 @@ public class FeatureActivity extends AppCompatActivity {
 
                     Date date = new Date();
                     ImageModel imageModel = new ImageModel(strName, "", strName,
-                            utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                            Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                     imageModel.setmIsNew(true);
                     //arrayListImageModel.add(imageModel);
 

@@ -39,11 +39,12 @@ public class DashboardActivity extends AppCompatActivity implements
         App42GCMController.App42GCMListener, NetworkStateReceiver.NetworkStateReceiverListener {
 
 
+    public static boolean isLoaded;
     private static RelativeLayout loadingPanel;
     //private Utils utils;
     private static AppCompatActivity appCompatActivity;
     //private static Handler threadHandler;
-    private AppUtils appUtils;
+    private static AppUtils appUtils;
     private LinearLayout net_error_layout;
     private NetworkStateReceiver networkStateReceiver;
     private ImageView mytask, clients, feedback, notification;
@@ -56,6 +57,8 @@ public class DashboardActivity extends AppCompatActivity implements
 
             if (message != null && !message.equalsIgnoreCase("")) {
                 AppUtils.loadNotifications(DashboardActivity.this);
+                AppUtils.fetchActivitiesSync(DashboardActivity.this);
+                appUtils.fetchClients(2, appCompatActivity);
 
                 if (Config.intSelectedMenu != Config.intNotificationScreen)
                     showPushDialog(message);
@@ -64,9 +67,21 @@ public class DashboardActivity extends AppCompatActivity implements
     };
 
     public static void gotoSimpleActivityMenu() {
+
+        appUtils.createCustomerModel();
+
+        loadingPanel.setVisibility(View.GONE);
+
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
+
+            String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
+            String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+
+            appUtils.createActivityModel(strStartDate, strEndDate);
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
+
+            //CareGiver.getDbCon().getDb();
         }
     }
 
@@ -74,17 +89,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
         if (Utils.isConnectingToInternet(appCompatActivity)) {
 
-            Config.dependentIds.clear();
-            Config.customerIds.clear();
-            Config.clientModels.clear();
-
-            Config.clientNameModels.clear();
-
-            Config.strDependentNames.clear();
-            Config.strCustomerNames.clear();
-            Config.customerIdsCopy.clear();
-
-            AppUtils appUtils = new AppUtils(appCompatActivity);
+            // AppUtils appUtils = new AppUtils(appCompatActivity);
             appUtils.fetchClients(2, appCompatActivity);
 
         } else {
@@ -97,6 +102,14 @@ public class DashboardActivity extends AppCompatActivity implements
     private static void reloadActivities() {
 
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
+
+            /*ActivityFragment.activityModels = Config.activityModels;
+            ActivityFragment.mAdapter.notifyDataSetChanged();*/
+
+            String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
+            String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+
+            appUtils.createActivityModel(strStartDate, strEndDate);
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
         }
@@ -124,9 +137,9 @@ public class DashboardActivity extends AppCompatActivity implements
         builder.show();
     }
 
-    private void gotoSimpleActivity() {
+    private void gotoSimpleActivity(boolean isLoad) {
         goToDashboard();
-        refreshDashboardData();
+        refreshDashboardData(isLoad);
     }
 
     private void goToDashboard() {
@@ -148,6 +161,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
         try {
             appUtils = new AppUtils(DashboardActivity.this);
+            appCompatActivity = DashboardActivity.this;
             //utils = new Utils();
 
             mytask = (ImageView) findViewById(R.id.buttonMyTasks);
@@ -247,14 +261,11 @@ public class DashboardActivity extends AppCompatActivity implements
 
             appUtils.createProviderModel(sessionManager.getProviderId());
 
-
             if (Config.providerModel != null)
                 App42API.setLoggedInUser(Config.providerModel.getStrEmail());
 
             //App42Log.setDebug(true);
 
-
-            appCompatActivity = DashboardActivity.this;
 
             Bundle bundle = getIntent().getExtras();
 
@@ -271,23 +282,23 @@ public class DashboardActivity extends AppCompatActivity implements
 
             if (b) {
 
+                AppUtils.fetchActivitiesSync(DashboardActivity.this);
+                //refreshClientsData();
+
+                mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task));
+                textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
                 if (Config.intSelectedMenu == Config.intDashboardScreen) {
                     loadingPanel.setVisibility(View.VISIBLE);
-
-                    mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task));
-                    textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-
-                    gotoSimpleActivity();
+                    gotoSimpleActivity(true);
                 }
             } else {
+                //appUtils.createCustomerModel();
                 if (Config.intSelectedMenu == Config.intDashboardScreen) {
-
-                    mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task));
-                    textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-
-                    goToDashboard();
+                    gotoSimpleActivity(false);
                 }
             }
+            appUtils.createCustomerModel();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -335,7 +346,8 @@ public class DashboardActivity extends AppCompatActivity implements
         textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         Config.intSelectedMenu = Config.intDashboardScreen;
         //todo check and remove
-        gotoSimpleActivity();
+        //gotoSimpleActivity();
+        goToDashboard();
     }
 
     private void menuClients() {
@@ -363,7 +375,7 @@ public class DashboardActivity extends AppCompatActivity implements
         App42GCMController.storeRegistrationId(this, gcmRegId);
         if (!App42GCMController.isApp42Registerd(DashboardActivity.this)) {
             App42GCMController.registerOnApp42(App42API.getLoggedInUser(), gcmRegId, this);
-            Utils.log(gcmRegId, " GCM ");
+            //Utils.log(gcmRegId, " GCM ");
         }
     }
 
@@ -385,6 +397,7 @@ public class DashboardActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
         try {
+            isLoaded = false;
             unregisterReceiver(mBroadcastReceiver);
             if (networkStateReceiver != null)
                 unregisterReceiver(networkStateReceiver);
@@ -400,9 +413,11 @@ public class DashboardActivity extends AppCompatActivity implements
             String strMess = intent.getStringExtra(App42GCMService.ExtraMessage);
 
             AppUtils.loadNotifications(DashboardActivity.this);
-
+            AppUtils.fetchActivitiesSync(DashboardActivity.this);
+            appUtils.fetchClients(2, appCompatActivity);
             //if(Config.intSelectedMenu!=Config.intNotificationScreen)
             showPushDialog(strMess);
+
         }
     }
 
@@ -413,6 +428,8 @@ public class DashboardActivity extends AppCompatActivity implements
         if (Config.providerModel == null || Config.providerModel.getStrName() == null) {
             AppUtils.logout(DashboardActivity.this);
         } else {
+
+            isLoaded = true;
 
             try {
                 IntentFilter filter = new IntentFilter(
@@ -455,60 +472,50 @@ public class DashboardActivity extends AppCompatActivity implements
         }*/
     }
 
-    private void refreshDashboardData() {
+    private void refreshDashboardData(boolean isLoad) {
 
-        if (Utils.isConnectingToInternet(appCompatActivity)) {
+        Calendar calendar = Calendar.getInstance();
+
+        Date date = calendar.getTime();
+
+        String strDate = Utils.writeFormatDateDB.format(date);
+
+        DashboardFragment.strEndDate = Utils.convertDateToStringQuery(Utils.
+                convertStringToDateQuery(strDate + "T23:59:59.999"));
+        DashboardFragment.strStartDate = Utils.convertDateToStringQuery(Utils.
+                convertStringToDateQuery(strDate + "T00:00:00.000"));
+
+
+        DashboardFragment.strDate = Utils.writeFormatDate.format(date);
+        DashboardFragment._strDate = Utils.writeFormatDateDB.format(date);
+
+        Config.intSelectedMenu = Config.intDashboardScreen;
+
+
+        if (isLoad && Utils.isConnectingToInternet(appCompatActivity)) {
 
             loadingPanel.setVisibility(View.VISIBLE);
 
-            Config.dependentIds.clear();
-            Config.strActivityIds.clear();
+          /*  Config.dependentIds.clear();
             Config.customerIds.clear();
-
             Config.dependentIdsAdded.clear();
             Config.customerIdsAdded.clear();
-
-            Config.activityModels.clear();
             Config.dependentModels.clear();
-            Config.customerModels.clear();
+            Config.customerModels.clear();*/
 
+            //Config.milestoneModels.clear();
             //Config.clientModels.clear();
+            // Config.feedBackModels.clear();
+            //Config.activityModels.clear();
+            //Config.strActivityIds.clear();
 
-            Config.feedBackModels.clear();
-            Config.milestoneModels.clear();
-
-            Calendar calendar = Calendar.getInstance();
-
-          /*  int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH); // Note: zero based!
-            int day = calendar.get(Calendar.DAY_OF_MONTH);*/
-
-            Date date = calendar.getTime();
-
-          /*  Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            cal.add(Calendar.DAY_OF_MONTH, -1);
-            Date prevDate = cal.getTime();*/
-
-            String strDate = Utils.writeFormatDateDB.format(date);
-
-            DashboardFragment.strEndDate = Utils.convertDateToStringQuery(Utils.
-                    convertStringToDateQuery(strDate + "T23:59:59.999"));
-            DashboardFragment.strStartDate = Utils.convertDateToStringQuery(Utils.
-                    convertStringToDateQuery(strDate + "T00:00:00.000"));
-
-
-            DashboardFragment.strDate = Utils.writeFormatDate.format(date);
-            DashboardFragment._strDate = Utils.writeFormatDateDB.format(date);
-
-            Config.intSelectedMenu = Config.intDashboardScreen;
 
             if (Config.providerModel != null)
                 appUtils.fetchActivities();
 
         } else {
             reloadActivities();
-            Utils.toast(2, 2, getString(R.string.warning_internet), DashboardActivity.this);
+            //Utils.toast(2, 2, getString(R.string.warning_internet), DashboardActivity.this);
         }
     }
 
@@ -530,11 +537,39 @@ public class DashboardActivity extends AppCompatActivity implements
     @Override
     public void networkAvailable() {
         net_error_layout.setVisibility(View.GONE);
+        //AppUtils.fetchActivitiesSync(DashboardActivity.this);
+        //refreshClientsData();
     }
 
     @Override
     public void networkUnavailable() {
         net_error_layout.setVisibility(View.VISIBLE);
         loadingPanel.setVisibility(View.GONE);
+
+        net_error_layout.postDelayed(
+                new Runnable() {
+                    public void run() {
+                        net_error_layout.setVisibility(View.GONE);
+                    }
+                }, 3000);
+
+     /*   Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        net_error_layout.setVisibility(View.GONE);
+                    }
+                });
+            }
+        };
+        thread.start(); //start the thread*/
     }
 }

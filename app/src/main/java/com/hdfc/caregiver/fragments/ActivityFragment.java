@@ -87,12 +87,11 @@ public class ActivityFragment extends Fragment
 
                 ActivityModel activityModel = activityModels.get(position);
 
-                int iDisplayFlag = activityModel.getiActivityDisplayFlag();
+                boolean isActivity = activityModel.getiActivityDisplayFlag();
 
-                if (iDisplayFlag == 1 || iDisplayFlag == 0)
+                if (isActivity)
                     cvh.textViewWhat.setText(context.getString(R.string.activity));
-
-                if (iDisplayFlag == 2)
+                else
                     cvh.textViewWhat.setText(context.getString(R.string.task));
 
                /* if (iDisplayFlag == 3)

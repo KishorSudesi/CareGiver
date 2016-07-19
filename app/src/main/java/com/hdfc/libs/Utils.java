@@ -73,10 +73,12 @@ import java.util.regex.Pattern;
  */
 public class Utils {
 
-    private static final Locale locale = Locale.ENGLISH;
+    public static final Locale locale = Locale.ENGLISH;
 
     public final static SimpleDateFormat readFormat =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale);
+    public final static SimpleDateFormat readFormatLocal =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", locale);
     public final static SimpleDateFormat writeFormat = new
             SimpleDateFormat("kk:mm dd MMM yyyy", locale);
     public final static SimpleDateFormat writeFormatDate = new
@@ -123,6 +125,7 @@ public class Utils {
         Config.intScreenHeight = metrics.heightPixels;
 
         readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        readFormatLocal.setTimeZone(TimeZone.getTimeZone("UTC"));
         queryFormat.setTimeZone(TimeZone.getDefault());
     }
 
@@ -634,10 +637,10 @@ public class Utils {
 
     public static void toast(int type, int duration, String message, Context context) {
 
-        String strColor = "#ffffff";
+        String strColor = "#fcc485";
 
         if (type == 2)
-            strColor = "#fcc485";
+            strColor = "#FF0000";
 
         try {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
@@ -700,6 +703,20 @@ public class Utils {
 
         try {
             date = readFormat.format(dtDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
+        return date; //
+    }
+
+    public static String convertDateToStringQueryLocal(Date dtDate) {
+
+        String date = null;
+
+        try {
+            date = readFormatLocal.format(dtDate);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -874,10 +891,10 @@ public class Utils {
 
     public void toast(int type, int duration, String message) {
 
-        String strColor = "#FF0000";
+        String strColor = "#fcc485";
 
         if (type == 2)
-            strColor = "#fcc485";
+            strColor = "#FF0000";
 
         try {
             LayoutInflater inflater = ((Activity) _ctxt).getLayoutInflater();

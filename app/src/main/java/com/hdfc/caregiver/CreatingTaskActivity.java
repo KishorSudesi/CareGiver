@@ -18,8 +18,9 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
-import com.hdfc.caregiver.fragments.DashboardFragment;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
@@ -598,19 +599,23 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             if (response != null) {
 
                                 if (response.getJsonDocList().size() > 0) {
-                                    String strInsertedDocumentId = response.getJsonDocList().get(0).getDocId();
+                                    //String strInsertedDocumentId = response.getJsonDocList().get(0).getDocId();
                                     //   iUpdateFlag = iActivityCreated;
                                     //fetchService(serviceModel, dependentModel);
-
-                                    //
-                                    Date startDate = null, endDate = null;
-                                    String strStartDateCopy, strEndDateCopy;
                                     String strDateNow = "";
+
+                                    Calendar calendar = Calendar.getInstance();
+                                    Date dateNow = calendar.getTime();
+
+                                    strDateNow = Utils.convertDateToString(dateNow);
+                                    //
+                                   /* Date startDate = null, endDate = null;
+                                    String strStartDateCopy, strEndDateCopy;
+
                                     Date activityDate = null;
 
                                     try {
-                                        Calendar calendar = Calendar.getInstance();
-                                        Date dateNow = calendar.getTime();
+
 
                                         String strDate;
 
@@ -631,20 +636,33 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                         Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED ");
 
-                                        if (activityDate.before(endDate) && activityDate.after(startDate)) {
-                                            appUtils.createActivityModel(
-                                                    response.getJsonDocList().get(0).getDocId(),
-                                                    response.getJsonDocList().get(0).getJsonDoc(),
-                                                    1
-                                            );
-                                        }
+                                        if (activityDate.before(endDate) && activityDate.after(startDate)) {*/
+
+                                    String values[] = {response.getJsonDocList().get(0).getDocId(),
+                                            "",
+                                            response.getJsonDocList().get(0).getJsonDoc(),
+                                            Config.collectionActivity, "0", ""};
+
+                                    String selection = DbHelper.COLUMN_OBJECT_ID + " = ?";
+
+                                    // WHERE clause arguments
+                                    String[] selectionArgs = {response.getJsonDocList().get(0).getDocId()};
+                                    CareGiver.getDbCon().updateInsert(DbHelper.strTableNameCollection,
+                                            selection, values, DbHelper.COLLECTION_FIELDS,
+                                            selectionArgs);
+
+                                    AppUtils.insertActivityDate(
+                                            response.getJsonDocList().get(0).getDocId(),
+                                            response.getJsonDocList().get(0).getJsonDoc());
+                                       /* }
 
                                     } catch (Exception e) {
                                         e.printStackTrace();
-                                    }
+                                    }*/
 
                                     //
-                                    strPushMessage = Config.providerModel.getStrName() + getString(R.string.has_created) +
+                                    strPushMessage = Config.providerModel.getStrName() +
+                                            getString(R.string.has_created) +
                                             serviceModel.getStrServiceName() + getString(R.string.to) +
                                             dependentModel.getStrName() +
                                             getString(R.string.on) + strDate;
@@ -653,11 +671,14 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                     try {
 
-                                        jsonObject.put("created_by", Config.providerModel.getStrProviderId());
+                                        jsonObject.put("created_by", Config.providerModel.
+                                                getStrProviderId());
                                         jsonObject.put("time", strDateNow);
                                         jsonObject.put("user_type", "dependent");
-                                        jsonObject.put("user_id", dependentModel.getStrDependentID());
-                                        jsonObject.put("activity_id", strInsertedDocumentId);//todo add to care taker
+                                        jsonObject.put("user_id", dependentModel.
+                                                getStrDependentID());
+                                        jsonObject.put("activity_id", response.getJsonDocList().
+                                                get(0).getDocId());
                                         jsonObject.put("created_by_type", "provider");
                                         jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
 

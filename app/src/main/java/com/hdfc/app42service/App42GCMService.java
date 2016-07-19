@@ -110,6 +110,10 @@ public class App42GCMService extends IntentService {
                             values,
                             DbHelper.COLLECTION_FIELDS);*/
 
+                    /*AppUtils appUtils = new AppUtils(this);
+
+                    appUtils.fetchActivitiesSync(this);
+*/
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

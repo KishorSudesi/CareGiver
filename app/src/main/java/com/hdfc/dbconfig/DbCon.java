@@ -2,8 +2,6 @@ package com.hdfc.dbconfig;
 
 import android.content.Context;
 
-import com.hdfc.config.Config;
-
 import net.sqlcipher.Cursor;
 
 public class DbCon {
@@ -82,8 +80,12 @@ public class DbCon {
         return dbHelper.rawQuery(query);
     }
 
+    public void getDb() {
+        dbHelper.moveToExternal();
+    }
+
     //app specific functions
-    public void deleteFiles() {
+  /*  public void deleteFiles() {
         delete(DbHelper.strTableNameFiles, null, null);
     }
 
@@ -91,7 +93,7 @@ public class DbCon {
         delete(DbHelper.strTableNameCollection,
                 DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
                 new String[]{Config.collectionNotification, ""});
-    }
+    }*/
 
     public Cursor getMaxDate(String strCollectionName) {
 

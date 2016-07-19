@@ -18,6 +18,7 @@ import com.hdfc.adapters.RatingsAdapter;
 import com.hdfc.caregiver.MyProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AppUtils;
 
 import java.io.File;
 
@@ -61,6 +62,7 @@ public class RatingsFragment extends Fragment {
         TextView textViewName = (TextView) view.findViewById(R.id.name);
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
         Button logout = (Button) view.findViewById(R.id.buttonlogout);
+        AppUtils appUtils = new AppUtils(getActivity());
 
         //  layout = (LinearLayout) view.findViewById(R.id.linearLayoutRatings);
         RatingBar ratingBar = (RatingBar) view.findViewById(R.id.ratingBar);
@@ -72,6 +74,8 @@ public class RatingsFragment extends Fragment {
 
         if (Config.providerModel.getStrName() != null)
             textViewName.setText(Config.providerModel.getStrName());
+
+        appUtils.createFeedbackyModel();
 
        /* backgroundThreadHandler = new BackgroundThreadHandler();
         BackgroundThread backgroundThread = new BackgroundThread();

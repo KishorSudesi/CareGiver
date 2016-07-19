@@ -31,7 +31,6 @@ public class DashboardFragment extends Fragment {
     public static String strStartDate, strEndDate;
     //private Button buttonActivity, buttonTask;
     private TextView textView;
-    private Utils utils;
     private AppUtils appUtils;
     private RelativeLayout loadingPanel;
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
@@ -53,46 +52,34 @@ public class DashboardFragment extends Fragment {
 
             textView.setText(Utils.writeFormatDate.format(date));
 
-            if (utils.isConnectingToInternet()) {
+            loadingPanel.setVisibility(View.VISIBLE);
 
-                loadingPanel.setVisibility(View.VISIBLE);
+            Config.dependentIds.clear();
+            Config.customerIds.clear();
 
-                Config.dependentIds.clear();
-                Config.strActivityIds.clear();
-                Config.customerIds.clear();
+            Config.dependentIdsAdded.clear();
+            Config.customerIdsAdded.clear();
 
-                Config.dependentIdsAdded.clear();
-                Config.customerIdsAdded.clear();
 
-                Config.activityModels.clear();
-                Config.dependentModels.clear();
-                Config.customerModels.clear();
+            Config.dependentModels.clear();
+            Config.customerModels.clear();
 
-                //Config.clientModels.clear();
+            //Config.clientModels.clear();
 
-                Config.feedBackModels.clear();
-                Config.milestoneModels.clear();
+            Config.feedBackModels.clear();
 
-                // Calendar calendar = Calendar.getInstance();
+            strDate = Utils.writeFormatDate.format(date);
 
-          /*  int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH); // Note: zero based!
-            int day = calendar.get(Calendar.DAY_OF_MONTH);*/
+            Config.intSelectedMenu = Config.intDashboardScreen;
 
-                //Date date = calendar.getTime();
-/*
-                strEndDate = strDate + "T23:59:59.999Z";
-                strStartDate = strDate + "T00:00:00.000Z";*/
+            String strStartDate = _strDate + " 00:00:00.000";
+            String strEndDate = _strDate + " 24:00:00.000";
 
-                strDate = Utils.writeFormatDate.format(date);
+            appUtils.createActivityModel(strStartDate, strEndDate);
+            ActivityFragment.activityModels = Config.activityModels;
+            ActivityFragment.mAdapter.notifyDataSetChanged();
 
-                Config.intSelectedMenu = Config.intDashboardScreen;
-
-                appUtils.fetchActivities();
-
-            } else {
-                utils.toast(2, 2, getString(R.string.warning_internet));
-            }
+            loadingPanel.setVisibility(View.GONE);
 
             //
         }
@@ -121,26 +108,9 @@ public class DashboardFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         loadingPanel = (RelativeLayout) getActivity().findViewById(R.id.loadingPanel);
-/*
-        buttonActivity = (Button) view.findViewById(R.id.buttonActivity);
-        buttonTask = (Button) view.findViewById(R.id.buttonTask);*/
 
         appUtils = new AppUtils(getActivity());
-        utils = new Utils(getActivity());
-
-      /*  buttonActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonClicked(0);
-            }
-        });
-
-        buttonTask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonClicked(1);
-            }
-        });*/
+        //Utils utils = new Utils(getActivity());
 
         LinearLayout layoutDate = (LinearLayout)view.findViewById(R.id.linearDate);
 
@@ -158,13 +128,6 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-/*
-        ActivityFragment fragment = ActivityFragment.newInstance();
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frameLayoutDashboard, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();*/
-
         buttonClicked(0);
 
         return view;
@@ -174,15 +137,7 @@ public class DashboardFragment extends Fragment {
 
         try {
 
-          /*  buttonActivity.setBackgroundResource(R.drawable.button_back_trans);
-            buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorAccentDark));*/
-
-           /* buttonTask.setBackgroundResource(R.drawable.button_back_trans);
-            buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorAccentDark));*/
-
             if (iPosition == 0) {
-               /* buttonActivity.setBackgroundResource(R.drawable.one_side_border);
-                buttonActivity.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));*/
 
                 ActivityFragment fragment = ActivityFragment.newInstance();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().
@@ -194,24 +149,6 @@ public class DashboardFragment extends Fragment {
                 ActivityFragment.activityModels = Config.activityModels;
                 ActivityFragment.mAdapter.notifyDataSetChanged();
             }
-
-           /* if (iPosition == 1) {
-                *//*buttonTask.setBackgroundResource(R.drawable.one_side_border);
-                buttonTask.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));*//*
-
-                MileStoneFragment fragment = MileStoneFragment.newInstance();
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frameLayoutDashboard, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-
-
-                MileStoneFragment.milestoneModels = Config.milestoneModels;
-                MileStoneFragment.mAdapter.notifyDataSetChanged();
-
-                *//*DashboardActivity.loadingPanel.setVisibility(View.VISIBLE);
-                appUtils.fetchMileStone(DashboardActivity.loadingPanel);*//*
-            }*/
 
         } catch (Exception e) {
             e.printStackTrace();

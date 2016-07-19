@@ -34,7 +34,7 @@ public class ActivityModel implements Serializable {
     private String strActivityProviderStatus;
 
     private boolean bActivityOverdue;
-    private int iActivityDisplayFlag;
+    private boolean iActivityDisplayFlag;
 
     private ArrayList<ImageModel> imageModels = new ArrayList<>();
     private ArrayList<VideoModel> videoModels = new ArrayList<>();
@@ -79,11 +79,11 @@ public class ActivityModel implements Serializable {
         this.strCreatedBy = strCreatedBy;
     }
 
-    public int getiActivityDisplayFlag() {
+    public boolean getiActivityDisplayFlag() {
         return iActivityDisplayFlag;
     }
 
-    public void setiActivityDisplayFlag(int iActivityDisplayFlag) {
+    public void setiActivityDisplayFlag(boolean iActivityDisplayFlag) {
         this.iActivityDisplayFlag = iActivityDisplayFlag;
     }
 
