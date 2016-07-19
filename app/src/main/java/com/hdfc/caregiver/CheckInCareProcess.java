@@ -104,12 +104,13 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             washroomImageUploadCount, bedroomImageUploadCount;
     private boolean success;
     private MultiBitmapLoader multiBitmapLoader;
-    private LinearLayout layouthall, layoutkitchen, layoutwashroom, layoutbedroom;
+    private LinearLayout layouthall, layoutkitchen, layoutwashroom, layoutbedroom, mainlinearlayout;
     private CheckBox electrocheck, homecheck, autocheck, kitchenequipcheck, grocerycheck, domesticcheck;
     private String valkitchen, valgrocery, valelectronic, valhomeapplience, valautomobile, valmaidservices, valmediacomment, valcheckincarename;
     private View focusView = null;
     private ProgressDialog mProgressDialog;
     private String items[];
+
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
@@ -182,6 +183,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_in_care);
+
+        mainlinearlayout = (LinearLayout) findViewById(R.id.mainlinearlayout);
 
         items = new String[4];
 
@@ -491,7 +494,6 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     automobile.setError(null);
                     maidservices.setError(null);
                     mediacomment.setError(null);
-                    checkincarename.setError(null);
 
 
                     valkitchen = kitchen_equipments.getText().toString().trim();
@@ -501,53 +503,50 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     valautomobile = automobile.getText().toString().trim();
                     valmaidservices = maidservices.getText().toString().trim();
                     valmediacomment = mediacomment.getText().toString().trim();
-                    valcheckincarename = checkincarename.getText().toString().trim();
 
-                    if (TextUtils.isEmpty(valcheckincarename)) {
-                        checkincarename.setError(getString(R.string.error_field_required));
-                        focusView = checkincarename;
-                        cancel = true;
+                    if (kitchenequipcheck.isChecked() == false) {
+                        if (TextUtils.isEmpty(valkitchen)) {
+                            kitchen_equipments.setError(getString(R.string.error_field_required));
+                            focusView = kitchen_equipments;
+                            cancel = true;
+                        }
                     }
-
-                    if (TextUtils.isEmpty(valkitchen)) {
-                        kitchen_equipments.setError(getString(R.string.error_field_required));
-                        focusView = kitchen_equipments;
-                        cancel = true;
+                    if (grocerycheck.isChecked() == false) {
+                        if (TextUtils.isEmpty(valgrocery)) {
+                            grocery.setError(getString(R.string.error_field_required));
+                            focusView = grocery;
+                            cancel = true;
+                        }
                     }
-
-                    if (TextUtils.isEmpty(valgrocery)) {
-                        grocery.setError(getString(R.string.error_field_required));
-                        focusView = grocery;
-                        cancel = true;
+                    if (electrocheck.isChecked() == false) {
+                        if (TextUtils.isEmpty(valelectronic)) {
+                            electronic.setError(getString(R.string.error_field_required));
+                            focusView = electronic;
+                            cancel = true;
+                        }
                     }
-                    if (TextUtils.isEmpty(valelectronic)) {
-                        electronic.setError(getString(R.string.error_field_required));
-                        focusView = electronic;
-                        cancel = true;
+                    if (homecheck.isChecked() == false) {
+                        if (TextUtils.isEmpty(valhomeapplience)) {
+                            homeapplience.setError(getString(R.string.error_field_required));
+                            focusView = homeapplience;
+                            cancel = true;
+                        }
                     }
-                    if (TextUtils.isEmpty(valhomeapplience)) {
-                        homeapplience.setError(getString(R.string.error_field_required));
-                        focusView = homeapplience;
-                        cancel = true;
+                    if (autocheck.isChecked() == false) {
+                        if (TextUtils.isEmpty(valautomobile)) {
+                            automobile.setError(getString(R.string.error_field_required));
+                            focusView = automobile;
+                            cancel = true;
+                        }
                     }
-                    if (TextUtils.isEmpty(valautomobile)) {
-                        automobile.setError(getString(R.string.error_field_required));
-                        focusView = automobile;
-                        cancel = true;
+                    if (domesticcheck.isChecked() == false) {
+                        if (TextUtils.isEmpty(valmaidservices)) {
+                            maidservices.setError(getString(R.string.error_field_required));
+                            focusView = maidservices;
+                            cancel = true;
+                        }
                     }
-                    if (TextUtils.isEmpty(valmaidservices)) {
-                        maidservices.setError(getString(R.string.error_field_required));
-                        focusView = maidservices;
-                        cancel = true;
-                    }
-                    if (kitchenequipcheck.isChecked() == false
-                            || grocerycheck.isChecked() == false
-                            || electrocheck.isChecked() == false
-                            || homecheck.isChecked() == false
-                            || domesticcheck.isChecked() == false) {
-                        utils.toast(2, 2, getString(R.string.select_checkbox));
-                    }
-                   /* if (hallimageModels.size() <= 0
+                    /* if (hallimageModels.size() <= 0
                             || kitchenimageModels.size() <= 0
                             || washroomimageModels.size() <= 0
                             || bedroomimageModels.size() <= 0) {
@@ -605,7 +604,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         int id = v.getId();
         switch (id) {
             case R.id.pick_date:
-                if (items[0].equals("Y")) {
+                if (items[0].equals("N")) {
 
                     isClicked = 0;
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
@@ -617,7 +616,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 break;
 
             case R.id.pick_date2:
-                if (items[1].equals("Y")) {
+                if (items[1].equals("N")) {
                     isClicked = 1;
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
                             .setListener(listener)
@@ -628,7 +627,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 break;
 
             case R.id.pick_date3:
-                if (items[2].equals("Y")) {
+                if (items[2].equals("N")) {
                     isClicked = 2;
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
                             .setListener(listener)
@@ -640,7 +639,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
 
             case R.id.pick_date4:
-                if (items[3].equals("Y")) {
+                if (items[3].equals("N")) {
                     isClicked = 3;
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
                             .setListener(listener)
@@ -1257,6 +1256,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                 jsonObjectCheckinCare.put("created_date", strCreateDate);
                 jsonObjectCheckinCare.put("dependent_id", "");
+                jsonObjectCheckinCare.put("provider_id", Config.providerModel.getStrProviderId());
                 jsonObjectCheckinCare.put("updated_date", "");
                 jsonObjectCheckinCare.put("current_date", datetxt.getText().toString());
                 jsonObjectCheckinCare.put("status", "New");
@@ -2386,7 +2386,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 items[0] = item;
 
                 if (item.equals("Y")) {
-                    utils.toast(2, 2, getString(R.string.select_date));
+                    //  utils.toast(2, 2, getString(R.string.select_date));
                     waterstatus.setText("Yes");
                     if (grocerystatus.getText().toString().equals("Done")
                             && kitchenequipmentstatus.getText().toString().equals("Done")
@@ -2427,7 +2427,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 items[1] = item;
 
                 if (item.equals("Y")) {
-                    utils.toast(2, 2, getString(R.string.select_date));
+                    //   utils.toast(2, 2, getString(R.string.select_date));
 
                     gasstatus.setText("Yes");
                     if (grocerystatus.getText().toString().equals("Done")
@@ -2468,7 +2468,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 items[2] = item;
 
                 if (item.equals("Y")) {
-                    utils.toast(2, 2, getString(R.string.select_date));
+                    //  utils.toast(2, 2, getString(R.string.select_date));
 
                     electricitystatus.setText("Yes");
                     if (grocerystatus.getText().toString().equals("Done")
@@ -2510,7 +2510,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 items[3] = item;
 
                 if (item.equals("Y")) {
-                    utils.toast(2, 2, getString(R.string.select_date));
+                    //   utils.toast(2, 2, getString(R.string.select_date));
 
                     telephonestatus.setText("Yes");
                     if (grocerystatus.getText().toString().equals("Done")
@@ -2583,6 +2583,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 1;
+                        mainlinearlayout.requestFocus();
                         if (IMAGE_COUNT < 20) {
 
                             utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
@@ -2598,6 +2599,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 2;
+                        mainlinearlayout.requestFocus();
                         if (IMAGE_COUNT < 20) {
 
                             utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
@@ -2613,6 +2615,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 3;
+                        mainlinearlayout.requestFocus();
                         if (IMAGE_COUNT < 20) {
 
                             utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
@@ -2628,6 +2631,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 4;
+                        mainlinearlayout.requestFocus();
                         if (IMAGE_COUNT < 20) {
 
                             utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())

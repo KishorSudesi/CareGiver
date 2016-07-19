@@ -12,6 +12,7 @@ import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.FeedBackModel;
 import com.hdfc.models.NotificationModel;
+import com.hdfc.models.PictureModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
 
@@ -105,7 +106,8 @@ public class Config {
     public static ArrayList<String> strNotificationIds = new ArrayList<>();
 
     public static ArrayList<CheckInCareModel> checkInCareModels = new ArrayList<>();
-
+    public static ArrayList<CheckInCareModel> checkInCareActivityNames = new ArrayList<>();
+    public static ArrayList<PictureModel> roomtypeName = new ArrayList<>();
 
     public static ArrayList<ClientNameModel> clientNameModels = new ArrayList<>();
     public static Map<String, List<String>> serviceNameModels = new HashMap<>();

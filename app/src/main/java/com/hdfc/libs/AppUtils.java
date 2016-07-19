@@ -15,6 +15,8 @@ import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.models.ActivityModel;
+import com.hdfc.models.CheckInCareActivityModel;
+import com.hdfc.models.CheckInCareModel;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.ClientNameModel;
 import com.hdfc.models.CustomerModel;
@@ -25,8 +27,10 @@ import com.hdfc.models.FileModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.models.NotificationModel;
+import com.hdfc.models.PictureModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
+import com.hdfc.models.SubActivityModel;
 import com.hdfc.models.VideoModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
@@ -2305,6 +2309,103 @@ public class AppUtils {
         return activityModel;
     }
     //////////////////////////
+
+    public void createCheckInCareModel(String strActivityId, String strDocument) {
+
+
+        try {
+            JSONObject jsonObjectCheck = new JSONObject(strDocument);
+
+
+            CheckInCareModel checkInCareModel = new CheckInCareModel();
+            //
+            checkInCareModel.setStrName(jsonObjectCheck.optString("check_in_care_name"));
+            JSONArray subMainactivities = jsonObjectCheck.optJSONArray("activities");
+            JSONArray picture = jsonObjectCheck.optJSONArray("picture");
+
+            try {
+                if (picture != null && picture.length() > 0) {
+
+                    for (int m = 0; m < picture.length(); m++) {
+                        JSONObject jsonObject = picture.getJSONObject(m);
+
+
+                        if (jsonObject != null && jsonObject.length() > 0) {
+
+                            PictureModel pictureModel = new PictureModel();
+
+                            pictureModel.setStrStatus(jsonObject.getString("status"));
+                            pictureModel.setStrRoomName(jsonObject.getString("room_name"));
+                            ArrayList<ImageModel> imageModels = new ArrayList<>();
+
+                            JSONArray imageDetails = jsonObject.optJSONArray("pictures_details");
+                            for (int k = 0; k < imageDetails.length(); k++) {
+                                JSONObject jsonObjectImage = imageDetails.getJSONObject(k);
+
+                                ImageModel imageModel = new ImageModel(jsonObjectImage.optString("image_url"),
+                                        jsonObjectImage.optString("description"), jsonObjectImage.optString("date_time"));
+                                imageModels.add(imageModel);
+                            }
+
+                            pictureModel.setImageModels(imageModels);
+
+                            checkInCareModel.setPictureModel(pictureModel);
+
+                            Config.roomtypeName.add(pictureModel);
+
+
+                        }
+
+                    }
+
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            ArrayList<CheckInCareActivityModel> checkInCareActivityModels = new ArrayList<CheckInCareActivityModel>();
+
+            try {
+                if (subMainactivities != null && subMainactivities.length() > 0) {
+                    for (int i = 0; i < subMainactivities.length(); i++) {
+
+
+                        JSONObject jsonObjectsubactivitites = subMainactivities.getJSONObject(i);
+                        jsonObjectsubactivitites.optString("activity_name");
+                        if (jsonObjectsubactivitites != null && jsonObjectsubactivitites.length() > 0) {
+                            ArrayList<SubActivityModel> subActivityModels = new ArrayList<SubActivityModel>();
+
+                            JSONArray subactivities = jsonObjectsubactivitites.optJSONArray("sub_activities");
+                            for (int j = 0; j < subactivities.length(); j++) {
+                                JSONObject jsonObjectsubactivity = subactivities.getJSONObject(j);
+
+                                SubActivityModel subActivityModel = new SubActivityModel(jsonObjectsubactivity.optString("status"),
+                                        jsonObjectsubactivity.optString("sub_activity_name"), jsonObjectsubactivity.optString("utility_name"),
+                                        jsonObjectsubactivity.optString("due_date"), jsonObjectsubactivity.optString("due_status"));
+                                subActivityModels.add(subActivityModel);
+                            }
+                            CheckInCareActivityModel checkInCareActivityModel = new CheckInCareActivityModel(jsonObjectsubactivitites.optString("activity_name"), subActivityModels);
+                            checkInCareActivityModels.add(checkInCareActivityModel);
+                        }
+
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+
+
+            checkInCareModel.setCheckInCareActivityModels(checkInCareActivityModels);
+
+            Config.checkInCareActivityNames.add(checkInCareModel);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void createServiceModel(String strDocumentId, JSONObject jsonObject) {
 

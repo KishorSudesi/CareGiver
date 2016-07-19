@@ -20,13 +20,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.CheckInCareProcess;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AppUtils;
+import com.hdfc.libs.SessionManager;
+import com.hdfc.libs.Utils;
+import com.hdfc.models.CheckInCareModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
+import com.shephertz.app42.paas.sdk.android.App42CallBack;
+import com.shephertz.app42.paas.sdk.android.storage.Query;
+import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
+import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,14 +46,19 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
+    private static ArrayList<String> strings;
     private final LayoutInflater inf;
     private Context _context;
+    private Utils utils;
+    private AppUtils appUtils;
+    private SessionManager sessionManager = null;
     private List<CustomerModel> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<CustomerModel, List<DependentModel>> _listDataChild;
     private boolean bool[];
     //private Utils utils;
     //private MultiBitmapLoader multiBitmapLoader;
+
 
     public ExpandableListAdapter(Context context, List<CustomerModel> listDataHeader,
                                  HashMap<CustomerModel, List<DependentModel>> listChildData) {
@@ -52,6 +69,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this._listDataChild = listChildData;
         bool = new boolean[listDataHeader.size()];
         inf = LayoutInflater.from(_context);
+        appUtils = new AppUtils(_context);
+        utils = new Utils(_context);
+        sessionManager = new SessionManager(_context);
     }
 
     @Override
@@ -241,30 +261,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.insert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                Config.customerModel = (CustomerModel) v.getTag();
+                Calendar c = Calendar.getInstance();
+                String iyear = String.valueOf(c.get(Calendar.YEAR));
+                String imonth = String.valueOf(c.get(Calendar.MONTH) + 1);
 
                 try {
-                    final CharSequence[] items = {"Create New", "Cancel"};
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+                    fetchCheckInCareName(imonth, iyear, Config.customerModel.getStrCustomerID(), Config.providerModel.getStrProviderId());
 
-                    //items[0] =items[0].toString().replaceAll("CheckInCare Name","");
 
-                    builder.setTitle("Check In Care");
-                    builder.setItems(items, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int item) {
-
-                            if (items[item].equals("Create New")) {
-                                Config.customerModel = (CustomerModel) v.getTag();
-                                Intent next = new Intent(_context, CheckInCareProcess.class);
-                                _context.startActivity(next);
-
-                            } else if (items[item].equals("Cancel")) {
-                                dialog.dismiss();
-                            }
-                        }
-                    });
-                    builder.show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -276,7 +282,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     }
 
-   /* private void fetchCheckInCareName(final ProgressDialog progressDialog,final boolean isBackground) {
+    private void fetchCheckInCareName(String iMonth, String iYear, String CustomerId, String ProviderId) {
+
+        iMonth = iMonth; // - 1
+        Config.checkInCareActivityNames.clear();
 
         if (Utils.isConnectingToInternet(_context)) {
 
@@ -285,17 +294,23 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
             StorageService storageService = new StorageService(_context);
 
-            Query q1 = QueryBuilder.build("customer_id", Config.customerModel.getStrCustomerID(), QueryBuilder.
+          /*  Query q2 = QueryBuilder.build("current_date", strDate,
+                    QueryBuilder.Operator.GREATER_THAN_EQUALTO);*/
+            Query q1 = QueryBuilder.build("year", iYear, QueryBuilder.
+                    Operator.EQUALS);
+            Query q2 = QueryBuilder.build("month", iMonth, QueryBuilder.
+                    Operator.EQUALS);
+            Query q3 = QueryBuilder.build("customer_id", CustomerId, QueryBuilder.
+                    Operator.EQUALS);
+            Query q4 = QueryBuilder.build("provider_id", ProviderId, QueryBuilder.
                     Operator.EQUALS);
 
-            Query q2 = QueryBuilder.build("current_date", strDate,
-                    QueryBuilder.Operator.GREATER_THAN_EQUALTO);
+            Query q5 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
+            Query q6 = QueryBuilder.compoundOperator(q3, QueryBuilder.Operator.AND, q4);
+            Query q7 = QueryBuilder.compoundOperator(q5, QueryBuilder.Operator.AND, q6);
 
-            Query q3 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
-
-
-            storageService.findDocsByQueryOrderBy(Config.collectionCheckInCare, q3, 1,
-                    0, "time", 1, new App42CallBack() {
+            storageService.findDocsByQueryOrderBy(Config.collectionCheckInCare, q7, 3000,
+                    0, "created_date", 1, new App42CallBack() {
 
                         @Override
                         public void onSuccess(Object o) {
@@ -304,67 +319,84 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 Storage storage = (Storage) o;
 
                                 Utils.log(storage.toString(), "not ");
-
+                                Utils.log("Size : " + storage.getJsonDocList().size(), " not ");
                                 if (storage.getJsonDocList().size() > 0) {
-
-                                    ArrayList<Storage.JSONDocument> jsonDocList = storage.
-                                            getJsonDocList();
-
                                     try {
+                                        try {
+                                            for (int i = 0; i < storage.getJsonDocList().size(); i++) {
 
-                                        CareGiver.getDbCon().beginDBTransaction();
+                                                Storage.JSONDocument jsonDocument = storage.
+                                                        getJsonDocList().get(i);
 
-                                        for (int i = 0; i < jsonDocList.size(); i++) {
+                                                String strDocument = jsonDocument.getJsonDoc();
+                                                String strActivityId = jsonDocument.getDocId();
 
-                                            String values[] = {jsonDocList.get(i).getDocId(),
-                                                    jsonDocList.get(i).getUpdatedAt(),
-                                                    jsonDocList.get(i).getJsonDoc(),
-                                                    Config.collectionCheckInCare, "1", ""};
+                                                appUtils.createCheckInCareModel(strActivityId, strDocument);
 
+                                            }
+                                            try {
+                                                ArrayList<CheckInCareModel> checkInCareActivityNames = Config.checkInCareActivityNames;
 
-                                            Utils.log(" 1 ", " 2 ");
-                                            CareGiver.getDbCon().insert(
-                                                    DbHelper.strTableNameCollection,
-                                                    values,
-                                                    DbHelper.COLLECTION_FIELDS
-                                            );
+                                                strings = new ArrayList<String>();
 
+                                                if (checkInCareActivityNames != null) {
+                                                    for (int i = 0; i < checkInCareActivityNames.size(); i++) {
+
+                                                        strings.add(checkInCareActivityNames.get(i).getStrName());
+
+                                                    }
+                                                }
+
+                                                strings.add("Create New");
+                                                strings.add("Cancel");
+                                                final CharSequence[] items = strings.toArray(new CharSequence[strings.size()]);
+
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+
+                                                builder.setTitle("Check In Care");
+                                                builder.setItems(items, new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int item) {
+                                                        if (items[item].equals("Create New")) {
+                                                            // Config.customerModel = (CustomerModel) v.getTag();
+                                                            Intent next = new Intent(_context, CheckInCareProcess.class);
+                                                            _context.startActivity(next);
+
+                                                        } else if (items[item].equals("Cancel")) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    }
+                                                });
+                                                builder.show();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
-                                        CareGiver.getDbCon().dbTransactionSuccessFull();
-                                        //CareGiver.getDbCon().deleteDuplicateNotifications();
                                     } catch (Exception e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        CareGiver.getDbCon().endDBTransaction();
+
                                     }
                                 }
-                                refreshNotifications();
                             } else {
-                                if (!isBackground)
-                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                utils.toast(2, 2, _context.getString(R.string.warning_internet));
                             }
 
-                            if (!isBackground)
-                                loadingPanel.setVisibility(View.GONE);
                         }
 
                         @Override
                         public void onException(Exception e) {
 
-                            if (!isBackground) {
-
-                                loadingPanel.setVisibility(View.GONE);
-
                                 if (e == null)
-                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                    utils.toast(2, 2, _context.getString(R.string.warning_internet));
                                 else
-                                    utils.toast(1, 1, getString(R.string.error));
-                            }
+                                    utils.toast(1, 1, _context.getString(R.string.error));
+
                         }
                    });
 
         }
-    }*/
+    }
 
     @Override
     public boolean hasStableIds() {

@@ -6,12 +6,15 @@ import java.util.ArrayList;
  * Created by Admin on 07-07-2016.
  */
 public class CheckInCareModel {
+
+    private String strName = "";
     private String strStatus = "";
     private String strMonth = "";
     private String strYear = "";
     private String strHouseName = "";
     private String strCreatedDate = "";
     private String strUpdatedDate = "";
+    private String strCheckInCareName = "";
 
     private String strCustomerID;
     private String strDependentID;
@@ -24,10 +27,11 @@ public class CheckInCareModel {
     public CheckInCareModel() {
     }
 
-    public CheckInCareModel(String strStatus, String strMonth, String strYear,
-                             String strHouseName, String strCreatedDate, String strUpdatedDate,
-                             String strCustomerID,String strDependentID,ArrayList<PictureModel> pictureModels,
+    public CheckInCareModel(String strName, String strStatus, String strMonth, String strYear,
+                            String strHouseName, String strCreatedDate, String strUpdatedDate,
+                            String strCustomerID, String strDependentID, String strCheckInCareName, ArrayList<PictureModel> pictureModels,
                             ArrayList<CheckInCareActivityModel> checkInCareActivityModels) {
+        this.strName = strName;
         this.strStatus = strStatus;
         this.strMonth = strMonth;
         this.strYear = strYear;
@@ -36,15 +40,21 @@ public class CheckInCareModel {
         this.strUpdatedDate = strUpdatedDate;
         this.strCustomerID = strCustomerID;
         this.strDependentID = strDependentID;
+        this.strCheckInCareName = strCheckInCareName;
         this.pictureModels = pictureModels;
         this.checkInCareActivityModels = checkInCareActivityModels;
 
 
     }
-    public String getStrStatus() {
-        return strStatus;
+
+    public String getStrName() {
+        return strName;
     }
 
+    public void setStrName(String strName) {
+        this.strName = strName;
+    }
+  
     public void setStrStatus(String strStatus) {
         this.strStatus = strStatus;
     }
@@ -105,6 +115,13 @@ public class CheckInCareModel {
         this.strCustomerID = strCustomerID;
     }
 
+    public String getStrCheckInCareName() {
+        return strCheckInCareName;
+    }
+
+    public void setStrCheckInCareName(String strCheckInCareName) {
+        this.strCheckInCareName = strCheckInCareName;
+    }
 
 
     public ArrayList<PictureModel> getPictureModels() {
@@ -113,6 +130,10 @@ public class CheckInCareModel {
 
     public void setPictureModels(ArrayList<PictureModel> pictureModels) {
         this.pictureModels = pictureModels;
+    }
+
+    public void setPictureModel(PictureModel pictureModel) {
+        this.pictureModels.add(pictureModel);
     }
     public void clearPictureModels() {
         this.pictureModels.clear();

@@ -11,10 +11,9 @@ public class PictureModel {
 
     private ArrayList<ImageModel> imageModels = new ArrayList<>();
 
-    /*public PictureModel(){
+    public PictureModel() {
 
     }
-*/
     public PictureModel(String strRoomName, String strStatus, ArrayList<ImageModel> imageModels) {
         this.strStatus = strStatus;
         this.strRoomName = strRoomName;

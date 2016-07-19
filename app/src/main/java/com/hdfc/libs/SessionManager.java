@@ -22,6 +22,7 @@ public class SessionManager {
     private static final String KEY_EMAIL = "EMAIL";
     // customer id (make variable public to access from outside)
     private static final String KEY_PROVIDER_ID = "PROVIDER_ID";
+    public final String KEY_CHECKIN_CARE_STATUS = "checkin_care_status";
     // Shared Preferences
     private SharedPreferences pref;
     // Editor for Shared preferences
@@ -67,6 +68,16 @@ public class SessionManager {
             e.printStackTrace();
         }
         return strEmail;
+    }
+
+    /**
+     * Get stored session data
+     */
+    public boolean getCheckInCareStatus() {
+
+
+        // return customer id
+        return pref.getBoolean(KEY_CHECKIN_CARE_STATUS, false);
     }
 
     public String getProviderId() {
