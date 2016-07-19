@@ -29,9 +29,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
@@ -600,7 +597,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client2 = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        //client2 = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -2676,7 +2673,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    public Action getIndexApiAction() {
+    /*public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
                 .setName("CheckInCareProcess Page") // TODO: Define a title for the content shown.
                 // TODO: Make sure this auto-generated URL is correct.
@@ -2686,7 +2683,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 .setObject(object)
                 .setActionStatus(Action.STATUS_TYPE_COMPLETED)
                 .build();
-    }
+    }*/
 
     @Override
     public void onStart() {
@@ -2694,8 +2691,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client2.connect();
-        AppIndex.AppIndexApi.start(client2, getIndexApiAction());
+        //client2.connect();
+        //AppIndex.AppIndexApi.start(client2, getIndexApiAction());
     }
 
     @Override
@@ -2704,8 +2701,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client2, getIndexApiAction());
-        client2.disconnect();
+        //AppIndex.AppIndexApi.end(client2, getIndexApiAction());
+        //client2.disconnect();
     }
 
     private class BackgroundThreadHandler extends Handler {
