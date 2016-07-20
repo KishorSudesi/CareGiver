@@ -13,8 +13,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.R;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.models.NotificationModel;
+
+import net.sqlcipher.Cursor;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -124,25 +131,72 @@ public class NotificationAdapter extends BaseAdapter {
                 strUrl = Config.providerModel.getStrImgUrl();
             }
 
+            String strColumnName = "";
+
             if (adapterNotificationModels.get(position).getStrCreatedByType().
                     equalsIgnoreCase("dependent")) {
-                if (Config.dependentIdsAdded.contains(strId)) {
-                    strName = Config.dependentModels.get(Config.dependentIdsAdded.
-                            indexOf(strId)).getStrName();
-                    strUrl = Config.dependentModels.get(Config.dependentIdsAdded.
-                            indexOf(strId)).getStrImageUrl();
-                }
+                strColumnName = Config.collectionDependent;
             }
 
             if (adapterNotificationModels.get(position).getStrCreatedByType().
                     equalsIgnoreCase("customer")) {
-                if (Config.customerIdsAdded.contains(strId)) {
-                    strName = Config.customerModels.get(Config.customerIdsAdded.
-                            indexOf(strId)).getStrName();
-                    strUrl = Config.customerModels.get(Config.customerIdsAdded.
-                            indexOf(strId)).getStrImgUrl();
+                strColumnName = Config.collectionCustomer;
+            }
+
+            Cursor cursor = null;
+            JSONObject jsonObject = null;
+
+            if (!strColumnName.equalsIgnoreCase("")) {
+                cursor = CareGiver.getDbCon().fetch(
+                        DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                        new String[]{strColumnName, strId}, null, "0,1", true, null, null
+                );
+
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    try {
+                        jsonObject = new JSONObject(cursor.getString(0));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+
+            CareGiver.getDbCon().closeCursor(cursor);
+
+            if (jsonObject != null) {
+                try {
+                    if (adapterNotificationModels.get(position).getStrCreatedByType().
+                            equalsIgnoreCase("dependent")) {
+                        if (jsonObject.getString("dependent_profile_url") != null
+                                && !jsonObject.getString("dependent_profile_url").
+                                equalsIgnoreCase("")) {
+                            strUrl = jsonObject.getString("dependent_profile_url");
+                        }
+                        if (jsonObject.getString("dependent_name") != null
+                                && !jsonObject.getString("dependent_name").equalsIgnoreCase("")) {
+                            strName = jsonObject.getString("dependent_name");
+                        }
+                    }
+
+                    if (adapterNotificationModels.get(position).getStrCreatedByType().
+                            equalsIgnoreCase("customer")) {
+                        if (jsonObject.getString("customer_profile_url") != null
+                                && !jsonObject.getString("customer_profile_url").
+                                equalsIgnoreCase("")) {
+                            strUrl = jsonObject.getString("customer_profile_url");
+                        }
+                        if (jsonObject.getString("customer_name") != null
+                                && !jsonObject.getString("customer_name").equalsIgnoreCase("")) {
+                            strName = jsonObject.getString("customer_name");
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
 
             try {
                 //String strDate = adapterNotificationModels.get(position).getStrDateTime();
@@ -156,15 +210,10 @@ public class NotificationAdapter extends BaseAdapter {
                 e.printStackTrace();
             }
 
-            viewHolder.textViewName.setText(strName);
+            if (!strName.equalsIgnoreCase(""))
+                viewHolder.textViewName.setText(strName);
 
-            try {
-               /* File f = utils.getInternalFileImages(utils.replaceSpace(strId));
-
-                //Utils.log(f.getAbsolutePath(), " P ");
-
-                if (f.exists())
-                    multiBitmapLoader.loadBitmap(f.getAbsolutePath(), viewHolder.roundedImageView);*/
+            if (!strUrl.equalsIgnoreCase("")) {
 
                 Glide.with(_context)
                         .load(strUrl)
@@ -174,8 +223,6 @@ public class NotificationAdapter extends BaseAdapter {
                         .crossFade()
                         .into(viewHolder.roundedImageView);
 
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
 

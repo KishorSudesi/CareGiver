@@ -72,6 +72,12 @@ public class LoginActivity extends AppCompatActivity {
         utils = new Utils();
         //AppUtils appUtils = new AppUtils(LoginActivity.this);
 
+        //todo remove in live
+        if (Config.DEVELOPMENT) {
+            editEmail.setText("carla1@gmail.com");
+            editPassword.setText("we");
+        }
+
         // sharedPreferences = getSharedPreferences(Config.strPreferenceName, MODE_PRIVATE);
 
         sessionManager = new SessionManager(LoginActivity.this);

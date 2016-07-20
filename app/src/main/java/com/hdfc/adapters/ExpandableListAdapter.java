@@ -314,7 +314,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             Query q6 = QueryBuilder.compoundOperator(q3, QueryBuilder.Operator.AND, q4);
             Query q7 = QueryBuilder.compoundOperator(q5, QueryBuilder.Operator.AND, q6);
 
-            storageService.findDocsByQueryOrderBy(Config.collectionCheckInCare, q7, 3000,
+            storageService.findDocsByQueryOrderBy(Config.collectionCheckInCare, q7, 30000,
                     0, "created_date", 1, new App42CallBack() {
 
                         @Override

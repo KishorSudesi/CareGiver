@@ -26,6 +26,7 @@ import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AppUtils;
+import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
@@ -72,6 +73,7 @@ public class MyProfileActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private AppUtils appUtils;
     private PermissionHelper permissionHelper;
+    private SessionManager sessionManager;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,8 @@ public class MyProfileActivity extends AppCompatActivity {
         buttonContinue = (Button) findViewById(R.id.buttonContinue);
         //ImageView pen = (ImageView) findViewById(R.id.imgPen);
         Button buttonBack = (Button) findViewById(R.id.buttonBack);
+
+        sessionManager = new SessionManager(MyProfileActivity.this);
 
         permissionHelper = PermissionHelper.getInstance(this);
 
@@ -169,7 +173,10 @@ public class MyProfileActivity extends AppCompatActivity {
                     builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            AppUtils.logout(MyProfileActivity.this);
+                            AppUtils.logout(getApplicationContext());
+                            Intent dashboardIntent = new Intent(MyProfileActivity.this, LoginActivity.class);
+                            startActivity(dashboardIntent);
+                            finish();
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -320,17 +327,20 @@ public class MyProfileActivity extends AppCompatActivity {
 
             File file = null;
 
-            String strImage;
+            String strImage, strPath = "";
 
             try {
-                file = new File(Config.providerModel.getStrImgPath());
+                strPath = sessionManager.getProfileImage();
+
+                if (strPath != null && !strPath.equalsIgnoreCase("") && !strPath.equalsIgnoreCase("N"))
+                    file = new File(strPath);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             if (file != null && file.exists()) {
-                strImage = Config.providerModel.getStrImgPath();
+                strImage = strPath;
             } else {
                 strImage = Config.providerModel.getStrImgUrl();
             }
@@ -406,6 +416,9 @@ public class MyProfileActivity extends AppCompatActivity {
                                     new String[]{"updated_date", "updated"},
                                     new String[]{Config.providerModel.getStrProviderId(),
                                             Config.collectionProvider});
+
+                            //todo for scenario when offline image save and data in online
+                            sessionManager.saveProfileImage("N");
 
                             if (!isBackground) {
                                 progressDialog.dismiss();
@@ -546,6 +559,14 @@ public class MyProfileActivity extends AppCompatActivity {
                                             getStrProviderId(), false);
 
                                     if (utils.isConnectingToInternet()) {
+                                        Glide.with(MyProfileActivity.this)
+                                                .load(fileList.get(0).getUrl())
+                                                .centerCrop()
+                                                .bitmapTransform(new CropCircleTransformation(
+                                                        MyProfileActivity.this))
+                                                .placeholder(R.drawable.person_icon)
+                                                .crossFade()
+                                                .into(profileImage);
                                         updateProviderDoc(false);
                                     }
 
@@ -626,10 +647,11 @@ public class MyProfileActivity extends AppCompatActivity {
             //if (isImageChanged) { //&& bitmap != nul
                 try {
 
-                    Config.providerModel.setStrImgPath(strCustomerImgName);
+                    //Config.providerModel.setStrImgPath(strCustomerImgName);
+                    sessionManager.saveProfileImage(strCustomerImgName);
 
                     Glide.with(MyProfileActivity.this)
-                            .load(Config.providerModel.getStrImgPath())
+                            .load(sessionManager.getProfileImage())
                             .centerCrop()
                             .bitmapTransform(new CropCircleTransformation(MyProfileActivity.this))
                             .placeholder(R.drawable.person_icon)

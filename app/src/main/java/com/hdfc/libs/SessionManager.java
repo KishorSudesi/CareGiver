@@ -22,7 +22,9 @@ public class SessionManager {
     private static final String KEY_EMAIL = "EMAIL";
     // customer id (make variable public to access from outside)
     private static final String KEY_PROVIDER_ID = "PROVIDER_ID";
-    public final String KEY_CHECKIN_CARE_STATUS = "checkin_care_status";
+    private static final String KEY_PROFILE_IMAGE = "PROFILE_IMAGE";
+    private static final String KEY_CLIENT_DATE = "CLIENT_DATE";
+    //private final String KEY_CHECKIN_CARE_STATUS = "checkin_care_status";
     // Shared Preferences
     private SharedPreferences pref;
     // Editor for Shared preferences
@@ -58,6 +60,55 @@ public class SessionManager {
         editor.commit();
     }
 
+
+    public void saveProfileImage(String strPath) {
+        try {
+
+            editor.putString(KEY_PROFILE_IMAGE, AESCrypt.encrypt(Config.string, strPath));
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+
+        // commit changes
+        editor.commit();
+    }
+
+    public void saveClientDate(String strDate) {
+        try {
+
+            editor.putString(KEY_CLIENT_DATE, AESCrypt.encrypt(Config.string, strDate));
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+
+        // commit changes
+        editor.commit();
+    }
+
+    public String getClientDate() {
+
+        String strClientDate = "";
+
+        try {
+            strClientDate = AESCrypt.decrypt(Config.string, pref.getString(KEY_CLIENT_DATE, ""));
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        return strClientDate;
+    }
+
+    public String getProfileImage() {
+
+        String strProfileImage = "";
+
+        try {
+            strProfileImage = AESCrypt.decrypt(Config.string, pref.getString(KEY_PROFILE_IMAGE, ""));
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        return strProfileImage;
+    }
+
     public String getEmail() {
 
         String strEmail = "";
@@ -72,13 +123,13 @@ public class SessionManager {
 
     /**
      * Get stored session data
-     */
+     *//*
     public boolean getCheckInCareStatus() {
 
 
         // return customer id
         return pref.getBoolean(KEY_CHECKIN_CARE_STATUS, false);
-    }
+    }*/
 
     public String getProviderId() {
 

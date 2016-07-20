@@ -20,12 +20,19 @@ import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.CreatingTaskActivity;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
+
+import net.sqlcipher.Cursor;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -85,9 +92,9 @@ public class ActivityFragment extends Fragment
 
             if (Config.activityModels.size() > 0) {
 
-                ActivityModel activityModel = activityModels.get(position);
+                //ActivityModel activityModel = activityModels.get(position);
 
-                boolean isActivity = activityModel.getiActivityDisplayFlag();
+                boolean isActivity = activityModels.get(position).getiActivityDisplayFlag();
 
                 if (isActivity)
                     cvh.textViewWhat.setText(context.getString(R.string.activity));
@@ -98,25 +105,29 @@ public class ActivityFragment extends Fragment
                     cvh.textViewWhat.setText(context.getString(R.string.activity));*/
 
 
-                String strMessage = activityModel.getStrActivityDesc();
+                String strMessage = activityModels.get(position).getStrActivityDesc();
 
                 if (strMessage != null && strMessage.length() > 20)
-                    strMessage = activityModel.getStrActivityDesc().substring(0, 18) + "..";
+                    strMessage = activityModels.get(position).getStrActivityDesc().substring(0, 18)
+                            + "..";
 
-                String strName = activityModel.getStrActivityName();
+                String strName = activityModels.get(position).getStrActivityName();
 
                 if (strName.length() > 20)
-                    strName = activityModel.getStrActivityName().substring(0, 18) + "..";
+                    strName = activityModels.get(position).getStrActivityName().substring(0, 18)
+                            + "..";
 
                 cvh.textSubject.setText(strName);
 
                 cvh.textMessage.setText(strMessage);
 
-                cvh.textTime.setText(Utils.formatDate(activityModel.getStrActivityDate()));
+                cvh.textTime.setText(Utils.formatDate(activityModels.get(position).
+                        getStrActivityDate()));
 
-                if (activityModel.getStrCreatedBy() != null
-                        && !activityModel.getStrCreatedBy().equalsIgnoreCase("")
-                        && activityModel.getStrCreatedBy().equalsIgnoreCase("customer")
+                if (activityModels.get(position).getStrCreatedBy() != null
+                        && !activityModels.get(position).getStrCreatedBy().equalsIgnoreCase("")
+                        && activityModels.get(position).getStrCreatedBy().
+                        equalsIgnoreCase("customer")
                         ) {
                     //cvh.linearParent.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_customer));
                     cvh.textViewWhat.setTextColor(context.getResources().getColor(
@@ -127,7 +138,8 @@ public class ActivityFragment extends Fragment
                             R.color.colorAccent));
                 }
 
-                if (activityModel.getStrActivityStatus().equalsIgnoreCase("completed")) {
+                if (activityModels.get(position).getStrActivityStatus().
+                        equalsIgnoreCase("completed")) {
                     //cvh.imageTiming.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.done));
                     cvh.imageTiming.setBackgroundResource(R.mipmap.done_action);
                     cvh.imageTiming.setTextColor(context.getResources().getColor(
@@ -137,17 +149,20 @@ public class ActivityFragment extends Fragment
                             R.drawable.status_closed));
                 }
 
-                if (activityModel.getStrActivityStatus().equalsIgnoreCase("new")
-                        || activityModel.getStrActivityStatus().equalsIgnoreCase("open")) {
+                if (activityModels.get(position).getStrActivityStatus().equalsIgnoreCase("new")
+                        || activityModels.get(position).getStrActivityStatus().
+                        equalsIgnoreCase("open")) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText(context.getString(R.string.new_text));
                     cvh.imageTiming.setTextColor(context.getResources().getColor(R.color.colorRed));
-                    cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.status_new));
+                    cvh.linearLayout.setBackgroundDrawable(context.getResources().
+                            getDrawable(R.drawable.status_new));
                 }
 
-                if (activityModel.getStrActivityStatus().equalsIgnoreCase("inprocess")) {
+                if (activityModels.get(position).getStrActivityStatus().
+                        equalsIgnoreCase("inprocess")) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
-                    cvh.imageTiming.setText(utils.formatDateTime(activityModel.
+                    cvh.imageTiming.setText(utils.formatDateTime(activityModels.get(position).
                             getStrActivityDate()));
                     cvh.imageTiming.setTextColor(context.getResources().getColor(
                             R.color.colorAccent));
@@ -155,21 +170,30 @@ public class ActivityFragment extends Fragment
                             R.drawable.status_process));
                 }
 
+                JSONObject jsonObject = null;
 
-                //Utils.log(activityModel.getStrDependentID(), " IMG ");
+                Cursor cursor = CareGiver.getDbCon().fetch(
+                        DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                        new String[]{Config.collectionDependent,
+                                activityModels.get(position).getStrDependentID()
+                        },
+                        null, "0,1", true, null, null
+                );
 
-                /*File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(
-                        activityModel.getStrDependentID().trim()));*/
+                String strUrl = "";
 
-                //if (fileImage.exists()) {
-                //String filename = fileImage.getAbsolutePath();
-                //multiBitmapLoader.loadBitmap(filename, cvh.imagePerson);
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    try {
+                        jsonObject = new JSONObject(cursor.getString(0));
+                        strUrl = jsonObject.optString("dependent_profile_url");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-                int iPosition = Config.dependentIdsAdded.indexOf(activityModel.getStrDependentID());
-
-                if (iPosition > -1) {
-
-                    String strUrl = Config.dependentModels.get(iPosition).getStrImageUrl();
+                if (strUrl.equalsIgnoreCase("")) {
 
                     Glide.with(context)
                             .load(strUrl)
@@ -179,10 +203,6 @@ public class ActivityFragment extends Fragment
                             .crossFade()
                             .into(cvh.imagePerson);
                 }
-               /* } else {
-                    cvh.imagePerson.setImageDrawable(context.getResources().getDrawable(
-                            R.drawable.person_icon));
-                }*/
             }
             return convertView;
         }

@@ -17,5 +17,8 @@ public class PushNotificationService {
         asyncService.sendPushToUser(strUserName, strMessage, app42CallBack);
     }
 
+    public void removeUserDevice(String strUserName, String strToken, App42CallBack app42CallBack) {
+        asyncService.removeDevice(strUserName, strToken, app42CallBack);
+    }
 
 }

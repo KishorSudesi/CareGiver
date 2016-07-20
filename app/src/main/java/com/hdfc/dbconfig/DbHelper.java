@@ -31,26 +31,36 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_UPDATE_DATE = "updated_date";
     public static final String COLUMN_DOCUMENT = "document";
     public static final String COLUMN_COLLECTION_NAME = "collection_name";
-    public static final String COLUMN_DOC_DATE = "doc_date";
+    public static final String COLUMN_CLIENT_FLAG = "client_flag";
     public static final String COLLECTION_FIELDS[] = {"object_id", "updated_date", "document",
-            "collection_name", "status", "doc_date"};
+            "collection_name", "status", "client_flag"};
+
+    public static final String COLLECTION_FIELDS_CD[] = {"object_id", "updated_date", "document",
+            "collection_name"};
+
+    public static final String COLLECTION_FIELDS_CLIENTS[] = {"object_id",
+            "collection_name", "status"};
 
     public static final String MILESTONE_FIELDS[] = {"object_id", "milestone_id", "milestone_date"};
     public static final String DATE_FORMAT_DB = "yyyy-MM-dd HH:mm:ss.SSS";
     //CREATE INDEX indexname ON tablename(columnname);
     public static final SimpleDateFormat sqlQueryFormat =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Utils.locale);
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 9;
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
     private static SQLiteDatabase db;
     //private Utils utils;
-    private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection + " ( id integer primary key autoincrement," +
-            " object_id VARCHAR(50), updated_date datetime, document text, collection_name VARCHAR(50), status integer, doc_date datetime, updated integer)";
+    private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection
+            + " ( id integer primary key autoincrement, object_id VARCHAR(50), updated_date "
+            + "datetime, document text, collection_name VARCHAR(50), status integer, "
+            + "client_flag integer, updated integer)";
+    //doc_date datetime,
 
-    private String strMilestoneQuery = "CREATE TABLE " + strTableNameMilestone + " ( id integer primary key autoincrement," +
-            " object_id VARCHAR(50), milestone_id integer, milestone_date datetime)";
+    private String strMilestoneQuery = "CREATE TABLE " + strTableNameMilestone + " ( id integer "
+            + "primary key autoincrement, object_id VARCHAR(50), milestone_id integer,"
+            + " milestone_date datetime)";
 
     /*private String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
             " name VARCHAR(100), url VARCHAR(300), file_type VARCHAR(10),  file_hash VARCHAR(50))";
@@ -176,8 +186,8 @@ public class DbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    Cursor fetch(String tbl, String names[], String where, String args[], String order, String limit,
-                 boolean isDistinct, String groupBy, String having) {
+    Cursor fetch(String tbl, String names[], String where, String args[], String order,
+                 String limit, boolean isDistinct, String groupBy, String having) {
 
         if (db != null && !db.isOpen())
             open();

@@ -850,6 +850,38 @@ public class AsyncApp42ServiceApi {
         }.start();
     }
 
+    //todo get token and remove device in logout
+    public void removeDevice(final String userName, final String strToken,
+                             final App42CallBack callBack) {
+
+        final Handler callerThreadHandler = new Handler();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final App42Response response = pushNotificationService.unsubscribeDevice(
+                            userName, strToken);
+
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSuccess(response);
+                        }
+                    });
+                } catch (final App42Exception ex) {
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callBack != null) {
+                                callBack.onException(ex);
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
    /* public interface App42UserServiceListener {
         void onUserCreated(User response);
 

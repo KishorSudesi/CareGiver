@@ -66,6 +66,7 @@ public class Config {
     public static final boolean isDebuggable = true;
     public static final String string = Utils.getStringJni();
     public static final boolean release = false;
+    public static final boolean DEVELOPMENT = true;
     //Login specific //User Specific clear at logout or whenever needed
     public final static String strCustomerImageName = "provider_image";
     public static int intClientScreen = 2;
@@ -112,7 +113,7 @@ public class Config {
 
     public static ArrayList<ClientNameModel> clientNameModels = new ArrayList<>();
     public static Map<String, List<String>> serviceNameModels = new HashMap<>();
-    public static boolean boolIsLoggedIn = false;
+    //public static boolean boolIsLoggedIn = false;
     public static double iRatings = 0;
     public static int iRatingCount = 0;
     public static List<FeedBackModel> feedBackModels = new ArrayList<>();

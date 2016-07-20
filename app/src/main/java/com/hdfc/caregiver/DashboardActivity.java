@@ -43,6 +43,7 @@ public class DashboardActivity extends AppCompatActivity implements
     private static RelativeLayout loadingPanel;
     //private Utils utils;
     private static AppCompatActivity appCompatActivity;
+    //todo remove static variables with ref. context
     //private static Handler threadHandler;
     private static AppUtils appUtils;
     private LinearLayout net_error_layout;
@@ -58,19 +59,21 @@ public class DashboardActivity extends AppCompatActivity implements
             if (message != null && !message.equalsIgnoreCase("")) {
                 AppUtils.loadNotifications(DashboardActivity.this);
                 AppUtils.fetchActivitiesSync(DashboardActivity.this);
-                appUtils.fetchClients(2, appCompatActivity);
+                //appUtils.fetchClients(2, appCompatActivity);
 
                 if (Config.intSelectedMenu != Config.intNotificationScreen)
                     showPushDialog(message);
             }
         }
     };
+    private SessionManager sessionManager;
 
-    public static void gotoSimpleActivityMenu() {
+    public static void gotoSimpleActivityMenu(boolean isLoader) {
 
         appUtils.createCustomerModel();
 
-        loadingPanel.setVisibility(View.GONE);
+        if (isLoader && loadingPanel.getVisibility() == View.VISIBLE)
+            loadingPanel.setVisibility(View.GONE);
 
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
@@ -90,7 +93,7 @@ public class DashboardActivity extends AppCompatActivity implements
         if (Utils.isConnectingToInternet(appCompatActivity)) {
 
             // AppUtils appUtils = new AppUtils(appCompatActivity);
-            appUtils.fetchClients(2, appCompatActivity);
+            AppUtils.fetchClients(2, appCompatActivity);
 
         } else {
             Utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet),
@@ -257,7 +260,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 menuNotification(false);
             }
 
-            SessionManager sessionManager = new SessionManager(DashboardActivity.this);
+            sessionManager = new SessionManager(DashboardActivity.this);
 
             appUtils.createProviderModel(sessionManager.getProviderId());
 
@@ -414,7 +417,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
             AppUtils.loadNotifications(DashboardActivity.this);
             AppUtils.fetchActivitiesSync(DashboardActivity.this);
-            appUtils.fetchClients(2, appCompatActivity);
+            AppUtils.fetchClients(2, appCompatActivity);
             //if(Config.intSelectedMenu!=Config.intNotificationScreen)
             showPushDialog(strMess);
 
@@ -425,9 +428,11 @@ public class DashboardActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
 
-        if (Config.providerModel == null || Config.providerModel.getStrName() == null) {
-            AppUtils.logout(DashboardActivity.this);
-        } else {
+        if (sessionManager.getProviderId() != null
+                && !sessionManager.getProviderId().equalsIgnoreCase("")) {
+
+            if (Config.providerModel == null || Config.providerModel.getStrName() == null)
+                appUtils.createProviderModel(sessionManager.getProviderId());
 
             isLoaded = true;
 
@@ -443,6 +448,12 @@ public class DashboardActivity extends AppCompatActivity implements
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+        } else {
+            AppUtils.logout(DashboardActivity.this);
+            Intent dashboardIntent = new Intent(DashboardActivity.this, LoginActivity.class);
+            startActivity(dashboardIntent);
+            finish();
         }
 
     }

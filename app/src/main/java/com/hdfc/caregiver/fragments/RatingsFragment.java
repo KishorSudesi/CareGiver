@@ -19,6 +19,7 @@ import com.hdfc.caregiver.MyProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
+import com.hdfc.libs.SessionManager;
 
 import java.io.File;
 
@@ -75,7 +76,7 @@ public class RatingsFragment extends Fragment {
         if (Config.providerModel.getStrName() != null)
             textViewName.setText(Config.providerModel.getStrName());
 
-        appUtils.createFeedbackyModel();
+        appUtils.createFeedbackModel();
 
        /* backgroundThreadHandler = new BackgroundThreadHandler();
         BackgroundThread backgroundThread = new BackgroundThread();
@@ -132,17 +133,24 @@ public class RatingsFragment extends Fragment {
 
         File file = null;
 
-        String strImage;
+        String strImage, strPath = "";
 
         try {
-            file = new File(Config.providerModel.getStrImgPath());
+
+            SessionManager sessionManager = new SessionManager(getActivity());
+            strPath = sessionManager.getProfileImage();
+
+            if (strPath != null && !strPath.equalsIgnoreCase("") && !strPath.equalsIgnoreCase("N"))
+                file = new File(strPath);
+
+            //file = new File(Config.providerModel.getStrImgPath());
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         if (file != null && file.exists()) {
-            strImage = Config.providerModel.getStrImgPath();
+            strImage = strPath;
         } else {
             strImage = Config.providerModel.getStrImgUrl();
         }

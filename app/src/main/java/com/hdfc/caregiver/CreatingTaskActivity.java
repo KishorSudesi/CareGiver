@@ -643,11 +643,15 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                             response.getJsonDocList().get(0).getJsonDoc(),
                                             Config.collectionActivity, "0", ""};
 
-                                    String selection = DbHelper.COLUMN_OBJECT_ID + " = ?";
+                                    String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                            + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
                                     // WHERE clause arguments
-                                    String[] selectionArgs = {response.getJsonDocList().get(0).getDocId()};
-                                    CareGiver.getDbCon().updateInsert(DbHelper.strTableNameCollection,
+                                    String[] selectionArgs = {
+                                            response.getJsonDocList().get(0).getDocId()
+                                            , Config.collectionActivity};
+                                    CareGiver.getDbCon().updateInsert(
+                                            DbHelper.strTableNameCollection,
                                             selection, values, DbHelper.COLLECTION_FIELDS,
                                             selectionArgs);
 

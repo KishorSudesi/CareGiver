@@ -7,7 +7,7 @@ public class ProviderModel {
 
     private String strName = "";
     private String strImgUrl = "";
-    private String strImgPath = "";
+    //private String strImgPath = "";
     private String strAddress = "";
     private String strContacts = "";
     private String strEmail = "";
@@ -24,44 +24,44 @@ public class ProviderModel {
     }
 
 
-    public ProviderModel(String strName, String strImgUrl, String strImgPath, String strAddress,
+    public ProviderModel(String strName, String strImgUrl, String strAddress,
                          String strContacts, String strEmail, String strProviderId) {
         this.strName = strName;
         this.strImgUrl = strImgUrl;
-        this.strImgPath = strImgPath;
+        //this.strImgPath = strImgPath;
         this.strAddress = strAddress;
         this.strContacts = strContacts;
         this.strEmail = strEmail;
         this.strProviderId = strProviderId;
     }
 
-    public String getStrCountry() {
+    /*public String getStrCountry() {
         return strCountry;
-    }
+    }*/
 
     public void setStrCountry(String strCountry) {
         this.strCountry = strCountry;
     }
 
-    public String getStrCity() {
+    /*public String getStrCity() {
         return strCity;
-    }
+    }*/
 
     public void setStrCity(String strCity) {
         this.strCity = strCity;
     }
 
-    public String getStrState() {
+    /*public String getStrState() {
         return strState;
-    }
+    }*/
 
     public void setStrState(String strState) {
         this.strState = strState;
     }
 
-    public String getStrPinCode() {
+    /*public String getStrPinCode() {
         return strPinCode;
-    }
+    }*/
 
     public void setStrPinCode(String strPinCode) {
         this.strPinCode = strPinCode;
@@ -83,13 +83,13 @@ public class ProviderModel {
         this.strImgUrl = strImgUrl;
     }
 
-    public String getStrImgPath() {
+   /* public String getStrImgPath() {
         return strImgPath;
     }
 
     public void setStrImgPath(String strImgPath) {
         this.strImgPath = strImgPath;
-    }
+    }*/
 
     public String getStrAddress() {
         return strAddress;
@@ -111,15 +111,15 @@ public class ProviderModel {
         return strEmail;
     }
 
-    public void setStrEmail(String strEmail) {
+    /*public void setStrEmail(String strEmail) {
         this.strEmail = strEmail;
-    }
+    }*/
 
     public String getStrProviderId() {
         return strProviderId;
     }
 
-    public void setStrProviderId(String strProviderId) {
+    /*public void setStrProviderId(String strProviderId) {
         this.strProviderId = strProviderId;
-    }
+    }*/
 }

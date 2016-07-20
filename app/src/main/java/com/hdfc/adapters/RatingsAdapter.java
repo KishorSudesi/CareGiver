@@ -10,9 +10,16 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.R;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.FeedBackModel;
+
+import net.sqlcipher.Cursor;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +70,7 @@ public class RatingsAdapter extends BaseAdapter {
             viewHolder.feedback = (TextView) convertView.findViewById(R.id.txtMessage);
             viewHolder.time = (TextView) convertView.findViewById(R.id.txtTime);
             viewHolder.image = (ImageView) convertView.findViewById(R.id.imageViewRatingsItem);
-            viewHolder.smily = (ImageView)convertView.findViewById(R.id.imageViewRatingsSmily);
+            viewHolder.smiley = (ImageView) convertView.findViewById(R.id.imageViewRatingsSmily);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -71,22 +78,21 @@ public class RatingsAdapter extends BaseAdapter {
 
         if(data1.size()>0) {
 
-            FeedBackModel feedBackModel = data1.get(position);
+            //FeedBackModel feedBackModel = data1.get(position);
 
-            viewHolder.feedback.setText(feedBackModel.getStrFeedBackMessage());
-            viewHolder.time.setText(Utils.writeFormat.format(utils.convertStringToDate(feedBackModel.getStrFeedBackTime())));
+            viewHolder.feedback.setText(data1.get(position).getStrFeedBackMessage());
+            viewHolder.time.setText(Utils.writeFormat.format(Utils.convertStringToDate(data1.get(position).getStrFeedBackTime())));
 
-            if (feedBackModel.getIntFeedBackRating()== 1){
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_1));
-            }else if(feedBackModel.getIntFeedBackRating()== 2)
-            {
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_2));
-            }else if (feedBackModel.getIntFeedBackRating()== 3){
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_3));
-            }else if (feedBackModel.getIntFeedBackRating()== 4){
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_4));
-            }else {
-                viewHolder.smily.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_5));
+            if (data1.get(position).getIntFeedBackRating() == 1) {
+                viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_1));
+            } else if (data1.get(position).getIntFeedBackRating() == 2) {
+                viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_2));
+            } else if (data1.get(position).getIntFeedBackRating() == 3) {
+                viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_3));
+            } else if (data1.get(position).getIntFeedBackRating() == 4) {
+                viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_4));
+            } else {
+                viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_5));
             }
 
             //
@@ -101,29 +107,54 @@ public class RatingsAdapter extends BaseAdapter {
 
             //todo add for dependent
 
-            String strUrl = "";
+            //String strId;
 
-            if (!feedBackModel.getStrFeedBackBy().equalsIgnoreCase("")) {
-                if (Config.customerIdsAdded.contains(feedBackModel.getStrFeedBackBy())) {
-                    strUrl = Config.customerModels.get(Config.customerIdsAdded.
-                            indexOf(feedBackModel.getStrFeedBackBy())).getStrImgUrl();
+            if (!data1.get(position).getStrFeedBackBy().equalsIgnoreCase("")) {
+
+                String strId = data1.get(position).getStrFeedBackBy();
+
+                String strColumnName = Config.collectionCustomer;
+
+                Cursor cursor1 = CareGiver.getDbCon().fetch(
+                        DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                        new String[]{strColumnName, strId}, null, "0,1", true, null, null
+                );
+
+                JSONObject jsonObject = null;
+
+                if (cursor1.getCount() > 0) {
+                    cursor1.moveToFirst();
+                    try {
+                        jsonObject = new JSONObject(cursor1.getString(0));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                CareGiver.getDbCon().closeCursor(cursor1);
+
+                try {
+                    if (jsonObject != null && jsonObject.getString("customer_profile_url") != null
+                            && !jsonObject.getString("customer_profile_url").equalsIgnoreCase("")) {
+                        Glide.with(_context)
+                                .load(jsonObject.getString("customer_profile_url"))
+                                .centerCrop()
+                                .bitmapTransform(new CropCircleTransformation(_context))
+                                .placeholder(R.drawable.person_icon)
+                                .crossFade()
+                                .into(viewHolder.image);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-
-            Glide.with(_context)
-                    .load(strUrl)
-                    .centerCrop()
-                    .bitmapTransform(new CropCircleTransformation(_context))
-                    .placeholder(R.drawable.person_icon)
-                    .crossFade()
-                    .into(viewHolder.image);
-
         }
         return convertView;
     }
 
     private class ViewHolder {
         TextView feedback, time;
-        ImageView image,smily;
+        ImageView image, smiley;
     }
 }

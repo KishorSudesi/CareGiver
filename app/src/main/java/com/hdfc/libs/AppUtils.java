@@ -1,15 +1,12 @@
 package com.hdfc.libs;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.DashboardActivity;
-import com.hdfc.caregiver.LoginActivity;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
@@ -43,7 +40,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,7 +53,7 @@ import java.util.Set;
  */
 public class AppUtils {
     private static StorageService storageService;
-    private static Date startDate, endDate;
+    //private static Date startDate, endDate;
     //private Context context;
     private Utils utils;
 
@@ -74,11 +70,11 @@ public class AppUtils {
 
         //this.context = context;
 
-        Calendar calendar = Calendar.getInstance();
+        /*Calendar calendar = Calendar.getInstance();
 
-        String strStartDateCopy, strEndDateCopy;
+        String strStartDateCopy, strEndDateCopy;*/
 
-        try {
+        /*try {
             Date dateNow = calendar.getTime();
             strEndDateCopy = Utils.writeFormatDateDB.format(dateNow) + "T23:59:59.999Z";
             strStartDateCopy = Utils.writeFormatDateDB.format(dateNow) + "T00:00:00.000Z";
@@ -88,18 +84,14 @@ public class AppUtils {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        ///
+        }*/
     }
 
     public static void logout(Context _context) {
         try {
             Config.jsonObject = null;
 
-
             Config.intSelectedMenu = 0;
-
-            Config.boolIsLoggedIn = false;
 
             //Config.fileModels.clear();
             if (CareGiver.getDbCon() != null)
@@ -109,9 +101,9 @@ public class AppUtils {
                     Context.MODE_PRIVATE).edit();
             editor.clear();
             editor.apply();
-
+/*
             File fileImage = Utils.createFileInternal("images/");
-            Utils.deleteAllFiles(fileImage);
+            Utils.deleteAllFiles(fileImage);*/
 
             unregisterGcm(_context);
 
@@ -129,6 +121,7 @@ public class AppUtils {
 
                     GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(_context);
                     //App42GCMService.unRegisterGcm();
+                    //todo remove device from app42 and unregister in online mode
 
                     try {
                         if (gcm != null)
@@ -136,10 +129,6 @@ public class AppUtils {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                    Intent dashboardIntent = new Intent(_context, LoginActivity.class);
-                    _context.startActivity(dashboardIntent);
-                    ((Activity) _context).finish();
 
                 } catch (Exception bug) {
                     bug.printStackTrace();
@@ -208,7 +197,8 @@ public class AppUtils {
                                                     jsonDocList.get(i).getJsonDoc(),
                                                     Config.collectionNotification, "1", ""};
 
-                                            CareGiver.getDbCon().insert(DbHelper.strTableNameCollection,
+                                            CareGiver.getDbCon().insert(
+                                                    DbHelper.strTableNameCollection,
                                                     values,
                                                     DbHelper.COLLECTION_FIELDS);
 
@@ -230,7 +220,7 @@ public class AppUtils {
         }
     }
 
-    public static void fetchActivitiesSync(Context context) {
+    public static void fetchActivitiesSync(final Context context) {
 
         String strDate = DbHelper.DEFAULT_DB_DATE;
 
@@ -248,31 +238,6 @@ public class AppUtils {
         Query q1 = QueryBuilder.build("provider_id", sessionManager.getProviderId(),
                 QueryBuilder.Operator.EQUALS);
 
-       /* Query q2 = QueryBuilder.build("activity_date", DashboardFragment.strEndDate, QueryBuilder.
-                Operator.LESS_THAN_EQUALTO);
-
-        Query q3 = QueryBuilder.build("activity_date", DashboardFragment.strStartDate, QueryBuilder.
-                Operator.GREATER_THAN_EQUALTO);
-
-        Query q4 = QueryBuilder.compoundOperator(q2, QueryBuilder.Operator.AND, q3);
-
-        Query q7 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strEndDate, QueryBuilder.
-                Operator.LESS_THAN_EQUALTO);
-
-        Query q8 = QueryBuilder.build("milestones.scheduled_date", DashboardFragment.strStartDate, QueryBuilder.
-                Operator.GREATER_THAN_EQUALTO);
-
-        Query q10 = QueryBuilder.build("milestones.status", Config.MilestoneStatus.COMPLETED, QueryBuilder.
-                Operator.NOT_EQUALS);
-
-        Query q9 = QueryBuilder.compoundOperator(q7, QueryBuilder.Operator.AND, q8);
-
-        Query q11 = QueryBuilder.compoundOperator(q9, QueryBuilder.Operator.AND, q10);
-
-        Query q5 = QueryBuilder.compoundOperator(q4, QueryBuilder.Operator.OR, q11);
-
-        Query q6 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q5);*/
-
         Query finalQuery;
 
         if (strDate != null && !strDate.equalsIgnoreCase("")) {
@@ -284,12 +249,6 @@ public class AppUtils {
             finalQuery = q1;
         }
 
-       /* try {
-            Utils.log(finalQuery.get(), " QUERY ");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
         StorageService storageService = new StorageService(context);
 
         storageService.findDocsByQueryOrderBy(Config.collectionActivity, finalQuery, 30000, 0,
@@ -300,7 +259,7 @@ public class AppUtils {
                     public void onSuccess(Object o) {
                         if (o != null) {
 
-                            Utils.log(o.toString(), " Activity All 90 ");
+                            Utils.log(o.toString(), " Activity All ");
 
                             Storage storage = (Storage) o;
 
@@ -312,16 +271,17 @@ public class AppUtils {
 
                                     Storage.JSONDocument jsonDocument = jsonDocList.get(i);
 
-                                    ///
                                     String values[] = {jsonDocument.getDocId(),
                                             jsonDocument.getUpdatedAt(),
                                             jsonDocument.getJsonDoc(),
                                             Config.collectionActivity, "0", ""};
 
-                                    String selection = DbHelper.COLUMN_OBJECT_ID + " = ?";
+                                    String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                            + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
                                     // WHERE clause arguments
-                                    String[] selectionArgs = {jsonDocument.getDocId()};
+                                    String[] selectionArgs = {jsonDocument.getDocId(),
+                                            Config.collectionActivity};
                                     CareGiver.getDbCon().updateInsert(
                                             DbHelper.strTableNameCollection,
                                             selection, values, DbHelper.COLLECTION_FIELDS,
@@ -337,16 +297,17 @@ public class AppUtils {
                                 CareGiver.getDbCon().endDBTransaction();
                             }
                         }
-                        //fetchCustomers(1);
-                        if (DashboardActivity.isLoaded)
-                            DashboardActivity.gotoSimpleActivityMenu();
+                        fetchClients(2, context);
+                        /*if (DashboardActivity.isLoaded)
+                            DashboardActivity.gotoSimpleActivityMenu(false);*/
                     }
 
                     @Override
                     public void onException(Exception ex) {
                         Utils.log(ex.getMessage(), " f90 ");
-                        if (DashboardActivity.isLoaded)
-                            DashboardActivity.gotoSimpleActivityMenu();
+                        fetchClients(2, context);
+                        /*if (DashboardActivity.isLoaded)
+                            DashboardActivity.gotoSimpleActivityMenu(false);*/
                     }
                 });
     }
@@ -359,8 +320,6 @@ public class AppUtils {
             JSONObject jsonObject = new JSONObject(strDocument);
 
             if (jsonObject.has("dependent_id")) {
-
-                //activity
 
                 String selectionActivity = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                         + DbHelper.COLUMN_MILESTONE_ID + "=? ";
@@ -388,11 +347,47 @@ public class AppUtils {
                         selectionArgsActivity);
                 ///
 
-                if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
+              /*  if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
                     Config.dependentIds.add(jsonObject.getString("dependent_id"));
 
                 if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
-                    Config.customerIds.add(jsonObject.getString("customer_id"));
+                    Config.customerIds.add(jsonObject.getString("customer_id"));*/
+
+                insertClientIds(jsonObject.optString("customer_id"),
+                        jsonObject.optString("dependent_id"));
+
+                //feedback
+                if (jsonObject.has("feedbacks")) {
+
+                    JSONArray jsonArrayFeedback = jsonObject.getJSONArray("feedbacks");
+
+                    for (int k = 0; k < jsonArrayFeedback.length(); k++) {
+
+                        JSONObject jsonObjectFeedback = jsonArrayFeedback.getJSONObject(k);
+
+                        if (jsonObjectFeedback.has("feedback_message")) {
+
+                            String strCustomerId = "", strDependentId = "";
+
+                            if (jsonObjectFeedback.getString("feedback_by_type").
+                                    equalsIgnoreCase("customer")) {
+                                if (!Config.customerIds.contains(jsonObjectFeedback.
+                                        optString("feedback_by")))
+                                    strCustomerId = jsonObjectFeedback.optString("feedback_by");
+                            }
+
+                            if (jsonObjectFeedback.getString("feedback_by_type").
+                                    equalsIgnoreCase("dependent")) {
+                                if (!Config.dependentIds.contains(jsonObjectFeedback.
+                                        optString("feedback_by")))
+                                    strDependentId = jsonObjectFeedback.optString("feedback_by");
+                            }
+                            insertClientIds(strCustomerId, strDependentId);
+                        }
+                    }
+
+                }
+                //feedback
 
                 if (jsonObject.has("milestones")) {
 
@@ -438,6 +433,434 @@ public class AppUtils {
         }
     }
 
+    private static void fetchDependents(final int iFlag, final Context context) {
+
+        if (Utils.isConnectingToInternet(context)) {
+
+            String strDate = DbHelper.DEFAULT_DB_DATE;
+
+            Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionDependent);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                strDate = cursor.getString(0);
+            }
+
+            CareGiver.getDbCon().closeCursor(cursor);
+
+            Cursor cursor1 = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_OBJECT_ID},
+                    DbHelper.COLUMN_COLLECTION_NAME + "=?",
+                    new String[]{Config.collectionDependent}, null, null, true, null, null
+            );
+
+            ArrayList<String> strDependentIds = new ArrayList<>();
+
+            if (cursor1.getCount() > 0) {
+                cursor1.moveToFirst();
+
+                while (cursor1.isAfterLast()) {
+                    strDependentIds.add(cursor1.getString(0));
+                    cursor1.moveToNext();
+                }
+            }
+            CareGiver.getDbCon().closeCursor(cursor1);
+
+            Query mQuery1 = null;
+
+            if (strDependentIds.size() > 0) {
+                mQuery1 = QueryBuilder.build("_id", strDependentIds,
+                        QueryBuilder.Operator.INLIST);
+            }
+
+            Query finalQuery;
+
+            Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
+                    GREATER_THAN_EQUALTO);
+
+            if (mQuery1 != null) { //strDate != null && !strDate.equalsIgnoreCase("")
+
+                finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
+                        q12);
+            } else {
+                finalQuery = q12;
+            }
+
+            storageService.findDocsByQuery(Config.collectionDependent, finalQuery,
+                    new App42CallBack() {
+
+                        @Override
+                        public void onSuccess(Object o) {
+                            try {
+                                if (o != null) {
+
+                                    Storage storage = (Storage) o;
+
+                                    if (storage.getJsonDocList().size() > 0) {
+
+                                        for (int i = 0; i < storage.getJsonDocList().size(); i++) {
+
+                                            Storage.JSONDocument jsonDocument = storage.
+                                                    getJsonDocList().get(i);
+
+                                            String values[] = {jsonDocument.getDocId(),
+                                                    jsonDocument.getUpdatedAt(),
+                                                    jsonDocument.getJsonDoc(),
+                                                    Config.collectionDependent
+                                            };
+
+                                            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+                                            // WHERE clause arguments
+                                            String[] selectionArgs = {jsonDocument.getDocId(),
+                                                    Config.collectionDependent};
+                                            CareGiver.getDbCon().updateInsert(
+                                                    DbHelper.strTableNameCollection,
+                                                    selection, values,
+                                                    DbHelper.COLLECTION_FIELDS_CD,
+                                                    selectionArgs);
+
+                                        }
+                                    }
+                                }
+                                if (DashboardActivity.isLoaded) {
+                                    if (iFlag == 2)
+                                        DashboardActivity.gotoSimpleActivityMenu(true);
+                                    else
+                                        DashboardActivity.gotoSimpleActivityMenu(false);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                            Utils.log(e.getMessage(), " MESS 1");
+                            if (DashboardActivity.isLoaded) {
+                                if (iFlag == 2)
+                                    DashboardActivity.gotoSimpleActivityMenu(true);
+                                else
+                                    DashboardActivity.gotoSimpleActivityMenu(false);
+                            }
+                }
+                    });
+        }
+    }
+
+    private static void fetchCustomers(final int iFlag, final Context context) {
+
+        if (Utils.isConnectingToInternet(context)) {
+
+            String strDate = DbHelper.DEFAULT_DB_DATE;
+
+            Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionCustomer);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                strDate = cursor.getString(0);
+            }
+
+            CareGiver.getDbCon().closeCursor(cursor);
+
+            Cursor cursor1 = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_OBJECT_ID},
+                    DbHelper.COLUMN_COLLECTION_NAME + "=?",
+                    new String[]{Config.collectionCustomer}, null, null, true, null, null
+            );
+
+            // and " + DbHelper.COLUMN_DOCUMENT + "=?
+
+            ArrayList<String> strCustomerIds = new ArrayList<>();
+
+            if (cursor1.getCount() > 0) {
+                cursor1.moveToFirst();
+
+                while (cursor1.isAfterLast()) {
+                    strCustomerIds.add(cursor1.getString(0));
+                    cursor1.moveToNext();
+                }
+            }
+            CareGiver.getDbCon().closeCursor(cursor1);
+
+
+            Query mQuery1 = null;
+            if (strCustomerIds.size() > 0) {
+                mQuery1 = QueryBuilder.build("_id", strCustomerIds,
+                        QueryBuilder.Operator.INLIST);
+            }
+
+            Query finalQuery;
+
+            //if (strDate != null && !strDate.equalsIgnoreCase("")) {
+            Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
+                    GREATER_THAN_EQUALTO);
+
+            if (mQuery1 != null) {
+                finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND, q12);
+            } else {
+                finalQuery = q12;
+            }
+            /* else {
+                finalQuery = mQuery1;
+            }*/
+
+
+            storageService.findDocsByQuery(Config.collectionCustomer, finalQuery,
+                    new App42CallBack() {
+
+                        @Override
+                        public void onSuccess(Object o) {
+                            try {
+
+                                if (o != null) {
+
+                                    Utils.log(o.toString(), " fetchCustomers ");
+                                    Storage storage = (Storage) o;
+
+                                    if (storage.getJsonDocList().size() > 0) {
+
+                                        for (int i = 0; i < storage.getJsonDocList().size(); i++) {
+
+                                            Storage.JSONDocument jsonDocument = storage.
+                                                    getJsonDocList().get(i);
+
+                                            String values[] = {jsonDocument.getDocId(),
+                                                    jsonDocument.getUpdatedAt(),
+                                                    jsonDocument.getJsonDoc(),
+                                                    Config.collectionCustomer
+                                            };
+
+                                            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+                                            // WHERE clause arguments
+                                            String[] selectionArgs = {jsonDocument.getDocId(),
+                                                    Config.collectionCustomer};
+                                            CareGiver.getDbCon().updateInsert(
+                                                    DbHelper.strTableNameCollection,
+                                                    selection, values,
+                                                    DbHelper.COLLECTION_FIELDS_CD,
+                                                    selectionArgs);
+                                        }
+                                    }
+                                    fetchDependents(iFlag, context);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                            Utils.log(e.getMessage(), " MESS 0");
+                            fetchDependents(iFlag, context);
+                        }
+
+                    });
+        }
+    }
+
+    //refresh Clients = Customer->Dependents
+    public static void fetchClients(final int iFlag, final Context context) {
+
+        if (Utils.isConnectingToInternet(context)) {
+
+            Query finalQuery;
+            Calendar calendar = Calendar.getInstance();
+            Date date = calendar.getTime();
+            final String strDateNow = Utils.readFormat.format(date);
+
+            final SessionManager sessionManager = new SessionManager(context);
+
+            String strDate = DbHelper.DEFAULT_DB_DATE;
+
+            if (sessionManager.getClientDate() != null
+                    && !sessionManager.getClientDate().equalsIgnoreCase("")) {
+                strDate = sessionManager.getClientDate();
+            }
+
+            Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
+                    QueryBuilder.Operator.EQUALS);
+
+            if (strDate != null && !strDate.equalsIgnoreCase("")) {
+                Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
+                        GREATER_THAN_EQUALTO);
+                finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
+            } else {
+                finalQuery = q1;
+            }
+
+            StorageService storageService = new StorageService(context);
+
+            storageService.findDocsByQueryOrderBy(Config.collectionProviderDependent, finalQuery,
+                    30000, 0,
+                    "provider_id", 1, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            try {
+                                if (o != null) {
+
+                                    Storage storage = (Storage) o;
+
+                                    if (storage.getJsonDocList().size() > 0) {
+
+                                        ArrayList<Storage.JSONDocument> jsonDocList = storage.
+                                                getJsonDocList();
+
+                                        for (int i = 0; i < jsonDocList.size(); i++) {
+
+                                            Storage.JSONDocument jsonDocument = storage.
+                                                    getJsonDocList().get(i);
+
+                                            String strDocument = jsonDocument.getJsonDoc();
+
+                                            try {
+                                                JSONObject jsonObject = new JSONObject(strDocument);
+
+                                                insertClientIds(jsonObject.getString("customer_id"),
+                                                        jsonObject.getString("customer_id"),
+                                                        jsonObject.optInt("removed"));
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        sessionManager.saveClientDate(strDateNow);
+                                    }
+                                }
+                                Utils.log(" 0 ", " MESS ");
+                                fetchCustomers(iFlag, context);
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                                //fetchCustomers(iFlag);
+                            }
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                            Utils.log(e.getMessage(), " MESS ");
+                            fetchCustomers(iFlag, context);
+                        }
+                    });
+        }
+    }
+
+    private static void insertClientIds(String strCustomerId, String strDependentId) {
+
+        try {
+
+            if (!strCustomerId.equalsIgnoreCase("")) {
+                Cursor cursor = CareGiver.getDbCon().fetch(
+                        DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                        new String[]{Config.collectionCustomer, strCustomerId}, null, "0, 1", true,
+                        null, null
+                );
+
+                if (cursor.getCount() <= 0) {
+                    String values[] = {strCustomerId, Config.collectionCustomer, "0"};
+
+                    CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values,
+                            DbHelper.COLLECTION_FIELDS_CLIENTS);
+                }
+
+                CareGiver.getDbCon().closeCursor(cursor);
+            }
+
+            //dependent
+            if (!strDependentId.equalsIgnoreCase("")) {
+                Cursor cursor1 = CareGiver.getDbCon().fetch(
+                        DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                        new String[]{Config.collectionDependent, strDependentId}, null, "0, 1", true,
+                        null, null
+                );
+
+                if (cursor1.getCount() <= 0) {
+
+                    String values1[] = {strDependentId, Config.collectionDependent, "0"};
+
+                    CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values1,
+                            DbHelper.COLLECTION_FIELDS_CLIENTS);
+                }
+
+                CareGiver.getDbCon().closeCursor(cursor1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void insertClientIds(String strCustomerId, String strDependentId, int iRemoved) {
+
+        try {
+
+            if (!strCustomerId.equalsIgnoreCase("")) {
+                Cursor cursor = CareGiver.getDbCon().fetch(
+                        DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                        new String[]{Config.collectionCustomer, strCustomerId}, null, "0, 1", true,
+                        null, null
+                );
+
+                if (cursor.getCount() <= 0) {
+                    String values[] = {strCustomerId, "", "", Config.collectionCustomer, "0",
+                            String.valueOf(iRemoved)};
+
+                    CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values,
+                            DbHelper.COLLECTION_FIELDS);
+                } else {
+                    String values[] = {String.valueOf(iRemoved)};
+                    String selection = DbHelper.COLUMN_OBJECT_ID + "=? and "
+                            + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+                    // WHERE clause arguments
+                    String[] selectionArgs = {strCustomerId, Config.collectionCustomer};
+                    CareGiver.getDbCon().update(DbHelper.strTableNameCollection, selection, values,
+                            new String[]{DbHelper.COLUMN_CLIENT_FLAG}, selectionArgs);
+                }
+
+                CareGiver.getDbCon().closeCursor(cursor);
+            }
+
+            //dependent
+            if (!strDependentId.equalsIgnoreCase("")) {
+                Cursor cursor1 = CareGiver.getDbCon().fetch(
+                        DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                        new String[]{Config.collectionDependent, strDependentId}, null, "0, 1", true,
+                        null, null
+                );
+
+                if (cursor1.getCount() <= 0) {
+
+                    String values1[] = {strDependentId, "", "", Config.collectionDependent, "0",
+                            String.valueOf(iRemoved)};
+
+                    CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values1,
+                            DbHelper.COLLECTION_FIELDS);
+                } else {
+                    String values[] = {String.valueOf(iRemoved)};
+                    String selection = DbHelper.COLUMN_OBJECT_ID + "=? and "
+                            + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+                    // WHERE clause arguments
+                    String[] selectionArgs = {strDependentId, Config.collectionDependent};
+                    CareGiver.getDbCon().update(DbHelper.strTableNameCollection, selection, values,
+                            new String[]{DbHelper.COLUMN_CLIENT_FLAG}, selectionArgs);
+                }
+
+                CareGiver.getDbCon().closeCursor(cursor1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void createProviderModel(String strProviderId) {
 
         try {
@@ -466,7 +889,7 @@ public class AppUtils {
                     Config.providerModel = new ProviderModel(
                             jsonObject.getString("provider_name"),
                             jsonObject.getString("provider_profile_url"),
-                            "",
+                            //"",
                             jsonObject.getString("provider_address"),
                             jsonObject.getString("provider_contact_no"),
                             jsonObject.getString("provider_email"),
@@ -483,6 +906,43 @@ public class AppUtils {
             e.printStackTrace();
         }
     }
+
+    /*public void loadAllFiles() {
+
+        Cursor cur = null;
+
+        try {
+
+            cur = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameFiles, new String[]{"name", "url"}, null,
+                    null, null, null, true, null, null
+            );
+
+            if (cur.getCount() > 0) {
+                cur.moveToFirst();
+                while (!cur.isAfterLast()) {
+                    utils.loadImageFromWeb(cur.getString(0), cur.getString(1));
+                    cur.moveToNext();
+                }
+            }
+
+            CareGiver.getDbCon().closeCursor(cur);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            CareGiver.getDbCon().closeCursor(cur);
+        }
+
+        *//*for (int i = 0; i < Config.fileModels.size(); i++) {
+            FileModel fileModel = Config.fileModels.get(i);
+
+            if (fileModel != null && fileModel.getStrFileUrl() != null &&
+                    !fileModel.getStrFileUrl().equalsIgnoreCase("")) {
+                utils.loadImageFromWeb(fileModel.getStrFileName(),
+                        fileModel.getStrFileUrl());
+            }
+        }*//*
+    }*/
 
     public void updateProviderJson(String strProviderId, boolean bWhich) {
 
@@ -529,476 +989,6 @@ public class AppUtils {
         }
     }
 
-    private void fetchDependents(final int iFlag) {
-
-        if (Config.dependentIds.size() > 0) {
-
-            if (utils.isConnectingToInternet()) {
-
-                String strDate = DbHelper.DEFAULT_DB_DATE;
-
-                Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionDependent);
-
-                if (cursor != null && cursor.getCount() > 0) {
-                    cursor.moveToFirst();
-                    strDate = cursor.getString(0);
-                }
-
-                CareGiver.getDbCon().closeCursor(cursor);
-
-                //
-                Cursor cursor1 = CareGiver.getDbCon().fetch(
-                        DbHelper.strTableNameCollection,
-                        new String[]{DbHelper.COLUMN_OBJECT_ID},
-                        DbHelper.COLUMN_COLLECTION_NAME
-                                + "=? and "
-                                + DbHelper.COLUMN_DOCUMENT + "=?",
-                        new String[]{Config.collectionDependent,
-                                ""
-                        },
-                        null, null, true,
-                        null, null
-                );
-
-                ArrayList<String> strDependentIds = new ArrayList<>();
-
-                if (cursor1.getCount() > 0) {
-                    cursor1.moveToFirst();
-
-                    while (cursor1.isAfterLast()) {
-                        strDependentIds.add(cursor1.getString(0));
-                        cursor1.moveToNext();
-                    }
-                }
-                CareGiver.getDbCon().closeCursor(cursor1);
-                //
-
-                Query mQuery1 = null;
-
-                if (strDependentIds.size() > 0) {
-                    mQuery1 = QueryBuilder.build("_id", strDependentIds,
-                            QueryBuilder.Operator.INLIST);
-                }
-
-                Query finalQuery;
-
-                Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
-                        GREATER_THAN_EQUALTO);
-
-                if (mQuery1 != null) { //strDate != null && !strDate.equalsIgnoreCase("")
-
-                    finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
-                            q12);
-                } else {
-                    finalQuery = q12;
-                }
-
-                //
-
-                //Query query = QueryBuilder.build("_id", Config.dependentIds, QueryBuilder.Operator.INLIST);
-
-                storageService.findDocsByQuery(Config.collectionDependent, finalQuery, new App42CallBack() {
-
-                    @Override
-                    public void onSuccess(Object o) {
-                        try {
-                            //System.out.println("NACHIKET : "+(o!=null));
-                            if (o != null) {
-
-                                Utils.log(o.toString(), " MESS 1");
-
-                                Storage storage = (Storage) o;
-
-                                if (storage.getJsonDocList().size() > 0) {
-
-                                    for (int i = 0; i < storage.getJsonDocList().size(); i++) {
-
-                                        Storage.JSONDocument jsonDocument = storage.
-                                                getJsonDocList().get(i);
-/*
-                                        String strDocument = jsonDocument.getJsonDoc();
-                                        String strDependentDocId = jsonDocument.
-                                                getDocId();*/
-
-
-                                        //
-                                        String values[] = {jsonDocument.getDocId(),
-                                                jsonDocument.getUpdatedAt(),
-                                                jsonDocument.getJsonDoc(),
-                                                Config.collectionDependent,
-                                                "0", ""};
-
-                                        String selection = DbHelper.COLUMN_OBJECT_ID
-                                                + " = ?";
-
-                                        // WHERE clause arguments
-                                        String[] selectionArgs = {jsonDocument.getDocId()};
-                                        CareGiver.getDbCon().updateInsert(
-                                                DbHelper.strTableNameCollection,
-                                                selection, values,
-                                                DbHelper.COLLECTION_FIELDS,
-                                                selectionArgs);
-                                        //
-
-                                    }
-                                }
-                            }
-                            if (iFlag == 2)
-                                DashboardActivity.gotoSimpleActivityMenu();
-                            else
-                                DashboardActivity.refreshClientsData();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onException(Exception e) {
-                        Utils.log(e.getMessage(), " MESS 1");
-                        if (iFlag == 2)
-                            DashboardActivity.gotoSimpleActivityMenu();
-                        else
-                            DashboardActivity.refreshClientsData();
-                    }
-
-                });
-
-            } else {
-                if (iFlag == 2)
-                    DashboardActivity.gotoSimpleActivityMenu();
-                else
-                    DashboardActivity.refreshClientsData();
-            }
-
-        } else {
-            if (iFlag == 2)
-                DashboardActivity.gotoSimpleActivityMenu();
-            else
-                DashboardActivity.refreshClientsData();
-        }
-    }
-
-    private void fetchCustomers(final int iFlag) {
-
-        // if (Config.customerIds.size() > 0) {
-
-            if (utils.isConnectingToInternet()) {
-
-                String strDate = DbHelper.DEFAULT_DB_DATE;
-
-                Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionCustomer);
-
-                if (cursor != null && cursor.getCount() > 0) {
-                    cursor.moveToFirst();
-                    strDate = cursor.getString(0);
-                }
-
-                CareGiver.getDbCon().closeCursor(cursor);
-
-                //
-                Cursor cursor1 = CareGiver.getDbCon().fetch(
-                        DbHelper.strTableNameCollection,
-                        new String[]{DbHelper.COLUMN_OBJECT_ID},
-                        DbHelper.COLUMN_COLLECTION_NAME
-                                + "=? and "
-                                + DbHelper.COLUMN_DOCUMENT + "=?",
-                        new String[]{Config.collectionCustomer,
-                                ""
-                        },
-                        null, null, true,
-                        null, null
-                );
-                // CareGiver.getDbCon().closeCursor(cursor);
-
-                ArrayList<String> strCustomerIds = new ArrayList<>();
-
-                if (cursor1.getCount() > 0) {
-                    cursor1.moveToFirst();
-
-                    while (cursor1.isAfterLast()) {
-                        strCustomerIds.add(cursor1.getString(0));
-                        cursor1.moveToNext();
-                    }
-                }
-                CareGiver.getDbCon().closeCursor(cursor1);
-                //
-
-                Query mQuery1 = null;
-                if (strCustomerIds.size() > 0) {
-                    mQuery1 = QueryBuilder.build("_id", strCustomerIds,
-                            QueryBuilder.Operator.INLIST);
-                }
-
-                Query finalQuery;
-
-                //if (strDate != null && !strDate.equalsIgnoreCase("")) {
-                Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
-                        GREATER_THAN_EQUALTO);
-
-                if (mQuery1 != null) {
-                    finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
-                            q12);
-                } else {
-                    finalQuery = q12;
-                }
-                /* else {
-                    finalQuery = mQuery1;
-                }*/
-
-
-                storageService.findDocsByQuery(Config.collectionCustomer, finalQuery,
-                        new App42CallBack() {
-
-                            @Override
-                            public void onSuccess(Object o) {
-                                try {
-
-                                    if (o != null) {
-
-                                        Utils.log(o.toString(), " fetchCustomers ");
-                                        Storage storage = (Storage) o;
-
-                                        if (storage.getJsonDocList().size() > 0) {
-
-                                            for (int i = 0; i < storage.getJsonDocList().size(); i++) {
-
-                                                Storage.JSONDocument jsonDocument = storage.
-                                                        getJsonDocList().get(i);
-
-                                               /* String strDocument = jsonDocument.getJsonDoc();
-                                                String strDependentDocId = jsonDocument.
-                                                        getDocId();*/
-
-
-                                                //
-                                                String values[] = {jsonDocument.getDocId(),
-                                                        jsonDocument.getUpdatedAt(),
-                                                        jsonDocument.getJsonDoc(),
-                                                        Config.collectionCustomer,
-                                                        "0", ""};
-
-                                                String selection = DbHelper.COLUMN_OBJECT_ID
-                                                        + " = ?";
-
-                                                // WHERE clause arguments
-                                                String[] selectionArgs = {jsonDocument.getDocId()};
-                                                CareGiver.getDbCon().updateInsert(
-                                                        DbHelper.strTableNameCollection,
-                                                        selection, values,
-                                                        DbHelper.COLLECTION_FIELDS,
-                                                        selectionArgs);
-                                                //
-                                            }
-                                        }
-                                        fetchDependents(iFlag);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    //fetchDependents(iFlag);
-                                }
-                            }
-
-                            @Override
-                            public void onException(Exception e) {
-                                Utils.log(e.getMessage(), " MESS 0");
-                                fetchDependents(iFlag);
-                            }
-
-                        });
-            } else {
-                fetchDependents(iFlag);
-            }
-
-        //} else fetchDependents(iFlag);
-    }
-
-    private void createDependentModel(String strDocumentId, String strDocument, int iFlag) {
-
-        /*try {
-
-            JSONObject jsonObjectDependent = new JSONObject(strDocument);
-
-            if (!Config.dependentIdsAdded.contains(strDocumentId)) {
-
-                ///
-                DependentModel dependentModel = new DependentModel(
-                        jsonObjectDependent.getString("dependent_name"),
-                        jsonObjectDependent.getString("dependent_relation"),
-                        jsonObjectDependent.getString("dependent_notes"),
-                        jsonObjectDependent.getString("dependent_address"),
-                        jsonObjectDependent.getString("dependent_contact_no"),
-                        jsonObjectDependent.getString("dependent_email"),
-                        jsonObjectDependent.getString("dependent_illness"),
-                        "",
-                        "",
-                        strDocumentId,
-                        jsonObjectDependent.getString("customer_id"));
-
-                if (jsonObjectDependent.has("dependent_profile_url"))
-                    dependentModel.setStrImageUrl(jsonObjectDependent.getString("dependent_profile_url"));
-
-                dependentModel.setStrDob(jsonObjectDependent.getString("dependent_dob"));
-
-
-                if (jsonObjectDependent.has("dependent_age")) {
-
-                    try {
-                        dependentModel.setIntAge(jsonObjectDependent.getInt("dependent_age"));
-                    } catch (Exception e) {
-                        try {
-                            String strAge = jsonObjectDependent.getString("dependent_age");
-
-                            int iAge = 0;
-                            if (!strAge.equalsIgnoreCase(""))
-                                iAge = Integer.parseInt(strAge);
-
-                            dependentModel.setIntAge(iAge);
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-
-                if (jsonObjectDependent.has("health_bp")) {
-
-                    try {
-                        dependentModel.setIntHealthBp(jsonObjectDependent.getInt("health_bp"));
-                    } catch (Exception e) {
-                        try {
-                            String strBp = jsonObjectDependent.getString("health_bp");
-
-                            int iBp = 0;
-                            if (!strBp.equalsIgnoreCase(""))
-                                iBp = Integer.parseInt(strBp);
-
-                            dependentModel.setIntHealthBp(iBp);
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-
-                if (jsonObjectDependent.has("health_heart_rate")) {
-
-                    try {
-                        dependentModel.setIntHealthHeartRate(jsonObjectDependent.getInt("health_heart_rate"));
-                    } catch (Exception e) {
-                        try {
-
-                            String strPulse = jsonObjectDependent.getString("health_heart_rate");
-
-                            int iPulse = 0;
-                            if (!strPulse.equalsIgnoreCase(""))
-                                iPulse = Integer.parseInt(strPulse);
-
-                            dependentModel.setIntHealthHeartRate(iPulse);
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-                ///
-
-                Config.dependentIdsAdded.add(strDocumentId);
-
-                Config.dependentModels.add(dependentModel);
-
-                if (iFlag == 2) {
-
-                    if (!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name"))) {
-                        Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
-
-                        int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.getString("customer_id"));
-
-                        if (Config.clientModels.size() > 0) {
-                            if (iPosition > -1 && iPosition < Config.clientModels.size())
-                                Config.clientModels.get(iPosition).setDependentModel(dependentModel);
-                        }
-
-                        if (Config.clientNameModels.size() > 0) {
-                            if (iPosition > -1 && iPosition < Config.clientNameModels.size()) {
-                                Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
-                                Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
-                            }
-                        }
-                    }
-                }
-
-               *//* Config.fileModels.add(new FileModel(strDocumentId,
-                        jsonObjectDependent.getString("dependent_profile_url"), "IMAGE"));*//*
-
-                //
-                if (jsonObjectDependent.has("dependent_profile_url")) {
-                    String strUrl = jsonObjectDependent.getString("dependent_profile_url");
-
-                    *//*String strUrlHash = Utils.sha512(strUrl);
-
-                    Cursor cur = CareGiver.getDbCon().fetch(
-                            DbHelper.strTableNameFiles, new String[]{"file_hash"}, "name=?",
-                            new String[]{strDocumentId}, null, "0, 1", true, null, null
-                    );
-
-                    //Utils.log(strUrlHash, " HASH ");
-
-
-                    String strHashLocal = "";
-
-                    if (cur.getCount() <= 0) {
-                        CareGiver.getDbCon().insert(DbHelper.strTableNameFiles, new String[]{strDocumentId,
-                                        strUrl, "IMAGE", strUrlHash},
-                                new String[]{"name", "url", "file_type", "file_hash"});
-                    } else {
-
-                        cur.moveToFirst();
-                        strHashLocal = cur.getString(0);
-                        cur.moveToNext();
-                        CareGiver.getDbCon().closeCursor(cur);
-
-                        if (!strHashLocal.equalsIgnoreCase(strUrlHash)) {
-                            CareGiver.getDbCon().update(
-                                    DbHelper.strTableNameFiles, "name=?",
-                                    new String[]{strUrl, strUrlHash},
-                                    new String[]{"url", "file_hash"}, new String[]{strDocumentId}
-                            );
-                        }
-                    }
-
-                    CareGiver.getDbCon().closeCursor(cur);*//*
-                }
-            } else {
-                if (iFlag == 2) {
-
-                    if (!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name"))) {
-                        Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
-
-                        int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.getString("customer_id"));
-
-                        if (Config.clientModels.size() > 0) {
-
-                            if (iPosition > -1 && iPosition < Config.clientModels.size()) {
-                                int iPosition1 = Config.dependentIdsAdded.indexOf(strDocumentId);
-                                if (iPosition1 > -1 && iPosition1 < Config.dependentModels.size()) {
-                                    DependentModel dependentModel = Config.dependentModels.get(iPosition1);
-                                    Config.clientModels.get(iPosition).setDependentModel(dependentModel);
-                                }
-                            }
-                        }
-
-                        //
-                        if (Config.clientNameModels.size() > 0) {
-                            if (iPosition > -1 && iPosition < Config.clientNameModels.size()) {
-                                Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
-                                Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-    }
-
     public void createNotificationModel() {
 
         Cursor cursor = null;
@@ -1009,9 +999,8 @@ public class AppUtils {
             cursor = CareGiver.getDbCon().fetch(
                     DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
                     DbHelper.COLUMN_COLLECTION_NAME + "=?",
-                    new String[]{Config.collectionNotification}, DbHelper.COLUMN_UPDATE_DATE + " desc",
-                    null, true, null, null
-            );
+                    new String[]{Config.collectionNotification}, DbHelper.COLUMN_UPDATE_DATE
+                            + " desc", null, true, null, null);
 
             if (cursor != null && cursor.getCount() > 0) {
                 Config.notificationModels.clear();
@@ -1032,22 +1021,24 @@ public class AppUtils {
                                 jsonObjectProvider.getString("created_by"), "");
 
                         if (jsonObjectProvider.has("activity_id"))
-                            notificationModel.setStrActivityId(jsonObjectProvider.getString("activity_id"));
+                            notificationModel.setStrActivityId(jsonObjectProvider.
+                                    getString("activity_id"));
 
-                        if (jsonObjectProvider.getString("created_by_type").equalsIgnoreCase("customer")) {
-                            if (!Config.customerIdsAdded.contains(jsonObjectProvider.getString("created_by")))
+                        if (jsonObjectProvider.getString("created_by_type").
+                                equalsIgnoreCase("customer")) {
+                            if (!Config.customerIdsAdded.contains(jsonObjectProvider.
+                                    getString("created_by")))
                                 Config.customerIds.add(jsonObjectProvider.getString("created_by"));
                         }
 
-                        if (jsonObjectProvider.getString("created_by_type").equalsIgnoreCase("dependent")) {
-                            if (!Config.dependentIdsAdded.contains(jsonObjectProvider.getString("created_by")))
+                        if (jsonObjectProvider.getString("created_by_type").
+                                equalsIgnoreCase("dependent")) {
+                            if (!Config.dependentIdsAdded.contains(jsonObjectProvider.
+                                    getString("created_by")))
                                 Config.dependentIds.add(jsonObjectProvider.getString("created_by"));
                         }
 
-                        /*if (!Config.strNotificationIds.contains(strDocumentId)) {
-                            Config.strNotificationIds.add(strDocumentId);*/
                         Config.notificationModels.add(notificationModel);
-                        //}
                     }
                     cursor.moveToNext();
                 }
@@ -1071,7 +1062,8 @@ public class AppUtils {
 
         Cursor newCursor = CareGiver.getDbCon().fetch(
                 DbHelper.strTableNameCollection,
-                new String[]{DbHelper.COLUMN_OBJECT_ID, DbHelper.COLUMN_DOCUMENT},
+                new String[]{DbHelper.COLUMN_OBJECT_ID, DbHelper.COLUMN_DOCUMENT,
+                        DbHelper.COLUMN_CLIENT_FLAG},
                 DbHelper.COLUMN_COLLECTION_NAME
                         + "=?",
                 new String[]{Config.collectionCustomer},
@@ -1085,9 +1077,13 @@ public class AppUtils {
 
             try {
 
+                int iRemoved = 0;
+
                 while (!newCursor.isAfterLast()) {
 
                     if (!newCursor.getString(1).equalsIgnoreCase("")) {
+
+                        iRemoved = newCursor.getInt(2);
 
                         JSONObject jsonObject = new JSONObject(newCursor.getString(1));
 
@@ -1110,7 +1106,8 @@ public class AppUtils {
                                     newCursor.getString(0));
 
 
-                            if (!Config.strCustomerNames.contains(jsonObject.getString("customer_name"))) {
+                            if (iRemoved == 0) {
+
                                 Config.strCustomerNames.add(jsonObject.getString("customer_name"));
 
                                 Config.customerIdsCopy.add(newCursor.getString(0));
@@ -1120,89 +1117,54 @@ public class AppUtils {
                                 Config.clientModels.add(clientModel);
 
                                 ClientNameModel clientNameModel = new ClientNameModel();
-                                clientNameModel.setStrCustomerName(jsonObject.getString("customer_name"));
+                                clientNameModel.setStrCustomerName(jsonObject.
+                                        getString("customer_name"));
 
                                 Config.clientNameModels.add(clientNameModel);
-                            }
 
-                            Config.customerModels.add(customerModel);
-                            Config.customerIdsAdded.add(newCursor.getString(0));
+                                Config.customerModels.add(customerModel);
+                                Config.customerIdsAdded.add(newCursor.getString(0));
+                            }
                         }
                     }
-
                     newCursor.moveToNext();
                 }
 
             } catch (JSONException e1) {
                 e1.printStackTrace();
             }
-
         }
         CareGiver.getDbCon().closeCursor(newCursor);
         createDependentModel();
     }
 
-    /*public void loadAllFiles() {
-
-        Cursor cur = null;
-
-        try {
-
-            cur = CareGiver.getDbCon().fetch(
-                    DbHelper.strTableNameFiles, new String[]{"name", "url"}, null,
-                    null, null, null, true, null, null
-            );
-
-            if (cur.getCount() > 0) {
-                cur.moveToFirst();
-                while (!cur.isAfterLast()) {
-                    utils.loadImageFromWeb(cur.getString(0), cur.getString(1));
-                    cur.moveToNext();
-                }
-            }
-
-            CareGiver.getDbCon().closeCursor(cur);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            CareGiver.getDbCon().closeCursor(cur);
-        }
-
-        *//*for (int i = 0; i < Config.fileModels.size(); i++) {
-            FileModel fileModel = Config.fileModels.get(i);
-
-            if (fileModel != null && fileModel.getStrFileUrl() != null &&
-                    !fileModel.getStrFileUrl().equalsIgnoreCase("")) {
-                utils.loadImageFromWeb(fileModel.getStrFileName(),
-                        fileModel.getStrFileUrl());
-            }
-        }*//*
-    }*/
-
     private void createDependentModel() {
 
         Config.dependentModels.clear();
         Config.strDependentNames.clear();
-        //Config.customerIdsCopy.clear();
         Config.dependentIdsAdded.clear();
 
         Cursor newCursor = CareGiver.getDbCon().fetch(
                 DbHelper.strTableNameCollection,
-                new String[]{DbHelper.COLUMN_OBJECT_ID, DbHelper.COLUMN_DOCUMENT},
-                DbHelper.COLUMN_COLLECTION_NAME
-                        + "=?",
-                new String[]{Config.collectionDependent},
-                null, null, true,
-                null, null
+                new String[]{
+                        DbHelper.COLUMN_OBJECT_ID, DbHelper.COLUMN_DOCUMENT,
+                        DbHelper.COLUMN_CLIENT_FLAG
+                },
+                DbHelper.COLUMN_COLLECTION_NAME + "=?", new String[]{Config.collectionDependent},
+                null, null, true, null, null
         );
 
         if (newCursor.getCount() > 0) {
 
             newCursor.moveToFirst();
 
+            int iRemoved = 1;
+
             try {
 
                 while (!newCursor.isAfterLast()) {
+
+                    iRemoved = newCursor.getInt(2);
 
                     if (!newCursor.getString(1).equalsIgnoreCase("")) {
                         JSONObject jsonObjectDependent = new JSONObject(newCursor.getString(1));
@@ -1221,7 +1183,8 @@ public class AppUtils {
                                 jsonObjectDependent.getString("customer_id"));
 
                         if (jsonObjectDependent.has("dependent_profile_url"))
-                            dependentModel.setStrImageUrl(jsonObjectDependent.getString("dependent_profile_url"));
+                            dependentModel.setStrImageUrl(jsonObjectDependent.
+                                    getString("dependent_profile_url"));
 
                         dependentModel.setStrDob(jsonObjectDependent.getString("dependent_dob"));
 
@@ -1229,7 +1192,8 @@ public class AppUtils {
                         if (jsonObjectDependent.has("dependent_age")) {
 
                             try {
-                                dependentModel.setIntAge(jsonObjectDependent.getInt("dependent_age"));
+                                dependentModel.setIntAge(jsonObjectDependent.
+                                        getInt("dependent_age"));
                             } catch (Exception e) {
                                 try {
                                     String strAge = jsonObjectDependent.getString("dependent_age");
@@ -1248,7 +1212,8 @@ public class AppUtils {
                         if (jsonObjectDependent.has("health_bp")) {
 
                             try {
-                                dependentModel.setIntHealthBp(jsonObjectDependent.getInt("health_bp"));
+                                dependentModel.setIntHealthBp(jsonObjectDependent.
+                                        getInt("health_bp"));
                             } catch (Exception e) {
                                 try {
                                     String strBp = jsonObjectDependent.getString("health_bp");
@@ -1267,11 +1232,13 @@ public class AppUtils {
                         if (jsonObjectDependent.has("health_heart_rate")) {
 
                             try {
-                                dependentModel.setIntHealthHeartRate(jsonObjectDependent.getInt("health_heart_rate"));
+                                dependentModel.setIntHealthHeartRate(jsonObjectDependent.
+                                        getInt("health_heart_rate"));
                             } catch (Exception e) {
                                 try {
 
-                                    String strPulse = jsonObjectDependent.getString("health_heart_rate");
+                                    String strPulse = jsonObjectDependent.
+                                            getString("health_heart_rate");
 
                                     int iPulse = 0;
                                     if (!strPulse.equalsIgnoreCase(""))
@@ -1284,23 +1251,30 @@ public class AppUtils {
                             }
                         }
 
+                        // if(iRemoved==0){
+
                         Config.dependentModels.add(dependentModel);
                         Config.dependentIdsAdded.add(newCursor.getString(0));
 
-                        if (!Config.strDependentNames.contains(jsonObjectDependent.getString("dependent_name"))) {
-                            Config.strDependentNames.add(jsonObjectDependent.getString("dependent_name"));
+                        if (iRemoved == 0) {
+                            Config.strDependentNames.add(jsonObjectDependent.
+                                    getString("dependent_name"));
 
-                            int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.getString("customer_id"));
+                            int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.
+                                    getString("customer_id"));
 
                             if (Config.clientModels.size() > 0) {
                                 if (iPosition > -1 && iPosition < Config.clientModels.size())
-                                    Config.clientModels.get(iPosition).setDependentModel(dependentModel);
+                                    Config.clientModels.get(iPosition).setDependentModel(
+                                            dependentModel);
                             }
 
                             if (Config.clientNameModels.size() > 0) {
                                 if (iPosition > -1 && iPosition < Config.clientNameModels.size()) {
-                                    Config.clientNameModels.get(iPosition).removeStrDependentName(jsonObjectDependent.getString("dependent_name"));
-                                    Config.clientNameModels.get(iPosition).setStrDependentName(jsonObjectDependent.getString("dependent_name"));
+                                    Config.clientNameModels.get(iPosition).removeStrDependentName(
+                                            jsonObjectDependent.getString("dependent_name"));
+                                    Config.clientNameModels.get(iPosition).setStrDependentName(
+                                            jsonObjectDependent.getString("dependent_name"));
                                 }
                             }
                         }
@@ -1317,17 +1291,6 @@ public class AppUtils {
     }
 
     public void fetchActivities() {
-
-      /* String strDate = DbHelper.DEFAULT_DB_DATE;
-
-       Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionServiceCustomer);
-
-        if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            strDate = cursor.getString(0);
-        }
-
-        CareGiver.getDbCon().closeCursor(cursor);*/
 
         Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
                 QueryBuilder.Operator.EQUALS);
@@ -1357,21 +1320,6 @@ public class AppUtils {
 
         Query q6 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q5);
 
-      /*  Query finalQuery;
-
-        if (strDate!=null&&!strDate.equalsIgnoreCase("")) {
-            Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.GREATER_THAN_EQUALTO);
-
-            finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
-        } else {
-            finalQuery = q1;
-        }*/
-
-        try {
-            Utils.log(q6.get(), " QUERY ");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         storageService.findDocsByQueryOrderBy(Config.collectionActivity, q6, 30000, 0,
                 "milestones.scheduled_date", 1,
@@ -1380,8 +1328,6 @@ public class AppUtils {
                     @Override
                     public void onSuccess(Object o) {
                         if (o != null) {
-
-                            //Utils.log(o.toString(), " Activity All SSS ");
 
                             Storage storage = (Storage) o;
 
@@ -1393,16 +1339,17 @@ public class AppUtils {
 
                                     Storage.JSONDocument jsonDocument = jsonDocList.get(i);
 
-                                    ///
                                     String values[] = {jsonDocument.getDocId(),
                                             jsonDocument.getUpdatedAt(),
                                             jsonDocument.getJsonDoc(), Config.collectionActivity,
                                             "0", ""};
 
-                                    String selection = DbHelper.COLUMN_OBJECT_ID + " = ?";
+                                    String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                            + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
                                     // WHERE clause arguments
-                                    String[] selectionArgs = {jsonDocument.getDocId()};
+                                    String[] selectionArgs = {jsonDocument.getDocId(),
+                                            Config.collectionActivity};
                                     CareGiver.getDbCon().updateInsert(
                                             DbHelper.strTableNameCollection,
                                             selection, values, DbHelper.COLLECTION_FIELDS,
@@ -1445,8 +1392,8 @@ public class AppUtils {
                     + " AS C3 FROM " + DbHelper.strTableNameCollection + " AS a INNER JOIN "
                     + DbHelper.strTableNameMilestone + " AS b ON a.object_id=b.object_id  WHERE b."
                     + DbHelper.COLUMN_MILESTONE_DATE + ">= Datetime('" + strStartDate + "') AND b."
-                    + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "') ORDER BY b."
-                    + DbHelper.COLUMN_MILESTONE_DATE + " DESC LIMIT 0, 30000";
+                    + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "') ORDER BY"
+                    + " b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC LIMIT 0, 30000";
 
             Utils.log(strQuery, " QUERY ");
 
@@ -1479,6 +1426,7 @@ public class AppUtils {
             e.printStackTrace();
         }
     }
+    //////////////////////////
 
     private void createActivityModel(JSONObject jsonObject, String strDocumentId,
                                      boolean isActivity) {
@@ -1617,13 +1565,6 @@ public class AppUtils {
                                     Config.dependentIds.add(jsonObjectFeedback.
                                             optString("feedback_by"));
                             }
-
-                         /*   Config.iRatings += jsonObjectFeedback.getInt("feedback_rating");
-
-                            Config.iRatingCount += 1;
-
-                            Config.feedBackModels.add(feedBackModel);*/
-
                         }
                     }
                     activityModel.setFeedBackModels(feedBackModels);
@@ -1830,7 +1771,6 @@ public class AppUtils {
                                 milestoneModel.setFieldModel(fieldModel);
                             }
                         }
-
                         activityModel.setiActivityDisplayFlag(isActivity);
                         activityModel.setMilestoneModel(milestoneModel);
                     }
@@ -1842,7 +1782,7 @@ public class AppUtils {
         }
     }
 
-    public void createFeedbackyModel() {
+    public void createFeedbackModel() {
 
         try {
 
@@ -1867,9 +1807,6 @@ public class AppUtils {
                     JSONObject jsonObject = new JSONObject(cursor.getString(0));
 
                     if (jsonObject.has("dependent_id")) {
-
-                        //ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
-
 
                         if (jsonObject.has("feedbacks")) {
 
@@ -2308,10 +2245,8 @@ public class AppUtils {
 
         return activityModel;
     }
-    //////////////////////////
 
     public void createCheckInCareModel(String strActivityId, String strDocument) {
-
 
         try {
             JSONObject jsonObjectCheck = new JSONObject(strDocument);
@@ -2351,8 +2286,10 @@ public class AppUtils {
                             for (int k = 0; k < imageDetails.length(); k++) {
                                 JSONObject jsonObjectImage = imageDetails.getJSONObject(k);
 
-                                ImageModel imageModel = new ImageModel(jsonObjectImage.optString("image_url"),
-                                        jsonObjectImage.optString("description"), jsonObjectImage.optString("date_time"));
+                                ImageModel imageModel = new ImageModel(jsonObjectImage.
+                                        optString("image_url"),
+                                        jsonObjectImage.optString("description"), jsonObjectImage.
+                                        optString("date_time"));
                                 imageModels.add(imageModel);
                             }
 
@@ -2361,7 +2298,6 @@ public class AppUtils {
                             checkInCareModel.setPictureModel(pictureModel);
 
                             Config.roomtypeName.add(pictureModel);
-
 
                         }
 
@@ -2383,29 +2319,33 @@ public class AppUtils {
 
                         JSONObject jsonObjectsubactivitites = subMainactivities.getJSONObject(i);
                         jsonObjectsubactivitites.optString("activity_name");
-                        if (jsonObjectsubactivitites != null && jsonObjectsubactivitites.length() > 0) {
+                        if (jsonObjectsubactivitites != null && jsonObjectsubactivitites.
+                                length() > 0) {
                             ArrayList<SubActivityModel> subActivityModels = new ArrayList<SubActivityModel>();
 
-                            JSONArray subactivities = jsonObjectsubactivitites.optJSONArray("sub_activities");
+                            JSONArray subactivities = jsonObjectsubactivitites.
+                                    optJSONArray("sub_activities");
                             for (int j = 0; j < subactivities.length(); j++) {
                                 JSONObject jsonObjectsubactivity = subactivities.getJSONObject(j);
 
-                                SubActivityModel subActivityModel = new SubActivityModel(jsonObjectsubactivity.optString("status"),
-                                        jsonObjectsubactivity.optString("sub_activity_name"), jsonObjectsubactivity.optString("utility_name"),
-                                        jsonObjectsubactivity.optString("due_date"), jsonObjectsubactivity.optString("due_status"));
+                                SubActivityModel subActivityModel = new SubActivityModel(
+                                        jsonObjectsubactivity.optString("status"),
+                                        jsonObjectsubactivity.optString("sub_activity_name"),
+                                        jsonObjectsubactivity.optString("utility_name"),
+                                        jsonObjectsubactivity.optString("due_date"),
+                                        jsonObjectsubactivity.optString("due_status"));
                                 subActivityModels.add(subActivityModel);
                             }
-                            CheckInCareActivityModel checkInCareActivityModel = new CheckInCareActivityModel(jsonObjectsubactivitites.optString("activity_name"), subActivityModels);
+                            CheckInCareActivityModel checkInCareActivityModel =
+                                    new CheckInCareActivityModel(jsonObjectsubactivitites.
+                                            optString("activity_name"), subActivityModels);
                             checkInCareActivityModels.add(checkInCareActivityModel);
                         }
-
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-
             }
-
 
             checkInCareModel.setCheckInCareActivityModels(checkInCareActivityModels);
 
@@ -2483,8 +2423,8 @@ public class AppUtils {
                             fieldModel.setStrFieldType(jsonObjectField.getString("type"));
 
                             if (jsonObjectField.has("values")) {
-                                fieldModel.setStrFieldValues(utils.jsonToStringArray(jsonObjectField.
-                                        getJSONArray("values")));
+                                fieldModel.setStrFieldValues(utils.jsonToStringArray(
+                                        jsonObjectField.getJSONArray("values")));
                             }
 
                             if (jsonObjectField.has("child")) {
@@ -2505,19 +2445,22 @@ public class AppUtils {
                                 }
 
                                 if (jsonObjectField.has("child_type"))
-                                    fieldModel.setStrChildType(utils.jsonToStringArray(jsonObjectField.
-                                            getJSONArray("child_type")));
+                                    fieldModel.setStrChildType(utils.jsonToStringArray(
+                                            jsonObjectField.getJSONArray("child_type")));
 
                                 if (jsonObjectField.has("child_value"))
-                                    fieldModel.setStrChildValue(utils.jsonToStringArray(jsonObjectField.
+                                    fieldModel.setStrChildValue(
+                                            utils.jsonToStringArray(jsonObjectField.
                                             getJSONArray("child_value")));
 
                                 if (jsonObjectField.has("child_condition"))
-                                    fieldModel.setStrChildCondition(utils.jsonToStringArray(jsonObjectField.
+                                    fieldModel.setStrChildCondition(utils.
+                                            jsonToStringArray(jsonObjectField.
                                             getJSONArray("child_condition")));
 
                                 if (jsonObjectField.has("child_field"))
-                                    fieldModel.setiChildfieldID(utils.jsonToIntArray(jsonObjectField.
+                                    fieldModel.setiChildfieldID(utils.
+                                            jsonToIntArray(jsonObjectField.
                                             getJSONArray("child_field")));
                             }
 
@@ -2525,12 +2468,14 @@ public class AppUtils {
                             if (jsonObjectField.has("array_fields")) {
 
                                 try {
-                                    fieldModel.setiArrayCount(jsonObjectField.getInt("array_fields"));
+                                    fieldModel.setiArrayCount(jsonObjectField.
+                                            getInt("array_fields"));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     int i = 0;
                                     try {
-                                        i = Integer.parseInt(jsonObjectField.getString("array_fields"));
+                                        i = Integer.parseInt(jsonObjectField.
+                                                getString("array_fields"));
                                         fieldModel.setiArrayCount(i);
                                     } catch (Exception e1) {
                                         e1.printStackTrace();
@@ -2538,11 +2483,12 @@ public class AppUtils {
                                 }
 
                                 if (jsonObjectField.has("array_type"))
-                                    fieldModel.setStrArrayType(utils.jsonToStringArray(jsonObjectField.
-                                            getJSONArray("array_type")));
+                                    fieldModel.setStrArrayType(utils.jsonToStringArray(
+                                            jsonObjectField.getJSONArray("array_type")));
 
                                 if (jsonObjectField.has("array_data"))
-                                    fieldModel.setStrArrayData(jsonObjectField.getString("array_data"));
+                                    fieldModel.setStrArrayData(jsonObjectField.
+                                            getString("array_data"));
 
                             }
                             ////
@@ -2567,8 +2513,10 @@ public class AppUtils {
                 List<String> serviceNameList = new ArrayList<>();
 
                 if (Config.serviceNameModels != null && Config.serviceNameModels.size() > 0) {
-                    if (Config.serviceNameModels.containsKey(jsonObject.getString("category_name"))) {
-                        serviceNameList.addAll(Config.serviceNameModels.get(jsonObject.getString("category_name")));
+                    if (Config.serviceNameModels.containsKey(jsonObject.
+                            getString("category_name"))) {
+                        serviceNameList.addAll(Config.serviceNameModels.get(jsonObject.
+                                getString("category_name")));
                         serviceNameList.add(jsonObject.getString("service_name"));
                     } else {
                         serviceNameList.add(jsonObject.getString("service_name"));
@@ -2577,7 +2525,8 @@ public class AppUtils {
                     serviceNameList.add(jsonObject.getString("service_name"));
                 }
 
-                Config.serviceNameModels.put(jsonObject.getString("category_name"), serviceNameList);
+                Config.serviceNameModels.put(jsonObject.getString("category_name"),
+                        serviceNameList);
 
 
                 //
@@ -2602,129 +2551,6 @@ public class AppUtils {
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-    }
-
-    //refresh Providers
-    public void fetchClients(final int iFlag, Context context) {
-
-        if (utils.isConnectingToInternet()) {
-            //fetchCustomers(2);
-            StorageService storageService = new StorageService(context);
-
-            Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
-                    QueryBuilder.Operator.EQUALS);
-
-            storageService.findDocsByQueryOrderBy(Config.collectionProviderDependent, q1, 30000, 0,
-                    "provider_id", 1, new App42CallBack() {
-                        @Override
-                        public void onSuccess(Object o) {
-                            try {
-                                if (o != null) {
-
-                                    Storage storage = (Storage) o;
-
-                                    if (storage.getJsonDocList().size() > 0) {
-
-                                        ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
-
-                                        for (int i = 0; i < jsonDocList.size(); i++) {
-
-                                            Storage.JSONDocument jsonDocument = storage.getJsonDocList().
-                                                    get(i);
-
-                                            String strDocument = jsonDocument.getJsonDoc();
-
-                                            try {
-                                                JSONObject jsonObject = new JSONObject(strDocument);
-
-                                                /*if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
-                                                    Config.customerIds.add(jsonObject.getString("customer_id"));
-
-                                                if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
-                                                    Config.dependentIds.add(jsonObject.getString("dependent_id"));*/
-
-
-                                                Cursor cursor = CareGiver.getDbCon().fetch(
-                                                        DbHelper.strTableNameCollection,
-                                                        new String[]{DbHelper.COLUMN_DOCUMENT},
-                                                        DbHelper.COLUMN_COLLECTION_NAME
-                                                                + "=? and "
-                                                                + DbHelper.COLUMN_OBJECT_ID + "=?",
-                                                        new String[]{Config.collectionCustomer,
-                                                                jsonObject.getString("customer_id")
-                                                        },
-                                                        null, "0, 1", true,
-                                                        null, null
-                                                );
-
-                                                if (cursor.getCount() <= 0) {
-                                                    String values[] = {
-                                                            jsonObject.getString("customer_id"),
-                                                            "",
-                                                            "", Config.collectionCustomer,
-                                                            "0", ""};
-
-                                                    CareGiver.getDbCon().insert(
-                                                            DbHelper.strTableNameCollection,
-                                                            values, DbHelper.COLLECTION_FIELDS);
-                                                }
-                                                CareGiver.getDbCon().closeCursor(cursor);
-
-
-                                                //dependent
-
-                                                Cursor cursor1 = CareGiver.getDbCon().fetch(
-                                                        DbHelper.strTableNameCollection,
-                                                        new String[]{DbHelper.COLUMN_DOCUMENT},
-                                                        DbHelper.COLUMN_COLLECTION_NAME
-                                                                + "=? and "
-                                                                + DbHelper.COLUMN_OBJECT_ID + "=?",
-                                                        new String[]{Config.collectionDependent,
-                                                                jsonObject.getString("dependent_id")
-                                                        },
-                                                        null, "0, 1", true,
-                                                        null, null
-                                                );
-
-                                                if (cursor1.getCount() <= 0) {
-
-                                                    String values1[] = {
-                                                            jsonObject.getString("dependent_id"),
-                                                            "",
-                                                            "", Config.collectionDependent,
-                                                            "0", ""};
-
-
-                                                    CareGiver.getDbCon().insert(
-                                                            DbHelper.strTableNameCollection,
-                                                            values1, DbHelper.COLLECTION_FIELDS);
-                                                }
-                                                CareGiver.getDbCon().closeCursor(cursor1);
-
-
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    }
-                                }
-                                Utils.log(" 0 ", " MESS ");
-                                fetchCustomers(iFlag);
-                            } catch (Exception e1) {
-                                e1.printStackTrace();
-                                //fetchCustomers(iFlag);
-                            }
-                        }
-
-                        @Override
-                        public void onException(Exception e) {
-                            Utils.log(e.getMessage(), " MESS ");
-                            fetchCustomers(iFlag);
-                        }
-                    });
-        } else {
-            fetchCustomers(iFlag);
         }
     }
 }

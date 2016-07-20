@@ -25,7 +25,8 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/margin_general"
-                android:padding="@dimen/padding_general" />
+                android:padding="@dimen/padding_general"
+                android:src="@drawable/person_icon" />
 
         </LinearLayout>
 
