@@ -13,10 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -28,7 +30,6 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.CheckInCareModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
@@ -46,8 +47,10 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
+    static final int CUSTOM_DIALOG_ID = 0;
     private static ArrayList<String> strings;
     private final LayoutInflater inf;
+    ListView dialog_ListView;
     private Context _context;
     private Utils utils;
     private AppUtils appUtils;
@@ -56,6 +59,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     // child data in format of header title, child title
     private HashMap<CustomerModel, List<DependentModel>> _listDataChild;
     private boolean bool[];
+    private AlertDialog myalertDialog = null;
     //private Utils utils;
     //private MultiBitmapLoader multiBitmapLoader;
 
@@ -72,6 +76,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         appUtils = new AppUtils(_context);
         utils = new Utils(_context);
         sessionManager = new SessionManager(_context);
+
     }
 
     @Override
@@ -285,7 +290,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private void fetchCheckInCareName(String iMonth, String iYear, String CustomerId, String ProviderId) {
 
         iMonth = iMonth; // - 1
-        Config.checkInCareActivityNames.clear();
+        Config.checkInCareModels.clear();
 
         if (Utils.isConnectingToInternet(_context)) {
 
@@ -335,39 +340,49 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                                             }
                                             try {
-                                                ArrayList<CheckInCareModel> checkInCareActivityNames = Config.checkInCareActivityNames;
+                                                // ArrayList<CheckInCareModel> checkInCareActivityNames = Config.checkInCareActivityNames;
 
-                                                strings = new ArrayList<String>();
+                                                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context);
+                                                View convertView = inf.inflate(R.layout.custom_dialog, null);
 
-                                                if (checkInCareActivityNames != null) {
-                                                    for (int i = 0; i < checkInCareActivityNames.size(); i++) {
+                                                alertDialog.setTitle("Check In Care");
 
-                                                        strings.add(checkInCareActivityNames.get(i).getStrName());
-
-                                                    }
-                                                }
-
-                                                strings.add("Create New");
-                                                strings.add("Cancel");
-                                                final CharSequence[] items = strings.toArray(new CharSequence[strings.size()]);
-
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(_context);
-
-                                                builder.setTitle("Check In Care");
-                                                builder.setItems(items, new DialogInterface.OnClickListener() {
+                                                ListView listview = (ListView) convertView.findViewById(R.id.dialoglist);
+                                                Button create = (Button) convertView.findViewById(R.id.createnew);
+                                                Button cancel = (Button) convertView.findViewById(R.id.cancel);
+                                                CustomAlertAdapter arrayAdapter = new CustomAlertAdapter(_context, Config.checkInCareModels);
+                                                listview.setAdapter(arrayAdapter);
+                                               /* listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                     @Override
-                                                    public void onClick(DialogInterface dialog, int item) {
-                                                        if (items[item].equals("Create New")) {
-                                                            // Config.customerModel = (CustomerModel) v.getTag();
-                                                            Intent next = new Intent(_context, CheckInCareProcess.class);
-                                                            _context.startActivity(next);
+                                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                        myalertDialog.dismiss();
 
-                                                        } else if (items[item].equals("Cancel")) {
-                                                            dialog.dismiss();
-                                                        }
                                                     }
                                                 });
-                                                builder.show();
+*/
+                                                create.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        Intent i = new Intent(_context, CheckInCareProcess.class);
+                                                        _context.startActivity(i);
+
+                                                    }
+                                                });
+                                                cancel.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        myalertDialog.dismiss();
+
+                                                    }
+                                                });
+
+                                                alertDialog.setView(convertView);
+                                                myalertDialog = alertDialog.show();
+
+
+
+
+
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
@@ -384,13 +399,36 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                         }
 
+
                         @Override
                         public void onException(Exception e) {
 
                                 if (e == null)
                                     utils.toast(2, 2, _context.getString(R.string.warning_internet));
                                 else
-                                    utils.toast(1, 1, _context.getString(R.string.error));
+                                    try {
+                                        final CharSequence[] items = {"Create New", "Cancel"};
+
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+
+                                        builder.setTitle("Check In Care");
+                                        builder.setItems(items, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int item) {
+
+                                                if (items[item].equals("Create New")) {
+                                                    Intent i = new Intent(_context, CheckInCareProcess.class);
+                                                    _context.startActivity(i);
+
+                                                } else if (items[item].equals("Cancel")) {
+                                                    dialog.dismiss();
+                                                }
+                                            }
+                                        });
+                                        builder.show();
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
 
                         }
                    });

@@ -167,6 +167,8 @@
     <string name="file_deleted">File Deleted</string>
     <string name="attach_file">Attach File</string>
     <string name="click_attach">Click to Attach</string>
+    <string name="create_new">Create New</string>
+
 
     <string name="access_storage">Access to External Storage</string>
 

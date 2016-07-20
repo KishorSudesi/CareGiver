@@ -97,6 +97,7 @@ public class Config {
     public static ProviderModel providerModel = null;
     public static CustomerModel customerModel = null;
     public static DependentModel dependentModel = null;
+    public static CheckInCareModel checkInCareModel = null;
     public static JSONObject jsonObject = null;
     public static int intSelectedMenu = 0;
 
@@ -106,7 +107,7 @@ public class Config {
     public static ArrayList<String> strNotificationIds = new ArrayList<>();
 
     public static ArrayList<CheckInCareModel> checkInCareModels = new ArrayList<>();
-    public static ArrayList<CheckInCareModel> checkInCareActivityNames = new ArrayList<>();
+    //public static ArrayList<CheckInCareModel> checkInCareActivityNames = new ArrayList<>();
     public static ArrayList<PictureModel> roomtypeName = new ArrayList<>();
 
     public static ArrayList<ClientNameModel> clientNameModels = new ArrayList<>();

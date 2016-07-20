@@ -36,6 +36,7 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
+import com.hdfc.models.CheckInCareModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.views.TouchImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
@@ -66,6 +67,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     public static Uri uri;
     public static Bitmap bitmap = null;
     public static int IMAGE_COUNT = 0;
+    public static CheckInCareModel checkInCareModel = null;
+    static Boolean editcheckincare = false;
+    static int mPosition = -1;
     private static Utils utils;
     private static ProgressDialog mProgress = null;
     private static Handler backgroundThreadHandler;
@@ -110,6 +114,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private View focusView = null;
     private ProgressDialog mProgressDialog;
     private String items[];
+    private String checkcareid, topdate, editcomment;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -295,23 +300,6 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         grocery = (EditText) findViewById(R.id.grocery);
         mediacomment = (EditText) findViewById(R.id.mediacomment);
 
-      /*  mediacomment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (hallimageModels.size() > 0
-                        || kitchenimageModels.size() > 0
-                        || washroomimageModels.size() > 0
-                        || bedroomimageModels.size() > 0) {
-
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(mediacomment, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                    mediacomment.setFocusable(false);
-                    mediacomment.setFocusableInTouchMode(false);
-                }
-            }
-        });*/
-
-
         if (Config.customerModel != null) {
             strClientName = Config.customerModel.getStrName();
             //strImageName = Config.customerModel.getStrCustomerID();
@@ -475,6 +463,38 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         buttonKitchenAdd.setOnClickListener(this);
         buttonWashroomAdd.setOnClickListener(this);
         buttonBedroomAdd.setOnClickListener(this);
+
+        ////////////////////////////////editcheckincare
+
+        try {
+            Bundle getBundle = getIntent().getExtras();
+            if (getBundle != null) {
+                editcheckincare = getBundle.getBoolean("editcheckincare");
+                mPosition = getBundle.getInt("itemposition");
+            } else {
+                editcheckincare = false;
+                mPosition = -1;
+                checkInCareModel = null;
+            }
+
+            if (editcheckincare && mPosition > -1) {
+
+                checkInCareModel = Config.checkInCareModels.get(mPosition);
+
+                checkcareid = Config.checkInCareModels.get(mPosition).getStrName();
+                topdate = Config.checkInCareModels.get(mPosition).getStrCurrentDate();
+                editcomment = Config.checkInCareModels.get(mPosition).getStrMediaComment();
+
+                checkincarename.setText(checkcareid);
+                datetxt.setText(topdate);
+                mediacomment.setText(editcomment);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /////////////////////////////////////////end
 
         btn_close = (Button) findViewById(R.id.btn_close);
         btn_submit = (Button) findViewById(R.id.btn_submit);

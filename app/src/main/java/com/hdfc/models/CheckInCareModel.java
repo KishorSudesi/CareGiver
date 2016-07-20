@@ -13,11 +13,15 @@ public class CheckInCareModel {
     private String strYear = "";
     private String strHouseName = "";
     private String strCreatedDate = "";
+    private String strCurrentDate = "";
     private String strUpdatedDate = "";
     private String strCheckInCareName = "";
+    private String strMediaComment = "";
+
 
     private String strCustomerID;
     private String strDependentID;
+    private String strProviderID;
 
     private ArrayList<PictureModel> pictureModels = new ArrayList<>();
     private ArrayList<ImageModel> imageModels = new ArrayList<>();
@@ -29,7 +33,8 @@ public class CheckInCareModel {
 
     public CheckInCareModel(String strName, String strStatus, String strMonth, String strYear,
                             String strHouseName, String strCreatedDate, String strUpdatedDate,
-                            String strCustomerID, String strDependentID, String strCheckInCareName, ArrayList<PictureModel> pictureModels,
+                            String strCustomerID, String strDependentID, String strCurrentDate,
+                            String strCheckInCareName, String strMediaComment, ArrayList<PictureModel> pictureModels,
                             ArrayList<CheckInCareActivityModel> checkInCareActivityModels) {
         this.strName = strName;
         this.strStatus = strStatus;
@@ -42,6 +47,8 @@ public class CheckInCareModel {
         this.strDependentID = strDependentID;
         this.strCheckInCareName = strCheckInCareName;
         this.pictureModels = pictureModels;
+        this.strCurrentDate = strCurrentDate;
+        this.strMediaComment = strMediaComment;
         this.checkInCareActivityModels = checkInCareActivityModels;
 
 
@@ -115,6 +122,14 @@ public class CheckInCareModel {
         this.strCustomerID = strCustomerID;
     }
 
+    public String getStrProviderID() {
+        return strProviderID;
+    }
+
+    public void setStrProviderID(String strProviderID) {
+        this.strProviderID = strProviderID;
+    }
+
     public String getStrCheckInCareName() {
         return strCheckInCareName;
     }
@@ -122,6 +137,23 @@ public class CheckInCareModel {
     public void setStrCheckInCareName(String strCheckInCareName) {
         this.strCheckInCareName = strCheckInCareName;
     }
+
+    public String getStrMediaComment() {
+        return strMediaComment;
+    }
+
+    public void setStrMediaComment(String strMediaComment) {
+        this.strMediaComment = strMediaComment;
+    }
+
+    public String getStrCurrentDate() {
+        return strCurrentDate;
+    }
+
+    public void setStrCurrentDate(String strCurrentDate) {
+        this.strCurrentDate = strCurrentDate;
+    }
+
 
 
     public ArrayList<PictureModel> getPictureModels() {

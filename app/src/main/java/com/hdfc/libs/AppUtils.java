@@ -2320,6 +2320,15 @@ public class AppUtils {
             CheckInCareModel checkInCareModel = new CheckInCareModel();
             //
             checkInCareModel.setStrName(jsonObjectCheck.optString("check_in_care_name"));
+            checkInCareModel.setStrCreatedDate(jsonObjectCheck.optString("created_date"));
+            checkInCareModel.setStrMediaComment(jsonObjectCheck.optString("media_comment"));
+            checkInCareModel.setStrProviderID(jsonObjectCheck.optString("provider_id"));
+            checkInCareModel.setStrHouseName(jsonObjectCheck.optString("house_name"));
+            checkInCareModel.setStrCurrentDate(jsonObjectCheck.optString("current_date"));
+            checkInCareModel.setStrMonth(jsonObjectCheck.optString("month"));
+            checkInCareModel.setStrYear(jsonObjectCheck.optString("year"));
+            checkInCareModel.setStrCustomerID(jsonObjectCheck.optString("customer_id"));
+
             JSONArray subMainactivities = jsonObjectCheck.optJSONArray("activities");
             JSONArray picture = jsonObjectCheck.optJSONArray("picture");
 
@@ -2400,7 +2409,7 @@ public class AppUtils {
 
             checkInCareModel.setCheckInCareActivityModels(checkInCareActivityModels);
 
-            Config.checkInCareActivityNames.add(checkInCareModel);
+            Config.checkInCareModels.add(checkInCareModel);
 
         } catch (JSONException e) {
             e.printStackTrace();
