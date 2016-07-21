@@ -52,12 +52,11 @@ import java.util.Set;
  * Created by Admin on 4/25/2016.
  */
 public class AppUtils {
+    public static Set<String> categorySet = new HashSet<>();
     private static StorageService storageService;
     //private static Date startDate, endDate;
     //private Context context;
     private Utils utils;
-
-    private Set<String> categorySet = new HashSet<>();
 
     public AppUtils(Context context) {
 
@@ -166,7 +165,7 @@ public class AppUtils {
 
             if (!strDate.equalsIgnoreCase("")) {
                 Query q12 = QueryBuilder.build("_$updatedAt", strDate,
-                        QueryBuilder.Operator.GREATER_THAN_EQUALTO);
+                        QueryBuilder.Operator.GREATER_THAN);
 
                 finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
             } else {
@@ -182,7 +181,7 @@ public class AppUtils {
 
                                 Storage storage = (Storage) o;
 
-                                Utils.log(storage.toString(), "not ");
+                                Utils.log(storage.toString(), " Notifications ");
 
                                 if (storage.getJsonDocList().size() > 0) {
 
@@ -227,29 +226,33 @@ public class AppUtils {
 
         String strDate = "";
 
-        Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionActivity);
+        final SessionManager sessionManager = new SessionManager(context);
 
-        if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            strDate = cursor.getString(0);
+        boolean b = sessionManager.getActivitySync();
+
+        if (b) {
+            Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionActivity);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                strDate = cursor.getString(0);
+            }
+
+            if (strDate == null || strDate.equalsIgnoreCase(""))
+                strDate = DbHelper.DEFAULT_DB_DATE;
+            //// TODO: 7/21/2016
+
+            CareGiver.getDbCon().closeCursor(cursor);
         }
-
-        if (strDate == null || strDate.equalsIgnoreCase(""))
-            strDate = DbHelper.DEFAULT_DB_DATE;
-        //// TODO: 7/21/2016  
-
-        CareGiver.getDbCon().closeCursor(cursor);
-
-        SessionManager sessionManager = new SessionManager(context);
 
         Query q1 = QueryBuilder.build("provider_id", sessionManager.getProviderId(),
                 QueryBuilder.Operator.EQUALS);
 
         Query finalQuery;
 
-        if (!strDate.equalsIgnoreCase("")) {
+        if (!strDate.equalsIgnoreCase("") && b) {
             Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
-                    GREATER_THAN_EQUALTO);
+                    GREATER_THAN);
 
             finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
         } else {
@@ -297,6 +300,7 @@ public class AppUtils {
                                     insertActivityDate(jsonDocument.getDocId(),
                                             jsonDocument.getJsonDoc());
                                 }
+                                sessionManager.setActivitySync(true);
                                 CareGiver.getDbCon().dbTransactionSuccessFull();
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -311,7 +315,7 @@ public class AppUtils {
 
                     @Override
                     public void onException(Exception ex) {
-                        Utils.log(ex.getMessage(), " f90 ");
+                        Utils.log(ex.getMessage(), " Sync Activity Failure ");
                         fetchClients(1, context);
                         /*if (DashboardActivity.isLoaded)
                             DashboardActivity.gotoSimpleActivityMenu(false);*/
@@ -352,13 +356,6 @@ public class AppUtils {
                         DbHelper.strTableNameMilestone,
                         selectionActivity, valuesActivity, DbHelper.MILESTONE_FIELDS,
                         selectionArgsActivity);
-                ///
-
-              /*  if (!Config.dependentIds.contains(jsonObject.getString("dependent_id")))
-                    Config.dependentIds.add(jsonObject.getString("dependent_id"));
-
-                if (!Config.customerIds.contains(jsonObject.getString("customer_id")))
-                    Config.customerIds.add(jsonObject.getString("customer_id"));*/
 
                 insertClientIds(jsonObject.optString("customer_id"),
                         jsonObject.optString("dependent_id"));
@@ -408,13 +405,16 @@ public class AppUtils {
 
                         if (jsonObjectMilestone.has("scheduled_date")
                                 ) {
-                            /*&& !jsonObjectMilestone.getString("scheduled_date")
-                                .equalsIgnoreCase("")*/
+                            /*&& */
+                            String strMilestoneDate = "";
 
-                            String strMilestoneDate = Utils.convertDateToStringQueryLocal(
+                            if (!jsonObjectMilestone.getString("scheduled_date")
+                                    .equalsIgnoreCase("")) {
+                                strMilestoneDate = Utils.convertDateToStringQueryLocal(
                                     Utils.convertStringToDateQuery(jsonObjectMilestone.getString(
                                             "scheduled_date").substring(0, jsonObjectMilestone.
                                             getString("scheduled_date").length() - 1)));
+                            }
 
                             String values[] = {strDocumentId,
                                     jsonObjectMilestone.getString("id"),
@@ -487,7 +487,7 @@ public class AppUtils {
             Query finalQuery;
 
             Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
-                    GREATER_THAN_EQUALTO);
+                    GREATER_THAN);
 
             if (mQuery1 != null) { //strDate != null && !strDate.equalsIgnoreCase("")
 
@@ -619,7 +619,7 @@ public class AppUtils {
 
             //if (strDate != null && !strDate.equalsIgnoreCase("")) {
             Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
-                    GREATER_THAN_EQUALTO);
+                    GREATER_THAN);
 
             if (mQuery1 != null) {
                 finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND, q12);
@@ -644,7 +644,8 @@ public class AppUtils {
 
                                         if (storage.getJsonDocList().size() > 0) {
 
-                                            for (int i = 0; i < storage.getJsonDocList().size(); i++) {
+                                            for (int i = 0; i < storage.getJsonDocList().size();
+                                                 i++) {
 
                                                 Storage.JSONDocument jsonDocument = storage.
                                                         getJsonDocList().get(i);
@@ -655,7 +656,8 @@ public class AppUtils {
                                                         Config.collectionCustomer
                                                 };
 
-                                                String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                                String selection = DbHelper.COLUMN_OBJECT_ID
+                                                        + " = ? and "
                                                         + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
                                                 // WHERE clause arguments
@@ -715,7 +717,7 @@ public class AppUtils {
 
             if (!strDate.equalsIgnoreCase("")) {
                 Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
-                        GREATER_THAN_EQUALTO);
+                        GREATER_THAN);
                 finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
             } else {
                 finalQuery = q1;
@@ -2401,9 +2403,7 @@ public class AppUtils {
             serviceModel.setiUnit(jsonObject.getInt("unit"));
             serviceModel.setiUnitValue(jsonObject.getInt("unit_value"));
 
-
             if (jsonObject.has("milestones")) {
-
 
                 JSONArray jsonArrayMilestones = jsonObject.
                         getJSONArray("milestones");
@@ -2419,7 +2419,6 @@ public class AppUtils {
                     milestoneModel.setStrMilestoneStatus(jsonObjectMilestone.getString("status"));
                     milestoneModel.setStrMilestoneName(jsonObjectMilestone.getString("name"));
                     milestoneModel.setStrMilestoneDate(jsonObjectMilestone.getString("date"));
-                    //milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
 
                     if (jsonObjectMilestone.has("show"))
                         milestoneModel.setVisible(jsonObjectMilestone.getBoolean("show"));
@@ -2431,7 +2430,7 @@ public class AppUtils {
                         milestoneModel.setStrMilestoneScheduledDate(jsonObjectMilestone.
                                 getString("scheduled_date"));
 
-                    //
+
                     if (jsonObjectMilestone.has("fields")) {
 
                         JSONArray jsonArrayFields = jsonObjectMilestone.
@@ -2460,8 +2459,6 @@ public class AppUtils {
                             }
 
                             if (jsonObjectField.has("child")) {
-
-                                //fieldModel.setChild(jsonObjectField.getBoolean("child"));
 
                                 try {
                                     fieldModel.setChild(jsonObjectField.getBoolean("child"));
@@ -2496,7 +2493,6 @@ public class AppUtils {
                                             getJSONArray("child_field")));
                             }
 
-                            ////
                             if (jsonObjectField.has("array_fields")) {
 
                                 try {
@@ -2521,14 +2517,10 @@ public class AppUtils {
                                 if (jsonObjectField.has("array_data"))
                                     fieldModel.setStrArrayData(jsonObjectField.
                                             getString("array_data"));
-
                             }
-                            ////
-
                             milestoneModel.setFieldModel(fieldModel);
                         }
                     }
-
                     serviceModel.setMilestoneModels(milestoneModel);
                 }
             }
@@ -2536,12 +2528,12 @@ public class AppUtils {
             serviceModel.setStrServiceId(strDocumentId);
 
             if (!Config.strServcieIds.contains(strDocumentId)) {
+
                 Config.serviceModels.add(serviceModel);
                 Config.strServcieIds.add(strDocumentId);
 
                 Config.servicelist.add(jsonObject.getString("service_name"));
                 categorySet.add(jsonObject.getString("category_name"));
-                //Config.serviceCategorylist.add();
                 List<String> serviceNameList = new ArrayList<>();
 
                 if (Config.serviceNameModels != null && Config.serviceNameModels.size() > 0) {
@@ -2556,30 +2548,13 @@ public class AppUtils {
                 } else {
                     serviceNameList.add(jsonObject.getString("service_name"));
                 }
-
                 Config.serviceNameModels.put(jsonObject.getString("category_name"),
                         serviceNameList);
-
-
-                //
-               /* if (!Config.strServiceCategoryNames.contains(jsonObject.getString("category_name"))) {
-                    Config.strServiceCategoryNames.add(jsonObject.getString("category_name"));
-
-                    CategoryServiceModel categoryServiceModel = new CategoryServiceModel();
-                    categoryServiceModel.setStrCategoryName(jsonObject.getString("category_name"));
-                    categoryServiceModel.setServiceModels(serviceModel);
-
-                    Config.categoryServiceModels.add(categoryServiceModel);
-                } else {
-                    int iPosition = Config.strServiceCategoryNames.indexOf(jsonObject.getString("category_name"));
-                    Config.categoryServiceModels.get(iPosition).setServiceModels(serviceModel);
-                }*/
-                //
             }
+
             Config.serviceCategorylist.clear();
             List<String> serviceNameList = new ArrayList<String>(categorySet);
             Config.serviceCategorylist.addAll(serviceNameList);
-
 
         } catch (JSONException e) {
             e.printStackTrace();

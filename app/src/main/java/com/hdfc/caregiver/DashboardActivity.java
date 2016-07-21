@@ -420,7 +420,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
             AppUtils.loadNotifications(DashboardActivity.this);
             AppUtils.fetchActivitiesSync(DashboardActivity.this);
-            AppUtils.fetchClients(2, appCompatActivity);
+            //AppUtils.fetchClients(2, appCompatActivity);
             //if(Config.intSelectedMenu!=Config.intNotificationScreen)
             showPushDialog(strMess);
 
