@@ -25,6 +25,7 @@
 package com.hdfc.libs.simpleTooltip;
 
 import android.animation.AnimatorSet;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -248,7 +249,8 @@ public class SimpleTooltip implements PopupWindow.OnDismissListener {
         mRootView.post(new Runnable() {
             @Override
             public void run() {
-                mPopupWindow.showAtLocation(mRootView, Gravity.NO_GRAVITY, mRootView.getWidth(), mRootView.getHeight());
+                if (!((Activity) mContext).isFinishing())
+                    mPopupWindow.showAtLocation(mRootView, Gravity.NO_GRAVITY, mRootView.getWidth(), mRootView.getHeight());
             }
         });
     }

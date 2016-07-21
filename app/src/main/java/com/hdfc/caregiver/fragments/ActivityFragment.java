@@ -171,31 +171,37 @@ public class ActivityFragment extends Fragment
                 }
 
                 JSONObject jsonObject = null;
+                Cursor cursor = null;
+                String strUrl = "";
 
-                Cursor cursor = CareGiver.getDbCon().fetch(
+                try {
+
+                    cursor = CareGiver.getDbCon().fetch(
                         DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
                         DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
                         new String[]{Config.collectionDependent,
                                 activityModels.get(position).getStrDependentID()
                         },
                         null, "0,1", true, null, null
-                );
+                    );
 
-                String strUrl = "";
-
-                if (cursor.getCount() > 0) {
-                    cursor.moveToFirst();
-                    try {
-                        if (!cursor.getString(0).equalsIgnoreCase("")) {
-                            jsonObject = new JSONObject(cursor.getString(0));
-                            strUrl = jsonObject.optString("dependent_profile_url");
+                    if (cursor.getCount() > 0) {
+                        cursor.moveToFirst();
+                        try {
+                            if (cursor.getString(0) != null
+                                    && !cursor.getString(0).equalsIgnoreCase("")) {
+                                jsonObject = new JSONObject(cursor.getString(0));
+                                strUrl = jsonObject.optString("dependent_profile_url");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    CareGiver.getDbCon().closeCursor(cursor);
                 }
-
-                CareGiver.getDbCon().closeCursor(cursor);
 
                 if (!strUrl.equalsIgnoreCase("")) {
 

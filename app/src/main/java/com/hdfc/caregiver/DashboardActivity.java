@@ -81,11 +81,15 @@ public class DashboardActivity extends AppCompatActivity implements
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
             String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
 
+            //appUtils.createCustomerModel();
             appUtils.createActivityModel(strStartDate, strEndDate);
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
 
             CareGiver.getDbCon().getDb();
+
+            if (isLoader)
+                AppUtils.fetchActivitiesSync(appCompatActivity);
         }
     }
 
@@ -114,6 +118,7 @@ public class DashboardActivity extends AppCompatActivity implements
             String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
 
             appUtils.createActivityModel(strStartDate, strEndDate);
+            appUtils.createCustomerModel();
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
         }
@@ -286,7 +291,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
             if (b) {
 
-                AppUtils.fetchActivitiesSync(DashboardActivity.this);
+
                 //refreshClientsData();
 
                 mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task));
@@ -302,7 +307,6 @@ public class DashboardActivity extends AppCompatActivity implements
                     gotoSimpleActivity(false);
                 }
             }
-            appUtils.createCustomerModel();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -349,8 +353,6 @@ public class DashboardActivity extends AppCompatActivity implements
         mytask.setImageDrawable(getResources().getDrawable(R.mipmap.my_task));
         textViewTasks.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         Config.intSelectedMenu = Config.intDashboardScreen;
-        //todo check and remove
-        //gotoSimpleActivity();
         goToDashboard();
     }
 

@@ -303,7 +303,7 @@ public class AppUtils {
                                 CareGiver.getDbCon().endDBTransaction();
                             }
                         }
-                        fetchClients(2, context);
+                        fetchClients(1, context);
                         /*if (DashboardActivity.isLoaded)
                             DashboardActivity.gotoSimpleActivityMenu(false);*/
                     }
@@ -311,7 +311,7 @@ public class AppUtils {
                     @Override
                     public void onException(Exception ex) {
                         Utils.log(ex.getMessage(), " f90 ");
-                        fetchClients(2, context);
+                        fetchClients(1, context);
                         /*if (DashboardActivity.isLoaded)
                             DashboardActivity.gotoSimpleActivityMenu(false);*/
                     }
@@ -406,8 +406,10 @@ public class AppUtils {
                                 jsonArrayMilestones.getJSONObject(k);
 
                         if (jsonObjectMilestone.has("scheduled_date")
-                                && !jsonObjectMilestone.getString("scheduled_date")
-                                .equalsIgnoreCase("")) {
+                                ) {
+
+                            /*&& !jsonObjectMilestone.getString("scheduled_date")
+                                .equalsIgnoreCase("")*/
 
                             String strMilestoneDate = Utils.convertDateToStringQueryLocal(
                                     Utils.convertStringToDateQuery(jsonObjectMilestone.getString(
@@ -468,7 +470,7 @@ public class AppUtils {
             if (cursor1.getCount() > 0) {
                 cursor1.moveToFirst();
 
-                while (cursor1.isAfterLast()) {
+                while (!cursor1.isAfterLast()) {
                     strDependentIds.add(cursor1.getString(0));
                     cursor1.moveToNext();
                 }
@@ -491,70 +493,80 @@ public class AppUtils {
 
                 finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
                         q12);
-            } else {
+            /*} else {
                 finalQuery = q12;
-            }
+            }*/
 
-            storageService.findDocsByQuery(Config.collectionDependent, finalQuery,
-                    new App42CallBack() {
+                storageService.findDocsByQuery(Config.collectionDependent, finalQuery,
+                        new App42CallBack() {
 
-                        @Override
-                        public void onSuccess(Object o) {
-                            try {
-                                if (o != null) {
+                            @Override
+                            public void onSuccess(Object o) {
+                                try {
+                                    if (o != null) {
 
-                                    Storage storage = (Storage) o;
+                                        Storage storage = (Storage) o;
 
-                                    if (storage.getJsonDocList().size() > 0) {
+                                        Utils.log(o.toString(), " Dependent");
 
-                                        for (int i = 0; i < storage.getJsonDocList().size(); i++) {
+                                        if (storage.getJsonDocList().size() > 0) {
 
-                                            Storage.JSONDocument jsonDocument = storage.
-                                                    getJsonDocList().get(i);
+                                            for (int i = 0; i < storage.getJsonDocList().size(); i++) {
 
-                                            String values[] = {jsonDocument.getDocId(),
-                                                    jsonDocument.getUpdatedAt(),
-                                                    jsonDocument.getJsonDoc(),
-                                                    Config.collectionDependent
-                                            };
+                                                Storage.JSONDocument jsonDocument = storage.
+                                                        getJsonDocList().get(i);
 
-                                            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+                                                String values[] = {jsonDocument.getDocId(),
+                                                        jsonDocument.getUpdatedAt(),
+                                                        jsonDocument.getJsonDoc(),
+                                                        Config.collectionDependent
+                                                };
 
-                                            // WHERE clause arguments
-                                            String[] selectionArgs = {jsonDocument.getDocId(),
-                                                    Config.collectionDependent};
-                                            CareGiver.getDbCon().updateInsert(
-                                                    DbHelper.strTableNameCollection,
-                                                    selection, values,
-                                                    DbHelper.COLLECTION_FIELDS_CD,
-                                                    selectionArgs);
+                                                String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                                        + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
+                                                // WHERE clause arguments
+                                                String[] selectionArgs = {jsonDocument.getDocId(),
+                                                        Config.collectionDependent};
+                                                CareGiver.getDbCon().updateInsert(
+                                                        DbHelper.strTableNameCollection,
+                                                        selection, values,
+                                                        DbHelper.COLLECTION_FIELDS_CD,
+                                                        selectionArgs);
+
+                                            }
                                         }
                                     }
+                                    if (DashboardActivity.isLoaded) {
+                                        if (iFlag == 2)
+                                            DashboardActivity.gotoSimpleActivityMenu(true);
+                                        else
+                                            DashboardActivity.gotoSimpleActivityMenu(false);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
+                            }
+
+                            @Override
+                            public void onException(Exception e) {
+                                Utils.log(e.getMessage(), " Dependent Failure");
                                 if (DashboardActivity.isLoaded) {
                                     if (iFlag == 2)
                                         DashboardActivity.gotoSimpleActivityMenu(true);
                                     else
                                         DashboardActivity.gotoSimpleActivityMenu(false);
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
-                        }
-
-                        @Override
-                        public void onException(Exception e) {
-                            Utils.log(e.getMessage(), " MESS 1");
-                            if (DashboardActivity.isLoaded) {
-                                if (iFlag == 2)
-                                    DashboardActivity.gotoSimpleActivityMenu(true);
-                                else
-                                    DashboardActivity.gotoSimpleActivityMenu(false);
-                            }
+                        });
+            } else {
+                if (DashboardActivity.isLoaded) {
+                    if (iFlag == 2)
+                        DashboardActivity.gotoSimpleActivityMenu(true);
+                    else
+                        DashboardActivity.gotoSimpleActivityMenu(false);
                 }
-                    });
+            }
         }
     }
 
@@ -589,7 +601,7 @@ public class AppUtils {
             if (cursor1.getCount() > 0) {
                 cursor1.moveToFirst();
 
-                while (cursor1.isAfterLast()) {
+                while (!cursor1.isAfterLast()) {
                     strCustomerIds.add(cursor1.getString(0));
                     cursor1.moveToNext();
                 }
@@ -611,66 +623,68 @@ public class AppUtils {
 
             if (mQuery1 != null) {
                 finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND, q12);
-            } else {
+           /* } else {
                 finalQuery = q12;
-            }
+            }*/
             /* else {
                 finalQuery = mQuery1;
             }*/
 
+                storageService.findDocsByQuery(Config.collectionCustomer, finalQuery,
+                        new App42CallBack() {
 
-            storageService.findDocsByQuery(Config.collectionCustomer, finalQuery,
-                    new App42CallBack() {
+                            @Override
+                            public void onSuccess(Object o) {
+                                try {
 
-                        @Override
-                        public void onSuccess(Object o) {
-                            try {
+                                    if (o != null) {
 
-                                if (o != null) {
+                                        Utils.log(o.toString(), " fetchCustomers ");
+                                        Storage storage = (Storage) o;
 
-                                    Utils.log(o.toString(), " fetchCustomers ");
-                                    Storage storage = (Storage) o;
+                                        if (storage.getJsonDocList().size() > 0) {
 
-                                    if (storage.getJsonDocList().size() > 0) {
+                                            for (int i = 0; i < storage.getJsonDocList().size(); i++) {
 
-                                        for (int i = 0; i < storage.getJsonDocList().size(); i++) {
+                                                Storage.JSONDocument jsonDocument = storage.
+                                                        getJsonDocList().get(i);
 
-                                            Storage.JSONDocument jsonDocument = storage.
-                                                    getJsonDocList().get(i);
+                                                String values[] = {jsonDocument.getDocId(),
+                                                        jsonDocument.getUpdatedAt(),
+                                                        jsonDocument.getJsonDoc(),
+                                                        Config.collectionCustomer
+                                                };
 
-                                            String values[] = {jsonDocument.getDocId(),
-                                                    jsonDocument.getUpdatedAt(),
-                                                    jsonDocument.getJsonDoc(),
-                                                    Config.collectionCustomer
-                                            };
+                                                String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                                        + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
-                                            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
-
-                                            // WHERE clause arguments
-                                            String[] selectionArgs = {jsonDocument.getDocId(),
-                                                    Config.collectionCustomer};
-                                            CareGiver.getDbCon().updateInsert(
-                                                    DbHelper.strTableNameCollection,
-                                                    selection, values,
-                                                    DbHelper.COLLECTION_FIELDS_CD,
-                                                    selectionArgs);
+                                                // WHERE clause arguments
+                                                String[] selectionArgs = {jsonDocument.getDocId(),
+                                                        Config.collectionCustomer};
+                                                CareGiver.getDbCon().updateInsert(
+                                                        DbHelper.strTableNameCollection,
+                                                        selection, values,
+                                                        DbHelper.COLLECTION_FIELDS_CD,
+                                                        selectionArgs);
+                                            }
                                         }
+                                        fetchDependents(iFlag, context);
                                     }
-                                    fetchDependents(iFlag, context);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
-                        }
 
-                        @Override
-                        public void onException(Exception e) {
-                            Utils.log(e.getMessage(), " MESS 0");
-                            fetchDependents(iFlag, context);
-                        }
+                            @Override
+                            public void onException(Exception e) {
+                                Utils.log(e.getMessage(), " MESS 0");
+                                fetchDependents(iFlag, context);
+                            }
 
-                    });
+                        });
+            } else {
+                fetchDependents(iFlag, context);
+            }
         }
     }
 
@@ -719,6 +733,8 @@ public class AppUtils {
 
                                     Storage storage = (Storage) o;
 
+                                    Utils.log(o.toString(), " MESS ");
+
                                     if (storage.getJsonDocList().size() > 0) {
 
                                         ArrayList<Storage.JSONDocument> jsonDocList = storage.
@@ -745,7 +761,7 @@ public class AppUtils {
                                         sessionManager.saveClientDate(strDateNow);
                                     }
                                 }
-                                Utils.log(" 0 ", " MESS ");
+
                                 fetchCustomers(iFlag, context);
                             } catch (Exception e1) {
                                 e1.printStackTrace();
@@ -755,7 +771,7 @@ public class AppUtils {
 
                         @Override
                         public void onException(Exception e) {
-                            Utils.log(e.getMessage(), " MESS ");
+                            Utils.log(e.getMessage(), " Clients Failure ");
                             fetchCustomers(iFlag, context);
                         }
                     });
@@ -1092,7 +1108,7 @@ public class AppUtils {
 
             try {
 
-                int iRemoved = 0;
+                int iRemoved = 1;
 
                 while (!newCursor.isAfterLast()) {
 
@@ -1182,7 +1198,7 @@ public class AppUtils {
 
                     iRemoved = newCursor.getInt(2);
 
-                    if (!newCursor.getString(1).equalsIgnoreCase("")) {
+                    if (newCursor.getString(1) != null && !newCursor.getString(1).equalsIgnoreCase("")) {
                         JSONObject jsonObjectDependent = new JSONObject(newCursor.getString(1));
 
                         DependentModel dependentModel = new DependentModel(
