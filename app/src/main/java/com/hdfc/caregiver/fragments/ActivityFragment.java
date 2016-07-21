@@ -197,7 +197,7 @@ public class ActivityFragment extends Fragment
 
                 CareGiver.getDbCon().closeCursor(cursor);
 
-                if (strUrl.equalsIgnoreCase("")) {
+                if (!strUrl.equalsIgnoreCase("")) {
 
                     Glide.with(context)
                             .load(strUrl)

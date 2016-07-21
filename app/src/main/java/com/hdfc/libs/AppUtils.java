@@ -1277,7 +1277,7 @@ public class AppUtils {
                                     getString("dependent_name"));
 
                             int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.
-                                    getString("customer_id"));
+                                    optString("customer_id"));
 
                             if (Config.clientModels.size() > 0) {
                                 if (iPosition > -1 && iPosition < Config.clientModels.size())
