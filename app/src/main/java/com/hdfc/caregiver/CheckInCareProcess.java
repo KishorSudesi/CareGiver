@@ -36,8 +36,11 @@ import com.hdfc.config.Config;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
+import com.hdfc.models.CheckInCareActivityModel;
 import com.hdfc.models.CheckInCareModel;
 import com.hdfc.models.ImageModel;
+import com.hdfc.models.PictureModel;
+import com.hdfc.models.SubActivityModel;
 import com.hdfc.views.TouchImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
@@ -54,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
@@ -114,7 +118,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private View focusView = null;
     private ProgressDialog mProgressDialog;
     private String items[];
-    private String checkcareid, topdate, editcomment;
+    private String checkcareid, topdate, editcomment,subActivityName,status,dueStatus,dueDate,utilityName;
+    private static ArrayList<CheckInCareActivityModel> activity = new ArrayList<>();
+    private static ArrayList<SubActivityModel> subActivityModels = new ArrayList<>();
+    private ArrayList<PictureModel> picture = new ArrayList<>();
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -489,6 +496,107 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 datetxt.setText(topdate);
                 mediacomment.setText(editcomment);
 
+                activity = Config.checkInCareModels.get(mPosition).getCheckInCareActivityModels();
+
+                if (activity != null) {
+                    for (int i = 0; i < activity.size(); i++) {
+                        if (activity.get(i).getStrActivityName().equalsIgnoreCase("home_essentials")) {
+                            subActivityModels = activity.get(i).getSubActivityModels();
+                            for (int j = 0; j < subActivityModels.size(); j++) {
+                                subActivityName = subActivityModels.get(j).getStrSubActivityName();
+                                status = subActivityModels.get(j).getStrStatus();
+                                dueStatus = subActivityModels.get(j).getStrDueStatus();
+                                dueDate = subActivityModels.get(j).getStrDueDate();
+                                utilityName = subActivityModels.get(j).getStrUtilityName();
+
+                                if (subActivityName.equalsIgnoreCase("utility_bills")){
+
+                                if (utilityName.equalsIgnoreCase("water ")) {
+                                    spinner.setTag(dueStatus);
+                                    txtwater.setText(dueDate);
+                                    waterstatus.setText(status);
+
+                                }
+                                if (utilityName.equalsIgnoreCase("gas")) {
+                                    spinner1.setTag(dueStatus);
+                                    txtgas.setText(dueDate);
+                                    gasstatus.setText(status);
+
+                                }
+                                if (utilityName.equalsIgnoreCase("electricity")) {
+                                    spinner2.setTag(dueStatus);
+                                    txtelectricity.setText(dueDate);
+                                    electricitystatus.setText(status);
+
+                                }
+                                if (utilityName.equalsIgnoreCase("telephone")) {
+                                    spinner3.setTag(dueStatus);
+                                    txttelephone.setText(dueDate);
+                                    telephonestatus.setText(status);
+
+                                }
+                            }
+                                if (subActivityName.equalsIgnoreCase("kitchen_equipments")){
+                                    kitchen_equipments.setText(status);
+                                }
+                                if (subActivityName.equalsIgnoreCase("grocery")){
+                                    grocery.setText(status);
+                                }
+                            }
+                        }else if (activity.get(i).getStrActivityName().equalsIgnoreCase("domestic_help_status")) {
+                            subActivityModels = activity.get(i).getSubActivityModels();
+                            for (int j = 0; j < subActivityModels.size(); j++) {
+                                subActivityName = subActivityModels.get(j).getStrSubActivityName();
+                                status = subActivityModels.get(j).getStrStatus();
+
+                                if (subActivityName.equalsIgnoreCase("maid_services")){
+                                    maidservices.setText(status);
+                                }
+                            }
+                        } else if (activity.get(i).getStrActivityName().equalsIgnoreCase("equipment_working_status")) {
+                            subActivityModels = activity.get(i).getSubActivityModels();
+                            for (int j = 0; j < subActivityModels.size(); j++) {
+                                subActivityName = subActivityModels.get(j).getStrSubActivityName();
+                                status = subActivityModels.get(j).getStrStatus();
+
+                                if (subActivityName.equalsIgnoreCase("electronic")){
+                                    electronic.setText(status);
+                                }
+                                if (subActivityName.equalsIgnoreCase("home_appliances")){
+                                    electronic.setText(status);
+                                }
+                                if (subActivityName.equalsIgnoreCase("automobile")){
+                                    electronic.setText(status);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                picture = Config.checkInCareModels.get(mPosition).getPictureModels();
+                if (picture != null) {
+
+                    for (int k= 0; k< picture.size(); k++) {
+
+                        if (picture.get(k).getStrRoomName().equalsIgnoreCase("hall")) {
+                            hallimageModels = picture.get(k).getImageModels();
+                            addHallImages();
+                        }
+                        if (picture.get(k).getStrRoomName().equalsIgnoreCase("kitchen")) {
+                            kitchenimageModels = picture.get(k).getImageModels();
+                            addKitchenImages();
+                        }
+                        if (picture.get(k).getStrRoomName().equalsIgnoreCase("washroom")) {
+                            washroomimageModels = picture.get(k).getImageModels();
+                            addWashroomImages();
+                        }
+                        if (picture.get(k).getStrRoomName().equalsIgnoreCase("bedroom")) {
+                            bedroomimageModels = picture.get(k).getImageModels();
+                            addBedroomImages();
+                        }
+
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -566,17 +674,6 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                             cancel = true;
                         }
                     }
-                    /* if (hallimageModels.size() <= 0
-                            || kitchenimageModels.size() <= 0
-                            || washroomimageModels.size() <= 0
-                            || bedroomimageModels.size() <= 0) {
-                        if (TextUtils.isEmpty(valmediacomment)) {
-                            mediacomment.setError(getString(R.string.error_field_required));
-                            focusView = mediacomment;
-                            cancel = true;
-                        }
-                    }*/
-
 
                     if (cancel) {
                         focusView.requestFocus();
@@ -591,25 +688,20 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                             if (bFuture) {
 
-                                //  CheckInCareModel checkInCareModel = new CheckInCareModel();
-                                //if (hallimageModels != null && hallimageModels.size() > 0) {
                                     uploadHallImage();
-                                // }
 
                             } else {
                                 isClick = false;
-                                // utils.toast(2, 2, getString(R.string.invalid_date));
                             }
 
                         } else {
                             isClick = false;
-                            //  utils.toast(2, 2, getString(R.string.warning_internet));
                         }
 
                     }
                 } else {
                     isClick = false;
-                    //  utils.toast(2, 2, getString(R.string.warning_internet));
+
                 }
             }
         });
@@ -1620,6 +1712,336 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                         @Override
                         public void onUpdateDocFailed(App42Exception ex) {
+                        }
+                    });
+
+        } else {
+            utils.toast(2, 2, getString(R.string.warning_internet));
+        }
+    }
+
+    private void editupdateJson(){
+        if (utils.isConnectingToInternet()) {
+
+            JSONObject jsonObjectCheckinCare = null;
+
+
+            try {
+                jsonObjectCheckinCare = new JSONObject();
+
+                Date mydate = new Date();
+                String strCreateDate = Utils.readFormat.format(mydate);
+                String strMonth = Utils.writeFormatDateMonth.format(mydate);
+                String strYear = Utils.writeFormatDateYear.format(mydate);
+
+                jsonObjectCheckinCare.put("created_date", strCreateDate);
+                jsonObjectCheckinCare.put("dependent_id", "");
+                jsonObjectCheckinCare.put("provider_id", Config.providerModel.getStrProviderId());
+                jsonObjectCheckinCare.put("updated_date", "");
+                jsonObjectCheckinCare.put("current_date", datetxt.getText().toString());
+                jsonObjectCheckinCare.put("status", "New");
+                jsonObjectCheckinCare.put("month", strMonth);
+                jsonObjectCheckinCare.put("year", strYear);
+                jsonObjectCheckinCare.put("house_name", "Our House");
+                jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
+                jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
+                jsonObjectCheckinCare.put("check_in_care_name", checkincarename.getText().toString());
+
+                JSONArray jsonArrayPicture = new JSONArray();
+
+                ///////////////////////Hallimage
+                JSONObject jsonObjectHallPicture = new JSONObject();
+
+                jsonObjectHallPicture.put("status", "status");
+                jsonObjectHallPicture.put("room_name", "hall");
+
+                //  jsonArrayPicture.put(jsonObjectHallPicture);
+                //   jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
+
+                JSONArray jsonArrayHallPictureDetails = new JSONArray();
+
+                ArrayList<ImageModel> mTHallImageModels = new ArrayList<>();
+
+                if (hallimageModels.size() > 0) {
+
+                    for (ImageModel hallImageModel : hallimageModels) {
+
+                        JSONObject jsonObjectHallImages = new JSONObject();
+
+                        jsonObjectHallImages.put("image_url", hallImageModel.getStrImageUrl());
+                        jsonObjectHallImages.put("description", hallImageModel.getStrImageDesc());
+                        jsonObjectHallImages.put("date_time", hallImageModel.getStrImageTime());
+
+                        jsonArrayHallPictureDetails.put(jsonObjectHallImages);
+                        mTHallImageModels.add(hallImageModel);
+                    }
+                } else {
+
+                    jsonArrayHallPictureDetails.put("{\"0\":\"empty\"}");
+                }
+
+                jsonObjectHallPicture.put("pictures_details", jsonArrayHallPictureDetails);
+                jsonArrayPicture.put(jsonObjectHallPicture);
+                ////////////////////////Hallimage
+
+                //////////////////////kitchenimage
+                JSONObject jsonObjectKitchenPicture = new JSONObject();
+
+                jsonObjectKitchenPicture.put("status", "status");
+                jsonObjectKitchenPicture.put("room_name", "kitchen");
+
+              /*  jsonArrayPicture.put(jsonObjectKitchenPicture);
+                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);*/
+
+                JSONArray jsonArrayKitchenPictureDetails = new JSONArray();
+
+                ArrayList<ImageModel> mTKitchenImageModels = new ArrayList<>();
+
+                if (kitchenimageModels.size() > 0) {
+
+                    for (ImageModel kitchenImageModel : kitchenimageModels) {
+
+                        JSONObject jsonObjectKitchenImages = new JSONObject();
+
+                        jsonObjectKitchenImages.put("image_url", kitchenImageModel.getStrImageUrl());
+                        jsonObjectKitchenImages.put("description", kitchenImageModel.getStrImageDesc());
+                        jsonObjectKitchenImages.put("date_time", kitchenImageModel.getStrImageTime());
+
+                        jsonArrayKitchenPictureDetails.put(jsonObjectKitchenImages);
+                        mTKitchenImageModels.add(kitchenImageModel);
+                    }
+                } else {
+
+                    jsonArrayKitchenPictureDetails.put("{\"0\":\"empty\"}");
+                }
+                jsonObjectKitchenPicture.put("pictures_details", jsonArrayKitchenPictureDetails);
+                jsonArrayPicture.put(jsonObjectKitchenPicture);
+                ////////////////////////kitchenimage
+
+
+                //////////////////////washroomimage
+                JSONObject jsonObjectWashroomPicture = new JSONObject();
+
+                jsonObjectWashroomPicture.put("status", "status");
+                jsonObjectWashroomPicture.put("room_name", "washroom");
+
+               /* jsonArrayPicture.put(jsonObjectWashroomPicture);
+                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);*/
+                JSONArray jsonArrayWashroomPictureDetails = new JSONArray();
+
+                ArrayList<ImageModel> mTWashroomImageModels = new ArrayList<>();
+
+                if (washroomimageModels.size() > 0) {
+
+                    for (ImageModel washroomImageModel : washroomimageModels) {
+
+                        JSONObject jsonObjectWashroomImages = new JSONObject();
+
+                        jsonObjectWashroomImages.put("image_url", washroomImageModel.getStrImageUrl());
+                        jsonObjectWashroomImages.put("description", washroomImageModel.getStrImageDesc());
+                        jsonObjectWashroomImages.put("date_time", washroomImageModel.getStrImageTime());
+
+                        jsonArrayWashroomPictureDetails.put(jsonObjectWashroomImages);
+                        mTWashroomImageModels.add(washroomImageModel);
+                    }
+                } else {
+
+                    jsonArrayWashroomPictureDetails.put("{\"0\":\"empty\"}");
+                }
+                jsonObjectWashroomPicture.put("pictures_details", jsonArrayWashroomPictureDetails);
+                jsonArrayPicture.put(jsonObjectWashroomPicture);
+                ////////////////////////washroomimage
+
+                //////////////////////bedroomimage
+                JSONObject jsonObjectBedroomPicture = new JSONObject();
+
+                jsonObjectBedroomPicture.put("status", "status");
+                jsonObjectBedroomPicture.put("room_name", "bedroom");
+
+                //  jsonArrayPicture.put(jsonObjectBedroomPicture);
+                // jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
+                JSONArray jsonArrayBedroomPictureDetails = new JSONArray();
+
+                ArrayList<ImageModel> mTBedroomImageModels = new ArrayList<>();
+
+                if (bedroomimageModels.size() > 0) {
+
+                    for (ImageModel bedroomImageModel : bedroomimageModels) {
+
+                        JSONObject jsonObjectBedroomImages = new JSONObject();
+
+                        jsonObjectBedroomImages.put("image_url", bedroomImageModel.getStrImageUrl());
+                        jsonObjectBedroomImages.put("description", bedroomImageModel.getStrImageDesc());
+                        jsonObjectBedroomImages.put("date_time", bedroomImageModel.getStrImageTime());
+
+                        jsonArrayBedroomPictureDetails.put(jsonObjectBedroomImages);
+                        mTBedroomImageModels.add(bedroomImageModel);
+                    }
+                } else {
+
+                    jsonArrayBedroomPictureDetails.put("{\"0\":\"empty\"}");
+                }
+                jsonObjectBedroomPicture.put("pictures_details", jsonArrayBedroomPictureDetails);
+                jsonArrayPicture.put(jsonObjectBedroomPicture);
+                ////////////////////////bedroomimage
+
+                jsonObjectCheckinCare.put("picture", jsonArrayPicture);
+
+                ////
+
+                JSONArray jsonArrayActivities = new JSONArray();
+
+
+                /////////activity1
+                JSONObject jsonObjectActivities = new JSONObject();
+
+                jsonObjectActivities.put("activity_name", "home_essentials");
+
+                JSONArray jsonArraySubActivitiesHome = new JSONArray();
+
+                JSONObject jsonObjectSubActivitiesHome = new JSONObject();
+                jsonObjectSubActivitiesHome.put("sub_activity_name", "kitchen_equipments");
+                jsonObjectSubActivitiesHome.put("status", kitchen_equipments.getText().toString());
+
+                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome);
+
+                JSONObject jsonObjectSubActivitiesHome1 = new JSONObject();
+                jsonObjectSubActivitiesHome1.put("sub_activity_name", "grocery");
+                jsonObjectSubActivitiesHome1.put("status", grocery.getText().toString());
+
+
+                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome1);
+
+                JSONObject jsonObjectSubActivitiesHome2 = new JSONObject();
+                jsonObjectSubActivitiesHome2.put("sub_activity_name", "utility_bills");
+                jsonObjectSubActivitiesHome2.put("utility_name", "water ");
+                jsonObjectSubActivitiesHome2.put("due_status", items[0]);
+                jsonObjectSubActivitiesHome2.put("due_date", txtwater.getText().toString());
+                jsonObjectSubActivitiesHome2.put("status", waterstatus.getText().toString());
+
+
+                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome2);
+
+                JSONObject jsonObjectSubActivitiesHome3 = new JSONObject();
+                jsonObjectSubActivitiesHome3.put("sub_activity_name", "utility_bills");
+                jsonObjectSubActivitiesHome3.put("utility_name", "gas");
+                jsonObjectSubActivitiesHome3.put("due_status", items[1]);
+                jsonObjectSubActivitiesHome3.put("due_date", txtgas.getText().toString());
+                jsonObjectSubActivitiesHome3.put("status", gasstatus.getText().toString());
+
+
+                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome3);
+
+                JSONObject jsonObjectSubActivitiesHome4 = new JSONObject();
+                jsonObjectSubActivitiesHome4.put("sub_activity_name", "utility_bills");
+                jsonObjectSubActivitiesHome4.put("utility_name", "electricity");
+                jsonObjectSubActivitiesHome4.put("due_status", items[2]);
+                jsonObjectSubActivitiesHome4.put("due_date", txtelectricity.getText().toString());
+                jsonObjectSubActivitiesHome4.put("status", electricitystatus.getText().toString());
+
+
+                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome4);
+
+                JSONObject jsonObjectSubActivitiesHome5 = new JSONObject();
+                jsonObjectSubActivitiesHome5.put("sub_activity_name", "utility_bills");
+                jsonObjectSubActivitiesHome5.put("utility_name", "telephone");
+                jsonObjectSubActivitiesHome5.put("due_status", items[3]);
+                jsonObjectSubActivitiesHome5.put("due_date", txttelephone.getText().toString());
+                jsonObjectSubActivitiesHome5.put("status", telephonestatus.getText().toString());
+
+
+                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome5);
+
+                jsonObjectActivities.put("sub_activities", jsonArraySubActivitiesHome);
+
+                ///
+
+                jsonArrayActivities.put(jsonObjectActivities);
+                ////////////////activity1
+
+
+                ///////////////////////activity 2
+                JSONObject jsonObjectActivitiesDomestic = new JSONObject();
+
+                jsonObjectActivitiesDomestic.put("activity_name", "domestic_help_status");
+
+                JSONArray jsonArraySubActivitiesDomestic = new JSONArray();
+
+                JSONObject jsonObjectSubActivitiesDomestic = new JSONObject();
+                jsonObjectSubActivitiesDomestic.put("sub_activity_name", "maid_services");
+                jsonObjectSubActivitiesDomestic.put("status", maidservices.getText().toString());
+
+                jsonArraySubActivitiesDomestic.put(jsonObjectSubActivitiesDomestic);
+
+                jsonObjectActivitiesDomestic.put("sub_activities", jsonArraySubActivitiesDomestic);
+
+                jsonArrayActivities.put(jsonObjectActivitiesDomestic);
+                ///////////////////////activity 2
+
+
+                ///////////////////////activity 3
+                JSONObject jsonObjectActivitiesEquipment = new JSONObject();
+
+                jsonObjectActivitiesEquipment.put("activity_name", "equipment_working_status");
+
+                JSONArray jsonArraySubActivitiesEquipment = new JSONArray();
+
+                JSONObject jsonObjectSubActivitiesEquipment1 = new JSONObject();
+                jsonObjectSubActivitiesEquipment1.put("sub_activity_name", "electronic");
+                jsonObjectSubActivitiesEquipment1.put("status", electronic.getText().toString());
+
+                jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment1);
+
+
+                JSONObject jsonObjectSubActivitiesEquipment2 = new JSONObject();
+                jsonObjectSubActivitiesEquipment2.put("sub_activity_name", "home_appliances");
+                jsonObjectSubActivitiesEquipment2.put("status", homeapplience.getText().toString());
+
+                jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment2);
+
+
+                JSONObject jsonObjectSubActivitiesEquipment3 = new JSONObject();
+                jsonObjectSubActivitiesEquipment3.put("sub_activity_name", "automobile");
+                jsonObjectSubActivitiesEquipment3.put("status", automobile.getText().toString());
+
+                jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment3);
+
+
+                jsonObjectActivitiesEquipment.put("sub_activities", jsonArraySubActivitiesEquipment);
+
+                jsonArrayActivities.put(jsonObjectActivitiesEquipment);
+                ///////////////////////activity 3
+
+
+                jsonObjectCheckinCare.put("activities", jsonArrayActivities);
+
+
+               /* Config.checkInCareModels.get(mImageUploadCount).clearImageModel();
+                Config.checkInCareModels.get(mImageUploadCount).setImageModels(mTHallImageModels);*/
+
+                hallimageModels = mTHallImageModels;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            storageService.updateDocs(jsonObjectCheckinCare,
+                    Config.customerModel.getStrCustomerID(),
+                    Config.collectionCheckInCare, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object response) {
+                            utils.log(response.toString(),"Success");
+                            IMAGE_COUNT = 0;
+                            utils.toast(2, 2, getString(R.string.data_upload));
+                            Intent intent = new Intent(CheckInCareProcess.this, DashboardActivity.class);
+                            Config.intSelectedMenu = Config.intClientScreen;
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                            utils.toast(2, 2, getString(R.string.warning_internet));
                         }
                     });
 
