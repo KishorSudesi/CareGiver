@@ -22,6 +22,7 @@ import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.caregiver.fragments.NotificationFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
@@ -84,7 +85,7 @@ public class DashboardActivity extends AppCompatActivity implements
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
 
-            //CareGiver.getDbCon().getDb();
+            CareGiver.getDbCon().getDb();
         }
     }
 

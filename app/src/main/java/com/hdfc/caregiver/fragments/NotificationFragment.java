@@ -159,7 +159,7 @@ public class NotificationFragment extends Fragment {
             if (!isBackground)
                 loadingPanel.setVisibility(View.VISIBLE);
 
-            String strDate = DbHelper.DEFAULT_DB_DATE;
+            String strDate = "";
 
             Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionNotification);
 
@@ -167,6 +167,9 @@ public class NotificationFragment extends Fragment {
                 cursor.moveToFirst();
                 strDate = cursor.getString(0);
             }
+
+            if (strDate == null || strDate.equalsIgnoreCase(""))
+                strDate = DbHelper.DEFAULT_DB_DATE;
 
             CareGiver.getDbCon().closeCursor(cursor);
 
@@ -177,7 +180,7 @@ public class NotificationFragment extends Fragment {
 
             Query finalQuery;
 
-            if (strDate != null && !strDate.equalsIgnoreCase("")) {
+            if (!strDate.equalsIgnoreCase("")) {
                 Query q12 = QueryBuilder.build("_$updatedAt", strDate,
                         QueryBuilder.Operator.GREATER_THAN_EQUALTO);
 

@@ -186,12 +186,16 @@ public class ActivityFragment extends Fragment
                 if (cursor.getCount() > 0) {
                     cursor.moveToFirst();
                     try {
-                        jsonObject = new JSONObject(cursor.getString(0));
-                        strUrl = jsonObject.optString("dependent_profile_url");
+                        if (!cursor.getString(0).equalsIgnoreCase("")) {
+                            jsonObject = new JSONObject(cursor.getString(0));
+                            strUrl = jsonObject.optString("dependent_profile_url");
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+
+                CareGiver.getDbCon().closeCursor(cursor);
 
                 if (strUrl.equalsIgnoreCase("")) {
 

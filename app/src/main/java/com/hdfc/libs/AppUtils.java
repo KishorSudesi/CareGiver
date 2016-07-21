@@ -143,7 +143,7 @@ public class AppUtils {
         //todo optimize data fetch and multiple pushes
         if (Utils.isConnectingToInternet(context)) {
 
-            String strDate = DbHelper.DEFAULT_DB_DATE;
+            String strDate = "";
 
             Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionNotification);
 
@@ -151,6 +151,9 @@ public class AppUtils {
                 cursor.moveToFirst();
                 strDate = cursor.getString(0);
             }
+
+            if (strDate == null || strDate.equalsIgnoreCase(""))
+                strDate = DbHelper.DEFAULT_DB_DATE;
 
             CareGiver.getDbCon().closeCursor(cursor);
 
@@ -161,7 +164,7 @@ public class AppUtils {
 
             Query finalQuery;
 
-            if (strDate != null && !strDate.equalsIgnoreCase("")) {
+            if (!strDate.equalsIgnoreCase("")) {
                 Query q12 = QueryBuilder.build("_$updatedAt", strDate,
                         QueryBuilder.Operator.GREATER_THAN_EQUALTO);
 
@@ -222,7 +225,7 @@ public class AppUtils {
 
     public static void fetchActivitiesSync(final Context context) {
 
-        String strDate = DbHelper.DEFAULT_DB_DATE;
+        String strDate = "";
 
         Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionActivity);
 
@@ -230,6 +233,9 @@ public class AppUtils {
             cursor.moveToFirst();
             strDate = cursor.getString(0);
         }
+
+        if (strDate == null || strDate.equalsIgnoreCase(""))
+            strDate = DbHelper.DEFAULT_DB_DATE;
 
         CareGiver.getDbCon().closeCursor(cursor);
 
@@ -240,7 +246,7 @@ public class AppUtils {
 
         Query finalQuery;
 
-        if (strDate != null && !strDate.equalsIgnoreCase("")) {
+        if (!strDate.equalsIgnoreCase("")) {
             Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
                     GREATER_THAN_EQUALTO);
 
@@ -437,7 +443,7 @@ public class AppUtils {
 
         if (Utils.isConnectingToInternet(context)) {
 
-            String strDate = DbHelper.DEFAULT_DB_DATE;
+            String strDate = "";
 
             Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionDependent);
 
@@ -445,6 +451,9 @@ public class AppUtils {
                 cursor.moveToFirst();
                 strDate = cursor.getString(0);
             }
+
+            if (strDate == null || strDate.equalsIgnoreCase(""))
+                strDate = DbHelper.DEFAULT_DB_DATE;
 
             CareGiver.getDbCon().closeCursor(cursor);
 
@@ -553,7 +562,7 @@ public class AppUtils {
 
         if (Utils.isConnectingToInternet(context)) {
 
-            String strDate = DbHelper.DEFAULT_DB_DATE;
+            String strDate = "";
 
             Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionCustomer);
 
@@ -561,6 +570,9 @@ public class AppUtils {
                 cursor.moveToFirst();
                 strDate = cursor.getString(0);
             }
+
+            if (strDate == null || strDate.equalsIgnoreCase(""))
+                strDate = DbHelper.DEFAULT_DB_DATE;
 
             CareGiver.getDbCon().closeCursor(cursor);
 
@@ -674,17 +686,20 @@ public class AppUtils {
 
             final SessionManager sessionManager = new SessionManager(context);
 
-            String strDate = DbHelper.DEFAULT_DB_DATE;
+            String strDate = "";
 
             if (sessionManager.getClientDate() != null
                     && !sessionManager.getClientDate().equalsIgnoreCase("")) {
                 strDate = sessionManager.getClientDate();
             }
 
+            if (strDate == null || strDate.equalsIgnoreCase(""))
+                strDate = DbHelper.DEFAULT_DB_DATE;
+
             Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
                     QueryBuilder.Operator.EQUALS);
 
-            if (strDate != null && !strDate.equalsIgnoreCase("")) {
+            if (!strDate.equalsIgnoreCase("")) {
                 Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
                         GREATER_THAN_EQUALTO);
                 finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
@@ -1081,7 +1096,8 @@ public class AppUtils {
 
                 while (!newCursor.isAfterLast()) {
 
-                    if (!newCursor.getString(1).equalsIgnoreCase("")) {
+                    if (newCursor.getString(1) != null
+                            && !newCursor.getString(1).equalsIgnoreCase("")) {
 
                         iRemoved = newCursor.getInt(2);
 
@@ -1180,7 +1196,7 @@ public class AppUtils {
                                 "",
                                 "",
                                 newCursor.getString(0),
-                                jsonObjectDependent.getString("customer_id"));
+                                jsonObjectDependent.optString("customer_id"));
 
                         if (jsonObjectDependent.has("dependent_profile_url"))
                             dependentModel.setStrImageUrl(jsonObjectDependent.
