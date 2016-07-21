@@ -236,6 +236,7 @@ public class AppUtils {
 
         if (strDate == null || strDate.equalsIgnoreCase(""))
             strDate = DbHelper.DEFAULT_DB_DATE;
+        //// TODO: 7/21/2016  
 
         CareGiver.getDbCon().closeCursor(cursor);
 
@@ -407,7 +408,6 @@ public class AppUtils {
 
                         if (jsonObjectMilestone.has("scheduled_date")
                                 ) {
-
                             /*&& !jsonObjectMilestone.getString("scheduled_date")
                                 .equalsIgnoreCase("")*/
 
@@ -751,7 +751,7 @@ public class AppUtils {
                                                 JSONObject jsonObject = new JSONObject(strDocument);
 
                                                 insertClientIds(jsonObject.getString("customer_id"),
-                                                        jsonObject.getString("customer_id"),
+                                                        jsonObject.getString("dependent_id"),
                                                         jsonObject.optInt("removed"));
 
                                             } catch (JSONException e) {

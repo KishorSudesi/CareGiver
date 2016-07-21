@@ -178,7 +178,7 @@ public class ActivityFragment extends Fragment
 
                     cursor = CareGiver.getDbCon().fetch(
                         DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                            DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
                         new String[]{Config.collectionDependent,
                                 activityModels.get(position).getStrDependentID()
                         },
