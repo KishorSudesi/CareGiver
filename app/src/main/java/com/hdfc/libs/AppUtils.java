@@ -2280,7 +2280,7 @@ public class AppUtils {
         return activityModel;
     }
 
-    public void createCheckInCareModel(String strActivityId, String strDocument) {
+    public void createCheckInCareModel(String strDocumentId, String strDocument) {
 
         try {
             JSONObject jsonObjectCheck = new JSONObject(strDocument);
@@ -2289,6 +2289,7 @@ public class AppUtils {
             CheckInCareModel checkInCareModel = new CheckInCareModel();
             //
             checkInCareModel.setStrName(jsonObjectCheck.optString("check_in_care_name"));
+            checkInCareModel.setStrDocumentID(strDocumentId);
             checkInCareModel.setStrCreatedDate(jsonObjectCheck.optString("created_date"));
             checkInCareModel.setStrMediaComment(jsonObjectCheck.optString("media_comment"));
             checkInCareModel.setStrProviderID(jsonObjectCheck.optString("provider_id"));
@@ -2363,11 +2364,11 @@ public class AppUtils {
                                 JSONObject jsonObjectsubactivity = subactivities.getJSONObject(j);
 
                                 SubActivityModel subActivityModel = new SubActivityModel(
-                                        jsonObjectsubactivity.optString("status"),
                                         jsonObjectsubactivity.optString("sub_activity_name"),
-                                        jsonObjectsubactivity.optString("utility_name"),
+                                        jsonObjectsubactivity.optString("status"),
+                                        jsonObjectsubactivity.optString("due_status"),
                                         jsonObjectsubactivity.optString("due_date"),
-                                        jsonObjectsubactivity.optString("due_status"));
+                                        jsonObjectsubactivity.optString("utility_name"));
                                 subActivityModels.add(subActivityModel);
                             }
                             CheckInCareActivityModel checkInCareActivityModel =

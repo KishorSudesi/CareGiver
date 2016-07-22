@@ -116,6 +116,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private CheckBox electrocheck, homecheck, autocheck, kitchenequipcheck, grocerycheck, domesticcheck;
     private String valkitchen, valgrocery, valelectronic, valhomeapplience, valautomobile, valmaidservices, valmediacomment, valcheckincarename;
     private View focusView = null;
+    Integer myNum = 0;
     private ProgressDialog mProgressDialog;
     private String items[];
     private String checkcareid, topdate, editcomment,subActivityName,status,dueStatus,dueDate,utilityName;
@@ -509,28 +510,50 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                 dueDate = subActivityModels.get(j).getStrDueDate();
                                 utilityName = subActivityModels.get(j).getStrUtilityName();
 
+                               /* try {
+                                     myNum = Integer.parseInt(dueStatus);
+                                } catch(NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                }*/
+
                                 if (subActivityName.equalsIgnoreCase("utility_bills")){
 
                                 if (utilityName.equalsIgnoreCase("water ")) {
-                                    spinner.setTag(dueStatus);
+                                    if(dueStatus.equals("N")) {
+                                        spinner.setSelection(0);
+                                    }else{
+                                        spinner.setSelection(1);
+                                    }
                                     txtwater.setText(dueDate);
                                     waterstatus.setText(status);
 
                                 }
                                 if (utilityName.equalsIgnoreCase("gas")) {
-                                    spinner1.setTag(dueStatus);
+                                    if(dueStatus.equals("N")) {
+                                        spinner1.setSelection(0);
+                                    }else{
+                                        spinner1.setSelection(1);
+                                    }
                                     txtgas.setText(dueDate);
                                     gasstatus.setText(status);
 
                                 }
                                 if (utilityName.equalsIgnoreCase("electricity")) {
-                                    spinner2.setTag(dueStatus);
+                                    if(dueStatus.equals("N")) {
+                                        spinner2.setSelection(0);
+                                    }else{
+                                        spinner2.setSelection(1);
+                                    }
                                     txtelectricity.setText(dueDate);
                                     electricitystatus.setText(status);
 
                                 }
                                 if (utilityName.equalsIgnoreCase("telephone")) {
-                                    spinner3.setTag(dueStatus);
+                                    if(dueStatus.equals("N")) {
+                                        spinner3.setSelection(0);
+                                    }else{
+                                        spinner3.setSelection(1);
+                                    }
                                     txttelephone.setText(dueDate);
                                     telephonestatus.setText(status);
 
@@ -538,10 +561,37 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                             }
                                 if (subActivityName.equalsIgnoreCase("kitchen_equipments")){
                                     kitchen_equipments.setText(status);
+                                    if(!kitchen_equipments.getText().toString().equals(status)){
+                                        kitchenequipcheck.setChecked(true);
+                                    }
+                                        kitchenequipcheck.setChecked(true);
+                                    if(kitchenequipcheck.isChecked()==true){
+                                        kitchenequipmentstatus.setVisibility(View.VISIBLE);
+                                        kitchenequipmentstatus.setText("Done");
+                                        kitchenequipmentstatus.setTextColor(Color.BLUE);
+                                    } else {
+                                        kitchenequipmentstatus.setVisibility(View.VISIBLE);
+                                        kitchenequipmentstatus.setText("Pending");
+                                        kitchenequipmentstatus.setTextColor(Color.RED);
+                                    }
                                 }
                                 if (subActivityName.equalsIgnoreCase("grocery")){
                                     grocery.setText(status);
+                                    if(!grocery.getText().toString().equals(status)){
+                                        grocerycheck.setChecked(true);
+                                    }
+                                    grocerycheck.setChecked(true);
+                                    if(grocerycheck.isChecked()==true){
+                                        grocerystatus.setVisibility(View.VISIBLE);
+                                        grocerystatus.setText("Done");
+                                        grocerystatus.setTextColor(Color.BLUE);
+                                    } else {
+                                        grocerystatus.setVisibility(View.VISIBLE);
+                                        grocerystatus.setText("Pending");
+                                        grocerystatus.setTextColor(Color.RED);
+                                    }
                                 }
+
                             }
                         }else if (activity.get(i).getStrActivityName().equalsIgnoreCase("domestic_help_status")) {
                             subActivityModels = activity.get(i).getSubActivityModels();
@@ -551,6 +601,20 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                 if (subActivityName.equalsIgnoreCase("maid_services")){
                                     maidservices.setText(status);
+                                    if(!maidservices.getText().toString().equals(status)){
+                                        domesticcheck.setChecked(true);
+                                    }
+                                    domesticcheck.setChecked(true);
+                                    if (domesticcheck.isChecked() == true) {
+
+                                        domestichelpstatus.setVisibility(View.VISIBLE);
+                                        domestichelpstatus.setText("Done");
+                                        domestichelpstatus.setTextColor(Color.BLUE);
+                                    } else {
+                                        domestichelpstatus.setVisibility(View.VISIBLE);
+                                        domestichelpstatus.setText("Pending");
+                                        domestichelpstatus.setTextColor(Color.RED);
+                                    }
                                 }
                             }
                         } else if (activity.get(i).getStrActivityName().equalsIgnoreCase("equipment_working_status")) {
@@ -561,12 +625,36 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                 if (subActivityName.equalsIgnoreCase("electronic")){
                                     electronic.setText(status);
+                                    if(!electronic.getText().toString().equals(status)){
+                                        electrocheck.setChecked(true);
+                                    }
+                                    electrocheck.setChecked(true);
                                 }
                                 if (subActivityName.equalsIgnoreCase("home_appliances")){
-                                    electronic.setText(status);
+                                    homeapplience.setText(status);
+                                    if(!homeapplience.getText().toString().equals(status)){
+                                        homecheck.setChecked(true);
+                                    }
+                                    homecheck.setChecked(true);
                                 }
                                 if (subActivityName.equalsIgnoreCase("automobile")){
-                                    electronic.setText(status);
+                                    automobile.setText(status);
+                                    if(!automobile.getText().toString().equals(status)){
+                                        autocheck.setChecked(true);
+                                    }
+                                    autocheck.setChecked(true);
+                                }
+                                if (electrocheck.isChecked() == true
+                                        && homecheck.isChecked() == true
+                                        && autocheck.isChecked() == true) {
+
+                                    equipmentstatus.setVisibility(View.VISIBLE);
+                                    equipmentstatus.setText("Done");
+                                    equipmentstatus.setTextColor(Color.BLUE);
+                                } else {
+                                    equipmentstatus.setVisibility(View.VISIBLE);
+                                    equipmentstatus.setText("Pending");
+                                    equipmentstatus.setTextColor(Color.RED);
                                 }
                             }
                         }
@@ -580,19 +668,20 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("hall")) {
                             hallimageModels = picture.get(k).getImageModels();
-                            addHallImages();
+                           // setHallImages();
+
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("kitchen")) {
                             kitchenimageModels = picture.get(k).getImageModels();
-                            addKitchenImages();
+                           // addKitchenImages();
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("washroom")) {
                             washroomimageModels = picture.get(k).getImageModels();
-                            addWashroomImages();
+                          //  addWashroomImages();
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("bedroom")) {
                             bedroomimageModels = picture.get(k).getImageModels();
-                            addBedroomImages();
+                          //  addBedroomImages();
                         }
 
                     }
@@ -1292,7 +1381,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                             try {
                                                 bedroomImageUploadCount++;
                                                 if (bedroomImageUploadCount >= bedroomimageModels.size()) {
-                                                    updateJson();
+                                                    if(editcheckincare) {
+                                                        editupdateJson();
+                                                    }else {
+                                                        updateJson();
+                                                    }
                                                 } else {
                                                     uploadBedroomImage();
                                                 }
@@ -1304,7 +1397,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         } else {
                                             bedroomImageUploadCount++;
                                             if (bedroomImageUploadCount >= bedroomimageModels.size()) {
-                                                updateJson();
+                                                if(editcheckincare){
+                                                    editupdateJson();
+                                                }else {
+                                                    updateJson();
+                                                }
                                             } else {
                                                 uploadBedroomImage();
                                             }
@@ -1321,7 +1418,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         Utils.log(e.getMessage(), " Failure ");
                                         bedroomImageUploadCount++;
                                         if (bedroomImageUploadCount >= bedroomimageModels.size()) {
-                                            updateJson();
+                                            if(editcheckincare){
+                                                editupdateJson();
+                                            }else {
+                                                updateJson();
+                                            }
                                         } else {
                                             uploadBedroomImage();
                                         }
@@ -1334,19 +1435,31 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     bedroomImageUploadCount++;
 
                     if (bedroomImageUploadCount >= bedroomimageModels.size()) {
-                        updateJson();
+                        if(editcheckincare){
+                            editupdateJson();
+                        } else {
+                            updateJson();
+                        }
                     } else {
                         uploadBedroomImage();
                     }
                 }
             } else {
-                updateJson();
+                if(editcheckincare){
+                    editupdateJson();
+                }else {
+                    updateJson();
+                }
             }
         } else {
             if (mProgressDialog != null)
                 mProgressDialog.dismiss();
 
+            if(editcheckincare){
+                editupdateJson();
+            }else {
                 updateJson();
+            }
 
         }
     }
@@ -2027,7 +2140,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
 
             storageService.updateDocs(jsonObjectCheckinCare,
-                    Config.customerModel.getStrCustomerID(),
+                    Config.checkInCareModel.getStrDocumentID(),
                     Config.collectionCheckInCare, new App42CallBack() {
                         @Override
                         public void onSuccess(Object response) {
@@ -2089,6 +2202,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             }
         }
     }
+
+
 
     private void addHallImages() {
 

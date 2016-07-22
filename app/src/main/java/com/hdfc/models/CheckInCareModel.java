@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 public class CheckInCareModel {
 
+    private String strDocumentID;
     private String strName = "";
     private String strStatus = "";
     private String strMonth = "";
@@ -31,11 +32,12 @@ public class CheckInCareModel {
     public CheckInCareModel() {
     }
 
-    public CheckInCareModel(String strName, String strStatus, String strMonth, String strYear,
+    public CheckInCareModel(String strDocumentID,String strName, String strStatus, String strMonth, String strYear,
                             String strHouseName, String strCreatedDate, String strUpdatedDate,
                             String strCustomerID, String strDependentID, String strCurrentDate,
                             String strCheckInCareName, String strMediaComment, ArrayList<PictureModel> pictureModels,
                             ArrayList<CheckInCareActivityModel> checkInCareActivityModels) {
+        this.strDocumentID = strDocumentID;
         this.strName = strName;
         this.strStatus = strStatus;
         this.strMonth = strMonth;
@@ -128,6 +130,15 @@ public class CheckInCareModel {
 
     public void setStrProviderID(String strProviderID) {
         this.strProviderID = strProviderID;
+    }
+
+
+    public String getStrDocumentID() {
+        return strDocumentID;
+    }
+
+    public void setStrDocumentID(String strDocumentID) {
+        this.strDocumentID = strDocumentID;
     }
 
     public String getStrCheckInCareName() {

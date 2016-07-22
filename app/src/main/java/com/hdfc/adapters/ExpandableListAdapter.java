@@ -334,9 +334,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                                         getJsonDocList().get(i);
 
                                                 String strDocument = jsonDocument.getJsonDoc();
-                                                String strActivityId = jsonDocument.getDocId();
+                                                String strDocumentId = jsonDocument.getDocId();
 
-                                                appUtils.createCheckInCareModel(strActivityId, strDocument);
+                                                appUtils.createCheckInCareModel(strDocumentId, strDocument);
 
                                             }
                                             try {
