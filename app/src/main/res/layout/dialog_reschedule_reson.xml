@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/header_gradient"
+        android:gravity="center"
+        android:padding="10dp"
+        android:scaleType="center"
+        android:text="Reason"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/colorWhite" />
+
+    <TextView
+        android:id="@+id/tvCarla"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/edit_text_margin"
+        android:layout_marginRight="@dimen/edit_text_margin"
+        android:layout_marginTop="25dp"
+        android:padding="10dp"
+        android:text="Carla"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/tvProvider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/edit_text_margin"
+        android:layout_marginRight="@dimen/edit_text_margin"
+        android:layout_marginTop="5dp"
+        android:padding="10dp"
+        android:text="Provider"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/tvOther"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/edit_text_margin"
+        android:layout_marginRight="@dimen/edit_text_margin"
+        android:layout_marginTop="5dp"
+        android:padding="10dp"
+        android:text="Other"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/btndialogOk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/button_success"
+        android:gravity="center"
+        android:text="Ok"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/colorWhite" />
+
+</LinearLayout>

@@ -92,8 +92,9 @@ public class SessionManager {
 
         try {
             strClientDate = AESCrypt.decrypt(Config.string, pref.getString(KEY_CLIENT_DATE, ""));
-        } catch (GeneralSecurityException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            strClientDate = "";
         }
         return strClientDate;
     }
