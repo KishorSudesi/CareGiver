@@ -45,16 +45,16 @@ public class DashboardFragment extends Fragment {
             strDate = Utils.writeFormatDateDB.format(date);
             _strDate = Utils.writeFormatDateDB.format(date);
 
-            strEndDate = Utils.convertDateToStringQuery(Utils.convertStringToDateQuery(strDate +
+           /* strEndDate = Utils.convertDateToStringQuery(Utils.convertStringToDateQuery(strDate +
                     "T23:59:59.999"));
             strStartDate = Utils.convertDateToStringQuery(Utils.convertStringToDateQuery(strDate +
-                    "T00:00:00.000"));
+                    "T00:00:00.000"));*/
 
             textView.setText(Utils.writeFormatDate.format(date));
 
             loadingPanel.setVisibility(View.VISIBLE);
 
-            Config.dependentIds.clear();
+          /*  Config.dependentIds.clear();
             Config.customerIds.clear();
 
             Config.dependentIdsAdded.clear();
@@ -66,7 +66,7 @@ public class DashboardFragment extends Fragment {
 
             //Config.clientModels.clear();
 
-            Config.feedBackModels.clear();
+            Config.feedBackModels.clear();*/
 
             strDate = Utils.writeFormatDate.format(date);
 
@@ -115,7 +115,7 @@ public class DashboardFragment extends Fragment {
         LinearLayout layoutDate = (LinearLayout)view.findViewById(R.id.linearDate);
 
         textView = (TextView) view.findViewById(R.id.textViewDate);
-        textView.setText(strDate);
+
 
         layoutDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,6 +131,12 @@ public class DashboardFragment extends Fragment {
         buttonClicked(0);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        textView.setText(strDate);
     }
 
     private void buttonClicked(int iPosition) {

@@ -19,6 +19,8 @@ public class NotificationModel {
 
     private String strDisplayDate;
 
+    private int iNew;
+
     public NotificationModel(String strMessage, String strDateTime, String strUserType,
                              String strCreatedByType, String strUserID, String strCreatedByID,
                              String strNotificationID) {
@@ -31,6 +33,14 @@ public class NotificationModel {
         this.strNotificationID = strNotificationID;
 
         this.strDisplayDate = Utils.formatDate(strDateTime);
+    }
+
+    public int getiNew() {
+        return iNew;
+    }
+
+    public void setiNew(int iNew) {
+        this.iNew = iNew;
     }
 
     public String getStrDisplayDate() {

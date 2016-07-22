@@ -1,12 +1,13 @@
 package com.hdfc.libs;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.DashboardActivity;
+import com.hdfc.caregiver.R;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
@@ -96,10 +97,8 @@ public class AppUtils {
             if (CareGiver.getDbCon() != null)
                 CareGiver.getDbCon().truncateDatabase();
 
-            SharedPreferences.Editor editor = _context.getSharedPreferences(Config.strPreferenceName,
-                    Context.MODE_PRIVATE).edit();
-            editor.clear();
-            editor.apply();
+            SessionManager sessionManager = new SessionManager(_context);
+            sessionManager.logoutUser();
 /*
             File fileImage = Utils.createFileInternal("images/");
             Utils.deleteAllFiles(fileImage);*/
@@ -120,7 +119,7 @@ public class AppUtils {
 
                     GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(_context);
                     //App42GCMService.unRegisterGcm();
-                    //todo remove device from app42 and unregister in online mode
+                    //todo remove device per token from app42 and unregister in online mode
 
                     try {
                         if (gcm != null)
@@ -137,7 +136,7 @@ public class AppUtils {
         thread.start();
     }
 
-    public static void loadNotifications(Context context) {
+    public static void loadNotifications(final Context context) {
 
         //todo optimize data fetch and multiple pushes
         if (Utils.isConnectingToInternet(context)) {
@@ -197,13 +196,25 @@ public class AppUtils {
                                             String values[] = {jsonDocList.get(i).getDocId(),
                                                     jsonDocList.get(i).getUpdatedAt(),
                                                     jsonDocList.get(i).getJsonDoc(),
-                                                    Config.collectionNotification, "1", ""};
+                                                    Config.collectionNotification, "1", "", "1"};
 
                                             CareGiver.getDbCon().insert(
                                                     DbHelper.strTableNameCollection,
                                                     values,
                                                     DbHelper.COLLECTION_FIELDS);
 
+                                        }
+                                        if (!((Activity) context).isFinishing()) {
+
+                                            if (Config.intSelectedMenu !=
+                                                    Config.intNotificationScreen) {
+                                                Utils.toast(
+                                                        1, 1,
+                                                        context.getString(R.string.new_notification),
+                                                        context);
+                                            } else {
+                                                //todo for refresh adapter
+                                            }
                                         }
                                         CareGiver.getDbCon().dbTransactionSuccessFull();
                                     } catch (Exception e) {
@@ -284,7 +295,7 @@ public class AppUtils {
                                     String values[] = {jsonDocument.getDocId(),
                                             jsonDocument.getUpdatedAt(),
                                             jsonDocument.getJsonDoc(),
-                                            Config.collectionActivity, "0", ""};
+                                            Config.collectionActivity, "0", "", "1"};
 
                                     String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                             + DbHelper.COLUMN_COLLECTION_NAME + "=?";
@@ -301,6 +312,21 @@ public class AppUtils {
                                             jsonDocument.getJsonDoc());
                                 }
                                 sessionManager.setActivitySync(true);
+
+                                //
+                                if (!((Activity) context).isFinishing()) {
+
+                                    if (Config.intSelectedMenu !=
+                                            Config.intDashboardScreen) {
+                                        Utils.toast(
+                                                1, 1,
+                                                context.getString(R.string.new_activity),
+                                                context);
+                                    } else {
+                                        //todo for refresh adapter
+                                    }
+                                }
+                                //
                                 CareGiver.getDbCon().dbTransactionSuccessFull();
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -761,6 +787,20 @@ public class AppUtils {
                                             }
                                         }
                                         sessionManager.saveClientDate(strDateNow);
+                                        //
+                                        if (!((Activity) context).isFinishing()) {
+
+                                            if (Config.intSelectedMenu !=
+                                                    Config.intClientScreen) {
+                                                Utils.toast(
+                                                        1, 1,
+                                                        context.getString(R.string.new_clients),
+                                                        context);
+                                            } else {
+                                                //todo for refresh adapter
+                                            }
+                                        }
+                                        //
                                     }
                                 }
 
@@ -841,19 +881,20 @@ public class AppUtils {
 
                 if (cursor.getCount() <= 0) {
                     String values[] = {strCustomerId, "", "", Config.collectionCustomer, "0",
-                            String.valueOf(iRemoved)};
+                            String.valueOf(iRemoved), "1"};
 
                     CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values,
                             DbHelper.COLLECTION_FIELDS);
                 } else {
-                    String values[] = {String.valueOf(iRemoved)};
+                    String values[] = {String.valueOf(iRemoved), "1"};
                     String selection = DbHelper.COLUMN_OBJECT_ID + "=? and "
                             + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
                     // WHERE clause arguments
                     String[] selectionArgs = {strCustomerId, Config.collectionCustomer};
                     CareGiver.getDbCon().update(DbHelper.strTableNameCollection, selection, values,
-                            new String[]{DbHelper.COLUMN_CLIENT_FLAG}, selectionArgs);
+                            new String[]{DbHelper.COLUMN_CLIENT_FLAG, DbHelper.COLUMN_NEW_UPDATED},
+                            selectionArgs);
                 }
 
                 CareGiver.getDbCon().closeCursor(cursor);
@@ -871,19 +912,20 @@ public class AppUtils {
                 if (cursor1.getCount() <= 0) {
 
                     String values1[] = {strDependentId, "", "", Config.collectionDependent, "0",
-                            String.valueOf(iRemoved)};
+                            String.valueOf(iRemoved), "1"};
 
                     CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values1,
                             DbHelper.COLLECTION_FIELDS);
                 } else {
-                    String values[] = {String.valueOf(iRemoved)};
+                    String values[] = {String.valueOf(iRemoved), "1"};
                     String selection = DbHelper.COLUMN_OBJECT_ID + "=? and "
                             + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
                     // WHERE clause arguments
                     String[] selectionArgs = {strDependentId, Config.collectionDependent};
                     CareGiver.getDbCon().update(DbHelper.strTableNameCollection, selection, values,
-                            new String[]{DbHelper.COLUMN_CLIENT_FLAG}, selectionArgs);
+                            new String[]{DbHelper.COLUMN_CLIENT_FLAG, DbHelper.COLUMN_NEW_UPDATED},
+                            selectionArgs);
                 }
 
                 CareGiver.getDbCon().closeCursor(cursor1);
@@ -894,7 +936,7 @@ public class AppUtils {
         }
     }
 
-    public void createProviderModel(String strProviderId) {
+    public static void createProviderModel(String strProviderId) {
 
         try {
 
@@ -977,6 +1019,96 @@ public class AppUtils {
         }*//*
     }*/
 
+    public static void refreshProvider(Context context) {
+
+        if (Utils.isConnectingToInternet(context)) {
+
+            String strDate = "";
+
+            final SessionManager sessionManager = new SessionManager(context);
+
+            boolean b = sessionManager.getActivitySync();
+
+            if (b) {
+                Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionProvider);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    strDate = cursor.getString(0);
+                }
+
+                if (strDate == null || strDate.equalsIgnoreCase(""))
+                    strDate = DbHelper.DEFAULT_DB_DATE;
+
+                CareGiver.getDbCon().closeCursor(cursor);
+            }
+
+            Query q1 = QueryBuilder.build("provider_email", sessionManager.getEmail().toLowerCase(),
+                    QueryBuilder.Operator.EQUALS);
+
+            Query finalQuery;
+
+            if (!strDate.equalsIgnoreCase("") && b) {
+                Query q2 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
+                        GREATER_THAN);
+
+                finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
+            } else {
+                finalQuery = q1;
+            }
+
+            StorageService storageService = new StorageService(context);
+
+            storageService.findDocsByQueryOrderBy(Config.collectionProvider, finalQuery, 1, 0,
+                    "updated_date", 1, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            try {
+                                Storage storage = (Storage) o;
+
+                                if (storage.isResponseSuccess() && storage.getJsonDocList().
+                                        size() > 0) {
+
+                                    Storage.JSONDocument jsonDocument = storage.getJsonDocList().
+                                            get(0);
+
+                                    String values[] = {jsonDocument.getDocId(),
+                                            jsonDocument.getUpdatedAt(),
+                                            jsonDocument.getJsonDoc(),
+                                            Config.collectionProvider, "1", "", "1"};
+
+                                    String selection = DbHelper.COLUMN_OBJECT_ID +
+                                            " = ? and " + DbHelper.COLUMN_COLLECTION_NAME
+                                            + " = ? ";
+
+                                    String[] selectionArgs = {jsonDocument.getDocId(),
+                                            Config.collectionProvider};
+
+                                    CareGiver.getDbCon().updateInsert(
+                                            DbHelper.strTableNameCollection,
+                                            selection, values, DbHelper.COLLECTION_FIELDS,
+                                            selectionArgs);
+
+                                    createProviderModel(jsonDocument.getDocId());
+                                }
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                        }
+                    });
+        }
+    }
+
+    public static void syncAll(Context context) {
+        fetchActivitiesSync(context);
+        loadNotifications(context);
+        refreshProvider(context);
+    }
+
     public void updateProviderJson(String strProviderId, boolean bWhich) {
 
         try {
@@ -1028,9 +1160,11 @@ public class AppUtils {
         try {
 
             String strDocument;
+            int iNew;
 
             cursor = CareGiver.getDbCon().fetch(
-                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT
+                            , DbHelper.COLUMN_NEW_UPDATED},
                     DbHelper.COLUMN_COLLECTION_NAME + "=?",
                     new String[]{Config.collectionNotification}, DbHelper.COLUMN_UPDATE_DATE
                             + " desc", null, true, null, null);
@@ -1040,6 +1174,7 @@ public class AppUtils {
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
                     strDocument = cursor.getString(0);
+                    iNew = cursor.getInt(1);
 
                     JSONObject jsonObjectProvider = new JSONObject(strDocument);
 
@@ -1052,6 +1187,8 @@ public class AppUtils {
                                 jsonObjectProvider.getString("created_by_type"),
                                 jsonObjectProvider.getString("user_id"),
                                 jsonObjectProvider.getString("created_by"), "");
+
+                        notificationModel.setiNew(iNew);
 
                         if (jsonObjectProvider.has("activity_id"))
                             notificationModel.setStrActivityId(jsonObjectProvider.
@@ -1077,6 +1214,15 @@ public class AppUtils {
                 }
             }
             CareGiver.getDbCon().closeCursor(cursor);
+
+            //
+            CareGiver.getDbCon().update(
+                    DbHelper.strTableNameCollection,
+                    DbHelper.COLUMN_COLLECTION_NAME + "=?",
+                    new String[]{"0"},
+                    new String[]{DbHelper.COLUMN_NEW_UPDATED},
+                    new String[]{Config.collectionNotification});
+            //
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1110,7 +1256,7 @@ public class AppUtils {
 
             try {
 
-                int iRemoved = 1;
+                int iRemoved;
 
                 while (!newCursor.isAfterLast()) {
 
@@ -1192,7 +1338,7 @@ public class AppUtils {
 
             newCursor.moveToFirst();
 
-            int iRemoved = 1;
+            int iRemoved;
 
             try {
 
@@ -1323,6 +1469,7 @@ public class AppUtils {
         }
         CareGiver.getDbCon().closeCursor(newCursor);
     }
+    //////////////////////////
 
     public void fetchActivities() {
 
@@ -1376,7 +1523,7 @@ public class AppUtils {
                                     String values[] = {jsonDocument.getDocId(),
                                             jsonDocument.getUpdatedAt(),
                                             jsonDocument.getJsonDoc(), Config.collectionActivity,
-                                            "0", ""};
+                                            "0", "", "1"};
 
                                     String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                             + DbHelper.COLUMN_COLLECTION_NAME + "=?";
@@ -1460,7 +1607,6 @@ public class AppUtils {
             e.printStackTrace();
         }
     }
-    //////////////////////////
 
     private void createActivityModel(JSONObject jsonObject, String strDocumentId,
                                      boolean isActivity) {
@@ -1782,7 +1928,7 @@ public class AppUtils {
                                                 getInt("array_fields"));
                                     } catch (Exception e) {
                                         e.printStackTrace();
-                                        int i = 0;
+                                        int i;
                                         try {
                                             i = Integer.parseInt(jsonObjectField.
                                                     optString("array_fields"));
@@ -2243,7 +2389,7 @@ public class AppUtils {
                                                 getInt("array_fields"));
                                     } catch (Exception e) {
                                         e.printStackTrace();
-                                        int i = 0;
+                                        int i;
                                         try {
                                             i = Integer.parseInt(jsonObjectField.
                                                     optString("array_fields"));
@@ -2354,9 +2500,8 @@ public class AppUtils {
 
                         JSONObject jsonObjectsubactivitites = subMainactivities.getJSONObject(i);
                         jsonObjectsubactivitites.optString("activity_name");
-                        if (jsonObjectsubactivitites != null && jsonObjectsubactivitites.
-                                length() > 0) {
-                            ArrayList<SubActivityModel> subActivityModels = new ArrayList<SubActivityModel>();
+                        if (jsonObjectsubactivitites.length() > 0) {
+                            ArrayList<SubActivityModel> subActivityModels = new ArrayList<>();
 
                             JSONArray subactivities = jsonObjectsubactivitites.
                                     optJSONArray("sub_activities");
@@ -2501,7 +2646,7 @@ public class AppUtils {
                                             getInt("array_fields"));
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    int i = 0;
+                                    int i;
                                     try {
                                         i = Integer.parseInt(jsonObjectField.
                                                 getString("array_fields"));
@@ -2554,7 +2699,7 @@ public class AppUtils {
             }
 
             Config.serviceCategorylist.clear();
-            List<String> serviceNameList = new ArrayList<String>(categorySet);
+            List<String> serviceNameList = new ArrayList<>(categorySet);
             Config.serviceCategorylist.addAll(serviceNameList);
 
         } catch (JSONException e) {

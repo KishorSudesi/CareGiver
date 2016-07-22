@@ -25,6 +25,7 @@ public class SessionManager {
     private static final String KEY_PROFILE_IMAGE = "PROFILE_IMAGE";
     private static final String KEY_CLIENT_DATE = "CLIENT_DATE";
     private static final String KEY_ACTIVITY_SYNC = "ACTIVITY_SYNC";
+    private static final String KEY_SYNC_DATE = "SYNC_DATE";
     //private final String KEY_CHECKIN_CARE_STATUS = "checkin_care_status";
     // Shared Preferences
     private SharedPreferences pref;
@@ -74,7 +75,7 @@ public class SessionManager {
         editor.commit();
     }
 
-    public void saveClientDate(String strDate) {
+    void saveClientDate(String strDate) {
         try {
 
             editor.putString(KEY_CLIENT_DATE, AESCrypt.encrypt(Config.string, strDate));
@@ -86,9 +87,9 @@ public class SessionManager {
         editor.commit();
     }
 
-    public String getClientDate() {
+    String getClientDate() {
 
-        String strClientDate = "";
+        String strClientDate;
 
         try {
             strClientDate = AESCrypt.decrypt(Config.string, pref.getString(KEY_CLIENT_DATE, ""));
@@ -99,7 +100,31 @@ public class SessionManager {
         return strClientDate;
     }
 
-    public boolean getActivitySync() {
+    public void saveSyncDate(String strDate) {
+        try {
+            editor.putString(KEY_SYNC_DATE, AESCrypt.encrypt(Config.string, strDate));
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+
+        // commit changes
+        editor.commit();
+    }
+
+    public String getSyncDate() {
+
+        String strClientDate;
+
+        try {
+            strClientDate = AESCrypt.decrypt(Config.string, pref.getString(KEY_SYNC_DATE, ""));
+        } catch (Exception e) {
+            e.printStackTrace();
+            strClientDate = "";
+        }
+        return strClientDate;
+    }
+
+    boolean getActivitySync() {
 
         boolean b = false;
 
@@ -111,7 +136,7 @@ public class SessionManager {
         return b;
     }
 
-    public void setActivitySync(boolean b) {
+    void setActivitySync(boolean b) {
         try {
 
             editor.putBoolean(KEY_ACTIVITY_SYNC, b);

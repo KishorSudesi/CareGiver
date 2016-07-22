@@ -14,9 +14,9 @@
         />
     <TableLayout
         android:id="@+id/tableLayout"
-        android:layout_below="@+id/horizontal_bar"
         android:layout_width="match_parent"
-        android:layout_height="85dp">
+        android:layout_height="85dp"
+        android:layout_below="@+id/horizontal_bar">
 
         <TableRow
             android:layout_width="match_parent"
@@ -48,8 +48,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:src="@mipmap/notification"
-                android:padding="5dp"/>
+                android:padding="5dp"
+                android:src="@mipmap/notification" />
 
             <ImageView
                 android:id="@+id/buttonFeedback"
@@ -60,6 +60,16 @@
                 android:background="@drawable/button_back_trans"
                 android:padding="@dimen/padding_general"
                 android:src="@mipmap/my_account" />
+
+            <ImageView
+                android:id="@+id/buttonSync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_general"
+                android:layout_weight="1"
+                android:background="@drawable/button_back_trans"
+                android:padding="@dimen/padding_general"
+                android:src="@mipmap/time" />
 
         </TableRow>
 
@@ -103,6 +113,15 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/menu_feedback"
+                android:textSize="9sp" />
+
+            <TextView
+                android:id="@+id/textViewSync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/menu_sync"
                 android:textSize="9sp" />
 
         </TableRow>

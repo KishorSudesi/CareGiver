@@ -32,8 +32,9 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DOCUMENT = "document";
     public static final String COLUMN_COLLECTION_NAME = "collection_name";
     public static final String COLUMN_CLIENT_FLAG = "client_flag";
+    public static final String COLUMN_NEW_UPDATED = "new_updated";
     public static final String COLLECTION_FIELDS[] = {"object_id", "updated_date", "document",
-            "collection_name", "status", "client_flag"};
+            "collection_name", "status", "client_flag", "new_updated"};
 
     public static final String COLLECTION_FIELDS_CD[] = {"object_id", "updated_date", "document",
             "collection_name"};
@@ -46,7 +47,7 @@ public class DbHelper extends SQLiteOpenHelper {
     //CREATE INDEX indexname ON tablename(columnname);
     public static final SimpleDateFormat sqlQueryFormat =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Utils.locale);
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
@@ -55,7 +56,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection
             + " ( id integer primary key autoincrement, object_id VARCHAR(50), updated_date "
             + "datetime, document text, collection_name VARCHAR(50), status integer, "
-            + "client_flag integer, updated integer)";
+            + "client_flag integer, updated integer, new_updated integer)";
     //doc_date datetime,
 
     private String strMilestoneQuery = "CREATE TABLE " + strTableNameMilestone + " ( id integer "

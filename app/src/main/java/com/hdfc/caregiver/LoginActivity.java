@@ -22,11 +22,13 @@ import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbCon;
 import com.hdfc.dbconfig.DbHelper;
+import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
 import com.hdfc.views.CheckView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
+import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
@@ -36,6 +38,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -423,16 +427,18 @@ public class LoginActivity extends AppCompatActivity {
                                         Storage.JSONDocument jsonDocument = storage.getJsonDocList().
                                                 get(0);
 
-                                        if (iFlag == 1)
+                                        if (iFlag == 1) {
                                             sessionManager.createLoginSession(userName,
                                                     jsonDocument.getDocId());
+                                            putLoginLog();
+                                        }
 
                                         try {
                                             //CareGiver.getDbCon().beginDBTransaction();
                                             String values[] = {jsonDocument.getDocId(),
                                                     jsonDocument.getUpdatedAt(),
                                                     jsonDocument.getJsonDoc(),
-                                                    Config.collectionProvider, "1", ""};
+                                                    Config.collectionProvider, "1", "", "1"};
 
                                             String selection = DbHelper.COLUMN_OBJECT_ID +
                                                     " = ? and " + DbHelper.COLUMN_COLLECTION_NAME
@@ -523,6 +529,8 @@ public class LoginActivity extends AppCompatActivity {
         if (progressDialog.isShowing())
             progressDialog.dismiss();
 
+        //loadingPanel.setVisibility(View.GONE);
+
         Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
         intent.putExtra("LOAD", isFirst);
         Config.intSelectedMenu = Config.intDashboardScreen;
@@ -538,6 +546,71 @@ public class LoginActivity extends AppCompatActivity {
             CareGiver.getDbCon().close();
         }
         finish();
+    }
+
+    private void putLoginLog() {
+
+        if (Utils.isConnectingToInternet(LoginActivity.this)) {
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                SessionManager sessionManager = new SessionManager(LoginActivity.this);
+
+                Calendar calendar = Calendar.getInstance();
+                Date datNow = calendar.getTime();
+                String strDateNow = Utils.readFormat.format(datNow);
+
+                jsonObject.put("user_id", sessionManager.getProviderId());
+                jsonObject.put("source", "caregiver");
+                jsonObject.put("user_type", "provider");
+                jsonObject.put("device_id", Utils.getDeviceID(LoginActivity.this));
+                jsonObject.put("os", "android");
+                jsonObject.put("sdk_version", Config.iSdkVersion);
+                jsonObject.put("app_version", Config.iAppVersion);
+                jsonObject.put("time", strDateNow);
+                //jsonObject.put("ip", Utils.getIPAddress(true));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            StorageService storageService = new StorageService(LoginActivity.this);
+
+            storageService.insertDocs(Config.collectionLoginLog, jsonObject,
+                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+
+                        @Override
+                        public void onDocumentInserted(Storage response) {
+                            try {
+                                if (response.isResponseSuccess()) {
+                                    Utils.log(response.toString(), " LOG ");
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onUpdateDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onFindDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onInsertionFailed(App42Exception ex) {
+                            ex.printStackTrace();
+                        }
+
+                        @Override
+                        public void onFindDocFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onUpdateDocFailed(App42Exception ex) {
+                        }
+                    });
+        }
     }
 
     private class LoadDataTask extends AsyncTask<Void, Void, Void> {
@@ -558,32 +631,31 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            loadingPanel.setVisibility(View.GONE);
-
             try {
 
                 editEmail.setVisibility(View.VISIBLE);
                 editPassword.setVisibility(View.VISIBLE);
                 textView.setVisibility(View.VISIBLE);
                 button.setVisibility(View.VISIBLE);
-                
+
                 if (sessionManager.isLoggedIn() && !sessionManager.getEmail().equalsIgnoreCase("")
                         && !sessionManager.getProviderId().equalsIgnoreCase("")) {
+                    goToDashboard(false);
+                    /*if (Utils.isConnectingToInternet(LoginActivity.this)) {
 
-                    if (Utils.isConnectingToInternet(LoginActivity.this)) {
-
-                        progressDialog.setMessage(getString(R.string.process_login));
+                        progressDialog.setMessage(getString(R.string.loading));
                         progressDialog.setCancelable(false);
                         progressDialog.show();
 
                         fetchProviders(progressDialog, sessionManager.getEmail(), 3);
                     } else {
-                        progressDialog.setMessage(getString(R.string.log_in));
+                       *//* progressDialog.setMessage(getString(R.string.log_in));
                         progressDialog.setCancelable(false);
-                        progressDialog.show();
+                        progressDialog.show();*//*
                         goToDashboard(false);
-                    }
+                    }*/
                 }
+                loadingPanel.setVisibility(View.GONE);
             } catch (Exception e) {
                 e.printStackTrace();
             }

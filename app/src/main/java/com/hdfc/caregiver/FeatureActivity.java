@@ -27,7 +27,9 @@ import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
 import com.bumptech.glide.Glide;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ImageModel;
@@ -37,7 +39,10 @@ import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
 
+import net.sqlcipher.Cursor;
+
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -59,7 +64,7 @@ public class FeatureActivity extends AppCompatActivity {
     private static Handler backgroundThreadHandler;
 
     private static ActivityModel act;
-    private static String strName, strDependentUrl;
+    private static String strName, strCustomerName, strCustomerUrl;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
     private static boolean bLoad, isCompleted = false;
@@ -72,8 +77,6 @@ public class FeatureActivity extends AppCompatActivity {
     private boolean bWhichScreen = false;
     private boolean success;
     private TextView textViewTime;
-    //private MultiBitmapLoader multiBitmapLoader;
-    private ImageView imgLogoHeaderTaskDetail;
     private LinearLayout linearLayoutAttach;
     private Button done;
     private PermissionHelper permissionHelper;
@@ -84,7 +87,7 @@ public class FeatureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_features);
 
-        imgLogoHeaderTaskDetail = (ImageView) findViewById(R.id.imgLogoHeaderTaskDetail);
+        ImageView imgLogoHeaderTaskDetail = (ImageView) findViewById(R.id.imgLogoHeaderTaskDetail);
         done = (Button) findViewById(R.id.buttonVegetibleDone);
         linearLayoutAttach = (LinearLayout) findViewById(R.id.linearLayout1);
         Button cancel = (Button) findViewById(R.id.buttonBack);
@@ -131,23 +134,98 @@ public class FeatureActivity extends AppCompatActivity {
             if (act == null || iActivityPosition > -1)
                 act = Config.activityModels.get(iActivityPosition);
 
+            Cursor cursor1 = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                    new String[]{Config.collectionDependent, act.getStrDependentID()},
+                    null, "0,1", true, null, null
+            );
 
-            int iPosition = Config.dependentIdsAdded.indexOf(act.getStrDependentID());
+            JSONObject jsonObject = null;
 
-            String name = "";
-
-            if (iPosition > -1 && iPosition < Config.dependentModels.size()) {
-                name = Config.dependentModels.get(iPosition).getStrName();
-                strDependentUrl = Config.dependentModels.get(iPosition).getStrImageUrl();
+            if (cursor1.getCount() > 0) {
+                cursor1.moveToFirst();
+                try {
+                    jsonObject = new JSONObject(cursor1.getString(0));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
+            CareGiver.getDbCon().closeCursor(cursor1);
+
+            String name = "";
+            try {
+                if (jsonObject != null && jsonObject.getString("dependent_name") != null)
+                    name = jsonObject.optString("dependent_name");
+
+                if (jsonObject != null && imgLogoHeaderTaskDetail != null
+                        && jsonObject.getString("dependent_profile_url") != null
+                        && !jsonObject.getString("dependent_profile_url").equalsIgnoreCase("")) {
+
+                    Glide.with(FeatureActivity.this)
+                            .load(jsonObject.getString("dependent_profile_url"))
+                            .centerCrop()
+                            .bitmapTransform(new CropCircleTransformation(FeatureActivity.this))
+                            .placeholder(R.drawable.person_icon)
+                            .crossFade()
+                            .into(imgLogoHeaderTaskDetail);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (name.length() > 20)
+                name = name.substring(0, 18) + "..";
+
+            if (dependentName != null) {
+                dependentName.setText(name);
+            }
+
+            Cursor cursor2 = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameCollection,
+                    new String[]{DbHelper.COLUMN_DOCUMENT},
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? and "
+                            + DbHelper.COLUMN_OBJECT_ID + "=?",
+                    new String[]{Config.collectionCustomer, act.getStrCustomerID()},
+                    null, "0,1", true, null, null
+            );
+
+            JSONObject jsonObject1 = null;
+
+            if (cursor2.getCount() > 0) {
+                cursor2.moveToFirst();
+                try {
+                    jsonObject1 = new JSONObject(cursor2.getString(0));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            CareGiver.getDbCon().closeCursor(cursor2);
+
+            try {
+                if (jsonObject1 != null) {
+                    if (jsonObject1.getString("customer_name") != null)
+                        strCustomerName = jsonObject1.getString("customer_name");
+
+                    if (jsonObject1.getString("customer_profile_url") != null
+                            && !jsonObject1.getString("customer_profile_url").
+                            equalsIgnoreCase("")) {
+                        strCustomerUrl = jsonObject1.getString("customer_profile_url");
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 
             if (linearName != null) {
                 linearName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(FeatureActivity.this);
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(
+                                FeatureActivity.this);
                         LayoutInflater inflater = getLayoutInflater();
                         View dialogView = inflater.inflate(R.layout.name_popup, null);
                         builder.setView(dialogView);
@@ -155,31 +233,23 @@ public class FeatureActivity extends AppCompatActivity {
                         TextView textName = (TextView) dialogView.findViewById(R.id.textPopupName);
                         ImageView imageDialog = (ImageView) dialogView.findViewById(R.id.popupImage);
 
-                        int iCustomerPosition = Config.customerIdsAdded.indexOf(act.getStrCustomerID());
+                        try {
 
-                        String name = Config.customerModels.get(iCustomerPosition).getStrName();
-                        String strUrl = Config.customerModels.get(iCustomerPosition).getStrImgUrl();
+                            textName.setText(strCustomerName);
 
-                        textName.setText(name);
+                            Glide.with(FeatureActivity.this)
+                                    .load(strCustomerUrl)
+                                    .centerCrop()
+                                    .bitmapTransform(new CropCircleTransformation(
+                                            FeatureActivity.this))
+                                    .placeholder(R.drawable.person_icon)
+                                    .crossFade()
+                                    .into(imageDialog);
 
-                   /* File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrCustomerID()));
-
-                    if (fileImage.exists()) {
-                        String filename = fileImage.getAbsolutePath();
-                        multiBitmapLoader.loadBitmap(filename, imageDialog);
-                    } else {
-                        if (imageDialog != null) {
-                            imageDialog.setImageDrawable(getResources().getDrawable(R.drawable.person_icon));
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    }*/
 
-                        Glide.with(FeatureActivity.this)
-                                .load(strUrl)
-                                .centerCrop()
-                                .bitmapTransform(new CropCircleTransformation(FeatureActivity.this))
-                                .placeholder(R.drawable.person_icon)
-                                .crossFade()
-                                .into(imageDialog);
 
                         builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
@@ -192,14 +262,6 @@ public class FeatureActivity extends AppCompatActivity {
                         alertDialog.show();
                     }
                 });
-            }
-
-
-            if (name.length() > 20)
-                name = name.substring(0, 18) + "..";
-
-            if (dependentName != null) {
-                dependentName.setText(name);
             }
 
             String strActivityName = act.getStrActivityName();
@@ -267,6 +329,7 @@ public class FeatureActivity extends AppCompatActivity {
 
         Intent intent = new Intent(FeatureActivity.this, DashboardActivity.class);
         intent.putExtra("LOAD", bLoad);
+        intent.putExtra("RETAIN_DATE", true);
         startActivity(intent);
         finish();
     }
@@ -768,13 +831,6 @@ public class FeatureActivity extends AppCompatActivity {
                 }
             }*/
 
-            Glide.with(FeatureActivity.this)
-                    .load(strDependentUrl)
-                    .centerCrop()
-                    .bitmapTransform(new CropCircleTransformation(FeatureActivity.this))
-                    .placeholder(R.drawable.person_icon)
-                    .crossFade()
-                    .into(imgLogoHeaderTaskDetail);
 
             if (done != null) {
 

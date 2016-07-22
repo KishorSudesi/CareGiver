@@ -2,6 +2,7 @@ package com.hdfc.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -106,6 +107,12 @@ public class NotificationAdapter extends BaseAdapter {
                 viewHolder.textReadMore.setVisibility(View.GONE);
                 viewHolder.textReadMore.setEnabled(false);
             }
+
+            if (adapterNotificationModels.get(position).getiNew() == 1)
+                viewHolder.textViewText.setTypeface(Typeface.DEFAULT_BOLD);
+            else
+                viewHolder.textViewText.setTypeface(Typeface.DEFAULT);
+
             viewHolder.textViewText.setText(strMess);
 
             viewHolder.textReadMore.setOnClickListener(new View.OnClickListener() {

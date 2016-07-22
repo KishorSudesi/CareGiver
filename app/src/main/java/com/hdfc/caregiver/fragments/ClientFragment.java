@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.hdfc.adapters.ExpandableListAdapter;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
+import com.hdfc.libs.AppUtils;
 import com.hdfc.models.ClientModel;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
@@ -67,6 +68,8 @@ public class ClientFragment extends Fragment {
         TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
         expListView = (ExpandableListView) view.findViewById(R.id.listExp);
 
+        AppUtils appUtils = new AppUtils(getActivity());
+        appUtils.createCustomerModel();
         prepareListData();
 
         ExpandableListAdapter listAdapter = new ExpandableListAdapter(getActivity(), listDataHeader,

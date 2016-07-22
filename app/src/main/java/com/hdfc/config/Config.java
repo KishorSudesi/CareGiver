@@ -30,7 +30,7 @@ import java.util.Map;
 public class Config {
 
     public static final String dbName = "newzeal";
-    public static final String strPreferenceName = "CARE_GIVER";
+    //public static final String strPreferenceName = "CARE_GIVER";
 
     public static final String collectionService = "service";
     public static final String collectionServiceHistory = "servicehistory";
@@ -42,6 +42,7 @@ public class Config {
     public static final String collectionActivity = "activity";
     public static final String collectionDependent = "dependent";
     public static final String collectionNotification = "notification";
+    public static final String collectionLoginLog = "login_log";
     public static final String collectionCheckInCare = "checkincare";
 
 

@@ -142,9 +142,7 @@ public class NotificationFragment extends Fragment {
         if (Config.notificationModels.size() <= 0 || b) {
 
           /*  boolean isBackground=false;
-
             if(b)*/
-
 
             loadNotifications(b);
         }
@@ -189,12 +187,6 @@ public class NotificationFragment extends Fragment {
                 finalQuery = q1;
             }
 
-          /*  try {
-                Utils.log(finalQuery.get(), " QUERY ");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
-
 
             storageService.findDocsByQueryOrderBy(Config.collectionNotification, finalQuery, 30000,
                     0, "time", 1, new App42CallBack() {
@@ -221,12 +213,7 @@ public class NotificationFragment extends Fragment {
                                             String values[] = {jsonDocList.get(i).getDocId(),
                                                     jsonDocList.get(i).getUpdatedAt(),
                                                     jsonDocList.get(i).getJsonDoc(),
-                                                    Config.collectionNotification, "1", ""};
-
-                                            //String selection = DbHelper.COLUMN_OBJECT_ID + " = ?";
-
-                                            // WHERE clause arguments
-                                            //String[] selectionArgs = {jsonDocList.get(i).getDocId()};
+                                                    Config.collectionNotification, "1", "", "1"};
 
                                             Utils.log(" 1 ", " 2 ");
                                             CareGiver.getDbCon().insert(
@@ -268,6 +255,8 @@ public class NotificationFragment extends Fragment {
                             }
                         }
                     });
+        } else {
+            refreshNotifications();
         }
     }
 

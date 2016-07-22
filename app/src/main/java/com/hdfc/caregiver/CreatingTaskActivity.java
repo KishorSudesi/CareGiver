@@ -428,7 +428,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                         String values[] = {jsonDocument.getDocId(),
                                                 jsonDocument.getUpdatedAt(),
                                                 jsonDocument.getJsonDoc(),
-                                                Config.collectionService, "0", ""};
+                                                Config.collectionService, "0", "", "1"};
 
                                         String selection = DbHelper.COLUMN_OBJECT_ID + "=? and "
                                                 + DbHelper.COLUMN_COLLECTION_NAME + "=?";
@@ -475,7 +475,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 DbHelper.strTableNameCollection,
                 DbHelper.COLLECTION_FIELDS,
                 DbHelper.COLUMN_COLLECTION_NAME + "=?",
-                new String[]{},
+                new String[]{Config.collectionService},
                 null, null, true, null, null
         );
 
@@ -646,7 +646,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     String values[] = {response.getJsonDocList().get(0).getDocId(),
                                             "",
                                             response.getJsonDocList().get(0).getJsonDoc(),
-                                            Config.collectionActivity, "0", ""};
+                                            Config.collectionActivity, "0", "", "1"};
 
                                     String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                             + DbHelper.COLUMN_COLLECTION_NAME + "=?";
@@ -949,6 +949,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         Config.intSelectedMenu = Config.intDashboardScreen;
         utils.toast(2, 2, strAlert);
         //newIntent.putExtra("CREATED", true);
+        newIntent.putExtra("RETAIN_DATE", true);
         startActivity(newIntent);
         finish();
 
@@ -1054,6 +1055,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private void goBack() {
         Intent intent = new Intent(CreatingTaskActivity.this, DashboardActivity.class);
         Config.intSelectedMenu = Config.intDashboardScreen;
+        intent.putExtra("RETAIN_DATE", true);
         startActivity(intent);
         finish();
     }

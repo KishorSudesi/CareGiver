@@ -1,11 +1,9 @@
 package com.hdfc.libs;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,13 +12,12 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
@@ -53,17 +50,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
-import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -146,13 +144,13 @@ public class Utils {
         return getString();
     }
 
-    public static double round(double value, int places) {
+   /* public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
-    }
+    }*/
 
     //creating scaled bitmap with required width and height
     public static Bitmap createScaledBitmap(Bitmap unscaledBitmap, int dstWidth, int dstHeight) {
@@ -226,7 +224,7 @@ public class Utils {
     }*/
 
     //
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+   /* public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
                                                          int reqWidth, int reqHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap bmp = null;
@@ -252,7 +250,7 @@ public class Utils {
         }
 
         return bmp;
-    }//
+    }//*/
 
     //
     public static int calculateSampleSize(int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
@@ -334,10 +332,10 @@ public class Utils {
 
     }
 
-    public static boolean externalMemoryAvailable() {
+   /* public static boolean externalMemoryAvailable() {
         return Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED);
-    }
+    }*/
 
     public static void log(String message, String tag) {
 
@@ -349,7 +347,7 @@ public class Utils {
 
     }
 
-    public static String sha512(final String toEncrypt) {
+  /*  public static String sha512(final String toEncrypt) {
 
         try {
 
@@ -366,7 +364,7 @@ public class Utils {
         } catch (Exception exc) {
             return "";
         }
-    }
+    }*/
 
     /*public static long getAvailableExternalMemorySize() {
         if (externalMemoryAvailable()) {
@@ -428,7 +426,7 @@ public class Utils {
         return pathExternals;
     }*/
 
-    public static boolean deleteAllFiles(File directory) {
+   /* public static boolean deleteAllFiles(File directory) {
 
         final File[] files = directory.listFiles();
 
@@ -453,6 +451,12 @@ public class Utils {
         }
 
         return true;
+    }*/
+
+    public static String getDeviceID(Activity activity) {
+        return Settings.Secure.getString(activity.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
     }
     /*public static void recordAudio(String fileName) {
 
@@ -474,12 +478,7 @@ public class Utils {
     }*/
     //
 
-  /*  public static String getDeviceID(Activity activity) {
-        return Settings.Secure.getString(activity.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-
-    }
-
+  /*
     public static void hideSoftKeyboard(Activity activity) {
         try {
 
@@ -593,11 +592,11 @@ public class Utils {
         return key;
     }*/
 
-    public static void cancelNotification(int notifyId) {
+    /*public static void cancelNotification(int notifyId) {
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager nMgr = (NotificationManager) _ctxt.getSystemService(ns);
         nMgr.cancel(notifyId);
-    }
+    }*/
 
    /* public String getMonthLastDate(String strFromDate) {
 
@@ -788,7 +787,7 @@ public class Utils {
     }
 
 
-   /* public String getUUID() {
+    /*public String getUUID() {
         final TelephonyManager tm = (TelephonyManager) _ctxt.getSystemService(Context.TELEPHONY_SERVICE);
 
         final String tmDevice, tmSerial, androidId;
@@ -870,6 +869,43 @@ public class Utils {
         sbPostData.append("&route=" + "4");
         sbPostData.append("&sender=" + "CustomSenderID");
         return sbPostData.toString();
+    }
+
+    /**
+     * Get IP address from first non-localhost interface
+     *
+     * @param useIPv4 true=return ipv4, false=return ipv6
+     * @return address or empty string
+     */
+    public static String getIPAddress(boolean useIPv4) {
+        try {
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.
+                    getNetworkInterfaces());
+            for (NetworkInterface intf : interfaces) {
+                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+                for (InetAddress addr : addrs) {
+                    if (!addr.isLoopbackAddress()) {
+                        String sAddr = addr.getHostAddress();
+                        //boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
+                        boolean isIPv4 = sAddr.indexOf(':') < 0;
+
+                        if (useIPv4) {
+                            if (isIPv4)
+                                return sAddr;
+                        } else {
+                            if (!isIPv4) {
+                                int delim = sAddr.indexOf('%'); // drop ip6 zone suffix
+                                return delim < 0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).
+                                        toUpperCase();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } // for now eat exceptions
+        return "";
     }
 
     //
@@ -990,8 +1026,12 @@ public class Utils {
         return file;
     }
 
+    /*public boolean isPasswordValid(String password) {
+        return password.length() > 1;
+    }*/
+
     //load image from url
-    void loadImageFromWeb(String strFileName, String strFileUrl) {
+    /*void loadImageFromWeb(String strFileName, String strFileUrl) {
 
         strFileName = replaceSpace(strFileName.trim());
         strFileUrl = replaceSpace(strFileUrl.trim());
@@ -1025,10 +1065,6 @@ public class Utils {
         }
     }
 
-    /*public boolean isPasswordValid(String password) {
-        return password.length() > 1;
-    }*/
-
     public void moveFile(File file, File newFile) throws IOException {
         //File newFile = new File(dir, file.getName());
         FileChannel outputChannel = null;
@@ -1044,7 +1080,7 @@ public class Utils {
             if (outputChannel != null) outputChannel.close();
         }
     }
-
+*/
     public void copyFile(File file, File newFile) throws IOException {
         //File newFile = new File(dir, file.getName());
         FileChannel outputChannel = null;
@@ -1231,6 +1267,32 @@ public class Utils {
         }
     }
 
+ /*public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }*/
+
+    /*public void setDrawable(View v, Drawable drw) {
+        if (Build.VERSION.SDK_INT <= 16)
+            v.setBackgroundDrawable(drw);
+        else
+            v.setBackground(drw);
+    }
+
+    public void setStatusBarColor(String strColor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = ((Activity) _ctxt).getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.parseColor(strColor));
+        }
+    }*/
+
     public void openCamera(String strFileName, Fragment fragment, final Activity activity) {
 
 
@@ -1251,6 +1313,28 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
+    /*public EditText traverseEditTexts(ViewGroup v, Drawable all, Drawable current,
+                                      EditText editCurrent) {
+        EditText invalid = null;
+        for (int i = 0; i < v.getChildCount(); i++) {
+            Object child = v.getChildAt(i);
+            if (child instanceof EditText) {
+                EditText e = (EditText) child;
+
+                if (e.getId() == editCurrent.getId())
+                    setEditTextDrawable(e, current);
+                else
+                    setEditTextDrawable(e, all);
+            } else if (child instanceof ViewGroup) {
+                invalid = traverseEditTexts((ViewGroup) child, all, current, editCurrent);  // Recursive call.
+                if (invalid != null) {
+                    break;
+                }
+            }
+        }
+        return invalid;
+    }*/
 
  /*public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
@@ -1278,6 +1362,13 @@ public class Utils {
         }
     }*/
 
+   /* public void setEditTextDrawable(EditText editText, Drawable drw) {
+        if (Build.VERSION.SDK_INT <= 16)
+            editText.setBackgroundDrawable(drw);
+        else
+            editText.setBackground(drw);
+    }*/
+
     public void copyInputStreamToFile(InputStream in, File file) {
         try {
             OutputStream out = new FileOutputStream(file);
@@ -1291,28 +1382,6 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public EditText traverseEditTexts(ViewGroup v, Drawable all, Drawable current,
-                                      EditText editCurrent) {
-        EditText invalid = null;
-        for (int i = 0; i < v.getChildCount(); i++) {
-            Object child = v.getChildAt(i);
-            if (child instanceof EditText) {
-                EditText e = (EditText) child;
-
-                if (e.getId() == editCurrent.getId())
-                    setEditTextDrawable(e, current);
-                else
-                    setEditTextDrawable(e, all);
-            } else if (child instanceof ViewGroup) {
-                invalid = traverseEditTexts((ViewGroup) child, all, current, editCurrent);  // Recursive call.
-                if (invalid != null) {
-                    break;
-                }
-            }
-        }
-        return invalid;
     }
 
     /*public static String bytesToHex(byte[] bytes) {
@@ -1347,14 +1416,7 @@ public class Utils {
 
     //Application Specig=fic End
 
-    public void setEditTextDrawable(EditText editText, Drawable drw) {
-        if (Build.VERSION.SDK_INT <= 16)
-            editText.setBackgroundDrawable(drw);
-        else
-            editText.setBackground(drw);
-    }
-
-    public Bitmap roundedBitmap(Bitmap bmp) {
+    public Bitmap roundedBitmap(Bitmap bmp){
         Bitmap output = null;
 
         try {
@@ -1385,6 +1447,23 @@ public class Utils {
         return string;
     }
 
+    /*public ArrayList<View> getViewsByTag(ViewGroup root, String tag) {
+        ArrayList<View> views = new ArrayList<>();
+        final int childCount = root.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = root.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                views.addAll(getViewsByTag((ViewGroup) child, tag));
+            }
+
+            final Object tagObj = child.getTag();
+            if (tagObj != null && tagObj.equals(tag)) {
+                views.add(child);
+            }
+        }
+        return views;
+    }*/
+
     public Bitmap getBitmapFromFile(String strPath, int intWidth, int intHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap original = null;
@@ -1409,23 +1488,6 @@ public class Utils {
         }
 
         return original;
-    }
-
-    public ArrayList<View> getViewsByTag(ViewGroup root, String tag) {
-        ArrayList<View> views = new ArrayList<View>();
-        final int childCount = root.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            final View child = root.getChildAt(i);
-            if (child instanceof ViewGroup) {
-                views.addAll(getViewsByTag((ViewGroup) child, tag));
-            }
-
-            final Object tagObj = child.getTag();
-            if (tagObj != null && tagObj.equals(tag)) {
-                views.add(child);
-            }
-        }
-        return views;
     }
 
     public ArrayList<String> getEditTextValueByTag(ViewGroup root, String tag) {
@@ -1524,10 +1586,10 @@ public class Utils {
         JSONArray jsonArray = new JSONArray();
 
         try {
-            int iLength = string.length;
+            //int iLength = string.length;
 
-            for (int i = 0; i < iLength; i++) {
-                jsonArray.put(string[i]);
+            for (String aString : string) {
+                jsonArray.put(aString);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1535,5 +1597,6 @@ public class Utils {
 
         return jsonArray;
     }
+
 
 }
