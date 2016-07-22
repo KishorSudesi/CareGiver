@@ -182,7 +182,7 @@ public class NotificationFragment extends Fragment {
 
             if (!strDate.equalsIgnoreCase("")) {
                 Query q12 = QueryBuilder.build("_$updatedAt", strDate,
-                        QueryBuilder.Operator.GREATER_THAN_EQUALTO);
+                        QueryBuilder.Operator.GREATER_THAN);
 
                 finalQuery = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q12);
             } else {

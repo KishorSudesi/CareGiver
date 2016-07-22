@@ -30,7 +30,11 @@ import com.hdfc.models.MilestoneModel;
 import com.hdfc.models.ServiceModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.storage.Query;
+import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
+
+import net.sqlcipher.Cursor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,20 +53,18 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private static String valDateTime, valTitle, valSearch, strServiceName, valSearchService;
     private static StorageService storageService;
     private RelativeLayout loadingPanel;
-    private Spinner dependentlist, serviceCategoryList, inputSearchServices;
+    private Spinner dependentList, serviceCategoryList, inputSearchServices;
     private boolean isClicked = false;
     private View focusView = null;
     private AutoCompleteTextView inputSearch;
-    private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate, strSelectedDependent;
-    //private ProgressDialog progressDialog;
+    private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate,
+            strSelectedDependent;
+
     private Utils utils;
     private AppUtils appUtils;
     private EditText editTextTitle, dateAnd;
     private JSONObject jsonObject;
     private int mDependentPosition = -1;
-    private int mCategoryPosition = -1;
-
-    //private static Calendar calendar;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -80,14 +82,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         @Override
         public void onDateTimeCancel() {
-            // Overriding onDateTimeCancel() is optional.
         }
 
     };
-
-   /* public static void hideLoader() {
-        loadingPanel.setVisibility(View.GONE);
-    }*/
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,18 +93,15 @@ public class CreatingTaskActivity extends AppCompatActivity {
         editTextTitle = (EditText) findViewById(R.id.editTextTitle);
         inputSearch = (AutoCompleteTextView) findViewById(R.id.inputSearch);
         inputSearchServices = (Spinner) findViewById(R.id.inputSearchServices);
-        dependentlist = (Spinner) findViewById(R.id.spindependentList);
+        dependentList = (Spinner) findViewById(R.id.spindependentList);
         serviceCategoryList = (Spinner) findViewById(R.id.spinServiceList);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
-        //calendar = Calendar.getInstance();
-
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);
-        //progressDialog = new ProgressDialog(CreatingTaskActivity.this);
         storageService = new StorageService(CreatingTaskActivity.this);
 
-        dependentlist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        dependentList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 try {
@@ -167,13 +161,16 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                 mDependentPosition = Config.strCustomerNames.indexOf(valSearch.trim());
 
-                if (mDependentPosition > -1 && Config.clientNameModels.size() > 0 && mDependentPosition < Config.clientNameModels.size()) {
+                if (mDependentPosition > -1 && Config.clientNameModels.size() > 0
+                        && mDependentPosition < Config.clientNameModels.size()) {
                     names.clear();
                     names = Config.clientNameModels.get(mDependentPosition).getStrDependentNames();
                 }
 
-                ArrayAdapter<String> adapter1 = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.simple_dropdown_item_1line, names);
-                dependentlist.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
+                ArrayAdapter<String> adapter1 = new ArrayAdapter<>(CreatingTaskActivity.this,
+                        android.R.layout.simple_dropdown_item_1line, names);
+                dependentList.setAdapter(adapter1);
+                //setting the adapter data into the AutoCompleteTextView*/
 
             }
         });
@@ -185,26 +182,23 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 nameService.clear();
                 nameService.add(getString(R.string.no_services));
 
-
                 try {
-                    mCategoryPosition = position;
-
+                    //mCategoryPosition = position;
 
                     if (Config.serviceNameModels.size() > 0) {
                         nameService.clear();
-                        nameService.addAll(Config.serviceNameModels.get(Config.serviceCategorylist.get(position)));
-
+                        nameService.addAll(Config.serviceNameModels.get(Config.serviceCategorylist.
+                                get(position)));
                     }
 
-                    ArrayAdapter<String> adapter1 = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.simple_dropdown_item_1line, nameService);
-                    serviceCategoryList.setAdapter(adapter1);//setting the adapter data into the AutoCompleteTextView*/
-
+                    ArrayAdapter<String> adapter1 = new ArrayAdapter<>(CreatingTaskActivity.this,
+                            android.R.layout.simple_dropdown_item_1line, nameService);
+                    serviceCategoryList.setAdapter(adapter1);
+                    //setting the adapter data into the AutoCompleteTextView*/
 
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
-
-
             }
 
             @Override
@@ -212,6 +206,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
             }
         });
+
         serviceCategoryList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -240,7 +235,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
                         editTextTitle.setError(null);
                         dateAnd.setError(null);
                         inputSearch.setError(null);
-                        // serviceCategoryList.setError(null);
 
                         valTitle = editTextTitle.getText().toString().trim();
                         valDateTime = dateAnd.getText().toString().trim();
@@ -260,16 +254,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             cancel = true;
                         }
 
-                        /*if (TextUtils.isEmpty(strServiceName)) {
-                            // inputSearchServices.setError(getString(R.string.error_field_required));
-                            focusView = inputSearchServices;
-                            cancel = true;
-                        }*/
-
                         if (TextUtils.isEmpty(strSelectedDependent)) {
-                            //dependentlist.setError(getString(R.string.error_field_required));
                             utils.toast(2, 2, getString(R.string.select_dependent));
-                            focusView = dependentlist;
+                            focusView = dependentList;
                             cancel = true;
                         }
 
@@ -305,30 +292,36 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                 if (dateNow != null && enteredDate != null) {
 
-                                    Utils.log(String.valueOf(dateNow + " ! " + enteredDate), " NOW ");
+                                    Utils.log(String.valueOf(dateNow + " ! " + enteredDate), "NOW");
 
                                     if (enteredDate.compareTo(dateNow) < 0) {
                                         bFuture = false;
                                     }
                                 }
-                                ////////////////////////////
 
                                 if (bFuture) {
 
                                     ServiceModel serviceModel = null;
                                     DependentModel dependentModel = null;
 
-                                    int iServicePosition = Config.servicelist.indexOf(strServiceName);
+                                    int iServicePosition = Config.servicelist.
+                                            indexOf(strServiceName);
                                     if (iServicePosition > -1)
                                         serviceModel = Config.serviceModels.get(iServicePosition);
 
-                                    int iCustomerPosition = Config.strCustomerNames.indexOf(valSearch);
+                                    int iCustomerPosition = Config.strCustomerNames.
+                                            indexOf(valSearch);
                                     if (iCustomerPosition > -1)
-                                        strSelectedCustomer = Config.clientModels.get(iCustomerPosition).getCustomerModel().getStrEmail();
+                                        strSelectedCustomer = Config.clientModels.
+                                                get(iCustomerPosition).getCustomerModel().
+                                                getStrEmail();
 
-                                    int iDependentPosition = Config.clientNameModels.get(iCustomerPosition).getStrDependentNames().indexOf(strSelectedDependent);
+                                    int iDependentPosition = Config.clientNameModels.
+                                            get(iCustomerPosition).getStrDependentNames().
+                                            indexOf(strSelectedDependent);
                                     if (iDependentPosition > -1)
-                                        dependentModel = Config.clientModels.get(iCustomerPosition).getDependentModels().get(iDependentPosition);
+                                        dependentModel = Config.clientModels.get(iCustomerPosition).
+                                                getDependentModels().get(iDependentPosition);
 
 
                                     if (iCustomerPosition > -1) {
@@ -364,35 +357,22 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
             });
         }
-
-        //
-       /* if (utils.isConnectingToInternet()) {
-
-            loadingPanel.setVisibility(View.VISIBLE);
-
-            Config.dependentIds.clear();
-            Config.customerIds.clear();
-            Config.clientModels.clear();
-
-            Config.intSelectedMenu = Config.intClientScreen;
-
-            appUtils.fetchClients(3);
-
-        } else {
-            utils.toast(2, 2, getString(R.string.warning_internet));
-        }*/
+        refreshCustomerAdapter();
+        fetchServices();
     }
 
     private void refreshServiceAdapter() {
         ArrayAdapter<String> adapter;
-        adapter = new ArrayAdapter<>(CreatingTaskActivity.this, android.R.layout.simple_dropdown_item_1line, Config.serviceCategorylist);
+        adapter = new ArrayAdapter<>(CreatingTaskActivity.this,
+                android.R.layout.simple_dropdown_item_1line, Config.serviceCategorylist);
 
         //inputSearchServices.setThreshold(1);//will start working from first character
         inputSearchServices.setAdapter(adapter);
     }
 
     private void refreshCustomerAdapter() {
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreatingTaskActivity.this, android.R.layout.select_dialog_item, Config.strCustomerNames);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(CreatingTaskActivity.this,
+                android.R.layout.select_dialog_item, Config.strCustomerNames);
         //Getting the instance of AutoCompleteTextView
         //AutoCompleteTextView actv= (AutoCompleteTextView)findViewById(R.id.inputSearch);
         inputSearch.setThreshold(1);//will start working from first character
@@ -402,83 +382,128 @@ public class CreatingTaskActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+    }
 
-        storageService.findAllDocs(Config.collectionService,
-                new App42CallBack() {
-                    @Override
-                    public void onSuccess(Object o) {
+    private void fetchServices() {
 
-                        if (o != null) {
+        if (Utils.isConnectingToInternet(CreatingTaskActivity.this)) {
 
-                            Storage storage = (Storage) o;
+            String strDate = "";
 
-                            ArrayList<Storage.JSONDocument> jsonDocList = storage.getJsonDocList();
+            Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionService);
 
-                            Config.strServcieIds.clear();
-                            Config.serviceModels.clear();
-                            Config.servicelist.clear();
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                strDate = cursor.getString(0);
+            }
 
-                            for (int i = 0; i < jsonDocList.size(); i++) {
+            if (strDate == null || strDate.equalsIgnoreCase(""))
+                strDate = DbHelper.DEFAULT_DB_DATE;
 
-                                Storage.JSONDocument jsonDocument = jsonDocList.get(i);
+            CareGiver.getDbCon().closeCursor(cursor);
 
-                                String strDocumentId = jsonDocument.getDocId();
+            Query q1 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
+                    GREATER_THAN);
 
-                                String strServices = jsonDocument.getJsonDoc();
+            storageService.findDocsByQueryOrderBy(Config.collectionService, q1, 30000, 0,
+                    "_$updatedAt", 1,
+                    new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
 
-                                try {
+                            if (o != null) {
 
-                                    JSONObject jsonObjectServcies = new JSONObject(strServices);
+                                Utils.log(o.toString(), " Service");
 
-                                    if (jsonObjectServcies.has("unit"))
-                                        appUtils.createServiceModel(strDocumentId, jsonObjectServcies);
+                                Storage storage = (Storage) o;
 
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                ArrayList<Storage.JSONDocument> jsonDocList = storage.
+                                        getJsonDocList();
+
+                                for (int i = 0; i < jsonDocList.size(); i++) {
+
+                                    Storage.JSONDocument jsonDocument = jsonDocList.get(i);
+
+                                    try {
+                                        String values[] = {jsonDocument.getDocId(),
+                                                jsonDocument.getUpdatedAt(),
+                                                jsonDocument.getJsonDoc(),
+                                                Config.collectionService, "0", ""};
+
+                                        String selection = DbHelper.COLUMN_OBJECT_ID + "=? and "
+                                                + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+                                        // WHERE clause arguments
+                                        String[] selectionArgs = {jsonDocument.getDocId(),
+                                                Config.collectionService};
+                                        CareGiver.getDbCon().updateInsert(
+                                                DbHelper.strTableNameCollection,
+                                                selection, values, DbHelper.COLLECTION_FIELDS,
+                                                selectionArgs);
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
-
-                        } else {
-                            utils.toast(2, 2, getString(R.string.warning_internet));
-                        }
-
-                        refreshServices();
-                    }
-
-                    @Override
-                    public void onException(Exception e) {
-
-                        try {
                             refreshServices();
-                            if (e != null) {
-                                JSONObject jsonObject = new JSONObject(e.getMessage());
-                                JSONObject jsonObjectError = jsonObject.getJSONObject("app42Fault");
-                                String strMess = jsonObjectError.getString("details");
-
-                                utils.toast(2, 2, strMess);
-                            } else {
-                                utils.toast(2, 2, getString(R.string.warning_internet));
-                            }
-
-                        } catch (JSONException e1) {
-                            e1.printStackTrace();
                         }
-                    }
-                });
+
+                        @Override
+                        public void onException(Exception e) {
+                            if (e != null)
+                                Utils.log(e.getMessage(), " Service");
+                            refreshServices();
+                        }
+                    });
+        } else {
+            refreshServices();
+        }
+
     }
 
 
     private void refreshServices() {
 
+        Config.strServcieIds.clear();
+        Config.serviceModels.clear();
+        Config.servicelist.clear();
+        Config.serviceNameModels.clear();
+        AppUtils.categorySet.clear();
+
+        Cursor cursor = CareGiver.getDbCon().fetch(
+                DbHelper.strTableNameCollection,
+                DbHelper.COLLECTION_FIELDS,
+                DbHelper.COLUMN_COLLECTION_NAME + "=?",
+                new String[]{},
+                null, null, true, null, null
+        );
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            try {
+                while (!cursor.isAfterLast()) {
+                    JSONObject jsonObject = new JSONObject(cursor.getString(2));
+
+                    if (jsonObject.has("unit"))
+                        appUtils.createServiceModel(cursor.getString(0),
+                                jsonObject);
+                    cursor.moveToNext();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        CareGiver.getDbCon().closeCursor(cursor);
+
         refreshServiceAdapter();
-        refreshCustomerAdapter();
+        //refreshCustomerAdapter();
 
     }
 
     private void uploadData(ServiceModel serviceModel, DependentModel dependentModel) {
-
         addActivity(serviceModel, dependentModel);
-
     }
 
     private void addActivity(final ServiceModel serviceModel, final DependentModel dependentModel) {
@@ -487,7 +512,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         try {
             jsonObjectServices = new JSONObject();
-            //String strDate = utils.convertDateToString(new Date());
 
             jsonObjectServices.put("service_id", serviceModel.getStrServiceId());
             jsonObjectServices.put("service_name", serviceModel.getStrServiceName());
@@ -514,6 +538,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             jsonArray.put("{\"0\":\"empty\"}");
 
             jsonObjectServices.put("feedbacks", jsonArray);
+            //todo remove unwanted
             jsonObjectServices.put("videos", jsonArray);
             jsonObjectServices.put("images", jsonArray);
 
@@ -551,29 +576,40 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     jsonObjectField.put("label", fieldModel.getStrFieldLabel());
                     jsonObjectField.put("type", fieldModel.getStrFieldType());
 
-                    if (fieldModel.getStrFieldValues() != null && fieldModel.getStrFieldValues().length > 0)
-                        jsonObjectField.put("values", utils.stringToJsonArray(fieldModel.getStrFieldValues()));
+                    if (fieldModel.getStrFieldValues() != null && fieldModel.getStrFieldValues().
+                            length > 0)
+                        jsonObjectField.put("values", utils.stringToJsonArray(fieldModel.
+                                getStrFieldValues()));
 
                     if (fieldModel.isChild()) {
 
                         jsonObjectField.put("child", fieldModel.isChild());
 
-                        if (fieldModel.getStrChildType() != null && fieldModel.getStrChildType().length > 0)
-                            jsonObjectField.put("child_type", utils.stringToJsonArray(fieldModel.getStrChildType()));
+                        if (fieldModel.getStrChildType() != null && fieldModel.getStrChildType().
+                                length > 0)
+                            jsonObjectField.put("child_type", utils.stringToJsonArray(fieldModel.
+                                    getStrChildType()));
 
-                        if (fieldModel.getStrChildValue() != null && fieldModel.getStrChildValue().length > 0)
-                            jsonObjectField.put("child_value", utils.stringToJsonArray(fieldModel.getStrChildValue()));
+                        if (fieldModel.getStrChildValue() != null && fieldModel.getStrChildValue().
+                                length > 0)
+                            jsonObjectField.put("child_value", utils.stringToJsonArray(fieldModel.
+                                    getStrChildValue()));
 
-                        if (fieldModel.getStrChildCondition() != null && fieldModel.getStrChildCondition().length > 0)
-                            jsonObjectField.put("child_condition", utils.stringToJsonArray(fieldModel.getStrChildCondition()));
+                        if (fieldModel.getStrChildCondition() != null && fieldModel.
+                                getStrChildCondition().length > 0)
+                            jsonObjectField.put("child_condition", utils.stringToJsonArray(
+                                    fieldModel.getStrChildCondition()));
 
-                        if (fieldModel.getiChildfieldID() != null && fieldModel.getiChildfieldID().length > 0)
-                            jsonObjectField.put("child_field", utils.intToJsonArray(fieldModel.getiChildfieldID()));
+                        if (fieldModel.getiChildfieldID() != null && fieldModel.getiChildfieldID().
+                                length > 0)
+                            jsonObjectField.put("child_field", utils.intToJsonArray(
+                                    fieldModel.getiChildfieldID()));
                     }
 
                     if (fieldModel.getiArrayCount() > 0) {
                         jsonObjectField.put("array_fields", fieldModel.getiArrayCount());
-                        jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.getStrArrayType()));
+                        jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.
+                                getStrArrayType()));
                         jsonObjectField.put("array_data", fieldModel.getStrArrayData());
                     }
 
@@ -599,44 +635,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             if (response != null) {
 
                                 if (response.getJsonDocList().size() > 0) {
-                                    //String strInsertedDocumentId = response.getJsonDocList().get(0).getDocId();
-                                    //   iUpdateFlag = iActivityCreated;
-                                    //fetchService(serviceModel, dependentModel);
-                                    String strDateNow = "";
+
+                                    String strDateNow;
 
                                     Calendar calendar = Calendar.getInstance();
                                     Date dateNow = calendar.getTime();
 
                                     strDateNow = Utils.convertDateToString(dateNow);
-                                    //
-                                   /* Date startDate = null, endDate = null;
-                                    String strStartDateCopy, strEndDateCopy;
-
-                                    Date activityDate = null;
-
-                                    try {
-
-
-                                        String strDate;
-
-                                        if (DashboardFragment._strDate == null) {
-                                            Date date = calendar.getTime();
-                                            strDate = Utils.writeFormatDateDB.format(date);
-                                        } else {
-                                            strDate = DashboardFragment._strDate;
-                                        }
-
-                                        strEndDateCopy = strDate + "T23:59:59.999";
-                                        strStartDateCopy = strDate + "T00:00:00.000";
-                                        activityDate = Utils.readFormat.parse(_strDate);
-
-                                        endDate = Utils.queryFormat.parse(strEndDateCopy);
-                                        startDate = Utils.queryFormat.parse(strStartDateCopy);
-                                        strDateNow = Utils.convertDateToString(dateNow);
-
-                                        Utils.log(String.valueOf(endDate + " ! " + startDate + " ! " + activityDate), " CRATED ");
-
-                                        if (activityDate.before(endDate) && activityDate.after(startDate)) {*/
 
                                     String values[] = {response.getJsonDocList().get(0).getDocId(),
                                             "",
@@ -658,16 +663,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     AppUtils.insertActivityDate(
                                             response.getJsonDocList().get(0).getDocId(),
                                             response.getJsonDocList().get(0).getJsonDoc());
-                                       /* }
 
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }*/
-
-                                    //
                                     strPushMessage = Config.providerModel.getStrName() +
                                             getString(R.string.has_created) +
-                                            serviceModel.getStrServiceName() + getString(R.string.to) +
+                                            serviceModel.getStrServiceName()
+                                            + getString(R.string.to) +
                                             dependentModel.getStrName() +
                                             getString(R.string.on) + strDate;
 
@@ -684,7 +684,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                         jsonObject.put("activity_id", response.getJsonDocList().
                                                 get(0).getDocId());
                                         jsonObject.put("created_by_type", "provider");
-                                        jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
+                                        jsonObject.put(App42GCMService.ExtraMessage,
+                                                strPushMessage);
 
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -747,8 +748,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
                     public void onUpdateDocFailed(App42Exception ex) {
                     }
                 });
-        //,
-        //      Config.collectionActivity);
     }
 
     /*  public void fetchService(final ServiceModel serviceModel, final DependentModel dependentModel) {
