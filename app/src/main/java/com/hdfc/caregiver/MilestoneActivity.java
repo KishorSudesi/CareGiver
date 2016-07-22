@@ -752,6 +752,22 @@ public class MilestoneActivity extends AppCompatActivity {
                             // if (enteredDate != null && enteredDate != dateNow) {
                             iValidFlag = 1;
                             //}
+                            final Dialog dialog = new Dialog(MilestoneActivity.this);
+                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                            dialog.setContentView(R.layout.dialog_reschedule_reson);
+
+                            TextView textView1 = (TextView) dialog.findViewById(R.id.tvCarla);
+                            TextView textView2 = (TextView) dialog.findViewById(R.id.tvProvider);
+                            TextView textView3 = (TextView) dialog.findViewById(R.id.tvOther);
+                            Button buttonOk = (Button) dialog.findViewById(R.id.btndialogOk);
+                            buttonOk.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.show();
+
                         }
 
                         traverseEditTexts(layoutDialog, id, linearLayout, 1, iValidFlag);
