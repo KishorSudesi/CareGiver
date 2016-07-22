@@ -44,16 +44,20 @@ import com.hdfc.models.Action;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.text.ParseException;
@@ -827,6 +831,47 @@ public class Utils {
         }
     }*/
 
+    public static void sendSMS(String reciever, String message) {
+        URLConnection myURLConnection = null;
+        URL myURL = null;
+        BufferedReader reader = null;
+        try {
+            //prepare connection
+            myURL = new URL(buildRequestString(reciever, message));
+            myURLConnection = myURL.openConnection();
+            myURLConnection.connect();
+            reader = new BufferedReader(new
+                    InputStreamReader(myURLConnection.getInputStream()));
+
+            //reading response
+            String response;
+            while ((response = reader.readLine()) != null)
+                //print response
+                Log.d("RESPONSE", "" + response);
+            //finally close connection
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String buildRequestString(String reciever, String message) {
+        //encoding message
+        String encoded_message = URLEncoder.encode(message);
+
+        //Send SMS API
+        String mainUrl = "http://api.msg91.com/sendhttp.php?";
+
+        //Prepare parameter string
+        StringBuilder sbPostData = new StringBuilder(mainUrl);
+        // sbPostData.append("authkey="+authkey);
+        sbPostData.append("&mobiles=" + reciever);
+        sbPostData.append("&message=" + encoded_message);
+        sbPostData.append("&route=" + "4");
+        sbPostData.append("&sender=" + "CustomSenderID");
+        return sbPostData.toString();
+    }
+
     //
     public boolean compressImageFromPath(String strPath, int reqWidth, int reqHeight, int iQuality) {
 
@@ -980,6 +1025,10 @@ public class Utils {
         }
     }
 
+    /*public boolean isPasswordValid(String password) {
+        return password.length() > 1;
+    }*/
+
     public void moveFile(File file, File newFile) throws IOException {
         //File newFile = new File(dir, file.getName());
         FileChannel outputChannel = null;
@@ -1011,10 +1060,6 @@ public class Utils {
             if (outputChannel != null) outputChannel.close();
         }
     }
-
-    /*public boolean isPasswordValid(String password) {
-        return password.length() > 1;
-    }*/
 
     public boolean isConnectingToInternet() {
         ConnectivityManager connectivity = (ConnectivityManager)
@@ -1207,6 +1252,32 @@ public class Utils {
         }
     }
 
+ /*public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }*/
+
+    /*public void setDrawable(View v, Drawable drw) {
+        if (Build.VERSION.SDK_INT <= 16)
+            v.setBackgroundDrawable(drw);
+        else
+            v.setBackground(drw);
+    }
+
+    public void setStatusBarColor(String strColor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = ((Activity) _ctxt).getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.parseColor(strColor));
+        }
+    }*/
+
     public void copyInputStreamToFile(InputStream in, File file) {
         try {
             OutputStream out = new FileOutputStream(file);
@@ -1244,65 +1315,6 @@ public class Utils {
         return invalid;
     }
 
- /*public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }*/
-
-    /*public void setDrawable(View v, Drawable drw) {
-        if (Build.VERSION.SDK_INT <= 16)
-            v.setBackgroundDrawable(drw);
-        else
-            v.setBackground(drw);
-    }
-
-    public void setStatusBarColor(String strColor) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = ((Activity) _ctxt).getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.parseColor(strColor));
-        }
-    }*/
-
-    public void setEditTextDrawable(EditText editText, Drawable drw) {
-        if (Build.VERSION.SDK_INT <= 16)
-            editText.setBackgroundDrawable(drw);
-        else
-            editText.setBackground(drw);
-    }
-
-    public Bitmap roundedBitmap(Bitmap bmp){
-        Bitmap output = null;
-
-        try {
-            output = Bitmap.createBitmap(bmp.getWidth(),
-                    bmp.getHeight(), Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(output);
-
-            final Paint paint = new Paint();
-            final Rect rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
-
-            paint.setAntiAlias(true);
-            paint.setFilterBitmap(true);
-            paint.setDither(true);
-            canvas.drawARGB(0, 0, 0, 0);
-            paint.setColor(Color.parseColor("#BAB399"));
-            canvas.drawCircle(bmp.getWidth() / 2 + 0.7f, bmp.getHeight() / 2+ 0.7f,//
-                    bmp.getWidth() / 2+ 0.1f, paint); //
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(bmp, rect, rect, paint);
-        } catch (Exception | OutOfMemoryError e) {
-            e.printStackTrace();
-        }
-        return output;
-    }
-
     /*public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for ( int j = 0; j < bytes.length; j++ ) {
@@ -1334,6 +1346,39 @@ public class Utils {
 
 
     //Application Specig=fic End
+
+    public void setEditTextDrawable(EditText editText, Drawable drw) {
+        if (Build.VERSION.SDK_INT <= 16)
+            editText.setBackgroundDrawable(drw);
+        else
+            editText.setBackground(drw);
+    }
+
+    public Bitmap roundedBitmap(Bitmap bmp) {
+        Bitmap output = null;
+
+        try {
+            output = Bitmap.createBitmap(bmp.getWidth(),
+                    bmp.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(output);
+
+            final Paint paint = new Paint();
+            final Rect rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+
+            paint.setAntiAlias(true);
+            paint.setFilterBitmap(true);
+            paint.setDither(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(Color.parseColor("#BAB399"));
+            canvas.drawCircle(bmp.getWidth() / 2 + 0.7f, bmp.getHeight() / 2 + 0.7f,//
+                    bmp.getWidth() / 2 + 0.1f, paint); //
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bmp, rect, rect, paint);
+        } catch (Exception | OutOfMemoryError e) {
+            e.printStackTrace();
+        }
+        return output;
+    }
 
     public String replaceSpace(String string) {
         string = string.replace(" ", "_");

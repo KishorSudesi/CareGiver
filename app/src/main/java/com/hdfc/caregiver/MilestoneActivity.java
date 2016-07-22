@@ -85,6 +85,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private static boolean isToDate = false, isFromDate = false;
     private static boolean isAllowed;
     private final Context context = this;
+    private int iValidFlag = 0;
     private RelativeLayout loadingPanel;
     private int mImageCount, mImageUploadCount;
     private LinearLayout layout;
@@ -731,11 +732,12 @@ public class MilestoneActivity extends AppCompatActivity {
             }
 
             if (button != null) {
+
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        int iValidFlag = 0;
+                        iValidFlag = 0;
 
                         String buttonText = button.getText().toString();
 
@@ -750,7 +752,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         if (buttonText.equals("Reschedule")) {
                             // if (enteredDate != null && enteredDate != dateNow) {
-                            iValidFlag = 1;
+
                             //}
                             final Dialog dialog = new Dialog(MilestoneActivity.this);
                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -763,6 +765,8 @@ public class MilestoneActivity extends AppCompatActivity {
                             buttonOk.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+
+                                    iValidFlag = 1;
                                     dialog.dismiss();
                                 }
                             });
