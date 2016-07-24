@@ -47,7 +47,7 @@ public class DbHelper extends SQLiteOpenHelper {
     //CREATE INDEX indexname ON tablename(columnname);
     public static final SimpleDateFormat sqlQueryFormat =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Utils.locale);
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
@@ -56,7 +56,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection
             + " ( id integer primary key autoincrement, object_id VARCHAR(50), updated_date "
             + "datetime, document text, collection_name VARCHAR(50), status integer, "
-            + "client_flag integer, updated integer, new_updated integer)";
+            + "client_flag integer, updated integer, new_updated integer, customer_id VARCHAR(40))";
     //doc_date datetime,
 
     private String strMilestoneQuery = "CREATE TABLE " + strTableNameMilestone + " ( id integer "

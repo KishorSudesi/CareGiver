@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.hdfc.caregiver.CheckInCareProcess;
+import com.hdfc.caregiver.CheckInCareActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.CheckInCareModel;
@@ -84,7 +84,7 @@ public class CustomAlertAdapter extends BaseAdapter {
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("editcheckincare", true);
                 bundle.putInt("itemposition", position);
-                Intent intent = new Intent(ctx, CheckInCareProcess.class);
+                Intent intent = new Intent(ctx, CheckInCareActivity.class);
                 intent.putExtras(bundle);
                 ctx.startActivity(intent);
 

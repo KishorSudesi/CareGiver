@@ -14,7 +14,8 @@ public class ImageModel implements Serializable {
     private String strImagePath;
     private boolean mIsNew;
 
-    public ImageModel(String strImageName, String strImageUrl, String strImageDesc, String strImageTime, String strImagePath) {
+    public ImageModel(String strImageName, String strImageUrl, String strImageDesc,
+                      String strImageTime, String strImagePath) {
         this.strImageName = strImageName;
         this.strImageUrl = strImageUrl;
         this.strImageDesc = strImageDesc;

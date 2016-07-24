@@ -29,15 +29,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AsyncApp42ServiceApi;
-import com.hdfc.libs.MultiBitmapLoader;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.CheckInCareActivityModel;
-import com.hdfc.models.CheckInCareModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.PictureModel;
 import com.hdfc.models.SubActivityModel;
@@ -57,25 +56,23 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Admin on 01-07-2016.
  */
-public class CheckInCareProcess extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
-    public static final int DIALOG_DOWNLOAD_PROGRESS1 = 1;
+public class CheckInCareActivity extends AppCompatActivity implements View.OnClickListener,
+        AdapterView.OnItemSelectedListener {
+    private static final int DIALOG_DOWNLOAD_PROGRESS1 = 1;
     private static final String[] option = {"N", "Y"};
-    public static String strImageName = "", strClientName = "";
     public static Uri uri;
     public static Bitmap bitmap = null;
-    public static int IMAGE_COUNT = 0;
-    public static CheckInCareModel checkInCareModel = null;
-    static Boolean editcheckincare = false;
-    static int mPosition = -1;
+    private static String strImageName = "", strClientName = "";
+    private static int IMAGE_COUNT = 0;
+    private static Boolean editcheckincare = false;
     private static Utils utils;
-    private static ProgressDialog mProgress = null;
+    //private static ProgressDialog mProgress = null;
     private static Handler backgroundThreadHandler;
     private static boolean isImageChanged = false;
     private static ArrayList<String> imagePaths = new ArrayList<>();
@@ -87,42 +84,42 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     private static ArrayList<ImageModel> kitchenimageModels = new ArrayList<>();
     private static ArrayList<ImageModel> washroomimageModels = new ArrayList<>();
     private static ArrayList<ImageModel> bedroomimageModels = new ArrayList<>();
-    private static String strName;
-    private static boolean bLoad, isCompleted = false;
+    //private static String strName;
+    private static boolean isCompleted = false, bLoad;
     private static boolean bViewLoaded, mImageChanged;
     private static StorageService storageService;
     public String item = "";
-    int isClicked = 0;
-    int isHallFlag = 0;
+    private int isClicked = 0;
+    private int isHallFlag = 0;
     private boolean isClick = false;
-    private ImageView pick_date, pick_date2, pick_date3, pick_date4;
-    private ImageView client;
-    private Spinner spinner, spinner1, spinner2, spinner3;
-    private Button btn_submit, btn_close, buttonHallAdd, buttonKitchenAdd, buttonWashroomAdd, buttonBedroomAdd;
-    private EditText electronic, homeapplience, automobile, maidservices, kitchen_equipments, grocery, mediacomment, checkincarename;
-    private TextView datetxt, txtwater, txtgas, txtelectricity, txttelephone, clientnametxt;
+    private Button buttonHallAdd;
+    private Button buttonKitchenAdd;
+    private Button buttonWashroomAdd;
+    private Button buttonBedroomAdd;
+    private EditText electronic, homeapplience, automobile, maidservices, kitchen_equipments,
+            grocery, mediacomment, checkincarename;
+    private TextView datetxt;
+    private TextView txtwater;
+    private TextView txtgas;
+    private TextView txtelectricity;
+    private TextView txttelephone;
     private TextView utilitystatus, waterstatus, gasstatus, electricitystatus, telephonestatus,
-            equipmentstatus, grocerystatus, kitchenequipmentstatus, domestichelpstatus, uploadmediastatus, hallstatus,
-            kitchenstatus, washroomstatus, bedroomstatus, homeessentialstatus;
-    private String strwaterDate, strelectricityDate, strtelephoneDate, strgasDate, _strwaterDate,
-            _strelectricityDate, _strtelephoneDate, _strgasDate, strDate, _strDate;
-    private ProgressDialog progressDialog;
+            equipmentstatus, grocerystatus, kitchenequipmentstatus, domestichelpstatus,
+            uploadmediastatus, hallstatus, kitchenstatus, washroomstatus, bedroomstatus,
+            homeessentialstatus;
+    private String strDate;
     private int hallImageCount, kitchenImageCount, washroomImageCount,
             bedroomImageCount, hallImageUploadCount, kitchenImageUploadCount,
             washroomImageUploadCount, bedroomImageUploadCount;
     private boolean success;
-    private MultiBitmapLoader multiBitmapLoader;
     private LinearLayout layouthall, layoutkitchen, layoutwashroom, layoutbedroom, mainlinearlayout;
-    private CheckBox electrocheck, homecheck, autocheck, kitchenequipcheck, grocerycheck, domesticcheck;
-    private String valkitchen, valgrocery, valelectronic, valhomeapplience, valautomobile, valmaidservices, valmediacomment, valcheckincarename;
+    private CheckBox electrocheck, homecheck, autocheck, kitchenequipcheck, grocerycheck,
+            domesticcheck;
+    private String valkitchen, valgrocery, valelectronic, valhomeapplience, valautomobile,
+            valmaidservices, valmediacomment, valcheckincarename;
     private View focusView = null;
-    Integer myNum = 0;
     private ProgressDialog mProgressDialog;
-    private String items[];
-    private String checkcareid, topdate, editcomment,subActivityName,status,dueStatus,dueDate,utilityName;
-    private static ArrayList<CheckInCareActivityModel> activity = new ArrayList<>();
-    private static ArrayList<SubActivityModel> subActivityModels = new ArrayList<>();
-    private ArrayList<PictureModel> picture = new ArrayList<>();
+    private String items[], strSelectedDate;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -134,18 +131,19 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             // the date and time that the user has selected.
 
             strDate = Utils.writeFormatDateMY.format(date);
+            strSelectedDate = Utils.queryFormat.format(date);
 
-            strwaterDate = Utils.writeFormat.format(date);
-            strelectricityDate = Utils.writeFormat.format(date);
-            strtelephoneDate = Utils.writeFormat.format(date);
-            strgasDate = Utils.writeFormat.format(date);
+            String strwaterDate = Utils.writeFormat.format(date);
+            String strelectricityDate = Utils.writeFormat.format(date);
+            String strtelephoneDate = Utils.writeFormat.format(date);
+            String strgasDate = Utils.writeFormat.format(date);
 
-            _strDate = Utils.readFormat.format(date);
+         /*   String _strDate = Utils.readFormat.format(date);
 
-            _strwaterDate = Utils.readFormat.format(date);
-            _strelectricityDate = Utils.readFormat.format(date);
-            _strtelephoneDate = Utils.readFormat.format(date);
-            _strgasDate = Utils.readFormat.format(date);
+            String _strwaterDate = Utils.readFormat.format(date);
+            String _strelectricityDate = Utils.readFormat.format(date);
+            String _strtelephoneDate = Utils.readFormat.format(date);
+            String _strgasDate = Utils.readFormat.format(date);*/
 
             if (isClicked == 0) {
                 txtwater.setText(strwaterDate);
@@ -170,18 +168,13 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         }
 
     };
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client2;
 
     //display progress dialog
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case DIALOG_DOWNLOAD_PROGRESS1:
                 mProgressDialog = new ProgressDialog(this);
-                mProgressDialog.setMessage("Processing request, Please wait ...");
+                mProgressDialog.setMessage(getString(R.string.loading));
                 mProgressDialog.setCancelable(false);
                 mProgressDialog.show();
 
@@ -216,44 +209,53 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         washroomImageUploadCount = 0;
         bedroomImageUploadCount = 0;
 
-        storageService = new StorageService(CheckInCareProcess.this);
+        storageService = new StorageService(CheckInCareActivity.this);
 
         layouthall = (LinearLayout) findViewById(R.id.linear_hall);
         layoutkitchen = (LinearLayout) findViewById(R.id.linear_kitchen);
         layoutwashroom = (LinearLayout) findViewById(R.id.linear_washroom);
         layoutbedroom = (LinearLayout) findViewById(R.id.linear_bedroom);
-        multiBitmapLoader = new MultiBitmapLoader(CheckInCareProcess.this);
+        //MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(CheckInCareActivity.this);
 
 
-        utils = new Utils(CheckInCareProcess.this);
-        progressDialog = new ProgressDialog(CheckInCareProcess.this);
-        mProgress = new ProgressDialog(CheckInCareProcess.this);
+        utils = new Utils(CheckInCareActivity.this);
+        //ProgressDialog progressDialog = new ProgressDialog(CheckInCareActivity.this);
+        //mProgress = new ProgressDialog(CheckInCareActivity.this);
 
         Date mydate = new Date();
-        strDate = Utils.writeFormatDateMY.format(mydate);
+        //strDate = Utils.writeFormatDateMY.format(mydate);
         String stDate = Utils.queryFormatday.format(mydate);
         datetxt = (TextView) findViewById(R.id.datetxt);
-        datetxt.setText(strDate);
+
+        /*if (datetxt != null) {
+            datetxt.setText(strDate);
+        }*/
 
         LinearLayout layoutDate = (LinearLayout) findViewById(R.id.linearDate);
 
-        datetxt.setText(strDate);
+        //datetxt.setText(strDate);
 
-        layoutDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isClicked = 4;
-                new SlideDateTimePicker.Builder(getSupportFragmentManager())
-                        .setListener(listener)
-                        .setInitialDate(new Date())
-                        .build()
-                        .show();
-            }
-        });
+        if (layoutDate != null) {
+            layoutDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isClicked = 4;
+                    new SlideDateTimePicker.Builder(getSupportFragmentManager())
+                            .setListener(listener)
+                            .setInitialDate(new Date())
+                            .build()
+                            .show();
+                }
+            });
+        }
 
         checkincarename = (EditText) findViewById(R.id.checkincarename);
-        checkincarename.setText(stDate);
-        checkincarename.setTextSize(15);
+        if (checkincarename != null) {
+            checkincarename.setText(stDate);
+        }
+        if (checkincarename != null) {
+            checkincarename.setTextSize(15);
+        }
 
         electrocheck = (CheckBox) findViewById(R.id.electrocheck);
         homecheck = (CheckBox) findViewById(R.id.homecheck);
@@ -262,16 +264,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         grocerycheck = (CheckBox) findViewById(R.id.grocerycheck);
         domesticcheck = (CheckBox) findViewById(R.id.domesticcheck);
 
-        client = (ImageView) findViewById(R.id.clientimg);
-        pick_date = (ImageView) findViewById(R.id.pick_date);
-        pick_date2 = (ImageView) findViewById(R.id.pick_date2);
-        pick_date3 = (ImageView) findViewById(R.id.pick_date3);
-        pick_date4 = (ImageView) findViewById(R.id.pick_date4);
+        ImageView client = (ImageView) findViewById(R.id.clientimg);
+        ImageView pick_date = (ImageView) findViewById(R.id.pick_date);
+        ImageView pick_date2 = (ImageView) findViewById(R.id.pick_date2);
+        ImageView pick_date3 = (ImageView) findViewById(R.id.pick_date3);
+        ImageView pick_date4 = (ImageView) findViewById(R.id.pick_date4);
 
-        spinner = (Spinner) findViewById(R.id.spinner);
-        spinner1 = (Spinner) findViewById(R.id.spinner1);
-        spinner2 = (Spinner) findViewById(R.id.spinner2);
-        spinner3 = (Spinner) findViewById(R.id.spinner3);
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
+        Spinner spinner2 = (Spinner) findViewById(R.id.spinner2);
+        Spinner spinner3 = (Spinner) findViewById(R.id.spinner3);
 
         buttonHallAdd = (Button) findViewById(R.id.buttonHallAdd);
         buttonKitchenAdd = (Button) findViewById(R.id.buttonKitchenAdd);
@@ -282,7 +284,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         txtgas = (TextView) findViewById(R.id.gastxt);
         txtelectricity = (TextView) findViewById(R.id.electricitytxt);
         txttelephone = (TextView) findViewById(R.id.telephonetxt);
-        clientnametxt = (TextView) findViewById(R.id.clientnametxt);
+        TextView clientnametxt = (TextView) findViewById(R.id.clientnametxt);
 
         utilitystatus = (TextView) findViewById(R.id.utilitystatus);
         equipmentstatus = (TextView) findViewById(R.id.equipmentstatus);
@@ -314,125 +316,143 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             strImageName = Config.customerModel.getStrImgUrl();
         }
 
-        clientnametxt.setText(strClientName);
+        if (clientnametxt != null) {
+            clientnametxt.setText(strClientName);
+        }
 
-        Glide.with(CheckInCareProcess.this)
-                .load(strImageName)
-                .centerCrop()
-                .bitmapTransform(new CropCircleTransformation(CheckInCareProcess.this))
-                .placeholder(R.drawable.person_icon)
-                .crossFade()
-                .into(client);
+        if (client != null) {
+            Glide.with(CheckInCareActivity.this)
+                    .load(strImageName)
+                    .centerCrop()
+                    .bitmapTransform(new CropCircleTransformation(CheckInCareActivity.this))
+                    .placeholder(R.drawable.person_icon)
+                    .crossFade()
+                    .into(client);
+        }
 
-        if (electrocheck.isChecked() == true
-                && homecheck.isChecked() == true
-                && autocheck.isChecked() == true) {
+        if (electrocheck.isChecked() && homecheck.isChecked() && autocheck.isChecked()) {
 
             equipmentstatus.setVisibility(View.VISIBLE);
-            equipmentstatus.setText("Done");
+            equipmentstatus.setText(getString(R.string.done));
             equipmentstatus.setTextColor(Color.BLUE);
         } else {
             equipmentstatus.setVisibility(View.VISIBLE);
-            equipmentstatus.setText("Pending");
+            equipmentstatus.setText(getString(R.string.pending));
             equipmentstatus.setTextColor(Color.RED);
         }
 
-        if (kitchenequipcheck.isChecked() == true) {
+        if (kitchenequipcheck.isChecked()) {
             kitchenequipmentstatus.setVisibility(View.VISIBLE);
-            kitchenequipmentstatus.setText("Done");
+            kitchenequipmentstatus.setText(getString(R.string.done));
             kitchenequipmentstatus.setTextColor(Color.BLUE);
         } else {
             kitchenequipmentstatus.setVisibility(View.VISIBLE);
-            kitchenequipmentstatus.setText("Pending");
+            kitchenequipmentstatus.setText(getString(R.string.pending));
             kitchenequipmentstatus.setTextColor(Color.RED);
         }
 
-        if (grocerycheck.isChecked() == true) {
+        if (grocerycheck.isChecked()) {
 
             grocerystatus.setVisibility(View.VISIBLE);
-            grocerystatus.setText("Done");
+            grocerystatus.setText(getString(R.string.done));
             grocerystatus.setTextColor(Color.BLUE);
         } else {
             grocerystatus.setVisibility(View.VISIBLE);
-            grocerystatus.setText("Pending");
+            grocerystatus.setText(getString(R.string.pending));
             grocerystatus.setTextColor(Color.RED);
         }
 
-        if (domesticcheck.isChecked() == true) {
+        if (domesticcheck.isChecked()) {
 
             domestichelpstatus.setVisibility(View.VISIBLE);
-            domestichelpstatus.setText("Done");
+            domestichelpstatus.setText(getString(R.string.done));
             domestichelpstatus.setTextColor(Color.BLUE);
         } else {
             domestichelpstatus.setVisibility(View.VISIBLE);
-            domestichelpstatus.setText("Pending");
+            domestichelpstatus.setText(getString(R.string.pending));
             domestichelpstatus.setTextColor(Color.RED);
         }
 
         if (layouthall != null) {
             hallstatus.setVisibility(View.VISIBLE);
-            hallstatus.setText("Pending");
+            hallstatus.setText(getString(R.string.pending));
             hallstatus.setTextColor(Color.RED);
         } else {
             hallstatus.setVisibility(View.VISIBLE);
-            hallstatus.setText("Done");
+            hallstatus.setText(getString(R.string.done));
             hallstatus.setTextColor(Color.BLUE);
         }
         if (layoutkitchen != null) {
             kitchenstatus.setVisibility(View.VISIBLE);
-            kitchenstatus.setText("Pending");
+            kitchenstatus.setText(getString(R.string.pending));
             kitchenstatus.setTextColor(Color.RED);
         } else {
             kitchenstatus.setVisibility(View.VISIBLE);
-            kitchenstatus.setText("Done");
+            kitchenstatus.setText(getString(R.string.done));
             kitchenstatus.setTextColor(Color.BLUE);
         }
         if (layoutwashroom != null) {
             washroomstatus.setVisibility(View.VISIBLE);
-            washroomstatus.setText("Pending");
+            washroomstatus.setText(getString(R.string.pending));
             washroomstatus.setTextColor(Color.RED);
         } else {
             washroomstatus.setVisibility(View.VISIBLE);
-            washroomstatus.setText("Done");
+            washroomstatus.setText(getString(R.string.done));
             washroomstatus.setTextColor(Color.BLUE);
         }
         if (layoutbedroom != null) {
             bedroomstatus.setVisibility(View.VISIBLE);
-            bedroomstatus.setText("Pending");
+            bedroomstatus.setText(getString(R.string.pending));
             bedroomstatus.setTextColor(Color.RED);
         } else {
             bedroomstatus.setVisibility(View.VISIBLE);
-            bedroomstatus.setText("Done");
+            bedroomstatus.setText(getString(R.string.done));
             bedroomstatus.setTextColor(Color.BLUE);
         }
 
-        if (hallstatus.getText().equals("Done")
-                && kitchenstatus.getText().equals("Done")
-                && washroomstatus.getText().equals("Done")
-                && bedroomstatus.getText().equals("Done")) {
+        if (hallstatus.getText().equals(getString(R.string.done))
+                && kitchenstatus.getText().equals(getString(R.string.done))
+                && washroomstatus.getText().equals(getString(R.string.done))
+                && bedroomstatus.getText().equals(getString(R.string.done))) {
 
             uploadmediastatus.setVisibility(View.VISIBLE);
-            uploadmediastatus.setText("Done");
+            uploadmediastatus.setText(getString(R.string.done));
             uploadmediastatus.setTextColor(Color.BLUE);
         } else {
             uploadmediastatus.setVisibility(View.VISIBLE);
-            uploadmediastatus.setText("Pending");
+            uploadmediastatus.setText(getString(R.string.pending));
             uploadmediastatus.setTextColor(Color.RED);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CheckInCareProcess.this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(CheckInCareActivity.this,
                 android.R.layout.simple_spinner_item, option);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner1.setAdapter(adapter);
-        spinner2.setAdapter(adapter);
-        spinner3.setAdapter(adapter);
+        if (spinner != null) {
+            spinner.setAdapter(adapter);
+        }
+        if (spinner1 != null) {
+            spinner1.setAdapter(adapter);
+        }
+        if (spinner2 != null) {
+            spinner2.setAdapter(adapter);
+        }
+        if (spinner3 != null) {
+            spinner3.setAdapter(adapter);
+        }
 
-        spinner.setOnItemSelectedListener(this);
-        spinner1.setOnItemSelectedListener(this);
-        spinner2.setOnItemSelectedListener(this);
-        spinner3.setOnItemSelectedListener(this);
+        if (spinner != null) {
+            spinner.setOnItemSelectedListener(this);
+        }
+        if (spinner1 != null) {
+            spinner1.setOnItemSelectedListener(this);
+        }
+        if (spinner2 != null) {
+            spinner2.setOnItemSelectedListener(this);
+        }
+        if (spinner3 != null) {
+            spinner3.setOnItemSelectedListener(this);
+        }
 
 
         Button backImage = (Button) findViewById(R.id.buttonBack);
@@ -455,10 +475,18 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             });
         }
 
-        pick_date.setOnClickListener(this);
-        pick_date2.setOnClickListener(this);
-        pick_date3.setOnClickListener(this);
-        pick_date4.setOnClickListener(this);
+        if (pick_date != null) {
+            pick_date.setOnClickListener(this);
+        }
+        if (pick_date2 != null) {
+            pick_date2.setOnClickListener(this);
+        }
+        if (pick_date3 != null) {
+            pick_date3.setOnClickListener(this);
+        }
+        if (pick_date4 != null) {
+            pick_date4.setOnClickListener(this);
+        }
 
         electrocheck.setOnClickListener(this);
         homecheck.setOnClickListener(this);
@@ -476,39 +504,47 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
         try {
             Bundle getBundle = getIntent().getExtras();
+            //CheckInCareModel checkInCareModel = null;
+            int mPosition = -1;
             if (getBundle != null) {
                 editcheckincare = getBundle.getBoolean("editcheckincare");
                 mPosition = getBundle.getInt("itemposition");
             } else {
                 editcheckincare = false;
                 mPosition = -1;
-                checkInCareModel = null;
+                //checkInCareModel = null;
             }
 
             if (editcheckincare && mPosition > -1) {
 
-                checkInCareModel = Config.checkInCareModels.get(mPosition);
+                //checkInCareModel = Config.checkInCareModels.get(mPosition);
 
-                checkcareid = Config.checkInCareModels.get(mPosition).getStrName();
-                topdate = Config.checkInCareModels.get(mPosition).getStrCurrentDate();
-                editcomment = Config.checkInCareModels.get(mPosition).getStrMediaComment();
+                String checkcareid = Config.checkInCareModels.get(mPosition).getStrName();
+                String topdate = Config.checkInCareModels.get(mPosition).getStrCurrentDate();
+                String editcomment = Config.checkInCareModels.get(mPosition).getStrMediaComment();
 
                 checkincarename.setText(checkcareid);
                 datetxt.setText(topdate);
+                strSelectedDate = topdate;
                 mediacomment.setText(editcomment);
 
-                activity = Config.checkInCareModels.get(mPosition).getCheckInCareActivityModels();
+                ArrayList<CheckInCareActivityModel> activity = Config.checkInCareModels.
+                        get(mPosition).getCheckInCareActivityModels();
 
                 if (activity != null) {
                     for (int i = 0; i < activity.size(); i++) {
-                        if (activity.get(i).getStrActivityName().equalsIgnoreCase("home_essentials")) {
+                        String subActivityName;
+                        String status;
+                        ArrayList<SubActivityModel> subActivityModels;
+                        if (activity.get(i).getStrActivityName().
+                                equalsIgnoreCase("home_essentials")) {
                             subActivityModels = activity.get(i).getSubActivityModels();
                             for (int j = 0; j < subActivityModels.size(); j++) {
                                 subActivityName = subActivityModels.get(j).getStrSubActivityName();
                                 status = subActivityModels.get(j).getStrStatus();
-                                dueStatus = subActivityModels.get(j).getStrDueStatus();
-                                dueDate = subActivityModels.get(j).getStrDueDate();
-                                utilityName = subActivityModels.get(j).getStrUtilityName();
+                                String dueStatus = subActivityModels.get(j).getStrDueStatus();
+                                String dueDate = subActivityModels.get(j).getStrDueDate();
+                                String utilityName = subActivityModels.get(j).getStrUtilityName();
 
                                /* try {
                                      myNum = Integer.parseInt(dueStatus);
@@ -550,9 +586,13 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                 }
                                 if (utilityName.equalsIgnoreCase("telephone")) {
                                     if(dueStatus.equals("N")) {
-                                        spinner3.setSelection(0);
+                                        if (spinner3 != null) {
+                                            spinner3.setSelection(0);
+                                        }
                                     }else{
-                                        spinner3.setSelection(1);
+                                        if (spinner3 != null) {
+                                            spinner3.setSelection(1);
+                                        }
                                     }
                                     txttelephone.setText(dueDate);
                                     telephonestatus.setText(status);
@@ -565,13 +605,13 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         kitchenequipcheck.setChecked(true);
                                     }
                                         kitchenequipcheck.setChecked(true);
-                                    if(kitchenequipcheck.isChecked()==true){
+                                    if (kitchenequipcheck.isChecked()) {
                                         kitchenequipmentstatus.setVisibility(View.VISIBLE);
-                                        kitchenequipmentstatus.setText("Done");
+                                        kitchenequipmentstatus.setText(getString(R.string.done));
                                         kitchenequipmentstatus.setTextColor(Color.BLUE);
                                     } else {
                                         kitchenequipmentstatus.setVisibility(View.VISIBLE);
-                                        kitchenequipmentstatus.setText("Pending");
+                                        kitchenequipmentstatus.setText(getString(R.string.pending));
                                         kitchenequipmentstatus.setTextColor(Color.RED);
                                     }
                                 }
@@ -581,19 +621,20 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         grocerycheck.setChecked(true);
                                     }
                                     grocerycheck.setChecked(true);
-                                    if(grocerycheck.isChecked()==true){
+                                    if (grocerycheck.isChecked()) {
                                         grocerystatus.setVisibility(View.VISIBLE);
-                                        grocerystatus.setText("Done");
+                                        grocerystatus.setText(getString(R.string.done));
                                         grocerystatus.setTextColor(Color.BLUE);
                                     } else {
                                         grocerystatus.setVisibility(View.VISIBLE);
-                                        grocerystatus.setText("Pending");
+                                        grocerystatus.setText(getString(R.string.pending));
                                         grocerystatus.setTextColor(Color.RED);
                                     }
                                 }
 
                             }
-                        }else if (activity.get(i).getStrActivityName().equalsIgnoreCase("domestic_help_status")) {
+                        } else if (activity.get(i).getStrActivityName().
+                                equalsIgnoreCase("domestic_help_status")) {
                             subActivityModels = activity.get(i).getSubActivityModels();
                             for (int j = 0; j < subActivityModels.size(); j++) {
                                 subActivityName = subActivityModels.get(j).getStrSubActivityName();
@@ -605,19 +646,20 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         domesticcheck.setChecked(true);
                                     }
                                     domesticcheck.setChecked(true);
-                                    if (domesticcheck.isChecked() == true) {
+                                    if (domesticcheck.isChecked()) {
 
                                         domestichelpstatus.setVisibility(View.VISIBLE);
-                                        domestichelpstatus.setText("Done");
+                                        domestichelpstatus.setText(getString(R.string.done));
                                         domestichelpstatus.setTextColor(Color.BLUE);
                                     } else {
                                         domestichelpstatus.setVisibility(View.VISIBLE);
-                                        domestichelpstatus.setText("Pending");
+                                        domestichelpstatus.setText(getString(R.string.pending));
                                         domestichelpstatus.setTextColor(Color.RED);
                                     }
                                 }
                             }
-                        } else if (activity.get(i).getStrActivityName().equalsIgnoreCase("equipment_working_status")) {
+                        } else if (activity.get(i).getStrActivityName().
+                                equalsIgnoreCase("equipment_working_status")) {
                             subActivityModels = activity.get(i).getSubActivityModels();
                             for (int j = 0; j < subActivityModels.size(); j++) {
                                 subActivityName = subActivityModels.get(j).getStrSubActivityName();
@@ -644,16 +686,15 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                     }
                                     autocheck.setChecked(true);
                                 }
-                                if (electrocheck.isChecked() == true
-                                        && homecheck.isChecked() == true
-                                        && autocheck.isChecked() == true) {
+                                if (electrocheck.isChecked() && homecheck.isChecked()
+                                        && autocheck.isChecked()) {
 
                                     equipmentstatus.setVisibility(View.VISIBLE);
-                                    equipmentstatus.setText("Done");
+                                    equipmentstatus.setText(getString(R.string.done));
                                     equipmentstatus.setTextColor(Color.BLUE);
                                 } else {
                                     equipmentstatus.setVisibility(View.VISIBLE);
-                                    equipmentstatus.setText("Pending");
+                                    equipmentstatus.setText(getString(R.string.pending));
                                     equipmentstatus.setTextColor(Color.RED);
                                 }
                             }
@@ -661,10 +702,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     }
                 }
 
-                picture = Config.checkInCareModels.get(mPosition).getPictureModels();
+                ArrayList<PictureModel> picture = Config.checkInCareModels.get(mPosition).
+                        getPictureModels();
                 if (picture != null) {
 
-                    for (int k= 0; k< picture.size(); k++) {
+                    for (int k = 0; k < picture.size(); k++) {
 
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("hall")) {
                             hallimageModels = picture.get(k).getImageModels();
@@ -693,8 +735,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
         /////////////////////////////////////////end
 
-        btn_close = (Button) findViewById(R.id.btn_close);
-        btn_submit = (Button) findViewById(R.id.btn_submit);
+        Button btn_close = (Button) findViewById(R.id.btn_close);
+        Button btn_submit = (Button) findViewById(R.id.btn_submit);
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -721,42 +763,42 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     valmaidservices = maidservices.getText().toString().trim();
                     valmediacomment = mediacomment.getText().toString().trim();
 
-                    if (kitchenequipcheck.isChecked() == false) {
+                    if (kitchenequipcheck.isChecked()) {
                         if (TextUtils.isEmpty(valkitchen)) {
                             kitchen_equipments.setError(getString(R.string.error_field_required));
                             focusView = kitchen_equipments;
                             cancel = true;
                         }
                     }
-                    if (grocerycheck.isChecked() == false) {
+                    if (grocerycheck.isChecked()) {
                         if (TextUtils.isEmpty(valgrocery)) {
                             grocery.setError(getString(R.string.error_field_required));
                             focusView = grocery;
                             cancel = true;
                         }
                     }
-                    if (electrocheck.isChecked() == false) {
+                    if (electrocheck.isChecked()) {
                         if (TextUtils.isEmpty(valelectronic)) {
                             electronic.setError(getString(R.string.error_field_required));
                             focusView = electronic;
                             cancel = true;
                         }
                     }
-                    if (homecheck.isChecked() == false) {
+                    if (homecheck.isChecked()) {
                         if (TextUtils.isEmpty(valhomeapplience)) {
                             homeapplience.setError(getString(R.string.error_field_required));
                             focusView = homeapplience;
                             cancel = true;
                         }
                     }
-                    if (autocheck.isChecked() == false) {
+                    if (autocheck.isChecked()) {
                         if (TextUtils.isEmpty(valautomobile)) {
                             automobile.setError(getString(R.string.error_field_required));
                             focusView = automobile;
                             cancel = true;
                         }
                     }
-                    if (domesticcheck.isChecked() == false) {
+                    if (domesticcheck.isChecked()) {
                         if (TextUtils.isEmpty(valmaidservices)) {
                             maidservices.setError(getString(R.string.error_field_required));
                             focusView = maidservices;
@@ -851,120 +893,118 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.buttonHallAdd:
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareProcess.this, false);
+                        + ".jpeg", null, CheckInCareActivity.this, false);
 
                 break;
             case R.id.buttonKitchenAdd:
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareProcess.this, false);
+                        + ".jpeg", null, CheckInCareActivity.this, false);
 
                 break;
             case R.id.buttonWashroomAdd:
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareProcess.this, false);
+                        + ".jpeg", null, CheckInCareActivity.this, false);
 
                 break;
             case R.id.buttonBedroomAdd:
                 utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareProcess.this, false);
+                        + ".jpeg", null, CheckInCareActivity.this, false);
 
                 break;
 
 
         }
-        if (electrocheck.isChecked() == true
-                && homecheck.isChecked() == true
-                && autocheck.isChecked() == true) {
+        if (electrocheck.isChecked() && homecheck.isChecked() && autocheck.isChecked()) {
 
             equipmentstatus.setVisibility(View.VISIBLE);
-            equipmentstatus.setText("Done");
+            equipmentstatus.setText(getString(R.string.done));
             equipmentstatus.setTextColor(Color.BLUE);
         } else {
             equipmentstatus.setVisibility(View.VISIBLE);
-            equipmentstatus.setText("Pending");
+            equipmentstatus.setText(getString(R.string.pending));
             equipmentstatus.setTextColor(Color.RED);
         }
-        if (kitchenequipcheck.isChecked() == true) {
+        if (kitchenequipcheck.isChecked()) {
             kitchenequipmentstatus.setVisibility(View.VISIBLE);
-            kitchenequipmentstatus.setText("Done");
+            kitchenequipmentstatus.setText(getString(R.string.done));
             kitchenequipmentstatus.setTextColor(Color.BLUE);
             if (grocerystatus.getText().toString().equals("Done")
-                    && waterstatus.getText().toString().equals("Yes")
-                    && gasstatus.getText().toString().equals("Yes")
-                    && electricitystatus.getText().toString().equals("Yes")
-                    && telephonestatus.getText().toString().equals("Yes")) {
+                    && waterstatus.getText().toString().equals(getString(R.string.yes))
+                    && gasstatus.getText().toString().equals(getString(R.string.yes))
+                    && electricitystatus.getText().toString().equals(getString(R.string.yes))
+                    && telephonestatus.getText().toString().equals(getString(R.string.yes))) {
                 homeessentialstatus.setVisibility(View.VISIBLE);
-                homeessentialstatus.setText("Done");
+                homeessentialstatus.setText(getString(R.string.done));
                 homeessentialstatus.setTextColor(Color.BLUE);
             } else {
                 homeessentialstatus.setVisibility(View.VISIBLE);
-                homeessentialstatus.setText("Pending");
+                homeessentialstatus.setText(getString(R.string.pending));
                 homeessentialstatus.setTextColor(Color.RED);
             }
         } else {
             kitchenequipmentstatus.setVisibility(View.VISIBLE);
-            kitchenequipmentstatus.setText("Pending");
+            kitchenequipmentstatus.setText(getString(R.string.pending));
             kitchenequipmentstatus.setTextColor(Color.RED);
             if (grocerystatus.getText().toString().equals("Done")
                     && kitchenequipmentstatus.getText().toString().equals("Done")
-                    && waterstatus.getText().toString().equals("Yes")
-                    && gasstatus.getText().toString().equals("Yes")
-                    && electricitystatus.getText().toString().equals("Yes")
-                    && telephonestatus.getText().toString().equals("Yes")) {
+                    && waterstatus.getText().toString().equals(getString(R.string.yes))
+                    && gasstatus.getText().toString().equals(getString(R.string.yes))
+                    && electricitystatus.getText().toString().equals(getString(R.string.yes))
+                    && telephonestatus.getText().toString().equals(getString(R.string.yes))) {
                 homeessentialstatus.setVisibility(View.VISIBLE);
-                homeessentialstatus.setText("Done");
+                homeessentialstatus.setText(getString(R.string.done));
                 homeessentialstatus.setTextColor(Color.BLUE);
             } else {
                 homeessentialstatus.setVisibility(View.VISIBLE);
-                homeessentialstatus.setText("Pending");
+                homeessentialstatus.setText(getString(R.string.pending));
                 homeessentialstatus.setTextColor(Color.RED);
             }
         }
 
-        if (grocerycheck.isChecked() == true) {
+        if (grocerycheck.isChecked()) {
             grocerystatus.setVisibility(View.VISIBLE);
-            grocerystatus.setText("Done");
+            grocerystatus.setText(getString(R.string.done));
             grocerystatus.setTextColor(Color.BLUE);
             if (kitchenequipmentstatus.getText().toString().equals("Done")
-                    && waterstatus.getText().toString().equals("Yes")
-                    && gasstatus.getText().toString().equals("Yes")
-                    && electricitystatus.getText().toString().equals("Yes")
-                    && telephonestatus.getText().toString().equals("Yes")) {
+                    && waterstatus.getText().toString().equals(getString(R.string.yes))
+                    && gasstatus.getText().toString().equals(getString(R.string.yes))
+                    && electricitystatus.getText().toString().equals(getString(R.string.yes))
+                    && telephonestatus.getText().toString().equals(getString(R.string.yes))) {
                 homeessentialstatus.setVisibility(View.VISIBLE);
-                homeessentialstatus.setText("Done");
+                homeessentialstatus.setText(getString(R.string.done));
                 homeessentialstatus.setTextColor(Color.BLUE);
             } else {
                 homeessentialstatus.setVisibility(View.VISIBLE);
-                homeessentialstatus.setText("Pending");
+                homeessentialstatus.setText(getString(R.string.pending));
                 homeessentialstatus.setTextColor(Color.RED);
             }
         } else {
             grocerystatus.setVisibility(View.VISIBLE);
-            grocerystatus.setText("Pending");
+            grocerystatus.setText(getString(R.string.pending));
             grocerystatus.setTextColor(Color.RED);
             if (kitchenequipmentstatus.getText().toString().equals("Done")
                     && grocerystatus.getText().toString().equals("Done")
-                    && waterstatus.getText().toString().equals("Yes")
-                    && gasstatus.getText().toString().equals("Yes")
-                    && electricitystatus.getText().toString().equals("Yes")
-                    && telephonestatus.getText().toString().equals("Yes")) {
+                    && waterstatus.getText().toString().equals(getString(R.string.yes))
+                    && gasstatus.getText().toString().equals(getString(R.string.yes))
+                    && electricitystatus.getText().toString().equals(getString(R.string.yes))
+                    && telephonestatus.getText().toString().equals(getString(R.string.yes))) {
                 homeessentialstatus.setVisibility(View.VISIBLE);
-                homeessentialstatus.setText("Done");
+                homeessentialstatus.setText(getString(R.string.done));
                 homeessentialstatus.setTextColor(Color.BLUE);
             } else {
                 homeessentialstatus.setVisibility(View.VISIBLE);
-                homeessentialstatus.setText("Pending");
+                homeessentialstatus.setText(getString(R.string.pending));
                 homeessentialstatus.setTextColor(Color.RED);
             }
         }
-        if (domesticcheck.isChecked() == true) {
+        if (domesticcheck.isChecked()) {
 
             domestichelpstatus.setVisibility(View.VISIBLE);
-            domestichelpstatus.setText("Done");
+            domestichelpstatus.setText(getString(R.string.done));
             domestichelpstatus.setTextColor(Color.BLUE);
         } else {
             domestichelpstatus.setVisibility(View.VISIBLE);
-            domestichelpstatus.setText("Pending");
+            domestichelpstatus.setText(getString(R.string.pending));
             domestichelpstatus.setTextColor(Color.RED);
         }
     }
@@ -985,7 +1025,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
     }
 
     private void goBack() {
-        Intent intent = new Intent(CheckInCareProcess.this, DashboardActivity.class);
+        Intent intent = new Intent(CheckInCareActivity.this, DashboardActivity.class);
         Config.intSelectedMenu = Config.intClientScreen;
         startActivity(intent);
         finish();
@@ -1024,8 +1064,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                             Upload.File file = fileList.get(0);
 
-                                            hallimageModels.get(hallImageUploadCount).setmIsNew(false);
-                                            hallimageModels.get(hallImageUploadCount).setStrImageUrl(file.getUrl());
+                                            hallimageModels.get(hallImageUploadCount).
+                                                    setmIsNew(false);
+                                            hallimageModels.get(hallImageUploadCount).
+                                                    setStrImageUrl(file.getUrl());
 
                                             try {
                                                 hallImageUploadCount++;
@@ -1044,7 +1086,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         } else {
                                             hallImageUploadCount++;
                                             if (hallImageUploadCount >= hallimageModels.size()) {
-                                                if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
+                                                if (kitchenimageModels != null
+                                                        && kitchenimageModels.size() > 0) {
                                                     uploadKitchenImage();
                                                 }
                                             } else {
@@ -1064,7 +1107,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         Utils.log(e.getMessage(), " Failure ");
                                         hallImageUploadCount++;
                                         if (hallImageUploadCount >= hallimageModels.size()) {
-                                            if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
+                                            if (kitchenimageModels != null && kitchenimageModels.
+                                                    size() > 0) {
                                                 uploadKitchenImage();
                                             }
                                         } else {
@@ -1120,14 +1164,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
             if (kitchenImageUploadCount < kitchenimageModels.size()) {
 
-                final ImageModel mkitchenImageModel = kitchenimageModels.get(kitchenImageUploadCount);
+                final ImageModel mkitchenImageModel = kitchenimageModels.
+                        get(kitchenImageUploadCount);
 
                 if (mkitchenImageModel.ismIsNew()) {
 
                     UploadService uploadService = new UploadService(this);
 
                     uploadService.uploadImageCommon(mkitchenImageModel.getStrImagePath(),
-                            mkitchenImageModel.getStrImageDesc(), mkitchenImageModel.getStrImageDesc(),
+                            mkitchenImageModel.getStrImageDesc(), mkitchenImageModel.
+                                    getStrImageDesc(),
                             Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
                             new App42CallBack() {
                                 public void onSuccess(Object response) {
@@ -1143,12 +1189,15 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                             Upload.File file = fileList.get(0);
 
-                                            kitchenimageModels.get(kitchenImageUploadCount).setmIsNew(false);
-                                            kitchenimageModels.get(kitchenImageUploadCount).setStrImageUrl(file.getUrl());
+                                            kitchenimageModels.get(kitchenImageUploadCount).
+                                                    setmIsNew(false);
+                                            kitchenimageModels.get(kitchenImageUploadCount).
+                                                    setStrImageUrl(file.getUrl());
 
                                             try {
                                                 kitchenImageUploadCount++;
-                                                if (kitchenImageUploadCount >= kitchenimageModels.size()) {
+                                                if (kitchenImageUploadCount >= kitchenimageModels.
+                                                        size()) {
                                                     //  if (washroomimageModels != null && washroomimageModels.size() > 0) {
                                                         uploadWashroomImage();
                                                     //    }
@@ -1162,8 +1211,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                         } else {
                                             kitchenImageUploadCount++;
-                                            if (kitchenImageUploadCount >= kitchenimageModels.size()) {
-                                                if (washroomimageModels != null && washroomimageModels.size() > 0) {
+                                            if (kitchenImageUploadCount >= kitchenimageModels.
+                                                    size()) {
+                                                if (washroomimageModels != null &&
+                                                        washroomimageModels.size() > 0) {
                                                     uploadWashroomImage();
                                                 }
                                             } else {
@@ -1182,7 +1233,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                         Utils.log(e.getMessage(), " Failure ");
                                         kitchenImageUploadCount++;
                                         if (kitchenImageUploadCount >= kitchenimageModels.size()) {
-                                            if (washroomimageModels != null && washroomimageModels.size() > 0) {
+                                            if (washroomimageModels != null && washroomimageModels.
+                                                    size() > 0) {
                                                 uploadWashroomImage();
                                             }
                                         } else {
@@ -1236,16 +1288,17 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
             if (washroomImageUploadCount < washroomimageModels.size()) {
 
-                final ImageModel mwashroomImageModel = washroomimageModels.get(washroomImageUploadCount);
+                final ImageModel mwashroomImageModel = washroomimageModels.
+                        get(washroomImageUploadCount);
 
                 if (mwashroomImageModel.ismIsNew()) {
 
                     UploadService uploadService = new UploadService(this);
 
                     uploadService.uploadImageCommon(mwashroomImageModel.getStrImagePath(),
-                            mwashroomImageModel.getStrImageDesc(), mwashroomImageModel.getStrImageDesc(),
-                            Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
-                            new App42CallBack() {
+                            mwashroomImageModel.getStrImageDesc(), mwashroomImageModel.
+                                    getStrImageDesc(), Config.providerModel.getStrEmail(),
+                            UploadFileType.IMAGE, new App42CallBack() {
                                 public void onSuccess(Object response) {
 
                                     if (response != null) {
@@ -1259,12 +1312,15 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                             Upload.File file = fileList.get(0);
 
-                                            washroomimageModels.get(washroomImageUploadCount).setmIsNew(false);
-                                            washroomimageModels.get(washroomImageUploadCount).setStrImageUrl(file.getUrl());
+                                            washroomimageModels.get(washroomImageUploadCount).
+                                                    setmIsNew(false);
+                                            washroomimageModels.get(washroomImageUploadCount).
+                                                    setStrImageUrl(file.getUrl());
 
                                             try {
                                                 washroomImageUploadCount++;
-                                                if (washroomImageUploadCount >= washroomimageModels.size()) {
+                                                if (washroomImageUploadCount
+                                                        >= washroomimageModels.size()) {
                                                     //  if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
                                                         uploadBedroomImage();
                                                     //  }
@@ -1278,8 +1334,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                         } else {
                                             washroomImageUploadCount++;
-                                            if (washroomImageUploadCount >= washroomimageModels.size()) {
-                                                if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
+                                            if (washroomImageUploadCount >= washroomimageModels.
+                                                    size()) {
+                                                if (bedroomimageModels != null
+                                                        && bedroomimageModels.size() > 0) {
                                                     uploadBedroomImage();
                                                 }
                                             } else {
@@ -1297,8 +1355,10 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                     if (e != null) {
                                         Utils.log(e.getMessage(), " Failure ");
                                         washroomImageUploadCount++;
-                                        if (washroomImageUploadCount >= washroomimageModels.size()) {
-                                            if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
+                                        if (washroomImageUploadCount >= washroomimageModels.
+                                                size()) {
+                                            if (bedroomimageModels != null && bedroomimageModels.
+                                                    size() > 0) {
                                                 uploadBedroomImage();
                                             }
                                         } else {
@@ -1352,14 +1412,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
             if (bedroomImageUploadCount < bedroomimageModels.size()) {
 
-                final ImageModel mbedroomImageModel = bedroomimageModels.get(bedroomImageUploadCount);
+                final ImageModel mbedroomImageModel = bedroomimageModels.
+                        get(bedroomImageUploadCount);
 
                 if (mbedroomImageModel.ismIsNew()) {
 
                     UploadService uploadService = new UploadService(this);
 
                     uploadService.uploadImageCommon(mbedroomImageModel.getStrImagePath(),
-                            mbedroomImageModel.getStrImageDesc(), mbedroomImageModel.getStrImageDesc(),
+                            mbedroomImageModel.getStrImageDesc(), mbedroomImageModel.
+                                    getStrImageDesc(),
                             Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
                             new App42CallBack() {
                                 public void onSuccess(Object response) {
@@ -1375,12 +1437,15 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                             Upload.File file = fileList.get(0);
 
-                                            bedroomimageModels.get(bedroomImageUploadCount).setmIsNew(false);
-                                            bedroomimageModels.get(bedroomImageUploadCount).setStrImageUrl(file.getUrl());
+                                            bedroomimageModels.get(bedroomImageUploadCount).
+                                                    setmIsNew(false);
+                                            bedroomimageModels.get(bedroomImageUploadCount).
+                                                    setStrImageUrl(file.getUrl());
 
                                             try {
                                                 bedroomImageUploadCount++;
-                                                if (bedroomImageUploadCount >= bedroomimageModels.size()) {
+                                                if (bedroomImageUploadCount >= bedroomimageModels.
+                                                        size()) {
                                                     if(editcheckincare) {
                                                         editupdateJson();
                                                     }else {
@@ -1396,7 +1461,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                         } else {
                                             bedroomImageUploadCount++;
-                                            if (bedroomImageUploadCount >= bedroomimageModels.size()) {
+                                            if (bedroomImageUploadCount
+                                                    >= bedroomimageModels.size()) {
                                                 if(editcheckincare){
                                                     editupdateJson();
                                                 }else {
@@ -1490,7 +1556,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectCheckinCare.put("house_name", "Our House");
                 jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
                 jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
-                jsonObjectCheckinCare.put("check_in_care_name", checkincarename.getText().toString());
+                jsonObjectCheckinCare.put("check_in_care_name", checkincarename.getText().
+                        toString());
 
                 JSONArray jsonArrayPicture = new JSONArray();
 
@@ -1548,9 +1615,12 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                         JSONObject jsonObjectKitchenImages = new JSONObject();
 
-                        jsonObjectKitchenImages.put("image_url", kitchenImageModel.getStrImageUrl());
-                        jsonObjectKitchenImages.put("description", kitchenImageModel.getStrImageDesc());
-                        jsonObjectKitchenImages.put("date_time", kitchenImageModel.getStrImageTime());
+                        jsonObjectKitchenImages.put("image_url", kitchenImageModel.
+                                getStrImageUrl());
+                        jsonObjectKitchenImages.put("description", kitchenImageModel.
+                                getStrImageDesc());
+                        jsonObjectKitchenImages.put("date_time", kitchenImageModel.
+                                getStrImageTime());
 
                         jsonArrayKitchenPictureDetails.put(jsonObjectKitchenImages);
                         mTKitchenImageModels.add(kitchenImageModel);
@@ -1582,9 +1652,12 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                         JSONObject jsonObjectWashroomImages = new JSONObject();
 
-                        jsonObjectWashroomImages.put("image_url", washroomImageModel.getStrImageUrl());
-                        jsonObjectWashroomImages.put("description", washroomImageModel.getStrImageDesc());
-                        jsonObjectWashroomImages.put("date_time", washroomImageModel.getStrImageTime());
+                        jsonObjectWashroomImages.put("image_url", washroomImageModel.
+                                getStrImageUrl());
+                        jsonObjectWashroomImages.put("description", washroomImageModel.
+                                getStrImageDesc());
+                        jsonObjectWashroomImages.put("date_time", washroomImageModel.
+                                getStrImageTime());
 
                         jsonArrayWashroomPictureDetails.put(jsonObjectWashroomImages);
                         mTWashroomImageModels.add(washroomImageModel);
@@ -1615,9 +1688,12 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                         JSONObject jsonObjectBedroomImages = new JSONObject();
 
-                        jsonObjectBedroomImages.put("image_url", bedroomImageModel.getStrImageUrl());
-                        jsonObjectBedroomImages.put("description", bedroomImageModel.getStrImageDesc());
-                        jsonObjectBedroomImages.put("date_time", bedroomImageModel.getStrImageTime());
+                        jsonObjectBedroomImages.put("image_url", bedroomImageModel.
+                                getStrImageUrl());
+                        jsonObjectBedroomImages.put("description", bedroomImageModel.
+                                getStrImageDesc());
+                        jsonObjectBedroomImages.put("date_time", bedroomImageModel.
+                                getStrImageTime());
 
                         jsonArrayBedroomPictureDetails.put(jsonObjectBedroomImages);
                         mTBedroomImageModels.add(bedroomImageModel);
@@ -1752,7 +1828,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment3);
 
 
-                jsonObjectActivitiesEquipment.put("sub_activities", jsonArraySubActivitiesEquipment);
+                jsonObjectActivitiesEquipment.put("sub_activities",
+                        jsonArraySubActivitiesEquipment);
 
                 jsonArrayActivities.put(jsonObjectActivitiesEquipment);
                 ///////////////////////activity 3
@@ -1777,9 +1854,59 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         public void onDocumentInserted(Storage response) {
                             try {
                                 if (response.isResponseSuccess()) {
+
+                                    if (response.getJsonDocList().size() > 0) {
+
+                                        Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
+
+                                        ///
+                                        String values[] = {jsonDocument.getDocId(),
+                                                jsonDocument.getUpdatedAt(),
+                                                jsonDocument.getJsonDoc(),
+                                                Config.collectionCheckInCare, "0", "", "1"};
+
+                                        String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                                + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+                                        // WHERE clause arguments
+                                        String[] selectionArgs = {jsonDocument.getDocId(),
+                                                Config.collectionCheckInCare};
+                                        CareGiver.getDbCon().updateInsert(
+                                                DbHelper.strTableNameCollection,
+                                                selection, values, DbHelper.COLLECTION_FIELDS,
+                                                selectionArgs);
+
+
+                                        //////////////
+
+                                      /*  String strActivityDate = Utils.convertDateToStringQueryLocal(Utils.
+                                                convertStringToDateQuery(jsonObject.getString("activity_date").substring(0,
+                                                        jsonObject.getString("activity_date").length() - 1)));*/
+
+                                        String values1[] = {jsonDocument.getDocId(),
+                                                "0",
+                                                strSelectedDate};
+
+                                        String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                                + DbHelper.COLUMN_MILESTONE_ID + "=? ";
+
+                                        String[] selectionArgs1 = {jsonDocument.getDocId(),
+                                                "0"
+                                        };
+
+                                        CareGiver.getDbCon().updateInsert(
+                                                DbHelper.strTableNameMilestone,
+                                                selection1, values1, DbHelper.MILESTONE_FIELDS,
+                                                selectionArgs1);
+
+                                    }
+                                    ///
+
+
                                     IMAGE_COUNT = 0;
                                     utils.toast(2, 2, getString(R.string.data_upload));
-                                    Intent intent = new Intent(CheckInCareProcess.this, DashboardActivity.class);
+                                    Intent intent = new Intent(CheckInCareActivity.this,
+                                            DashboardActivity.class);
                                     Config.intSelectedMenu = Config.intClientScreen;
                                     startActivity(intent);
                                 } else {
@@ -1858,7 +1985,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonObjectCheckinCare.put("house_name", "Our House");
                 jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
                 jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
-                jsonObjectCheckinCare.put("check_in_care_name", checkincarename.getText().toString());
+                jsonObjectCheckinCare.put("check_in_care_name", checkincarename.getText().
+                        toString());
 
                 JSONArray jsonArrayPicture = new JSONArray();
 
@@ -1916,9 +2044,12 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                         JSONObject jsonObjectKitchenImages = new JSONObject();
 
-                        jsonObjectKitchenImages.put("image_url", kitchenImageModel.getStrImageUrl());
-                        jsonObjectKitchenImages.put("description", kitchenImageModel.getStrImageDesc());
-                        jsonObjectKitchenImages.put("date_time", kitchenImageModel.getStrImageTime());
+                        jsonObjectKitchenImages.put("image_url", kitchenImageModel.
+                                getStrImageUrl());
+                        jsonObjectKitchenImages.put("description", kitchenImageModel.
+                                getStrImageDesc());
+                        jsonObjectKitchenImages.put("date_time", kitchenImageModel.
+                                getStrImageTime());
 
                         jsonArrayKitchenPictureDetails.put(jsonObjectKitchenImages);
                         mTKitchenImageModels.add(kitchenImageModel);
@@ -1950,9 +2081,12 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                         JSONObject jsonObjectWashroomImages = new JSONObject();
 
-                        jsonObjectWashroomImages.put("image_url", washroomImageModel.getStrImageUrl());
-                        jsonObjectWashroomImages.put("description", washroomImageModel.getStrImageDesc());
-                        jsonObjectWashroomImages.put("date_time", washroomImageModel.getStrImageTime());
+                        jsonObjectWashroomImages.put("image_url", washroomImageModel.
+                                getStrImageUrl());
+                        jsonObjectWashroomImages.put("description", washroomImageModel.
+                                getStrImageDesc());
+                        jsonObjectWashroomImages.put("date_time", washroomImageModel.
+                                getStrImageTime());
 
                         jsonArrayWashroomPictureDetails.put(jsonObjectWashroomImages);
                         mTWashroomImageModels.add(washroomImageModel);
@@ -1983,9 +2117,12 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                         JSONObject jsonObjectBedroomImages = new JSONObject();
 
-                        jsonObjectBedroomImages.put("image_url", bedroomImageModel.getStrImageUrl());
-                        jsonObjectBedroomImages.put("description", bedroomImageModel.getStrImageDesc());
-                        jsonObjectBedroomImages.put("date_time", bedroomImageModel.getStrImageTime());
+                        jsonObjectBedroomImages.put("image_url", bedroomImageModel.
+                                getStrImageUrl());
+                        jsonObjectBedroomImages.put("description", bedroomImageModel.
+                                getStrImageDesc());
+                        jsonObjectBedroomImages.put("date_time", bedroomImageModel.
+                                getStrImageTime());
 
                         jsonArrayBedroomPictureDetails.put(jsonObjectBedroomImages);
                         mTBedroomImageModels.add(bedroomImageModel);
@@ -2120,7 +2257,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment3);
 
 
-                jsonObjectActivitiesEquipment.put("sub_activities", jsonArraySubActivitiesEquipment);
+                jsonObjectActivitiesEquipment.put("sub_activities",
+                        jsonArraySubActivitiesEquipment);
 
                 jsonArrayActivities.put(jsonObjectActivitiesEquipment);
                 ///////////////////////activity 3
@@ -2144,10 +2282,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     Config.collectionCheckInCare, new App42CallBack() {
                         @Override
                         public void onSuccess(Object response) {
-                            utils.log(response.toString(),"Success");
+                            Utils.log(response.toString(), "Success");
                             IMAGE_COUNT = 0;
                             utils.toast(2, 2, getString(R.string.data_upload));
-                            Intent intent = new Intent(CheckInCareProcess.this, DashboardActivity.class);
+                            Intent intent = new Intent(CheckInCareActivity.this,
+                                    DashboardActivity.class);
                             Config.intSelectedMenu = Config.intClientScreen;
                             startActivity(intent);
                         }
@@ -2212,28 +2351,30 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         if (hallimageModels != null && hallimageModels.size() > 0) {
 
             hallstatus.setVisibility(View.VISIBLE);
-            hallstatus.setText("Done");
+            hallstatus.setText(getString(R.string.done));
             hallstatus.setTextColor(Color.BLUE);
             if (kitchenstatus.getText().toString().equals("Done")
                     && washroomstatus.getText().toString().equals("Done")
                     && bedroomstatus.getText().toString().equals("Done")) {
 
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Done");
+                uploadmediastatus.setText(getString(R.string.done));
                 uploadmediastatus.setTextColor(Color.BLUE);
             } else {
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Pending");
+                uploadmediastatus.setText(getString(R.string.pending));
                 uploadmediastatus.setTextColor(Color.RED);
             }
 
 
             for (int i = 0; i < hallimageModels.size(); i++) {
                 try {
-                    final ImageView imageView = new ImageView(CheckInCareProcess.this);
+                    final ImageView imageView = new ImageView(CheckInCareActivity.this);
                     imageView.setPadding(0, 0, 3, 0);
 
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
                     Utils.log(String.valueOf(hallimageModels.get(i).getStrImageName() + " # " +
@@ -2256,14 +2397,17 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                             final int mPosition = (int) v.getTag(R.id.three);
 
-                            final Dialog dialog = new Dialog(CheckInCareProcess.this);
+                            final Dialog dialog = new Dialog(CheckInCareActivity.this);
                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
                             dialog.setContentView(R.layout.image_dialog_layout);
 
-                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
-                            TextView textViewClose = (TextView) dialog.findViewById(R.id.textViewClose);
-                            Button buttonDelete = (Button) dialog.findViewById(R.id.textViewTitle);
+                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                                    R.id.imgOriginal);
+                            TextView textViewClose = (TextView) dialog.findViewById(
+                                    R.id.textViewClose);
+                            Button buttonDelete = (Button) dialog.findViewById(
+                                    R.id.textViewTitle);
 
                             if (isCompleted)
                                 buttonDelete.setVisibility(View.INVISIBLE);
@@ -2283,14 +2427,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                     //
                                     final AlertDialog.Builder alertbox =
-                                            new AlertDialog.Builder(CheckInCareProcess.this);
+                                            new AlertDialog.Builder(CheckInCareActivity.this);
                                     alertbox.setTitle(getString(R.string.delete_image));
                                     alertbox.setMessage(getString(R.string.confirm_delete_image));
-                                    alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                    alertbox.setPositiveButton(getString(R.string.yes),
+                                            new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0, int arg1) {
 
                                             try {
-                                                File fDelete = utils.getInternalFileImages(mImageModel.getStrImageName());
+                                                File fDelete = utils.getInternalFileImages(
+                                                        mImageModel.getStrImageName());
 
                                                 if (fDelete.exists()) {
                                                     success = fDelete.delete();
@@ -2305,25 +2451,38 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                                     hallbitmaps.remove(mPosition);
                                                     if (hallImageCount < 1) {
                                                         hallstatus.setVisibility(View.VISIBLE);
-                                                        hallstatus.setText("Pending");
+                                                        hallstatus.setText(getString(
+                                                                R.string.pending));
                                                         hallstatus.setTextColor(Color.RED);
-                                                        if (kitchenstatus.getText().toString().equals("Done")
-                                                                && hallstatus.getText().toString().equals("Done")
-                                                                && washroomstatus.getText().toString().equals("Done")
-                                                                && bedroomstatus.getText().toString().equals("Done")) {
+                                                        if (kitchenstatus.
+                                                                getText().toString().equals("Done")
+                                                                && hallstatus.
+                                                                getText().toString().equals("Done")
+                                                                && washroomstatus.
+                                                                getText().toString().equals("Done")
+                                                                && bedroomstatus.
+                                                                getText().toString().
+                                                                equals("Done")) {
 
-                                                            uploadmediastatus.setVisibility(View.VISIBLE);
-                                                            uploadmediastatus.setText("Done");
-                                                            uploadmediastatus.setTextColor(Color.BLUE);
+                                                            uploadmediastatus.setVisibility(
+                                                                    View.VISIBLE);
+                                                            uploadmediastatus.setText(getString(
+                                                                    R.string.done));
+                                                            uploadmediastatus.setTextColor(
+                                                                    Color.BLUE);
                                                         } else {
-                                                            uploadmediastatus.setVisibility(View.VISIBLE);
-                                                            uploadmediastatus.setText("Pending");
-                                                            uploadmediastatus.setTextColor(Color.RED);
+                                                            uploadmediastatus.setVisibility(
+                                                                    View.VISIBLE);
+                                                            uploadmediastatus.setText(getString(
+                                                                    R.string.pending));
+                                                            uploadmediastatus.setTextColor(
+                                                                    Color.RED);
                                                         }
                                                     }
                                                 }
                                                 if (success) {
-                                                    utils.toast(2, 2, getString(R.string.file_deleted));
+                                                    utils.toast(2, 2, getString(
+                                                            R.string.file_deleted));
 
                                                 }
                                                 arg0.dismiss();
@@ -2334,7 +2493,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                             }
                                         }
                                     });
-                                    alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                                    alertbox.setNegativeButton(getString(R.string.no),
+                                            new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0, int arg1) {
                                             arg0.dismiss();
                                         }
@@ -2353,7 +2513,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                             }
                             dialog.setCancelable(true);
 
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
                             dialog.show();
 
                         }
@@ -2366,7 +2527,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             }
         } else {
             hallstatus.setVisibility(View.VISIBLE);
-            hallstatus.setText("Pending");
+            hallstatus.setText(getString(R.string.pending));
             hallstatus.setTextColor(Color.RED);
             if (kitchenstatus.getText().toString().equals("Done")
                     && hallstatus.getText().toString().equals("Done")
@@ -2374,11 +2535,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     && bedroomstatus.getText().toString().equals("Done")) {
 
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Done");
+                uploadmediastatus.setText(getString(R.string.done));
                 uploadmediastatus.setTextColor(Color.BLUE);
             } else {
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Pending");
+                uploadmediastatus.setText(getString(R.string.pending));
                 uploadmediastatus.setTextColor(Color.RED);
             }
 
@@ -2393,7 +2554,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
 
             kitchenstatus.setVisibility(View.VISIBLE);
-            kitchenstatus.setText("Done");
+            kitchenstatus.setText(getString(R.string.done));
             kitchenstatus.setTextColor(Color.BLUE);
 
             if (hallstatus.getText().toString().equals("Done")
@@ -2401,20 +2562,21 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     && bedroomstatus.getText().toString().equals("Done")) {
 
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Done");
+                uploadmediastatus.setText(getString(R.string.done));
                 uploadmediastatus.setTextColor(Color.BLUE);
             } else {
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Pending");
+                uploadmediastatus.setText(getString(R.string.pending));
                 uploadmediastatus.setTextColor(Color.RED);
             }
 
             for (int i = 0; i < kitchenimageModels.size(); i++) {
                 try {
-                    final ImageView imageView = new ImageView(CheckInCareProcess.this);
+                    final ImageView imageView = new ImageView(CheckInCareActivity.this);
                     imageView.setPadding(0, 0, 3, 0);
 
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
                     Utils.log(String.valueOf(kitchenimageModels.get(i).getStrImageName() + " # " +
@@ -2437,14 +2599,17 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                             final int mPosition = (int) v.getTag(R.id.three);
 
-                            final Dialog dialog = new Dialog(CheckInCareProcess.this);
+                            final Dialog dialog = new Dialog(CheckInCareActivity.this);
                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
                             dialog.setContentView(R.layout.image_dialog_layout);
 
-                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
-                            TextView textViewClose = (TextView) dialog.findViewById(R.id.textViewClose);
-                            Button buttonDelete = (Button) dialog.findViewById(R.id.textViewTitle);
+                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                                    R.id.imgOriginal);
+                            TextView textViewClose = (TextView) dialog.findViewById(
+                                    R.id.textViewClose);
+                            Button buttonDelete = (Button) dialog.findViewById(
+                                    R.id.textViewTitle);
 
                             if (isCompleted)
                                 buttonDelete.setVisibility(View.INVISIBLE);
@@ -2464,14 +2629,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                     //
                                     final AlertDialog.Builder alertbox =
-                                            new AlertDialog.Builder(CheckInCareProcess.this);
+                                            new AlertDialog.Builder(CheckInCareActivity.this);
                                     alertbox.setTitle(getString(R.string.delete_image));
                                     alertbox.setMessage(getString(R.string.confirm_delete_image));
-                                    alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                    alertbox.setPositiveButton(getString(R.string.yes),
+                                            new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0, int arg1) {
 
                                             try {
-                                                File fDelete = utils.getInternalFileImages(mImageModel.getStrImageName());
+                                                File fDelete = utils.getInternalFileImages(
+                                                        mImageModel.getStrImageName());
 
                                                 if (fDelete.exists()) {
                                                     success = fDelete.delete();
@@ -2486,27 +2653,41 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                                     kitchenbitmaps.remove(mPosition);
 
                                                     if (kitchenImageCount < 1) {
-                                                        kitchenstatus.setVisibility(View.VISIBLE);
-                                                        kitchenstatus.setText("Pending");
+                                                        kitchenstatus.setVisibility(
+                                                                View.VISIBLE);
+                                                        kitchenstatus.setText(getString(
+                                                                R.string.pending));
                                                         kitchenstatus.setTextColor(Color.RED);
 
-                                                        if (hallstatus.getText().toString().equals("Done")
-                                                                && kitchenstatus.getText().toString().equals("Done")
-                                                                && washroomstatus.getText().toString().equals("Done")
-                                                                && bedroomstatus.getText().toString().equals("Done")) {
+                                                        if (hallstatus.getText().toString().
+                                                                equals("Done")
+                                                                && kitchenstatus.
+                                                                getText().toString().equals("Done")
+                                                                && washroomstatus.
+                                                                getText().toString().equals("Done")
+                                                                && bedroomstatus.
+                                                                getText().toString().
+                                                                equals("Done")) {
 
-                                                            uploadmediastatus.setVisibility(View.VISIBLE);
-                                                            uploadmediastatus.setText("Done");
-                                                            uploadmediastatus.setTextColor(Color.BLUE);
+                                                            uploadmediastatus.setVisibility(
+                                                                    View.VISIBLE);
+                                                            uploadmediastatus.setText(
+                                                                    getString(R.string.done));
+                                                            uploadmediastatus.setTextColor(
+                                                                    Color.BLUE);
                                                         } else {
-                                                            uploadmediastatus.setVisibility(View.VISIBLE);
-                                                            uploadmediastatus.setText("Pending");
-                                                            uploadmediastatus.setTextColor(Color.RED);
+                                                            uploadmediastatus.setVisibility(
+                                                                    View.VISIBLE);
+                                                            uploadmediastatus.setText(getString(
+                                                                    R.string.pending));
+                                                            uploadmediastatus.setTextColor(
+                                                                    Color.RED);
                                                         }
                                                     }
                                                 }
                                                 if (success) {
-                                                    utils.toast(2, 2, getString(R.string.file_deleted));
+                                                    utils.toast(2, 2, getString(
+                                                            R.string.file_deleted));
 
                                                 }
                                                 arg0.dismiss();
@@ -2517,7 +2698,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                             }
                                         }
                                     });
-                                    alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                                    alertbox.setNegativeButton(getString(R.string.no),
+                                            new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0, int arg1) {
                                             arg0.dismiss();
                                         }
@@ -2536,7 +2718,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                             }
                             dialog.setCancelable(true);
 
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
                             dialog.show();
 
                         }
@@ -2549,7 +2732,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             }
         } else {
             kitchenstatus.setVisibility(View.VISIBLE);
-            kitchenstatus.setText("Pending");
+            kitchenstatus.setText(getString(R.string.pending));
             kitchenstatus.setTextColor(Color.RED);
             if (hallstatus.getText().toString().equals("Done")
                     && kitchenstatus.getText().toString().equals("Done")
@@ -2557,11 +2740,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                     && bedroomstatus.getText().toString().equals("Done")) {
 
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Done");
+                uploadmediastatus.setText(getString(R.string.done));
                 uploadmediastatus.setTextColor(Color.BLUE);
             } else {
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Pending");
+                uploadmediastatus.setText(getString(R.string.pending));
                 uploadmediastatus.setTextColor(Color.RED);
             }
 
@@ -2575,29 +2758,31 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         if (washroomimageModels != null && washroomimageModels.size() > 0) {
 
             washroomstatus.setVisibility(View.VISIBLE);
-            washroomstatus.setText("Done");
+            washroomstatus.setText(getString(R.string.done));
             washroomstatus.setTextColor(Color.BLUE);
 
-            if (hallstatus.getText().toString().equals("Done")
-                    && kitchenstatus.getText().toString().equals("Done")
-                    && bedroomstatus.getText().toString().equals("Done")) {
+            if (hallstatus.getText().toString().equals(getString(R.string.done))
+                    && kitchenstatus.getText().toString().equals(getString(R.string.done))
+                    && bedroomstatus.getText().toString().equals(getString(R.string.done))) {
 
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Done");
+                uploadmediastatus.setText(getString(R.string.done));
                 uploadmediastatus.setTextColor(Color.BLUE);
             } else {
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Pending");
+                uploadmediastatus.setText(getString(R.string.pending));
                 uploadmediastatus.setTextColor(Color.RED);
             }
 
 
             for (int i = 0; i < washroomimageModels.size(); i++) {
                 try {
-                    final ImageView imageView = new ImageView(CheckInCareProcess.this);
+                    final ImageView imageView = new ImageView(CheckInCareActivity.this);
                     imageView.setPadding(0, 0, 3, 0);
 
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.
+                            LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
                     Utils.log(String.valueOf(washroomimageModels.get(i).getStrImageName() + " # " +
@@ -2620,14 +2805,17 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                             final int mPosition = (int) v.getTag(R.id.three);
 
-                            final Dialog dialog = new Dialog(CheckInCareProcess.this);
+                            final Dialog dialog = new Dialog(CheckInCareActivity.this);
                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
                             dialog.setContentView(R.layout.image_dialog_layout);
 
-                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
-                            TextView textViewClose = (TextView) dialog.findViewById(R.id.textViewClose);
-                            Button buttonDelete = (Button) dialog.findViewById(R.id.textViewTitle);
+                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                                    R.id.imgOriginal);
+                            TextView textViewClose = (TextView) dialog.findViewById(
+                                    R.id.textViewClose);
+                            Button buttonDelete = (Button) dialog.findViewById(
+                                    R.id.textViewTitle);
 
                             if (isCompleted)
                                 buttonDelete.setVisibility(View.INVISIBLE);
@@ -2647,14 +2835,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                     //
                                     final AlertDialog.Builder alertbox =
-                                            new AlertDialog.Builder(CheckInCareProcess.this);
+                                            new AlertDialog.Builder(CheckInCareActivity.this);
                                     alertbox.setTitle(getString(R.string.delete_image));
                                     alertbox.setMessage(getString(R.string.confirm_delete_image));
-                                    alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                    alertbox.setPositiveButton(getString(R.string.yes),
+                                            new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0, int arg1) {
 
                                             try {
-                                                File fDelete = utils.getInternalFileImages(mImageModel.getStrImageName());
+                                                File fDelete = utils.getInternalFileImages(
+                                                        mImageModel.getStrImageName());
 
                                                 if (fDelete.exists()) {
                                                     success = fDelete.delete();
@@ -2669,25 +2859,40 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                                     washroombitmaps.remove(mPosition);
                                                     if (washroomImageCount < 1) {
                                                         washroomstatus.setVisibility(View.VISIBLE);
-                                                        washroomstatus.setText("Pending");
+                                                        washroomstatus.setText(getString(R.string.
+                                                                pending));
                                                         washroomstatus.setTextColor(Color.RED);
-                                                        if (hallstatus.getText().toString().equals("Done")
-                                                                && washroomstatus.getText().toString().equals("Done")
-                                                                && kitchenstatus.getText().toString().equals("Done")
-                                                                && bedroomstatus.getText().toString().equals("Done")) {
+                                                        if (hallstatus.getText().toString().
+                                                                equals(getString(R.string.done))
+                                                                && washroomstatus.getText().
+                                                                toString().equals(getString(
+                                                                R.string.done))
+                                                                && kitchenstatus.getText().
+                                                                toString().equals(getString(
+                                                                R.string.done))
+                                                                && bedroomstatus.getText().
+                                                                toString().equals(getString(
+                                                                R.string.done))) {
 
-                                                            uploadmediastatus.setVisibility(View.VISIBLE);
-                                                            uploadmediastatus.setText("Done");
-                                                            uploadmediastatus.setTextColor(Color.BLUE);
+                                                            uploadmediastatus.setVisibility(
+                                                                    View.VISIBLE);
+                                                            uploadmediastatus.setText(
+                                                                    getString(R.string.done));
+                                                            uploadmediastatus.setTextColor(
+                                                                    Color.BLUE);
                                                         } else {
-                                                            uploadmediastatus.setVisibility(View.VISIBLE);
-                                                            uploadmediastatus.setText("Pending");
-                                                            uploadmediastatus.setTextColor(Color.RED);
+                                                            uploadmediastatus.setVisibility(
+                                                                    View.VISIBLE);
+                                                            uploadmediastatus.setText(getString(
+                                                                    R.string.pending));
+                                                            uploadmediastatus.setTextColor(
+                                                                    Color.RED);
                                                         }
                                                     }
                                                 }
                                                 if (success) {
-                                                    utils.toast(2, 2, getString(R.string.file_deleted));
+                                                    utils.toast(2, 2, getString(
+                                                            R.string.file_deleted));
 
                                                 }
                                                 arg0.dismiss();
@@ -2698,7 +2903,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                             }
                                         }
                                     });
-                                    alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                                    alertbox.setNegativeButton(getString(R.string.no),
+                                            new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0, int arg1) {
                                             arg0.dismiss();
                                         }
@@ -2717,7 +2923,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                             }
                             dialog.setCancelable(true);
 
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
                             dialog.show();
 
                         }
@@ -2730,19 +2937,19 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             }
         } else {
             washroomstatus.setVisibility(View.VISIBLE);
-            washroomstatus.setText("Pending");
+            washroomstatus.setText(getString(R.string.pending));
             washroomstatus.setTextColor(Color.RED);
-            if (hallstatus.getText().toString().equals("Done")
-                    && washroomstatus.getText().toString().equals("Done")
-                    && kitchenstatus.getText().toString().equals("Done")
-                    && bedroomstatus.getText().toString().equals("Done")) {
+            if (hallstatus.getText().toString().equals(getString(R.string.done))
+                    && washroomstatus.getText().toString().equals(getString(R.string.done))
+                    && kitchenstatus.getText().toString().equals(getString(R.string.done))
+                    && bedroomstatus.getText().toString().equals(getString(R.string.done))) {
 
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Done");
+                uploadmediastatus.setText(getString(R.string.done));
                 uploadmediastatus.setTextColor(Color.BLUE);
             } else {
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Pending");
+                uploadmediastatus.setText(getString(R.string.pending));
                 uploadmediastatus.setTextColor(Color.RED);
             }
 
@@ -2756,27 +2963,29 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
 
             bedroomstatus.setVisibility(View.VISIBLE);
-            bedroomstatus.setText("Done");
+            bedroomstatus.setText(getString(R.string.done));
             bedroomstatus.setTextColor(Color.BLUE);
             if (hallstatus.getText().toString().equals("Done")
                     && kitchenstatus.getText().toString().equals("Done")
                     && washroomstatus.getText().toString().equals("Done")) {
 
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Done");
+                uploadmediastatus.setText(getString(R.string.done));
                 uploadmediastatus.setTextColor(Color.BLUE);
             } else {
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Pending");
+                uploadmediastatus.setText(getString(R.string.pending));
                 uploadmediastatus.setTextColor(Color.RED);
             }
 
             for (int i = 0; i < bedroomimageModels.size(); i++) {
                 try {
-                    final ImageView imageView = new ImageView(CheckInCareProcess.this);
+                    final ImageView imageView = new ImageView(CheckInCareActivity.this);
                     imageView.setPadding(0, 0, 3, 0);
 
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
                     Utils.log(String.valueOf(bedroomimageModels.get(i).getStrImageName() + " # " +
@@ -2799,14 +3008,17 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                             final int mPosition = (int) v.getTag(R.id.three);
 
-                            final Dialog dialog = new Dialog(CheckInCareProcess.this);
+                            final Dialog dialog = new Dialog(CheckInCareActivity.this);
                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
                             dialog.setContentView(R.layout.image_dialog_layout);
 
-                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(R.id.imgOriginal);
-                            TextView textViewClose = (TextView) dialog.findViewById(R.id.textViewClose);
-                            Button buttonDelete = (Button) dialog.findViewById(R.id.textViewTitle);
+                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                                    R.id.imgOriginal);
+                            TextView textViewClose = (TextView) dialog.findViewById(
+                                    R.id.textViewClose);
+                            Button buttonDelete = (Button) dialog.findViewById(
+                                    R.id.textViewTitle);
 
                             if (isCompleted)
                                 buttonDelete.setVisibility(View.INVISIBLE);
@@ -2826,14 +3038,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                     //
                                     final AlertDialog.Builder alertbox =
-                                            new AlertDialog.Builder(CheckInCareProcess.this);
+                                            new AlertDialog.Builder(CheckInCareActivity.this);
                                     alertbox.setTitle(getString(R.string.delete_image));
                                     alertbox.setMessage(getString(R.string.confirm_delete_image));
-                                    alertbox.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                    alertbox.setPositiveButton(getString(R.string.yes),
+                                            new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0, int arg1) {
 
                                             try {
-                                                File fDelete = utils.getInternalFileImages(mImageModel.getStrImageName());
+                                                File fDelete = utils.getInternalFileImages
+                                                        (mImageModel.getStrImageName());
 
                                                 if (fDelete.exists()) {
                                                     success = fDelete.delete();
@@ -2849,26 +3063,41 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                                                     if (bedroomImageCount < 1) {
                                                         bedroomstatus.setVisibility(View.VISIBLE);
-                                                        bedroomstatus.setText("Pending");
+                                                        bedroomstatus.setText(getString(
+                                                                R.string.pending));
                                                         bedroomstatus.setTextColor(Color.RED);
-                                                        if (hallstatus.getText().toString().equals("Done")
-                                                                && bedroomstatus.getText().toString().equals("Done")
-                                                                && kitchenstatus.getText().toString().equals("Done")
-                                                                && washroomstatus.getText().toString().equals("Done")) {
+                                                        if (hallstatus.getText().toString().
+                                                                equals(getString(R.string.done))
+                                                                && bedroomstatus.getText().
+                                                                toString().equals(getString(
+                                                                R.string.done))
+                                                                && kitchenstatus.getText().
+                                                                toString().equals(getString(
+                                                                R.string.done))
+                                                                && washroomstatus.getText().
+                                                                toString().equals(getString(
+                                                                R.string.done))) {
 
-                                                            uploadmediastatus.setVisibility(View.VISIBLE);
-                                                            uploadmediastatus.setText("Done");
-                                                            uploadmediastatus.setTextColor(Color.BLUE);
+                                                            uploadmediastatus.
+                                                                    setVisibility(View.VISIBLE);
+                                                            uploadmediastatus.
+                                                                    setText(getString(R.string.done));
+                                                            uploadmediastatus.
+                                                                    setTextColor(Color.BLUE);
                                                         } else {
-                                                            uploadmediastatus.setVisibility(View.VISIBLE);
-                                                            uploadmediastatus.setText("Pending");
-                                                            uploadmediastatus.setTextColor(Color.RED);
+                                                            uploadmediastatus.setVisibility(
+                                                                    View.VISIBLE);
+                                                            uploadmediastatus.setText
+                                                                    (getString(R.string.pending));
+                                                            uploadmediastatus.setTextColor(
+                                                                    Color.RED);
                                                         }
 
                                                     }
                                                 }
                                                 if (success) {
-                                                    utils.toast(2, 2, getString(R.string.file_deleted));
+                                                    utils.toast(2, 2, getString(R.string.
+                                                            file_deleted));
 
                                                 }
                                                 arg0.dismiss();
@@ -2879,7 +3108,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                                             }
                                         }
                                     });
-                                    alertbox.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                                    alertbox.setNegativeButton(getString(R.string.no),
+                                            new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0, int arg1) {
                                             arg0.dismiss();
                                         }
@@ -2898,7 +3128,8 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                             }
                             dialog.setCancelable(true);
 
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
                             dialog.show();
 
                         }
@@ -2911,19 +3142,19 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             }
         } else {
             bedroomstatus.setVisibility(View.VISIBLE);
-            bedroomstatus.setText("Pending");
+            bedroomstatus.setText(getString(R.string.pending));
             bedroomstatus.setTextColor(Color.RED);
-            if (hallstatus.getText().toString().equals("Done")
-                    && bedroomstatus.getText().toString().equals("Done")
-                    && kitchenstatus.getText().toString().equals("Done")
-                    && washroomstatus.getText().toString().equals("Done")) {
+            if (hallstatus.getText().toString().equals(getString(R.string.done))
+                    && bedroomstatus.getText().toString().equals(getString(R.string.done))
+                    && kitchenstatus.getText().toString().equals(getString(R.string.done))
+                    && washroomstatus.getText().toString().equals(getString(R.string.done))) {
 
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Done");
+                uploadmediastatus.setText(getString(R.string.done));
                 uploadmediastatus.setTextColor(Color.BLUE);
             } else {
                 uploadmediastatus.setVisibility(View.VISIBLE);
-                uploadmediastatus.setText("Pending");
+                uploadmediastatus.setText(getString(R.string.pending));
                 uploadmediastatus.setTextColor(Color.RED);
             }
 
@@ -2944,34 +3175,40 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
 
                 if (item.equals("Y")) {
                     //  utils.toast(2, 2, getString(R.string.select_date));
-                    waterstatus.setText("Yes");
-                    if (grocerystatus.getText().toString().equals("Done")
-                            && kitchenequipmentstatus.getText().toString().equals("Done")
-                            && gasstatus.getText().toString().equals("Yes")
-                            && electricitystatus.getText().toString().equals("Yes")
-                            && telephonestatus.getText().toString().equals("Yes")) {
+                    waterstatus.setText(getString(R.string.yes));
+                    if (grocerystatus.getText().toString().equals(getString(R.string.done))
+                            && kitchenequipmentstatus.getText().toString().
+                            equals(getString(R.string.done))
+                            && gasstatus.getText().toString().equals(getString(R.string.yes))
+                            && electricitystatus.getText().toString().
+                            equals(getString(R.string.yes))
+                            && telephonestatus.getText().toString().
+                            equals(getString(R.string.yes))) {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Done");
+                        homeessentialstatus.setText(getString(R.string.done));
                         homeessentialstatus.setTextColor(Color.BLUE);
                     } else {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Pending");
+                        homeessentialstatus.setText(getString(R.string.pending));
                         homeessentialstatus.setTextColor(Color.RED);
                     }
                 } else {
-                    waterstatus.setText("No");
-                    if (grocerystatus.getText().toString().equals("Done")
-                            && kitchenequipmentstatus.getText().toString().equals("Done")
-                            && waterstatus.getText().toString().equals("Yes")
-                            && gasstatus.getText().toString().equals("Yes")
-                            && electricitystatus.getText().toString().equals("Yes")
-                            && telephonestatus.getText().toString().equals("Yes")) {
+                    waterstatus.setText(getString(R.string.no));
+                    if (grocerystatus.getText().toString().equals(getString(R.string.done))
+                            && kitchenequipmentstatus.getText().toString().
+                            equals(getString(R.string.done))
+                            && waterstatus.getText().toString().equals(getString(R.string.yes))
+                            && gasstatus.getText().toString().equals(getString(R.string.yes))
+                            && electricitystatus.getText().toString().
+                            equals(getString(R.string.yes))
+                            && telephonestatus.getText().toString().
+                            equals(getString(R.string.yes))) {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Done");
+                        homeessentialstatus.setText(getString(R.string.done));
                         homeessentialstatus.setTextColor(Color.BLUE);
                     } else {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Pending");
+                        homeessentialstatus.setText(getString(R.string.pending));
                         homeessentialstatus.setTextColor(Color.RED);
                     }
 
@@ -2986,34 +3223,40 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 if (item.equals("Y")) {
                     //   utils.toast(2, 2, getString(R.string.select_date));
 
-                    gasstatus.setText("Yes");
-                    if (grocerystatus.getText().toString().equals("Done")
-                            && kitchenequipmentstatus.getText().toString().equals("Done")
-                            && waterstatus.getText().toString().equals("Yes")
-                            && electricitystatus.getText().toString().equals("Yes")
-                            && telephonestatus.getText().toString().equals("Yes")) {
+                    gasstatus.setText(getString(R.string.yes));
+                    if (grocerystatus.getText().toString().equals(getString(R.string.done))
+                            && kitchenequipmentstatus.getText().toString().
+                            equals(getString(R.string.done))
+                            && waterstatus.getText().toString().equals(getString(R.string.yes))
+                            && electricitystatus.getText().toString().
+                            equals(getString(R.string.yes))
+                            && telephonestatus.getText().toString().
+                            equals(getString(R.string.yes))) {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Done");
+                        homeessentialstatus.setText(getString(R.string.done));
                         homeessentialstatus.setTextColor(Color.BLUE);
                     } else {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Pending");
+                        homeessentialstatus.setText(getString(R.string.pending));
                         homeessentialstatus.setTextColor(Color.RED);
                     }
                 } else {
-                    gasstatus.setText("No");
-                    if (grocerystatus.getText().toString().equals("Done")
-                            && kitchenequipmentstatus.getText().toString().equals("Done")
-                            && waterstatus.getText().toString().equals("Yes")
-                            && gasstatus.getText().toString().equals("Yes")
-                            && electricitystatus.getText().toString().equals("Yes")
-                            && telephonestatus.getText().toString().equals("Yes")) {
+                    gasstatus.setText(getString(R.string.no));
+                    if (grocerystatus.getText().toString().equals(getString(R.string.done))
+                            && kitchenequipmentstatus.getText().toString().
+                            equals(getString(R.string.done))
+                            && waterstatus.getText().toString().equals(getString(R.string.yes))
+                            && gasstatus.getText().toString().equals(getString(R.string.yes))
+                            && electricitystatus.getText().toString().
+                            equals(getString(R.string.yes))
+                            && telephonestatus.getText().toString().
+                            equals(getString(R.string.yes))) {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Done");
+                        homeessentialstatus.setText(getString(R.string.done));
                         homeessentialstatus.setTextColor(Color.BLUE);
                     } else {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Pending");
+                        homeessentialstatus.setText(getString(R.string.pending));
                         homeessentialstatus.setTextColor(Color.RED);
                     }
                 }
@@ -3027,34 +3270,39 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 if (item.equals("Y")) {
                     //  utils.toast(2, 2, getString(R.string.select_date));
 
-                    electricitystatus.setText("Yes");
-                    if (grocerystatus.getText().toString().equals("Done")
-                            && kitchenequipmentstatus.getText().toString().equals("Done")
-                            && gasstatus.getText().toString().equals("Yes")
-                            && waterstatus.getText().toString().equals("Yes")
-                            && telephonestatus.getText().toString().equals("Yes")) {
+                    electricitystatus.setText(getString(R.string.yes));
+                    if (grocerystatus.getText().toString().equals(getString(R.string.done))
+                            && kitchenequipmentstatus.getText().toString().
+                            equals(getString(R.string.done))
+                            && gasstatus.getText().toString().equals(getString(R.string.yes))
+                            && waterstatus.getText().toString().equals(getString(R.string.yes))
+                            && telephonestatus.getText().toString().
+                            equals(getString(R.string.yes))) {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Done");
+                        homeessentialstatus.setText(getString(R.string.done));
                         homeessentialstatus.setTextColor(Color.BLUE);
                     } else {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Pending");
+                        homeessentialstatus.setText(getString(R.string.pending));
                         homeessentialstatus.setTextColor(Color.RED);
                     }
                 } else {
-                    electricitystatus.setText("No");
-                    if (grocerystatus.getText().toString().equals("Done")
-                            && kitchenequipmentstatus.getText().toString().equals("Done")
-                            && gasstatus.getText().toString().equals("Yes")
-                            && waterstatus.getText().toString().equals("Yes")
-                            && electricitystatus.getText().toString().equals("Yes")
-                            && telephonestatus.getText().toString().equals("Yes")) {
+                    electricitystatus.setText(getString(R.string.no));
+                    if (grocerystatus.getText().toString().equals(getString(R.string.done))
+                            && kitchenequipmentstatus.getText().toString().
+                            equals(getString(R.string.done))
+                            && gasstatus.getText().toString().equals(getString(R.string.yes))
+                            && waterstatus.getText().toString().equals(getString(R.string.yes))
+                            && electricitystatus.getText().toString().
+                            equals(getString(R.string.yes))
+                            && telephonestatus.getText().toString().
+                            equals(getString(R.string.yes))) {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Done");
+                        homeessentialstatus.setText(getString(R.string.done));
                         homeessentialstatus.setTextColor(Color.BLUE);
                     } else {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Pending");
+                        homeessentialstatus.setText(getString(R.string.pending));
                         homeessentialstatus.setTextColor(Color.RED);
                     }
                 }
@@ -3069,34 +3317,39 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 if (item.equals("Y")) {
                     //   utils.toast(2, 2, getString(R.string.select_date));
 
-                    telephonestatus.setText("Yes");
-                    if (grocerystatus.getText().toString().equals("Done")
-                            && kitchenequipmentstatus.getText().toString().equals("Done")
-                            && gasstatus.getText().toString().equals("Yes")
-                            && electricitystatus.getText().toString().equals("Yes")
-                            && waterstatus.getText().toString().equals("Yes")) {
+                    telephonestatus.setText(getString(R.string.yes));
+                    if (grocerystatus.getText().toString().equals(getString(R.string.done))
+                            && kitchenequipmentstatus.getText().toString().
+                            equals(getString(R.string.done))
+                            && gasstatus.getText().toString().equals(getString(R.string.yes))
+                            && electricitystatus.getText().toString().
+                            equals(getString(R.string.yes))
+                            && waterstatus.getText().toString().equals(getString(R.string.yes))) {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Done");
+                        homeessentialstatus.setText(getString(R.string.done));
                         homeessentialstatus.setTextColor(Color.BLUE);
                     } else {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Pending");
+                        homeessentialstatus.setText(getString(R.string.pending));
                         homeessentialstatus.setTextColor(Color.RED);
                     }
                 } else {
-                    telephonestatus.setText("No");
-                    if (grocerystatus.getText().toString().equals("Done")
-                            && kitchenequipmentstatus.getText().toString().equals("Done")
-                            && gasstatus.getText().toString().equals("Yes")
-                            && electricitystatus.getText().toString().equals("Yes")
-                            && waterstatus.getText().toString().equals("Yes")
-                            && telephonestatus.getText().toString().equals("Yes")) {
+                    telephonestatus.setText(getString(R.string.no));
+                    if (grocerystatus.getText().toString().equals(getString(R.string.done))
+                            && kitchenequipmentstatus.getText().toString().
+                            equals(getString(R.string.done))
+                            && gasstatus.getText().toString().equals(getString(R.string.yes))
+                            && electricitystatus.getText().toString().
+                            equals(getString(R.string.yes))
+                            && waterstatus.getText().toString().equals(getString(R.string.yes))
+                            && telephonestatus.getText().toString().
+                            equals(getString(R.string.yes))) {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Done");
+                        homeessentialstatus.setText(getString(R.string.done));
                         homeessentialstatus.setTextColor(Color.BLUE);
                     } else {
                         homeessentialstatus.setVisibility(View.VISIBLE);
-                        homeessentialstatus.setText("Pending");
+                        homeessentialstatus.setText(getString(R.string.pending));
                         homeessentialstatus.setTextColor(Color.RED);
                     }
                 }
@@ -3105,16 +3358,16 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         }
 
 
-        if (waterstatus.getText().toString().equals("Yes")
-                && gasstatus.getText().toString().equals("Yes")
-                && electricitystatus.getText().toString().equals("Yes")
-                && telephonestatus.getText().toString().equals("Yes")) {
+        if (waterstatus.getText().toString().equals(getString(R.string.yes))
+                && gasstatus.getText().toString().equals(getString(R.string.yes))
+                && electricitystatus.getText().toString().equals(getString(R.string.yes))
+                && telephonestatus.getText().toString().equals(getString(R.string.yes))) {
             utilitystatus.setVisibility(View.VISIBLE);
-            utilitystatus.setText("Done");
+            utilitystatus.setText(getString(R.string.done));
             utilitystatus.setTextColor(Color.BLUE);
         } else {
             utilitystatus.setVisibility(View.VISIBLE);
-            utilitystatus.setText("Pending");
+            utilitystatus.setText(getString(R.string.pending));
             utilitystatus.setTextColor(Color.RED);
 
         }
@@ -3131,7 +3384,7 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
         super.onResume();
 
 
-        utils = new Utils(CheckInCareProcess.this);
+        utils = new Utils(CheckInCareActivity.this);
 
         try {
 
@@ -3143,8 +3396,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         mainlinearlayout.requestFocus();
                         if (IMAGE_COUNT < 20) {
 
-                            utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                                    + ".jpeg", null, CheckInCareProcess.this, false);
+                            utils.selectImage(String.valueOf(new Date().getDate() + ""
+                                    + new Date().getTime())
+                                    + ".jpeg", null, CheckInCareActivity.this, false);
                         } else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }
@@ -3159,8 +3413,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         mainlinearlayout.requestFocus();
                         if (IMAGE_COUNT < 20) {
 
-                            utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                                    + ".jpeg", null, CheckInCareProcess.this, false);
+                            utils.selectImage(String.valueOf(new Date().getDate() + ""
+                                    + new Date().getTime())
+                                    + ".jpeg", null, CheckInCareActivity.this, false);
                         } else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }
@@ -3175,8 +3430,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         mainlinearlayout.requestFocus();
                         if (IMAGE_COUNT < 20) {
 
-                            utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                                    + ".jpeg", null, CheckInCareProcess.this, false);
+                            utils.selectImage(String.valueOf(new Date().getDate() + ""
+                                    + new Date().getTime())
+                                    + ".jpeg", null, CheckInCareActivity.this, false);
                         } else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }
@@ -3191,8 +3447,9 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         mainlinearlayout.requestFocus();
                         if (IMAGE_COUNT < 20) {
 
-                            utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                                    + ".jpeg", null, CheckInCareProcess.this, false);
+                            utils.selectImage(String.valueOf(new Date().getDate() + ""
+                                    + new Date().getTime())
+                                    + ".jpeg", null, CheckInCareActivity.this, false);
                         } else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }
@@ -3214,56 +3471,30 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
             e.printStackTrace();
         }
 
-        if (hallstatus.getText().equals("Done")
-                && kitchenstatus.getText().equals("Done")
-                && washroomstatus.getText().equals("Done")
-                && bedroomstatus.getText().equals("Done")) {
+        if (hallstatus.getText().equals(getString(R.string.done))
+                && kitchenstatus.getText().equals(getString(R.string.done))
+                && washroomstatus.getText().equals(getString(R.string.done))
+                && bedroomstatus.getText().equals(getString(R.string.done))) {
 
             uploadmediastatus.setVisibility(View.VISIBLE);
-            uploadmediastatus.setText("Done");
+            uploadmediastatus.setText(getString(R.string.done));
             uploadmediastatus.setTextColor(Color.BLUE);
         } else {
             uploadmediastatus.setVisibility(View.VISIBLE);
-            uploadmediastatus.setText("Pending");
+            uploadmediastatus.setText(getString(R.string.pending));
             uploadmediastatus.setTextColor(Color.RED);
         }
 
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    /*public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("CheckInCareProcess Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }*/
-
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        //client2.connect();
-        //AppIndex.AppIndexApi.start(client2, getIndexApiAction());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        //AppIndex.AppIndexApi.end(client2, getIndexApiAction());
-        //client2.disconnect();
     }
 
     private class BackgroundThreadHandler extends Handler {
@@ -3301,15 +3532,18 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         File mCopyFile = utils.getInternalFileImages(strTime);
                         utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime, Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime,
+                                Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                         imageModel.setmIsNew(true);
 
                         hallimageModels.add(imageModel);
 
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
+                                Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
-                        hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                                Config.intWidth, Config.intHeight));
 
                         IMAGE_COUNT++;
 
@@ -3332,16 +3566,19 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         File mCopyFile = utils.getInternalFileImages(strTime);
                         utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime, Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime,
+                                Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                         imageModel.setmIsNew(true);
 
                         kitchenimageModels.add(imageModel);
 
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
+                                Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
 
-                        kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                                Config.intWidth, Config.intHeight));
 
                         IMAGE_COUNT++;
 
@@ -3364,16 +3601,19 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         File mCopyFile = utils.getInternalFileImages(strTime);
                         utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime, Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime,
+                                Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                         imageModel.setmIsNew(true);
 
                         washroomimageModels.add(imageModel);
 
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
+                                Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
 
-                        washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                                Config.intWidth, Config.intHeight));
 
                         IMAGE_COUNT++;
 
@@ -3396,16 +3636,19 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         File mCopyFile = utils.getInternalFileImages(strTime);
                         utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime, Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        ImageModel imageModel = new ImageModel(strTime, "", strTime,
+                                Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                         imageModel.setmIsNew(true);
 
                         bedroomimageModels.add(imageModel);
 
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
+                                Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
 
-                        bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                                Config.intWidth, Config.intHeight));
 
                         IMAGE_COUNT++;
 
@@ -3435,14 +3678,17 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         utils.copyFile(new File(strImageName), mCopyFile);
 
                         Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName, Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        ImageModel imageModel = new ImageModel(strName, "", strName,
+                                Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                         imageModel.setmIsNew(true);
 
                         hallimageModels.add(imageModel);
 
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
+                                Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
-                        hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                                Config.intWidth, Config.intHeight));
 
                         hallImageCount++;
 
@@ -3465,14 +3711,17 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         utils.copyFile(new File(strImageName), mCopyFile);
 
                         Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName, Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        ImageModel imageModel = new ImageModel(strName, "", strName,
+                                Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                         imageModel.setmIsNew(true);
 
                         kitchenimageModels.add(imageModel);
 
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
+                                Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
-                        kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                                Config.intWidth, Config.intHeight));
 
                         kitchenImageCount++;
 
@@ -3495,14 +3744,17 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         utils.copyFile(new File(strImageName), mCopyFile);
 
                         Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName, Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        ImageModel imageModel = new ImageModel(strName, "", strName,
+                                Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                         imageModel.setmIsNew(true);
 
                         washroomimageModels.add(imageModel);
 
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
+                                Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
-                        washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                                Config.intWidth, Config.intHeight));
 
                         washroomImageCount++;
 
@@ -3525,14 +3777,17 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                         utils.copyFile(new File(strImageName), mCopyFile);
 
                         Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName, Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                        ImageModel imageModel = new ImageModel(strName, "", strName,
+                                Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                         imageModel.setmIsNew(true);
 
                         bedroomimageModels.add(imageModel);
 
-                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                        utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
+                                Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
 
-                        bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                                Config.intWidth, Config.intHeight));
 
                         bedroomImageCount++;
 
@@ -3554,8 +3809,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 try {
 
                     for (ImageModel imageModel : hallimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                            hallbitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        if (imageModel.getStrImageName() != null
+                                && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                            hallbitmaps.add(utils.getBitmapFromFile(
+                                    utils.getInternalFileImages(imageModel.getStrImageDesc()).
+                                            getAbsolutePath(), Config.intWidth, Config.intHeight));
 
                             imageModel.setmIsNew(false);
 
@@ -3570,8 +3828,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 try {
 
                     for (ImageModel imageModel : kitchenimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                            kitchenbitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().
+                                equalsIgnoreCase("")) {
+                            kitchenbitmaps.add(utils.getBitmapFromFile(utils.
+                                    getInternalFileImages(imageModel.getStrImageDesc()).
+                                    getAbsolutePath(), Config.intWidth, Config.intHeight));
 
                             imageModel.setmIsNew(false);
 
@@ -3586,8 +3847,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 try {
 
                     for (ImageModel imageModel : washroomimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                            washroombitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().
+                                equalsIgnoreCase("")) {
+                            washroombitmaps.add(utils.getBitmapFromFile(utils.
+                                    getInternalFileImages(imageModel.getStrImageDesc()).
+                                    getAbsolutePath(), Config.intWidth, Config.intHeight));
 
                             imageModel.setmIsNew(false);
 
@@ -3602,8 +3866,11 @@ public class CheckInCareProcess extends AppCompatActivity implements View.OnClic
                 try {
 
                     for (ImageModel imageModel : bedroomimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().equalsIgnoreCase("")) {
-                            bedroombitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(imageModel.getStrImageName()).getAbsolutePath(), Config.intWidth, Config.intHeight));
+                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().
+                                equalsIgnoreCase("")) {
+                            bedroombitmaps.add(utils.getBitmapFromFile(utils.
+                                    getInternalFileImages(imageModel.getStrImageDesc()).
+                                    getAbsolutePath(), Config.intWidth, Config.intHeight));
 
                             imageModel.setmIsNew(false);
 

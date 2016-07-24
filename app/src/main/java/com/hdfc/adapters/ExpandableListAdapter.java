@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hdfc.app42service.StorageService;
-import com.hdfc.caregiver.CheckInCareProcess;
+import com.hdfc.caregiver.CheckInCareActivity;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
@@ -287,6 +287,43 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     }
 
+    private void fetchAllCheckinCares(String strStartDate, String strEndDate) {
+
+        /*String strQuery = "SELECT a." + DbHelper.COLUMN_DOCUMENT + " AS C1 , b."
+                + DbHelper.COLUMN_MILESTONE_ID + " AS C2, b." + DbHelper.COLUMN_OBJECT_ID
+                + " AS C3 FROM " + DbHelper.strTableNameCollection + " AS a INNER JOIN "
+                + DbHelper.strTableNameMilestone + " AS b ON a.object_id=b.object_id  WHERE b."
+                + DbHelper.COLUMN_MILESTONE_DATE + ">= Datetime('" + strStartDate + "') AND b."
+                + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "') ORDER BY"
+                + " b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC LIMIT 0, 30000";
+
+        Utils.log(strQuery, " QUERY ");
+
+        Cursor newCursor = CareGiver.getDbCon().rawQuery(strQuery);
+
+        if (newCursor.getCount() > 0) {
+
+            newCursor.moveToFirst();
+
+            Boolean isActivity = true;
+
+            while (!newCursor.isAfterLast()) {
+
+                if (!Config.strActivityIds.contains(newCursor.getString(2))) {
+                    Config.strActivityIds.add(newCursor.getString(2));
+
+                    if (!newCursor.getString(1).equalsIgnoreCase("0"))
+                        isActivity = false;
+
+                    JSONObject jsonObject = new JSONObject(newCursor.getString(0));
+
+                    createActivityModel(jsonObject, newCursor.getString(2), isActivity);
+                }
+                newCursor.moveToNext();
+            }
+        }*/
+    }
+
     private void fetchCheckInCareName(String iMonth, String iYear, String CustomerId, String ProviderId) {
 
         iMonth = iMonth; // - 1
@@ -363,7 +400,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                                 create.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View view) {
-                                                        Intent i = new Intent(_context, CheckInCareProcess.class);
+                                                        Intent i = new Intent(_context, CheckInCareActivity.class);
                                                         _context.startActivity(i);
 
                                                     }
@@ -417,7 +454,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                             public void onClick(DialogInterface dialog, int item) {
 
                                                 if (items[item].equals("Create New")) {
-                                                    Intent i = new Intent(_context, CheckInCareProcess.class);
+                                                    Intent i = new Intent(_context, CheckInCareActivity.class);
                                                     _context.startActivity(i);
 
                                                 } else if (items[item].equals("Cancel")) {

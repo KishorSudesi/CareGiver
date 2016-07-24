@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hdfc.caregiver.CheckInCareProcess;
+import com.hdfc.caregiver.CheckInCareActivity;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
@@ -24,13 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ClientAdapter extends BaseExpandableListAdapter {
+    private final LayoutInflater inf;
     private Context _context;
     private List<CustomerModel> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<CustomerModel, List<DependentModel>> _listDataChild;
     private Utils utils;
     private MultiBitmapLoader multiBitmapLoader;
-    private final LayoutInflater inf;
 //    private ExpandableListView expListView;
 
    /* public ClientAdapter(){
@@ -199,7 +199,7 @@ public class ClientAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 Config.customerModel = (CustomerModel) v.getTag();
-                Intent next = new Intent(_context, CheckInCareProcess.class);
+                Intent next = new Intent(_context, CheckInCareActivity.class);
                 _context.startActivity(next);
 
             }
