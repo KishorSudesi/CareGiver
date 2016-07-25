@@ -796,6 +796,10 @@ public class MilestoneActivity extends AppCompatActivity {
                                     public void permissionGranted() {
                                         //action to perform when permission granteed
                                         isAllowed = true;
+
+                                        if (isAllowed)
+                                            utils.selectImage(strImageName1, null,
+                                                    MilestoneActivity.this, false);
                                     }
 
                                     @Override
@@ -806,8 +810,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                 }
                         );
 
-                        if (isAllowed)
-                            utils.selectImage(strImageName1, null, MilestoneActivity.this, false);
+                        /*if (isAllowed)
+                            utils.selectImage(strImageName1, null, MilestoneActivity.this, false);*/
 
                     }
                 });

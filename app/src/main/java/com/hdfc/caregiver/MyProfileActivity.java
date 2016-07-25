@@ -132,6 +132,7 @@ public class MyProfileActivity extends AppCompatActivity {
                             public void permissionGranted() {
                                 //action to perform when permission granteed
                                 isAllowed = true;
+                                openProfilePicker();
                             }
 
                             @Override
@@ -142,10 +143,7 @@ public class MyProfileActivity extends AppCompatActivity {
                         }
                 );
 
-                if (Flag == 1 && isAllowed) {
-                    utils.selectImage(String.valueOf(new Date().getDate() + ""
-                            + new Date().getTime()) + ".jpeg", null, MyProfileActivity.this, true);
-                }
+                //openProfilePicker();
             }
         });
        /* imageplace.setOnClickListener(new View.OnClickListener() {
@@ -358,6 +356,13 @@ public class MyProfileActivity extends AppCompatActivity {
     /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
     }*/
+
+    private void openProfilePicker() {
+        if (Flag == 1 && isAllowed) {
+            utils.selectImage(String.valueOf(new Date().getDate() + ""
+                    + new Date().getTime()) + ".jpeg", null, MyProfileActivity.this, true);
+        }
+    }
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {

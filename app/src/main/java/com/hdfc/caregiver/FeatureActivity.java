@@ -885,6 +885,8 @@ public class FeatureActivity extends AppCompatActivity {
                                         public void permissionGranted() {
                                             //action to perform when permission granteed
                                             isAllowed = true;
+                                            if (isAllowed)
+                                                utils.selectFile(strImageName, null, FeatureActivity.this, false);
                                         }
 
                                         @Override
@@ -895,8 +897,8 @@ public class FeatureActivity extends AppCompatActivity {
                                     }
                             );
 
-                            if (isAllowed)
-                                utils.selectFile(strImageName, null, FeatureActivity.this, false);
+                            /*if (isAllowed)
+                                utils.selectFile(strImageName, null, FeatureActivity.this, false);*/
                         } else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }
