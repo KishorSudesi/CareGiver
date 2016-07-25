@@ -1576,7 +1576,7 @@ public class AppUtils {
                     + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "')"
                     + " AND a." + DbHelper.COLUMN_COLLECTION_NAME + "='" + Config.collectionActivity + "'"
                     + " AND b." + DbHelper.COLUMN_MILESTONE_ID + "!=-1 ORDER BY"
-                    + " b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC LIMIT 0, 30000";
+                    + " b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC";
 
             Utils.log(strQuery, " QUERY ");
 
@@ -2446,6 +2446,7 @@ public class AppUtils {
             checkInCareModel.setStrMonth(jsonObjectCheck.optString("month"));
             checkInCareModel.setStrYear(jsonObjectCheck.optString("year"));
             checkInCareModel.setStrCustomerID(jsonObjectCheck.optString("customer_id"));
+            checkInCareModel.setStrCreatedActualDate(jsonObjectCheck.optString("created_date_actual"));
 
             JSONArray subMainactivities = jsonObjectCheck.optJSONArray("activities");
             JSONArray picture = jsonObjectCheck.optJSONArray("picture");

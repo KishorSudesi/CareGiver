@@ -376,6 +376,44 @@ public class FeatureActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+            String[] selectionArgs = {
+                    act.getStrActivityID()
+                    , Config.collectionActivity};
+
+            Cursor cursor = CareGiver.getDbCon().fetch(DbHelper.strTableNameCollection,
+                    DbHelper.COLLECTION_FIELDS, selection, selectionArgs, null, "0, 1", true,
+                    null, null
+            );
+
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+
+                try {
+                    JSONObject jsonObject = new JSONObject(cursor.getString(2));
+                    jsonObject.put("images", jsonArrayImagesAdded);
+
+                    //
+                    String values1[] = {act.getStrActivityID(),
+                            "",
+                            jsonObject.toString(),
+                            Config.collectionActivity, "0", "", "1"};
+
+                    // WHERE clause arguments
+                    CareGiver.getDbCon().updateInsert(
+                            DbHelper.strTableNameCollection,
+                            selection, values1, DbHelper.COLLECTION_FIELDS,
+                            selectionArgs);
+                    ////
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            CareGiver.getDbCon().closeCursor(cursor);
+
             storageService.updateDocs(jsonToUpdate,
                     act.getStrActivityID(),
                     Config.collectionActivity, new App42CallBack() {
@@ -653,7 +691,9 @@ public class FeatureActivity extends AppCompatActivity {
                     final ImageView imageView = new ImageView(FeatureActivity.this);
                     imageView.setPadding(0, 0, 3, 0);
 
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
                     Utils.log(String.valueOf(imageModels.get(i).getStrImageName() + " # " +
@@ -886,7 +926,7 @@ public class FeatureActivity extends AppCompatActivity {
                                             //action to perform when permission granteed
                                             isAllowed = true;
                                             if (isAllowed)
-                                                utils.selectFile(strImageName, null,
+                                                utils.selectImage(strImageName, null,
                                                         FeatureActivity.this, false);
                                         }
 

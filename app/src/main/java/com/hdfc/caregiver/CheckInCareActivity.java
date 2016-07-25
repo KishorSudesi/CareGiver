@@ -515,21 +515,21 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 //checkInCareModel = null;
             }
 
-            if (editcheckincare && mPosition > -1) {
+            if (editcheckincare && Config.checkInCareModel != null) {
 
                 //checkInCareModel = Config.checkInCareModels.get(mPosition);
 
-                String checkcareid = Config.checkInCareModels.get(mPosition).getStrName();
-                String topdate = Config.checkInCareModels.get(mPosition).getStrCurrentDate();
-                String editcomment = Config.checkInCareModels.get(mPosition).getStrMediaComment();
+                String checkcareid = Config.checkInCareModel.getStrName();
+                String topdate = Config.checkInCareModel.getStrCurrentDate();
+                String editcomment = Config.checkInCareModel.getStrMediaComment();
 
                 checkincarename.setText(checkcareid);
                 datetxt.setText(topdate);
-                strSelectedDate = topdate;
+                strSelectedDate = Config.checkInCareModel.getStrCreatedActualDate();
+                Utils.log(topdate, " DATE ");
                 mediacomment.setText(editcomment);
 
-                ArrayList<CheckInCareActivityModel> activity = Config.checkInCareModels.
-                        get(mPosition).getCheckInCareActivityModels();
+                ArrayList<CheckInCareActivityModel> activity = Config.checkInCareModel.getCheckInCareActivityModels();
 
                 if (activity != null) {
                     for (int i = 0; i < activity.size(); i++) {
@@ -702,7 +702,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     }
                 }
 
-                ArrayList<PictureModel> picture = Config.checkInCareModels.get(mPosition).
+                ArrayList<PictureModel> picture = Config.checkInCareModel.
                         getPictureModels();
                 if (picture != null) {
 
@@ -1042,11 +1042,16 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
     private void uploadHallImage() {
 
-        onCreateDialog(DIALOG_DOWNLOAD_PROGRESS1);
+        //onCreateDialog(DIALOG_DOWNLOAD_PROGRESS1);
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage(getString(R.string.loading));
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.show();
 
         if (hallImageCount > 0) {
 
-            onCreateDialog(DIALOG_DOWNLOAD_PROGRESS1);
+            //onCreateDialog(DIALOG_DOWNLOAD_PROGRESS1);
 
             bLoad = false;
 
@@ -1112,8 +1117,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                 @Override
                                 public void onException(Exception e) {
-                                    if (mProgressDialog != null)
-                                        mProgressDialog.dismiss();
+                                  /*  if (mProgressDialog != null)
+                                        mProgressDialog.dismiss();*/
                                     if (e != null) {
                                         Utils.log(e.getMessage(), " Failure ");
                                         hallImageUploadCount++;
@@ -1155,8 +1160,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             }
 
         } else {
-            if (mProgressDialog != null)
-                mProgressDialog.dismiss();
+          /*  if (mProgressDialog != null)
+                mProgressDialog.dismiss();*/
 
             uploadKitchenImage();
 
@@ -1279,8 +1284,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }
             }
         } else {
-            if (mProgressDialog != null)
-                mProgressDialog.dismiss();
+          /*  if (mProgressDialog != null)
+                mProgressDialog.dismiss();*/
 
             uploadWashroomImage();
 
@@ -1403,8 +1408,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }
             }
         } else {
-            if (mProgressDialog != null)
-                mProgressDialog.dismiss();
+           /* if (mProgressDialog != null)
+                mProgressDialog.dismiss();*/
 
             uploadBedroomImage();
 
@@ -1529,8 +1534,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }
             }
         } else {
-            if (mProgressDialog != null)
-                mProgressDialog.dismiss();
+           /* if (mProgressDialog != null)
+                mProgressDialog.dismiss();*/
 
             if(editcheckincare){
                 editupdateJson();
@@ -1547,7 +1552,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             JSONObject jsonObjectCheckinCare = null;
 
-
             try {
                 jsonObjectCheckinCare = new JSONObject();
 
@@ -1562,6 +1566,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectCheckinCare.put("updated_date", "");
                 jsonObjectCheckinCare.put("current_date", datetxt.getText().toString());
                 jsonObjectCheckinCare.put("status", "New");
+                jsonObjectCheckinCare.put("created_date_actual", strSelectedDate);
                 jsonObjectCheckinCare.put("month", strMonth);
                 jsonObjectCheckinCare.put("year", strYear);
                 jsonObjectCheckinCare.put("house_name", "Our House");
@@ -1864,6 +1869,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onDocumentInserted(Storage response) {
                             try {
+                                if (mProgressDialog.isShowing())
+                                    mProgressDialog.dismiss();
                                 if (response.isResponseSuccess()) {
 
                                     if (response.getJsonDocList().size() > 0) {
@@ -1944,6 +1951,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onInsertionFailed(App42Exception ex) {
                             try {
+                                if (mProgressDialog.isShowing())
+                                    mProgressDialog.dismiss();
                                 if (ex != null) {
                                     JSONObject jsonObject = new JSONObject(ex.getMessage());
                                     JSONObject jsonObjectError = jsonObject.
@@ -1970,15 +1979,15 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     });
 
         } else {
+            if (mProgressDialog.isShowing())
+                mProgressDialog.dismiss();
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }
 
     private void editupdateJson(){
 
-
             JSONObject jsonObjectCheckinCare = null;
-
 
             try {
                 jsonObjectCheckinCare = new JSONObject();
@@ -1993,6 +2002,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectCheckinCare.put("provider_id", Config.providerModel.getStrProviderId());
                 jsonObjectCheckinCare.put("updated_date", "");
                 jsonObjectCheckinCare.put("current_date", datetxt.getText().toString());
+                jsonObjectCheckinCare.put("created_date_actual", strSelectedDate);
                 jsonObjectCheckinCare.put("status", "New");
                 jsonObjectCheckinCare.put("month", strMonth);
                 jsonObjectCheckinCare.put("year", strYear);
@@ -2224,7 +2234,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 ////////////////activity1
 
 
-                ///////////////////////activity 2
+                ///////////// //////////activity 2
                 JSONObject jsonObjectActivitiesDomestic = new JSONObject();
 
                 jsonObjectActivitiesDomestic.put("activity_name", "domestic_help_status");
@@ -2336,7 +2346,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     Config.collectionCheckInCare, new App42CallBack() {
                         @Override
                         public void onSuccess(Object response) {
-                            Utils.log(response.toString(), "Success");
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            //Utils.log(response.toString(), "Success");
                             IMAGE_COUNT = 0;
                             utils.toast(2, 2, getString(R.string.data_upload));
                             Intent intent = new Intent(CheckInCareActivity.this,
@@ -2349,11 +2361,15 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onException(Exception e) {
                             e.printStackTrace();
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
                             utils.toast(2, 2, getString(R.string.warning_internet));
                         }
                     });
 
         } else {
+            if (mProgressDialog.isShowing())
+                mProgressDialog.dismiss();
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }
@@ -2433,10 +2449,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
-                    Utils.log(String.valueOf(hallimageModels.get(i).getStrImageName() + " # " +
+                /*    Utils.log(String.valueOf(hallimageModels.get(i).getStrImageName() + " # " +
                             hallimageModels.get(i).getStrImagePath()), " height 0 ");
 
-                    Utils.log(String.valueOf(hallbitmaps.get(i).getHeight()), " height ");
+                    Utils.log(String.valueOf(hallbitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
                     imageView.setImageBitmap(hallbitmaps.get(i));
@@ -2635,10 +2651,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
-                    Utils.log(String.valueOf(kitchenimageModels.get(i).getStrImageName() + " # " +
+            /*        Utils.log(String.valueOf(kitchenimageModels.get(i).getStrImageName() + " # " +
                             kitchenimageModels.get(i).getStrImagePath()), " height 0 ");
 
-                    Utils.log(String.valueOf(kitchenbitmaps.get(i).getHeight()), " height ");
+                    Utils.log(String.valueOf(kitchenbitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
                     imageView.setImageBitmap(kitchenbitmaps.get(i));
@@ -2841,10 +2857,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
-                    Utils.log(String.valueOf(washroomimageModels.get(i).getStrImageName() + " # " +
+                 /*   Utils.log(String.valueOf(washroomimageModels.get(i).getStrImageName() + " # " +
                             washroomimageModels.get(i).getStrImagePath()), " height 0 ");
 
-                    Utils.log(String.valueOf(washroombitmaps.get(i).getHeight()), " height ");
+                    Utils.log(String.valueOf(washroombitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
                     imageView.setImageBitmap(washroombitmaps.get(i));
@@ -3044,10 +3060,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
-                    Utils.log(String.valueOf(bedroomimageModels.get(i).getStrImageName() + " # " +
+            /*        Utils.log(String.valueOf(bedroomimageModels.get(i).getStrImageName() + " # " +
                             bedroomimageModels.get(i).getStrImagePath()), " height 0 ");
 
-                    Utils.log(String.valueOf(bedroombitmaps.get(i).getHeight()), " height ");
+                    Utils.log(String.valueOf(bedroombitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
                     imageView.setImageBitmap(bedroombitmaps.get(i));

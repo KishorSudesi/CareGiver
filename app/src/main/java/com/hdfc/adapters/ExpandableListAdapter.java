@@ -346,33 +346,32 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         CareGiver.getDbCon().closeCursor(newCursor);
 
-        ///
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context);
-        View convertView = inf.inflate(R.layout.custom_dialog, null);
-
         if (Config.checkInCareModels.size() <= 0) {
-            final CharSequence[] items = {"Create New", "Cancel"};
+            final CharSequence[] items = {_context.getString(R.string.create_new),
+                    _context.getString(R.string.cancel)};
 
             AlertDialog.Builder builder = new AlertDialog.Builder(_context);
 
-            builder.setTitle("Check In Care");
+            builder.setTitle(_context.getString(R.string.check_in_care));
             builder.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int item) {
 
-                    if (items[item].equals("Create New")) {
+                    if (items[item].equals(_context.getString(R.string.create_new))) {
                         Intent i = new Intent(_context, CheckInCareActivity.class);
                         _context.startActivity(i);
 
-                    } else if (items[item].equals("Cancel")) {
+                    } else if (items[item].equals(_context.getString(R.string.cancel))) {
                         dialog.dismiss();
                     }
                 }
             });
             builder.show();
         } else {
+            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context);
+            View convertView = inf.inflate(R.layout.custom_dialog, null);
 
-            alertDialog.setTitle("Check In Care");
+            alertDialog.setTitle(_context.getString(R.string.check_in_care));
 
             ListView listview = (ListView) convertView.findViewById(R.id.dialoglist);
             Button create = (Button) convertView.findViewById(R.id.createnew);

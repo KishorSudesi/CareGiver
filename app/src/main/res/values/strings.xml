@@ -243,6 +243,7 @@
     <!--List View Empty Strings-->
     <string name="no_activities">No Activities</string>
     <string name="no_notifications">Notifications Not Available</string>
+    <string name="no_new_notifications">No New Notifications Available</string>
     <string name="no_services">No Services</string>
 
     <!--File Picker Strings-->

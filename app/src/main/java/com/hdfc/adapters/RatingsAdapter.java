@@ -80,22 +80,24 @@ public class RatingsAdapter extends BaseAdapter {
 
             //FeedBackModel feedBackModel = data1.get(position);
 
-            viewHolder.feedback.setText(data1.get(position).getStrFeedBackMessage());
-            viewHolder.time.setText(Utils.writeFormat.format(Utils.convertStringToDate(data1.get(position).getStrFeedBackTime())));
+            try {
 
-            if (data1.get(position).getIntFeedBackRating() == 1) {
-                viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_1));
-            } else if (data1.get(position).getIntFeedBackRating() == 2) {
-                viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_2));
-            } else if (data1.get(position).getIntFeedBackRating() == 3) {
-                viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_3));
-            } else if (data1.get(position).getIntFeedBackRating() == 4) {
-                viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_4));
-            } else {
-                viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_5));
-            }
+                viewHolder.feedback.setText(data1.get(position).getStrFeedBackMessage());
+                viewHolder.time.setText(Utils.writeFormat.format(Utils.convertStringToDate(data1.get(position).getStrFeedBackTime())));
 
-            //
+                if (data1.get(position).getIntFeedBackRating() == 1) {
+                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_1));
+                } else if (data1.get(position).getIntFeedBackRating() == 2) {
+                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_2));
+                } else if (data1.get(position).getIntFeedBackRating() == 3) {
+                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_3));
+                } else if (data1.get(position).getIntFeedBackRating() == 4) {
+                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_4));
+                } else {
+                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_5));
+                }
+
+                //
            /* File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(feedBackModel.getStrFeedBackBy()));
 
             if(fileImage.exists()) {
@@ -105,49 +107,52 @@ public class RatingsAdapter extends BaseAdapter {
                 viewHolder.image.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
             }*/
 
-            //todo add for dependent
+                //todo add for dependent
 
-            //String strId;
+                //String strId;
 
-            if (!data1.get(position).getStrFeedBackBy().equalsIgnoreCase("")) {
+                if (!data1.get(position).getStrFeedBackBy().equalsIgnoreCase("")) {
 
-                String strId = data1.get(position).getStrFeedBackBy();
+                    String strId = data1.get(position).getStrFeedBackBy();
 
-                String strColumnName = Config.collectionCustomer;
+                    String strColumnName = Config.collectionCustomer;
 
-                Cursor cursor1 = CareGiver.getDbCon().fetch(
-                        DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
-                        new String[]{strColumnName, strId}, null, "0,1", true, null, null
-                );
+                    Cursor cursor1 = CareGiver.getDbCon().fetch(
+                            DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                            DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                            new String[]{strColumnName, strId}, null, "0,1", true, null, null
+                    );
 
-                JSONObject jsonObject = null;
+                    JSONObject jsonObject = null;
 
-                if (cursor1.getCount() > 0) {
-                    cursor1.moveToFirst();
+                    if (cursor1.getCount() > 0) {
+                        cursor1.moveToFirst();
+                        try {
+                            jsonObject = new JSONObject(cursor1.getString(0));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    CareGiver.getDbCon().closeCursor(cursor1);
+
                     try {
-                        jsonObject = new JSONObject(cursor1.getString(0));
+                        if (jsonObject != null && jsonObject.getString("customer_profile_url") != null
+                                && !jsonObject.getString("customer_profile_url").equalsIgnoreCase("")) {
+                            Glide.with(_context)
+                                    .load(jsonObject.getString("customer_profile_url"))
+                                    .centerCrop()
+                                    .bitmapTransform(new CropCircleTransformation(_context))
+                                    .placeholder(R.drawable.person_icon)
+                                    .crossFade()
+                                    .into(viewHolder.image);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-
-                CareGiver.getDbCon().closeCursor(cursor1);
-
-                try {
-                    if (jsonObject != null && jsonObject.getString("customer_profile_url") != null
-                            && !jsonObject.getString("customer_profile_url").equalsIgnoreCase("")) {
-                        Glide.with(_context)
-                                .load(jsonObject.getString("customer_profile_url"))
-                                .centerCrop()
-                                .bitmapTransform(new CropCircleTransformation(_context))
-                                .placeholder(R.drawable.person_icon)
-                                .crossFade()
-                                .into(viewHolder.image);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return convertView;

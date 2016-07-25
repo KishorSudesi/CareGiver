@@ -18,6 +18,7 @@ public class CheckInCareModel {
     private String strUpdatedDate = "";
     private String strCheckInCareName = "";
     private String strMediaComment = "";
+    private String strCreatedActualDate = "";
 
 
     private String strCustomerID;
@@ -56,16 +57,28 @@ public class CheckInCareModel {
 
     }
 
+    public String getStrStatus() {
+        return strStatus;
+    }
+
+    public void setStrStatus(String strStatus) {
+        this.strStatus = strStatus;
+    }
+
+    public String getStrCreatedActualDate() {
+        return strCreatedActualDate;
+    }
+
+    public void setStrCreatedActualDate(String strCreatedActualDate) {
+        this.strCreatedActualDate = strCreatedActualDate;
+    }
+
     public String getStrName() {
         return strName;
     }
 
     public void setStrName(String strName) {
         this.strName = strName;
-    }
-  
-    public void setStrStatus(String strStatus) {
-        this.strStatus = strStatus;
     }
 
     public String getStrMonth() {

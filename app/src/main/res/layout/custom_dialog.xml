@@ -1,41 +1,21 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/customdialog"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:minWidth="300dp"
+    android:orientation="vertical"
     android:padding="10dp">
 
-    <RelativeLayout
-        android:id="@+id/line1"
+    <ListView
+        android:id="@+id/dialoglist"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/blue"></RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/releative"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/line1">
-
-        <ListView
-            android:id="@+id/dialoglist"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/line2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/releative"
-        android:layout_marginBottom="2dp"
-        android:background="@color/black"></RelativeLayout>
+        android:layout_height="300dp"
+        android:layout_margin="@dimen/margin_general" />
 
     <Button
         android:id="@+id/createnew"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_below="@+id/line2"
+        android:layout_margin="@dimen/margin_general"
         android:layout_marginBottom="5dp"
         android:background="@drawable/button_success"
         android:gravity="center"
@@ -47,12 +27,11 @@
         android:id="@+id/cancel"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_below="@+id/createnew"
-        android:layout_marginBottom="5dp"
+        android:layout_margin="5dp"
         android:background="@drawable/button_success"
         android:gravity="center"
         android:text="@string/cancel"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorWhite" />
 
-</RelativeLayout>
+</LinearLayout>

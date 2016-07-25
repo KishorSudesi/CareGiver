@@ -35,7 +35,9 @@ import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.libs.simpleTooltip.SimpleTooltip;
@@ -49,6 +51,8 @@ import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
+
+import net.sqlcipher.Cursor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1665,6 +1669,48 @@ public class MilestoneActivity extends AppCompatActivity {
                 Config.activityModels.get(iActivityPosition).setStrActivityDoneDate(
                         strActivityDoneDate);
             }
+
+            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+            String[] selectionArgs = {
+                    act.getStrActivityID()
+                    , Config.collectionActivity};
+
+            Cursor cursor = CareGiver.getDbCon().fetch(DbHelper.strTableNameCollection,
+                    DbHelper.COLLECTION_FIELDS, selection, selectionArgs, null, "0, 1", true,
+                    null, null
+            );
+
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+
+                try {
+                    JSONObject jsonObject = new JSONObject(cursor.getString(2));
+
+                    jsonObject.put("milestones", jsonArrayMilestones);
+                    jsonObject.put("status", strActivityStatus);
+                    jsonObject.put("activity_done_date", strActivityDoneDate);
+
+                    //
+                    //appUtils.insertActivityDate(act.getStrActivityID(), jsonObject);
+                    /*String values1[] = {act.getStrActivityID(),
+                            "",
+                            jsonObject.toString(),
+                            Config.collectionActivity, "0", "", "1"};
+
+                    // WHERE clause arguments
+                    CareGiver.getDbCon().updateInsert(
+                            DbHelper.strTableNameCollection,
+                            selection, values1, DbHelper.COLLECTION_FIELDS,
+                            selectionArgs);*/
+                    ////
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            CareGiver.getDbCon().closeCursor(cursor);
 
 
             updateMileStones(jsonObjectMileStone);

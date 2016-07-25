@@ -251,7 +251,7 @@ public class NotificationFragment extends Fragment {
                                 if (e == null)
                                     utils.toast(2, 2, getString(R.string.warning_internet));
                                 else
-                                    utils.toast(1, 1, getString(R.string.error));
+                                    utils.toast(1, 1, getString(R.string.no_new_notifications));
                             }
                         }
                     });

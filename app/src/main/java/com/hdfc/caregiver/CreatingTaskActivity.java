@@ -359,6 +359,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
             });
         }
         refreshCustomerAdapter();
+
+        loadingPanel.setVisibility(View.VISIBLE);
         fetchServices();
     }
 
@@ -465,6 +467,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
 
     private void refreshServices() {
+
+        loadingPanel.setVisibility(View.GONE);
 
         Config.strServcieIds.clear();
         Config.serviceModels.clear();
