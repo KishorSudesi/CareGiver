@@ -99,6 +99,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);
+        appUtils.createCustomerModel();
         storageService = new StorageService(CreatingTaskActivity.this);
 
         dependentList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
