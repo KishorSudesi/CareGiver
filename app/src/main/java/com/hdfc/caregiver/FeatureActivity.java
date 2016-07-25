@@ -886,7 +886,8 @@ public class FeatureActivity extends AppCompatActivity {
                                             //action to perform when permission granteed
                                             isAllowed = true;
                                             if (isAllowed)
-                                                utils.selectFile(strImageName, null, FeatureActivity.this, false);
+                                                utils.selectFile(strImageName, null,
+                                                        FeatureActivity.this, false);
                                         }
 
                                         @Override

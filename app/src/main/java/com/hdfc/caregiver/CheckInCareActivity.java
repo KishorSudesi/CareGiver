@@ -131,7 +131,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             // the date and time that the user has selected.
 
             strDate = Utils.writeFormatDateMY.format(date);
-            strSelectedDate = Utils.queryFormat.format(date);
+            strSelectedDate = Utils.readFormatLocalDB.format(date);
 
             String strwaterDate = Utils.writeFormat.format(date);
             String strelectricityDate = Utils.writeFormat.format(date);
@@ -1884,8 +1884,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                         jsonObject.getString("activity_date").length() - 1)));*/
 
                                         String values1[] = {jsonDocument.getDocId(),
-                                                "0",
-                                                strSelectedDate};
+                                                "-1",
+                                                strSelectedDate,
+                                                Config.customerModel.getStrCustomerID()
+                                        };
 
                                         String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                                 + DbHelper.COLUMN_MILESTONE_ID + "=? ";
@@ -1896,7 +1898,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                         CareGiver.getDbCon().updateInsert(
                                                 DbHelper.strTableNameMilestone,
-                                                selection1, values1, DbHelper.MILESTONE_FIELDS,
+                                                selection1, values1, DbHelper.CCARE_FIELDS,
                                                 selectionArgs1);
 
                                     }
@@ -1961,7 +1963,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void editupdateJson(){
-        if (utils.isConnectingToInternet()) {
+
 
             JSONObject jsonObjectCheckinCare = null;
 
@@ -2276,6 +2278,46 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 e.printStackTrace();
             }
 
+
+        /////////////////////////udpate to DB
+        ///
+        String values[] = {Config.checkInCareModel.getStrDocumentID(),
+                "",
+                jsonObjectCheckinCare.toString(),
+                Config.collectionCheckInCare, "0", "", "1"};
+
+        String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+        // WHERE clause arguments
+        String[] selectionArgs = {Config.checkInCareModel.getStrDocumentID(),
+                Config.collectionCheckInCare};
+        CareGiver.getDbCon().updateInsert(
+                DbHelper.strTableNameCollection,
+                selection, values, DbHelper.COLLECTION_FIELDS,
+                selectionArgs);
+
+
+        String values1[] = {Config.checkInCareModel.getStrDocumentID(),
+                "-1",
+                strSelectedDate,
+                Config.customerModel.getStrCustomerID()
+        };
+
+        String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                + DbHelper.COLUMN_MILESTONE_ID + "=? ";
+
+        String[] selectionArgs1 = {Config.checkInCareModel.getStrDocumentID(),
+                "-1"
+        };
+
+        CareGiver.getDbCon().updateInsert(
+                DbHelper.strTableNameMilestone,
+                selection1, values1, DbHelper.CCARE_FIELDS,
+                selectionArgs1);
+        /////////////////////////udpate to DB
+
+        if (utils.isConnectingToInternet()) {
 
             storageService.updateDocs(jsonObjectCheckinCare,
                     Config.checkInCareModel.getStrDocumentID(),

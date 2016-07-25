@@ -26,7 +26,9 @@ import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.CheckInCareActivity;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
@@ -36,6 +38,8 @@ import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
+
+import net.sqlcipher.Cursor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -268,13 +272,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             public void onClick(final View v) {
                 Config.customerModel = (CustomerModel) v.getTag();
                 Calendar c = Calendar.getInstance();
-                String iyear = String.valueOf(c.get(Calendar.YEAR));
-                String imonth = String.valueOf(c.get(Calendar.MONTH) + 1);
+
+                int iyear = c.get(Calendar.YEAR);
+                int imonth = c.get(Calendar.MONTH) + 1;
 
                 try {
 
-                    fetchCheckInCareName(imonth, iyear, Config.customerModel.getStrCustomerID(), Config.providerModel.getStrProviderId());
+                    //fetchCheckInCareName(imonth, iyear, Config.customerModel.getStrCustomerID(), Config.providerModel.getStrProviderId());
 
+                    fetchAllCheckInCares(imonth, iyear);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -287,15 +293,31 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     }
 
-    private void fetchAllCheckinCares(String strStartDate, String strEndDate) {
+    private void fetchAllCheckInCares(int iMonth, int iYear) {
 
-        /*String strQuery = "SELECT a." + DbHelper.COLUMN_DOCUMENT + " AS C1 , b."
+        String strEndDate = Utils.getCurrentMonthLastDate();
+
+        String strMonth = String.valueOf(iMonth);
+
+        if (iMonth <= 9)
+            strMonth = "0" + strMonth;
+
+        String strStartDate = String.valueOf(iYear) + "-" + strMonth + "-01" + " 00:00:00.000";
+
+        //Utils.log(strStartDate, " SDATE ");
+
+        String strQuery = "SELECT a." + DbHelper.COLUMN_DOCUMENT + " AS C1 , b."
                 + DbHelper.COLUMN_MILESTONE_ID + " AS C2, b." + DbHelper.COLUMN_OBJECT_ID
                 + " AS C3 FROM " + DbHelper.strTableNameCollection + " AS a INNER JOIN "
                 + DbHelper.strTableNameMilestone + " AS b ON a.object_id=b.object_id  WHERE b."
                 + DbHelper.COLUMN_MILESTONE_DATE + ">= Datetime('" + strStartDate + "') AND b."
-                + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "') ORDER BY"
-                + " b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC LIMIT 0, 30000";
+                + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "') AND b."
+                + DbHelper.COLUMN_CUSTOMER_ID + "='" + Config.customerModel.getStrCustomerID()
+                + "' AND b." + DbHelper.COLUMN_MILESTONE_ID
+                + "=-1 AND a." + DbHelper.COLUMN_COLLECTION_NAME + "='" + Config.collectionCheckInCare + "'"
+                + " ORDER BY b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC";
+
+        //LIMIT 0, 30000
 
         Utils.log(strQuery, " QUERY ");
 
@@ -305,26 +327,85 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
             newCursor.moveToFirst();
 
-            Boolean isActivity = true;
+            try {
 
-            while (!newCursor.isAfterLast()) {
+                Config.checkInCareModels.clear();
 
-                if (!Config.strActivityIds.contains(newCursor.getString(2))) {
-                    Config.strActivityIds.add(newCursor.getString(2));
+                while (!newCursor.isAfterLast()) {
 
-                    if (!newCursor.getString(1).equalsIgnoreCase("0"))
-                        isActivity = false;
+                    //JSONObject jsonObject = new JSONObject(newCursor.getString(0));
+                    appUtils.createCheckInCareModel(newCursor.getString(1), newCursor.getString(0));
+                    //createActivityModel(jsonObject, newCursor.getString(2), isActivity);
 
-                    JSONObject jsonObject = new JSONObject(newCursor.getString(0));
-
-                    createActivityModel(jsonObject, newCursor.getString(2), isActivity);
+                    newCursor.moveToNext();
                 }
-                newCursor.moveToNext();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }*/
+        }
+
+        CareGiver.getDbCon().closeCursor(newCursor);
+
+        ///
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context);
+        View convertView = inf.inflate(R.layout.custom_dialog, null);
+
+        if (Config.checkInCareModels.size() <= 0) {
+            final CharSequence[] items = {"Create New", "Cancel"};
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+
+            builder.setTitle("Check In Care");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+
+                    if (items[item].equals("Create New")) {
+                        Intent i = new Intent(_context, CheckInCareActivity.class);
+                        _context.startActivity(i);
+
+                    } else if (items[item].equals("Cancel")) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+            builder.show();
+        } else {
+
+            alertDialog.setTitle("Check In Care");
+
+            ListView listview = (ListView) convertView.findViewById(R.id.dialoglist);
+            Button create = (Button) convertView.findViewById(R.id.createnew);
+            Button cancel = (Button) convertView.findViewById(R.id.cancel);
+            CustomAlertAdapter arrayAdapter = new CustomAlertAdapter(_context,
+                    Config.checkInCareModels);
+            listview.setAdapter(arrayAdapter);
+
+            create.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(_context, CheckInCareActivity.class);
+                    _context.startActivity(i);
+
+                }
+            });
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    myalertDialog.dismiss();
+
+                }
+            });
+
+            alertDialog.setView(convertView);
+            myalertDialog = alertDialog.show();
+        }
+        //
+
     }
 
-    private void fetchCheckInCareName(String iMonth, String iYear, String CustomerId, String ProviderId) {
+    private void fetchCheckInCareName(String iMonth, String iYear, String CustomerId,
+                                      String ProviderId) {
 
         iMonth = iMonth; // - 1
         Config.checkInCareModels.clear();

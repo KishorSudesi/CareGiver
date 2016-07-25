@@ -1573,7 +1573,9 @@ public class AppUtils {
                     + " AS C3 FROM " + DbHelper.strTableNameCollection + " AS a INNER JOIN "
                     + DbHelper.strTableNameMilestone + " AS b ON a.object_id=b.object_id  WHERE b."
                     + DbHelper.COLUMN_MILESTONE_DATE + ">= Datetime('" + strStartDate + "') AND b."
-                    + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "') ORDER BY"
+                    + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "')"
+                    + " AND a." + DbHelper.COLUMN_COLLECTION_NAME + "='" + Config.collectionActivity + "'"
+                    + " AND b." + DbHelper.COLUMN_MILESTONE_ID + "!=-1 ORDER BY"
                     + " b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC LIMIT 0, 30000";
 
             Utils.log(strQuery, " QUERY ");

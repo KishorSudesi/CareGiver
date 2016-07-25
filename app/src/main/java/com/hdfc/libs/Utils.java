@@ -59,6 +59,7 @@ import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -80,6 +81,8 @@ public class Utils {
     public final static SimpleDateFormat readFormat =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale);
     public final static SimpleDateFormat readFormatLocal =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", locale);
+    public final static SimpleDateFormat readFormatLocalDB =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", locale);
     public final static SimpleDateFormat writeFormat = new
             SimpleDateFormat("kk:mm dd MMM yyyy", locale);
@@ -129,11 +132,14 @@ public class Utils {
         readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         readFormatLocal.setTimeZone(TimeZone.getTimeZone("UTC"));
         queryFormat.setTimeZone(TimeZone.getDefault());
+        readFormatLocalDB.setTimeZone(TimeZone.getDefault());
     }
 
     public Utils() {
         readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        readFormatLocal.setTimeZone(TimeZone.getTimeZone("UTC"));
         queryFormat.setTimeZone(TimeZone.getDefault());
+        readFormatLocalDB.setTimeZone(TimeZone.getDefault());
     }
 
     public static native String getString();
@@ -598,19 +604,14 @@ public class Utils {
         nMgr.cancel(notifyId);
     }*/
 
-   /* public String getMonthLastDate(String strFromDate) {
+    public static String getCurrentMonthLastDate() {
 
-        String strLastDateMonth = "";
-
-        Date today = null;
-        try {
-            today = readFormatDate.parse(strFromDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        String strLastDateMonth;
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(today);
+        /*Date today = calendar.getTime();
+
+        calendar.setTime(today);*/
 
         calendar.add(Calendar.MONTH, 1);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -618,11 +619,11 @@ public class Utils {
 
         Date lastDayOfMonth = calendar.getTime();
 
-        strLastDateMonth = dateFormat.format(lastDayOfMonth) + "T23:59:59.999+0000";
+        strLastDateMonth = writeFormatDateDB.format(lastDayOfMonth) + " 24:00:00.000";
         log(strLastDateMonth, "LAST DATE ");
 
         return strLastDateMonth;
-    }*/
+    }
 
     public static boolean isConnectingToInternet(Context _ctxt) {
         ConnectivityManager connectivity = (ConnectivityManager)
