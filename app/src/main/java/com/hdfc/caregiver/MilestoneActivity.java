@@ -92,6 +92,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private SimpleTooltip simpleTooltip;
     private Utils utils;
     private PermissionHelper permissionHelper;
+    private String strValueReason = "";
   /*  private byte editTextType = 0;
     private byte TYPE_FROM = 1, TYPE_TO = 2;*/
 
@@ -432,14 +433,14 @@ public class MilestoneActivity extends AppCompatActivity {
 
                 if (fieldModel.getStrFieldType().equalsIgnoreCase("radio")
                         || fieldModel.getStrFieldType().equalsIgnoreCase("dropdown")) {
-
                     final Spinner spinner = new Spinner(MilestoneActivity.this);
 
                     spinner.setId(fieldModel.getiFieldID());
                     spinner.setTag(fieldModel.isFieldRequired());
+
                     spinner.setLayoutParams(new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                            ViewGroup.LayoutParams.WRAP_CONTENT,2));
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(MilestoneActivity.this,
                             android.R.layout.select_dialog_item, fieldModel.getStrFieldValues());
@@ -489,6 +490,28 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 } else
                                                     editTextChild.setEnabled(false);
                                             }
+                                        } else if ((fieldModel.getStrChildType()[i]
+                                                .equalsIgnoreCase("radio")
+                                                || fieldModel.getStrChildType()[i].equalsIgnoreCase("dropdown")) && fieldModel.getStrChildCondition()[i].
+                                                equalsIgnoreCase("equals")) {
+                                            String strValue = spinner.getSelectedItem().
+                                                    toString();
+                                            if (strValue.equalsIgnoreCase("UnSuccessFul")) {
+                                                Spinner spinnerChild = (Spinner) layoutDialog.
+                                                        findViewById(fieldModel.
+                                                                getiChildfieldID()[i]);
+                                                spinnerChild.setVisibility(View.VISIBLE);
+                                                spinnerChild.setSelection(0);
+                                                strValueReason = spinnerChild.getSelectedItem().
+                                                        toString();
+                                            } else if (strValue.equalsIgnoreCase("SuccessFul")) {
+                                                Spinner spinnerChild = (Spinner) layoutDialog.
+                                                        findViewById(fieldModel.
+                                                                getiChildfieldID()[i]);
+                                                spinnerChild.setVisibility(View.GONE);
+                                            }
+
+
                                         }
                                     }
                                 }
@@ -510,9 +533,10 @@ public class MilestoneActivity extends AppCompatActivity {
                     }
 
                     spinner.setEnabled(bEnabled);
-
+                    //linearLayoutParent.addView(spinner);
                     linearLayout1.addView(spinner);
                 }
+
 
                 if (fieldModel.getStrFieldType().equalsIgnoreCase("array")) {
 
@@ -595,6 +619,7 @@ public class MilestoneActivity extends AppCompatActivity {
                             linearLayoutArrayExist.addView(buttonDel);
 
                             linearLayoutParent.addView(linearLayoutArrayExist);
+
                         }
 
                     } catch (Exception e) {
