@@ -115,7 +115,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private LinearLayout layouthall, layoutkitchen, layoutwashroom, layoutbedroom, mainlinearlayout;
     private CheckBox electrocheck, homecheck, autocheck, kitchenequipcheck, grocerycheck,
             domesticcheck;
-    private String valkitchen, valgrocery, valelectronic, valhomeapplience, valautomobile,
+    private String valdate,valkitchen, valgrocery, valelectronic, valhomeapplience, valautomobile,
             valmaidservices, valmediacomment, valcheckincarename;
     private View focusView = null;
     private ProgressDialog mProgressDialog;
@@ -746,6 +746,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                     boolean cancel = false;
 
+                    datetxt.setError(null);
                     kitchen_equipments.setError(null);
                     grocery.setError(null);
                     electronic.setError(null);
@@ -755,6 +756,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     mediacomment.setError(null);
 
 
+                    valdate = datetxt.getText().toString().trim();
                     valkitchen = kitchen_equipments.getText().toString().trim();
                     valgrocery = grocery.getText().toString().trim();
                     valelectronic = electronic.getText().toString().trim();
@@ -763,6 +765,13 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     valmaidservices = maidservices.getText().toString().trim();
                     valmediacomment = mediacomment.getText().toString().trim();
 
+
+                        if (TextUtils.isEmpty(valdate)) {
+                            datetxt.setError(getString(R.string.select_date));
+                            utils.toast(2, 2, getString(R.string.select_date));
+                            focusView = datetxt;
+                            cancel = true;
+                        }
                     if (kitchenequipcheck.isChecked()) {
                         if (TextUtils.isEmpty(valkitchen)) {
                             kitchen_equipments.setError(getString(R.string.error_field_required));
@@ -1032,6 +1041,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void uploadHallImage() {
+
+        onCreateDialog(DIALOG_DOWNLOAD_PROGRESS1);
 
         if (hallImageCount > 0) {
 
@@ -1911,6 +1922,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                             DashboardActivity.class);
                                     Config.intSelectedMenu = Config.intClientScreen;
                                     startActivity(intent);
+                                    finish();
                                 } else {
                                     utils.toast(2, 2, getString(R.string.warning_internet));
                                 }
@@ -2331,10 +2343,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                     DashboardActivity.class);
                             Config.intSelectedMenu = Config.intClientScreen;
                             startActivity(intent);
+                            finish();
                         }
 
                         @Override
                         public void onException(Exception e) {
+                            e.printStackTrace();
                             utils.toast(2, 2, getString(R.string.warning_internet));
                         }
                     });
@@ -3435,16 +3449,17 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 1;
+
                         mainlinearlayout.requestFocus();
-                        if (IMAGE_COUNT < 20) {
+                      /*  if (IMAGE_COUNT < 20) {*/
 
                             utils.selectImage(String.valueOf(new Date().getDate() + ""
                                     + new Date().getTime())
                                     + ".jpeg", null, CheckInCareActivity.this, false);
-                        } else {
+                        } /*else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }
-                    }
+                    }*/
                 });
             }
             if (buttonKitchenAdd != null) {
@@ -3452,16 +3467,17 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 2;
-                        mainlinearlayout.requestFocus();
-                        if (IMAGE_COUNT < 20) {
 
+                        mainlinearlayout.requestFocus();
+                      /*  if (IMAGE_COUNT < 20) {
+*/
                             utils.selectImage(String.valueOf(new Date().getDate() + ""
                                     + new Date().getTime())
                                     + ".jpeg", null, CheckInCareActivity.this, false);
-                        } else {
+                        } /*else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }
-                    }
+                    }*/
                 });
             }
             if (buttonWashroomAdd != null) {
@@ -3469,16 +3485,17 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 3;
+
                         mainlinearlayout.requestFocus();
-                        if (IMAGE_COUNT < 20) {
+                       /* if (IMAGE_COUNT < 20) {*/
 
                             utils.selectImage(String.valueOf(new Date().getDate() + ""
                                     + new Date().getTime())
                                     + ".jpeg", null, CheckInCareActivity.this, false);
-                        } else {
+                        } /*else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }
-                    }
+                    }*/
                 });
             }
             if (buttonBedroomAdd != null) {
@@ -3486,23 +3503,25 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 4;
+
                         mainlinearlayout.requestFocus();
-                        if (IMAGE_COUNT < 20) {
+                     /*   if (IMAGE_COUNT < 20) {*/
 
                             utils.selectImage(String.valueOf(new Date().getDate() + ""
                                     + new Date().getTime())
                                     + ".jpeg", null, CheckInCareActivity.this, false);
-                        } else {
+                        } /*else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
                         }
-                    }
+                    }*/
+
                 });
             }
 
 
             if (!bViewLoaded) {
 
-                bViewLoaded = true;
+                bViewLoaded =true;
 
                 backgroundThreadHandler = new BackgroundThreadHandler();
                 Thread backgroundThreadImages = new BackgroundThreadImages();
@@ -3545,16 +3564,29 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             if (isHallFlag == 1) {
                 addHallImages();
+            }else{
+                addHallImages();
             }
+
             if (isHallFlag == 2) {
                 addKitchenImages();
+            }else{
+                addKitchenImages();
             }
+
             if (isHallFlag == 3) {
                 addWashroomImages();
+            }else{
+                addWashroomImages();
             }
+
+
             if (isHallFlag == 4) {
                 addBedroomImages();
+            }else{
+                addBedroomImages();
             }
+
         }
     }
 
@@ -3847,12 +3879,13 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private class BackgroundThreadImages extends Thread {
         @Override
         public void run() {
-            if (isHallFlag == 1) {
-                try {
 
+            if(editcheckincare) {
+
+                try {
                     for (ImageModel imageModel : hallimageModels) {
-                        if (imageModel.getStrImageName() != null
-                                && !imageModel.getStrImageName().equalsIgnoreCase("")) {
+                        if (imageModel.getStrImageUrl() != null
+                                && !imageModel.getStrImageUrl().equalsIgnoreCase("")) {
                             hallbitmaps.add(utils.getBitmapFromFile(
                                     utils.getInternalFileImages(imageModel.getStrImageDesc()).
                                             getAbsolutePath(), Config.intWidth, Config.intHeight));
@@ -3865,12 +3898,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 } catch (Exception | OutOfMemoryError e) {
                     e.printStackTrace();
                 }
-            }
-            if (isHallFlag == 2) {
+
+
                 try {
 
                     for (ImageModel imageModel : kitchenimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().
+                        if (imageModel.getStrImageUrl() != null && !imageModel.getStrImageUrl().
                                 equalsIgnoreCase("")) {
                             kitchenbitmaps.add(utils.getBitmapFromFile(utils.
                                     getInternalFileImages(imageModel.getStrImageDesc()).
@@ -3884,12 +3917,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 } catch (Exception | OutOfMemoryError e) {
                     e.printStackTrace();
                 }
-            }
-            if (isHallFlag == 3) {
+
+
                 try {
 
                     for (ImageModel imageModel : washroomimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().
+                        if (imageModel.getStrImageUrl() != null && !imageModel.getStrImageUrl().
                                 equalsIgnoreCase("")) {
                             washroombitmaps.add(utils.getBitmapFromFile(utils.
                                     getInternalFileImages(imageModel.getStrImageDesc()).
@@ -3903,12 +3936,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 } catch (Exception | OutOfMemoryError e) {
                     e.printStackTrace();
                 }
-            }
-            if (isHallFlag == 4) {
+
+
                 try {
 
                     for (ImageModel imageModel : bedroomimageModels) {
-                        if (imageModel.getStrImageName() != null && !imageModel.getStrImageName().
+                        if (imageModel.getStrImageUrl() != null && !imageModel.getStrImageUrl().
                                 equalsIgnoreCase("")) {
                             bedroombitmaps.add(utils.getBitmapFromFile(utils.
                                     getInternalFileImages(imageModel.getStrImageDesc()).

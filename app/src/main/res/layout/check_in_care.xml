@@ -793,7 +793,7 @@
                     android:layout_height="30dp"
                     android:layout_weight="0.8"
                     android:gravity="left"
-                    android:text="Upload Media"
+                    android:text="Photo Upload"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <TextView

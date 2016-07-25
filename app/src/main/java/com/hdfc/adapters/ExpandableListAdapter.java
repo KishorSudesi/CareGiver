@@ -334,7 +334,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 while (!newCursor.isAfterLast()) {
 
                     //JSONObject jsonObject = new JSONObject(newCursor.getString(0));
-                    appUtils.createCheckInCareModel(newCursor.getString(1), newCursor.getString(0));
+                    appUtils.createCheckInCareModel(newCursor.getString(2), newCursor.getString(0));
                     //createActivityModel(jsonObject, newCursor.getString(2), isActivity);
 
                     newCursor.moveToNext();
