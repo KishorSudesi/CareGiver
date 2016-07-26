@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -22,7 +23,9 @@ import com.hdfc.caregiver.fragments.ClientFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
 import com.hdfc.caregiver.fragments.NotificationFragment;
 import com.hdfc.caregiver.fragments.RatingsFragment;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
+import com.hdfc.dbconfig.DbCon;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.NetworkStateReceiver;
 import com.hdfc.libs.SessionManager;
@@ -44,12 +47,14 @@ public class DashboardActivity extends AppCompatActivity implements
     private static RelativeLayout loadingPanel;
     //private Utils utils;
     private static AppCompatActivity appCompatActivity;
+    private static AppUtils appUtils;
     //todo remove static variables with ref. context
     //private static Handler threadHandler;
-    private static AppUtils appUtils;
+    private int iWhichLoad;
     private LinearLayout net_error_layout;
     private NetworkStateReceiver networkStateReceiver;
     private ImageView mytask;
+    private String strMess;
     private ImageView clients;
     private ImageView feedback;
     private ImageView notification;
@@ -60,18 +65,23 @@ public class DashboardActivity extends AppCompatActivity implements
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String message = intent
-                    .getStringExtra(App42GCMService.ExtraMessage);
 
-            if (message != null && !message.equalsIgnoreCase("")) {
-                AppUtils.fetchActivitiesSync(DashboardActivity.this);
-                AppUtils.loadNotifications(DashboardActivity.this);
+            try {
+                String message = intent
+                        .getStringExtra(App42GCMService.ExtraMessage);
 
-                //todo optional refersh
-                AppUtils.refreshProvider(DashboardActivity.this);
+                if (message != null && !message.equalsIgnoreCase("")) {
+                    AppUtils.fetchActivitiesSync(DashboardActivity.this);
+                    AppUtils.loadNotifications(DashboardActivity.this);
 
-                if (Config.intSelectedMenu != Config.intNotificationScreen)
-                    showPushDialog(message);
+                    //todo optional refersh
+                    AppUtils.refreshProvider(DashboardActivity.this);
+
+                    if (Config.intSelectedMenu != Config.intNotificationScreen)
+                        showPushDialog(message);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     };
@@ -192,6 +202,18 @@ public class DashboardActivity extends AppCompatActivity implements
         try {
             appUtils = new AppUtils(DashboardActivity.this);
             appCompatActivity = DashboardActivity.this;
+            sessionManager = new SessionManager(DashboardActivity.this);
+
+            iWhichLoad = -1;
+
+            if (CareGiver.getDbCon() != null) {
+                Utils.log("1", " DB ");
+                AppUtils.createProviderModel(sessionManager.getProviderId());
+            } else {
+                Utils.log("2", " DB ");
+                iWhichLoad = 1;
+                new LoadDataTask().execute();
+            }
             //utils = new Utils();
 
             mytask = (ImageView) findViewById(R.id.buttonMyTasks);
@@ -308,24 +330,23 @@ public class DashboardActivity extends AppCompatActivity implements
                 }
             });
 
-            if (Config.intSelectedMenu == Config.intClientScreen) {
-                menuClients();
+            if (CareGiver.getDbCon() != null) {
+                if (Config.intSelectedMenu == Config.intClientScreen) {
+                    menuClients();
+                }
+
+                if (Config.intSelectedMenu == Config.intRatingsScreen) {
+                    menuFeedback();
+                }
+
+                if (Config.intSelectedMenu == Config.intNotificationScreen) {
+                    menuNotification(false);
+                }
             }
 
-            if (Config.intSelectedMenu == Config.intRatingsScreen) {
-                menuFeedback();
-            }
-
-            if (Config.intSelectedMenu == Config.intNotificationScreen) {
-                menuNotification(false);
-            }
-
-            sessionManager = new SessionManager(DashboardActivity.this);
-
-            AppUtils.createProviderModel(sessionManager.getProviderId());
-
-            if (Config.providerModel != null)
-                App42API.setLoggedInUser(Config.providerModel.getStrEmail());
+            if (sessionManager.getEmail() != null
+                    && !sessionManager.getEmail().equalsIgnoreCase(""))
+                App42API.setLoggedInUser(sessionManager.getEmail());
 
             //App42Log.setDebug(true);
 
@@ -360,6 +381,8 @@ public class DashboardActivity extends AppCompatActivity implements
                     gotoSimpleActivity(false, bRetain);
                 }
             }
+
+            Utils.log(" ONCREATE ", " DASHBOARD ");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -484,16 +507,20 @@ public class DashboardActivity extends AppCompatActivity implements
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent != null && intent.getStringExtra(App42GCMService.ExtraMessage) != null) {
-            String strMess = intent.getStringExtra(App42GCMService.ExtraMessage);
+        try {
+            Utils.log(String.valueOf(intent.getData()), " PUSH ");
+            if (intent != null && intent.getStringExtra(App42GCMService.ExtraMessage) != null) {
 
-            AppUtils.fetchActivitiesSync(DashboardActivity.this);
-            AppUtils.loadNotifications(DashboardActivity.this);
-            //todo optional refersh
-            AppUtils.refreshProvider(DashboardActivity.this);
+                if (CareGiver.getDbCon() != null) {
 
-            showPushDialog(strMess);
-
+                    iWhichLoad = 2;
+                    strMess = intent.getStringExtra(App42GCMService.ExtraMessage);
+                } else {
+                    new LoadDataTask().execute();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -504,8 +531,7 @@ public class DashboardActivity extends AppCompatActivity implements
         if (sessionManager.getProviderId() != null
                 && !sessionManager.getProviderId().equalsIgnoreCase("")) {
 
-            if (Config.providerModel == null || Config.providerModel.getStrName() == null)
-                AppUtils.createProviderModel(sessionManager.getProviderId());
+            //if (Config.providerModel == null || Config.providerModel.getStrName() == null)
 
             isLoaded = true;
 
@@ -528,7 +554,7 @@ public class DashboardActivity extends AppCompatActivity implements
             startActivity(dashboardIntent);
             finish();
         }
-
+        Utils.log(" ONRESUME ", " DASHBOARD ");
     }
 
     @Override
@@ -574,8 +600,9 @@ public class DashboardActivity extends AppCompatActivity implements
             DashboardFragment.strStartDate = Utils.convertDateToStringQuery(Utils.
                     convertStringToDateQuery(strDate + "T00:00:00.000"));
 
-            if (Config.providerModel != null)
-                appUtils.fetchActivities();
+            if (sessionManager.getProviderId() != null
+                    && !sessionManager.getProviderId().equalsIgnoreCase(""))
+                appUtils.fetchActivities(sessionManager.getProviderId());
 
         } else {
             reloadActivities();
@@ -674,5 +701,54 @@ public class DashboardActivity extends AppCompatActivity implements
             }
         };
         thread.start(); //start the thread*/
+    }
+
+    private class LoadDataTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                CareGiver.setDbCon(new DbCon(getApplicationContext()));
+            } catch (Exception e) {
+                e.getMessage();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            try {
+                if (iWhichLoad == 1) {
+                    AppUtils.createProviderModel(sessionManager.getProviderId());
+
+                    if (Config.intSelectedMenu == Config.intClientScreen) {
+                        menuClients();
+                    }
+
+                    if (Config.intSelectedMenu == Config.intRatingsScreen) {
+                        menuFeedback();
+                    }
+
+                    if (Config.intSelectedMenu == Config.intNotificationScreen) {
+                        menuNotification(false);
+                    }
+                }
+
+                if (iWhichLoad == 2) {
+                    AppUtils.fetchActivitiesSync(DashboardActivity.this);
+                    AppUtils.loadNotifications(DashboardActivity.this);
+                    //todo optional refersh
+                    AppUtils.refreshProvider(DashboardActivity.this);
+
+                    showPushDialog(strMess);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

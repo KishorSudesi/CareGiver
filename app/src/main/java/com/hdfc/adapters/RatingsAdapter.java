@@ -83,7 +83,12 @@ public class RatingsAdapter extends BaseAdapter {
             try {
 
                 viewHolder.feedback.setText(data1.get(position).getStrFeedBackMessage());
-                viewHolder.time.setText(Utils.writeFormat.format(Utils.convertStringToDate(data1.get(position).getStrFeedBackTime())));
+                try {
+                    viewHolder.time.setText(Utils.writeFormat.format(
+                            Utils.convertStringToDate(data1.get(position).getStrFeedBackTime())));
+                } catch (Exception e) {
+                    viewHolder.time.setText(data1.get(position).getStrFeedBackTime());
+                }
 
                 if (data1.get(position).getIntFeedBackRating() == 1) {
                     viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_1));

@@ -139,6 +139,7 @@ public class MyProfileActivity extends AppCompatActivity {
                             public void permissionRefused() {
                                 //action to perform when permission refused
                                 isAllowed = false;
+                                //todo notify user with reason for asking permission
                             }
                         }
                 );

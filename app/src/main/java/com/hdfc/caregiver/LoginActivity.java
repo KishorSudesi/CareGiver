@@ -142,7 +142,9 @@ public class LoginActivity extends AppCompatActivity {
         button.setVisibility(View.INVISIBLE);
 
         loadingPanel.setVisibility(View.VISIBLE);
-        new LoadDataTask().execute();
+
+        if (CareGiver.getDbCon() == null)
+            new LoadDataTask().execute();
     }
 
     private void showForgotPassword(){

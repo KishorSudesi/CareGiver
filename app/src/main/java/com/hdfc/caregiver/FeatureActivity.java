@@ -58,7 +58,7 @@ import pl.tajchert.nammu.PermissionCallback;
 public class FeatureActivity extends AppCompatActivity {
 
     public static int IMAGE_COUNT = 0;
-    private static int iActivityPosition = -1;
+    //private static int iActivityPosition = -1;
     private static String strImageName = "";
     private static StorageService storageService;
     private static Handler backgroundThreadHandler;
@@ -129,10 +129,10 @@ public class FeatureActivity extends AppCompatActivity {
             }
 
             act = (ActivityModel) b.getSerializable("ACTIVITY");
-            iActivityPosition = b.getInt("ACTIVITY_POSITION", -1);
+            /*iActivityPosition = b.getInt("ACTIVITY_POSITION", -1);
 
             if (act == null || iActivityPosition > -1)
-                act = Config.activityModels.get(iActivityPosition);
+                act = Config.activityModels.get(iActivityPosition);*/
 
             Cursor cursor1 = CareGiver.getDbCon().fetch(
                     DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
@@ -368,8 +368,8 @@ public class FeatureActivity extends AppCompatActivity {
 
                 jsonToUpdate.put("images", jsonArrayImagesAdded);
 
-                Config.activityModels.get(iActivityPosition).clearImageModel();
-                Config.activityModels.get(iActivityPosition).setImageModels(mTImageModels);
+                //Config.activityModels.get(iActivityPosition).clearImageModel();
+                //Config.activityModels.get(iActivityPosition).setImageModels(mTImageModels);
                 imageModels = mTImageModels;
 
             } catch (Exception e) {
@@ -1088,6 +1088,7 @@ public class FeatureActivity extends AppCompatActivity {
                             Intent intent = new Intent(FeatureActivity.this, MilestoneActivity.class);
                             args.putSerializable("Act", activityModel);
                             args.putSerializable("Milestone", milestoneModelObject);
+                            args.putBoolean("WHICH_SCREEN", bWhichScreen);
                             intent.putExtras(args);
                             startActivity(intent);
                         }

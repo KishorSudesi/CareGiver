@@ -155,9 +155,11 @@ public class AppUtils {
 
             CareGiver.getDbCon().closeCursor(cursor);
 
+            SessionManager sessionManager = new SessionManager(context);
+
             StorageService storageService = new StorageService(context);
 
-            Query q1 = QueryBuilder.build("user_id", Config.providerModel.getStrProviderId(),
+            Query q1 = QueryBuilder.build("user_id", sessionManager.getProviderId(),
                     QueryBuilder.Operator.EQUALS);
 
             Query finalQuery;
@@ -228,6 +230,7 @@ public class AppUtils {
 
                         @Override
                         public void onException(Exception e) {
+                            Utils.log(e.getMessage(), " Notifications ");
                         }
                     });
         }
@@ -738,7 +741,7 @@ public class AppUtils {
             if (strDate == null || strDate.equalsIgnoreCase(""))
                 strDate = DbHelper.DEFAULT_DB_DATE;
 
-            Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
+            Query q1 = QueryBuilder.build("provider_id", sessionManager.getProviderId(),
                     QueryBuilder.Operator.EQUALS);
 
             if (!strDate.equalsIgnoreCase("")) {
@@ -1471,9 +1474,9 @@ public class AppUtils {
     }
     //////////////////////////
 
-    public void fetchActivities() {
+    public void fetchActivities(String strProviderId) {
 
-        Query q1 = QueryBuilder.build("provider_id", Config.providerModel.getStrProviderId(),
+        Query q1 = QueryBuilder.build("provider_id", strProviderId,
                 QueryBuilder.Operator.EQUALS);
 
         Query q2 = QueryBuilder.build("activity_date", DashboardFragment.strEndDate, QueryBuilder.
@@ -1574,7 +1577,8 @@ public class AppUtils {
                     + DbHelper.strTableNameMilestone + " AS b ON a.object_id=b.object_id  WHERE b."
                     + DbHelper.COLUMN_MILESTONE_DATE + ">= Datetime('" + strStartDate + "') AND b."
                     + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "')"
-                    + " AND a." + DbHelper.COLUMN_COLLECTION_NAME + "='" + Config.collectionActivity + "'"
+                    + " AND a." + DbHelper.COLUMN_COLLECTION_NAME + "='" + Config.collectionActivity
+                    + "'"
                     + " AND b." + DbHelper.COLUMN_MILESTONE_ID + "!=-1 ORDER BY"
                     + " b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC";
 

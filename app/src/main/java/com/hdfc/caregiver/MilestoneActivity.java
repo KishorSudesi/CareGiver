@@ -87,7 +87,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private static int iActivityPosition;
     private static boolean bEnabled, mImageChanged;
     private static boolean isToDate = false, isFromDate = false;
-    private static boolean isAllowed;
+    private static boolean isAllowed, bWhichScreen;
     private final Context context = this;
     private int iValidFlag = 0;
     private RelativeLayout loadingPanel;
@@ -111,6 +111,7 @@ public class MilestoneActivity extends AppCompatActivity {
         permissionHelper = PermissionHelper.getInstance(this);
 
         act = (ActivityModel) b.getSerializable("Act");
+        bWhichScreen = b.getBoolean("WHICH_SCREEN", false);
 
         bitmaps.clear();
 
@@ -916,7 +917,7 @@ public class MilestoneActivity extends AppCompatActivity {
         Bundle args = new Bundle();
         Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
         args.putSerializable("ACTIVITY", act);
-        args.putInt("ACTIVITY_POSITION", iActivityPosition);
+        args.putBoolean("WHICH_SCREEN", bWhichScreen);
         intent.putExtras(args);
         startActivity(intent);
         finish();
@@ -2336,17 +2337,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         loadingPanel.setVisibility(View.GONE);
 
-        //utils.toast(2, 2, getString(R.string.milestone_updated));
-
         utils.toast(2, 2, strAlert);
-
-        //  reloadMilestones();
-
-        // Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
-        // Config.intSelectedMenu = Config.intDashboardScreen;
-        //startActivity(intent);
-
-        //ActivityModel obj = activityModels.get(itemPosition);
 
         mImageCount = 0;
         mImageChanged = false;
@@ -2355,7 +2346,7 @@ public class MilestoneActivity extends AppCompatActivity {
         Bundle args = new Bundle();
         Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
         args.putSerializable("ACTIVITY", act);
-        args.putInt("ACTIVITY_POSITION", iActivityPosition);
+        args.putBoolean("WHICH_SCREEN", bWhichScreen);
         intent.putExtras(args);
         startActivity(intent);
         finish();
@@ -2373,10 +2364,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private class BackgroundThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-
             addImages();
-
-
         }
     }
 
@@ -2386,24 +2374,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
             try {
                 for (int i = 0; i < imagePaths.size(); i++) {
-                    //Calendar calendar = new GregorianCalendar();
-                    //String strTime = String.valueOf(calendar.getTimeInMillis());
-                    //String strFileName = strTime + ".jpeg";
-                    /*File galleryFile = utils.createFileInternalImage(strFileName);
-                    strImageName1 = galleryFile.getAbsolutePath();
-                    Date date = new Date();*/
-
-                    //FileModel fileModel = new FileModel(strTime, "", "IMAGE", utils.convertDateToString(date), "DESC", strImageName1);
-                    //arrayListFileModel.add(fileModel);
-
-                    //utils.copyFile(new File(imagePaths.get(i)), galleryFile);
-                    //
-                   /* utils.compressImageFromPath(strImageName1, Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
-                    bitmaps.add(utils.getBitmapFromFile(strImageName1, Config.intWidth, Config.intHeight));
-
-                    IMAGE_COUNT++;*/
-
 
                     //////////////////////////////////
                     Calendar calendar = Calendar.getInstance();
@@ -2421,10 +2391,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     fileModel.setNew(true);
 
-
                     fileModels.add(fileModel);
-
-                    //
 
                     utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
                             Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
@@ -2437,7 +2404,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     mImageCount++;
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
-            } catch (IOException | OutOfMemoryError e) {
+            } catch (IOException | OutOfMemoryError ignored) {
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -2451,22 +2418,13 @@ public class MilestoneActivity extends AppCompatActivity {
             try {
                 if (strImageName1 != null && !strImageName1.equalsIgnoreCase("")) {
 
-
-                    // Date date = new Date();
-                    //FileModel fileModel = new FileModel(strName1, "", "IMAGE", utils.convertDateToString(date), "DESC", strImageName1);
-                    //arrayListFileModel.add(fileModel);
-                    //bitmaps.add(utils.getBitmapFromFile(strImageName1, Config.intWidth, Config.intHeight));
-
-
                     /////////////
                     File mCopyFile = utils.getInternalFileImages(strName1);
                     utils.copyFile(new File(strImageName1), mCopyFile);
                     Date date = new Date();
-                    //ImageModel imageModel = new ImageModel(strName1, "", strName1, utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                     FileModel fileModel = new FileModel(strName1, "", "IMAGE", Utils.
                             convertDateToString(date), "DESC", mCopyFile.getAbsolutePath());
                     fileModel.setNew(true);
-                    //arrayListImageModel.add(imageModel);
 
                     fileModels.add(fileModel);
 
@@ -2505,17 +2463,6 @@ public class MilestoneActivity extends AppCompatActivity {
                         IMAGE_COUNT++;
 
                         fileModel.setNew(false);
-
-                       /* JSONObject jsonObjectImages = new JSONObject();
-
-                        jsonObjectImages.put("file_name", fileModel.getStrFileName());
-                        jsonObjectImages.put("file_url", fileModel.getStrFileUrl());
-                        jsonObjectImages.put("file_type", fileModel.getStrFileType());
-                        jsonObjectImages.put("file_desc", fileModel.getStrFileDescription());
-                        jsonObjectImages.put("file_path", fileModel.getStrFilePath());
-                        jsonObjectImages.put("file_time", fileModel.getStrFileUploadTime());
-
-                        jsonArrayImagesAdded.put(jsonObjectImages);*/
                     }
                 }
                 //

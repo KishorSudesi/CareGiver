@@ -1,5 +1,6 @@
 package com.hdfc.caregiver;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -65,6 +66,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private EditText editTextTitle, dateAnd;
     private JSONObject jsonObject;
     private int mDependentPosition = -1;
+    private ProgressDialog progressDialog;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -96,6 +98,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
         dependentList = (Spinner) findViewById(R.id.spindependentList);
         serviceCategoryList = (Spinner) findViewById(R.id.spinServiceList);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
+        progressDialog = new ProgressDialog(CreatingTaskActivity.this);
 
         utils = new Utils(CreatingTaskActivity.this);
         appUtils = new AppUtils(CreatingTaskActivity.this);
@@ -360,7 +363,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
         }
         refreshCustomerAdapter();
 
-        loadingPanel.setVisibility(View.VISIBLE);
+        //loadingPanel.setVisibility(View.VISIBLE);
+        if (progressDialog != null) {
+            progressDialog.setMessage(getString(R.string.process_login));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
         fetchServices();
     }
 
@@ -468,7 +476,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
     private void refreshServices() {
 
-        loadingPanel.setVisibility(View.GONE);
+        //loadingPanel.setVisibility(View.GONE);
 
         Config.strServcieIds.clear();
         Config.serviceModels.clear();
@@ -504,6 +512,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         refreshServiceAdapter();
         //refreshCustomerAdapter();
+        if (progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
 
     }
 

@@ -294,6 +294,7 @@ public class NotificationFragment extends Fragment {
                     args.putBoolean("WHICH_SCREEN", true);
                     intent.putExtras(args);
                     startActivity(intent);
+                    getActivity().finish();
                 }
             }
 
