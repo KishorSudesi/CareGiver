@@ -67,7 +67,7 @@ public class Config {
     public static final boolean isDebuggable = true;
     public static final String string = Utils.getStringJni();
     public static final boolean release = false;
-    public static final boolean DEVELOPMENT = true;
+    public static final boolean DEVELOPMENT = false;
     //Login specific //User Specific clear at logout or whenever needed
     public final static String strCustomerImageName = "provider_image";
     public static int intClientScreen = 2;

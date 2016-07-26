@@ -318,7 +318,12 @@ public class MilestoneActivity extends AppCompatActivity {
 
                             if (act.getMilestoneModels().size() == milestoneModelObject.getiMilestoneId()) {
 
-                                Date date = Calendar.getInstance().getTime();
+                                Calendar cal = Calendar.getInstance(); // creates calendar
+                                cal.setTime(new Date()); // sets calendar time/date
+                                cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
+                                cal.getTime(); // returns new date object, one hour in the future
+
+                                Date date = cal.getTime();
                                 String date2 = Utils.writeFormat.format(date);
                                 editText.setText(date2);
                                 //bEnabled=false;

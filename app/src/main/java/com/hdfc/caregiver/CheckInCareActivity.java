@@ -1,5 +1,6 @@
 package com.hdfc.caregiver;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
 import com.bumptech.glide.Glide;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
@@ -58,6 +60,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import pl.tajchert.nammu.PermissionCallback;
 
 /**
  * Created by Admin on 01-07-2016.
@@ -102,6 +105,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private TextView txtwater;
     private TextView txtgas;
     private TextView txtelectricity;
+    private boolean isAllowed;
     private TextView txttelephone;
     private TextView utilitystatus, waterstatus, gasstatus, electricitystatus, telephonestatus,
             equipmentstatus, grocerystatus, kitchenequipmentstatus, domestichelpstatus,
@@ -121,6 +125,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private ProgressDialog mProgressDialog;
     private String items[], strSelectedDate;
 
+    private PermissionHelper permissionHelper;
+
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
@@ -138,8 +144,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             String strtelephoneDate = Utils.writeFormat.format(date);
             String strgasDate = Utils.writeFormat.format(date);
 
-         /*   String _strDate = Utils.readFormat.format(date);
+            checkincarename.setText(Utils.queryFormatday.format(date));
 
+         /*   String _strDate = Utils.readFormat.format(date);
             String _strwaterDate = Utils.readFormat.format(date);
             String _strelectricityDate = Utils.readFormat.format(date);
             String _strtelephoneDate = Utils.readFormat.format(date);
@@ -186,11 +193,24 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
+    protected void onDestroy() {
+        permissionHelper.finish();
+        super.onDestroy();
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_in_care);
 
         mainlinearlayout = (LinearLayout) findViewById(R.id.mainlinearlayout);
+
+        permissionHelper = PermissionHelper.getInstance(this);
 
         items = new String[4];
 
@@ -217,23 +237,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         layoutbedroom = (LinearLayout) findViewById(R.id.linear_bedroom);
         //MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(CheckInCareActivity.this);
 
-
         utils = new Utils(CheckInCareActivity.this);
-        //ProgressDialog progressDialog = new ProgressDialog(CheckInCareActivity.this);
-        //mProgress = new ProgressDialog(CheckInCareActivity.this);
 
-        Date mydate = new Date();
-        //strDate = Utils.writeFormatDateMY.format(mydate);
-        String stDate = Utils.queryFormatday.format(mydate);
         datetxt = (TextView) findViewById(R.id.datetxt);
 
-        /*if (datetxt != null) {
-            datetxt.setText(strDate);
-        }*/
-
         LinearLayout layoutDate = (LinearLayout) findViewById(R.id.linearDate);
-
-        //datetxt.setText(strDate);
 
         if (layoutDate != null) {
             layoutDate.setOnClickListener(new View.OnClickListener() {
@@ -250,12 +258,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         }
 
         checkincarename = (EditText) findViewById(R.id.checkincarename);
-        if (checkincarename != null) {
-            checkincarename.setText(stDate);
-        }
-        if (checkincarename != null) {
-            checkincarename.setTextSize(15);
-        }
 
         electrocheck = (CheckBox) findViewById(R.id.electrocheck);
         homecheck = (CheckBox) findViewById(R.id.homecheck);
@@ -517,16 +519,13 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             if (editcheckincare && Config.checkInCareModel != null) {
 
-                //checkInCareModel = Config.checkInCareModels.get(mPosition);
-
-                String checkcareid = Config.checkInCareModel.getStrName();
                 String topdate = Config.checkInCareModel.getStrCurrentDate();
                 String editcomment = Config.checkInCareModel.getStrMediaComment();
 
-                checkincarename.setText(checkcareid);
+                checkincarename.setText(Config.checkInCareModel.getStrName());
                 datetxt.setText(topdate);
                 strSelectedDate = Config.checkInCareModel.getStrCreatedActualDate();
-                Utils.log(topdate, " DATE ");
+                //Utils.log(topdate, " DATE ");
                 mediacomment.setText(editcomment);
 
                 ArrayList<CheckInCareActivityModel> activity = Config.checkInCareModel.getCheckInCareActivityModels();
@@ -772,42 +771,43 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             focusView = datetxt;
                             cancel = true;
                         }
-                    if (kitchenequipcheck.isChecked()) {
+
+                    if (!kitchenequipcheck.isChecked()) {
                         if (TextUtils.isEmpty(valkitchen)) {
                             kitchen_equipments.setError(getString(R.string.error_field_required));
                             focusView = kitchen_equipments;
                             cancel = true;
                         }
                     }
-                    if (grocerycheck.isChecked()) {
+                    if (!grocerycheck.isChecked()) {
                         if (TextUtils.isEmpty(valgrocery)) {
                             grocery.setError(getString(R.string.error_field_required));
                             focusView = grocery;
                             cancel = true;
                         }
                     }
-                    if (electrocheck.isChecked()) {
+                    if (!electrocheck.isChecked()) {
                         if (TextUtils.isEmpty(valelectronic)) {
                             electronic.setError(getString(R.string.error_field_required));
                             focusView = electronic;
                             cancel = true;
                         }
                     }
-                    if (homecheck.isChecked()) {
+                    if (!homecheck.isChecked()) {
                         if (TextUtils.isEmpty(valhomeapplience)) {
                             homeapplience.setError(getString(R.string.error_field_required));
                             focusView = homeapplience;
                             cancel = true;
                         }
                     }
-                    if (autocheck.isChecked()) {
+                    if (!autocheck.isChecked()) {
                         if (TextUtils.isEmpty(valautomobile)) {
                             automobile.setError(getString(R.string.error_field_required));
                             focusView = automobile;
                             cancel = true;
                         }
                     }
-                    if (domesticcheck.isChecked()) {
+                    if (!domesticcheck.isChecked()) {
                         if (TextUtils.isEmpty(valmaidservices)) {
                             maidservices.setError(getString(R.string.error_field_required));
                             focusView = maidservices;
@@ -2378,6 +2378,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
+        permissionHelper.onActivityResult(requestCode, resultCode, intent);
+
         if (resultCode == Activity.RESULT_OK) {
             try {
 
@@ -3450,6 +3452,30 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    private void selectImage() {
+
+        permissionHelper.verifyPermission(
+                new String[]{getString(R.string.access_storage)},
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                new PermissionCallback() {
+                    @Override
+                    public void permissionGranted() {
+                        //action to perform when permission granteed
+                        isAllowed = true;
+                        utils.selectImage(String.valueOf(new Date().getDate() + ""
+                                + new Date().getTime())
+                                + ".jpeg", null, CheckInCareActivity.this, false);
+                    }
+
+                    @Override
+                    public void permissionRefused() {
+                        //action to perform when permission refused
+                        isAllowed = false;
+                    }
+                }
+        );
+    }
+
     @Override
     protected void onResume() {
 
@@ -3465,19 +3491,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 1;
-
                         mainlinearlayout.requestFocus();
-                      /*  if (IMAGE_COUNT < 20) {*/
-
-                            utils.selectImage(String.valueOf(new Date().getDate() + ""
-                                    + new Date().getTime())
-                                    + ".jpeg", null, CheckInCareActivity.this, false);
-                        } /*else {
-                            utils.toast(2, 2, "Maximum 20 Images only Allowed");
-                        }
-                    }*/
+                        selectImage();
+                    }
                 });
             }
+
             if (buttonKitchenAdd != null) {
                 buttonKitchenAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -3485,15 +3504,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         isHallFlag = 2;
 
                         mainlinearlayout.requestFocus();
-                      /*  if (IMAGE_COUNT < 20) {
-*/
-                            utils.selectImage(String.valueOf(new Date().getDate() + ""
-                                    + new Date().getTime())
-                                    + ".jpeg", null, CheckInCareActivity.this, false);
-                        } /*else {
-                            utils.toast(2, 2, "Maximum 20 Images only Allowed");
+                        selectImage();
                         }
-                    }*/
                 });
             }
             if (buttonWashroomAdd != null) {
@@ -3501,17 +3513,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 3;
-
                         mainlinearlayout.requestFocus();
-                       /* if (IMAGE_COUNT < 20) {*/
-
-                            utils.selectImage(String.valueOf(new Date().getDate() + ""
-                                    + new Date().getTime())
-                                    + ".jpeg", null, CheckInCareActivity.this, false);
-                        } /*else {
-                            utils.toast(2, 2, "Maximum 20 Images only Allowed");
+                        selectImage();
                         }
-                    }*/
                 });
             }
             if (buttonBedroomAdd != null) {
@@ -3519,18 +3523,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onClick(View v) {
                         isHallFlag = 4;
-
                         mainlinearlayout.requestFocus();
-                     /*   if (IMAGE_COUNT < 20) {*/
-
-                            utils.selectImage(String.valueOf(new Date().getDate() + ""
-                                    + new Date().getTime())
-                                    + ".jpeg", null, CheckInCareActivity.this, false);
-                        } /*else {
-                            utils.toast(2, 2, "Maximum 20 Images only Allowed");
-                        }
-                    }*/
-
+                        selectImage();
+                    }
                 });
             }
 

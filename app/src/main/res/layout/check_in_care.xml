@@ -980,7 +980,6 @@
                     android:textSize="15sp"
                     android:visibility="gone" />
 
-
                 <Button
                     android:id="@+id/buttonBedroomAdd"
                     android:layout_width="30dp"
@@ -1076,14 +1075,8 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_marginBottom="5dp">
-
-            </LinearLayout>
-
         </LinearLayout>
-        </ScrollView>
+
+    </ScrollView>
 
 </LinearLayout>

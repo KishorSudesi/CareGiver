@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
@@ -14,6 +15,8 @@ import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.config.CareGiver;
+import com.hdfc.dbconfig.DbCon;
 import com.hdfc.libs.Utils;
 
 import org.json.JSONException;
@@ -146,6 +149,10 @@ public class App42GCMService extends IntentService {
     }
 
     private void sendNotification(String msg, String strClientId) {
+
+        LoadDataTask loadDataTask = new LoadDataTask();
+        loadDataTask.execute();
+
         long when = System.currentTimeMillis();
 
         NotificationManager mNotificationManager = (NotificationManager) this.
@@ -241,5 +248,25 @@ public class App42GCMService extends IntentService {
         Intent intent = new Intent(DisplayMessageAction);
         intent.putExtra(ExtraMessage, message);
         this.sendBroadcast(intent);
+    }
+
+    private class LoadDataTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                CareGiver.setDbCon(new DbCon(getApplicationContext()));
+            } catch (Exception e) {
+                e.getMessage();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
     }
 }
