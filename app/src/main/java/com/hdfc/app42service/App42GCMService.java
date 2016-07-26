@@ -160,7 +160,7 @@ public class App42GCMService extends IntentService {
         notificationIntent.putExtra("message_delivered", true);
         notificationIntent.putExtra(ExtraMessage, msg);
         notificationIntent.putExtra("LOAD", false);
-        Config.intSelectedMenu = Config.intNotificationScreen;
+        Config.intSelectedMenu = Config.intNotificationScreen;// to load on app kill
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         //notificationIntent.setFlags(603979776);//603979776 Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP

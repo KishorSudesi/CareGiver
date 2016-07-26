@@ -772,7 +772,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             cancel = true;
                         }
 
-                    if (!kitchenequipcheck.isChecked()) {
+                   /* if (!kitchenequipcheck.isChecked()) {
                         if (TextUtils.isEmpty(valkitchen)) {
                             kitchen_equipments.setError(getString(R.string.error_field_required));
                             focusView = kitchen_equipments;
@@ -813,7 +813,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             focusView = maidservices;
                             cancel = true;
                         }
-                    }
+                    }*/
 
                     if (cancel) {
                         focusView.requestFocus();

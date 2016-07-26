@@ -145,6 +145,13 @@ public class LoginActivity extends AppCompatActivity {
 
         if (CareGiver.getDbCon() == null)
             new LoadDataTask().execute();
+        else {
+            loadingPanel.setVisibility(View.GONE);
+            editEmail.setVisibility(View.VISIBLE);
+            editPassword.setVisibility(View.VISIBLE);
+            textView.setVisibility(View.VISIBLE);
+            button.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showForgotPassword(){

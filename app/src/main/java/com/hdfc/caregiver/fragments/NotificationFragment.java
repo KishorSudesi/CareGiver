@@ -125,8 +125,9 @@ public class NotificationFragment extends Fragment {
         Bundle bundle = this.getArguments();
         boolean b = bundle.getBoolean("RELOAD", false);
 
-        if (!b || !utils.isConnectingToInternet())
-            appUtils.createNotificationModel();
+        loadingPanel.setVisibility(View.VISIBLE);
+        appUtils.createNotificationModel();
+        loadingPanel.setVisibility(View.GONE);
 
         notificationAdapter = new NotificationAdapter(getActivity(), Config.notificationModels);
         listViewActivities.setAdapter(notificationAdapter);
@@ -134,28 +135,22 @@ public class NotificationFragment extends Fragment {
         listViewActivities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 findActivities(Config.notificationModels.get(position).getStrActivityId());
             }
         });
 
         if (Config.notificationModels.size() <= 0 || b) {
-
-          /*  boolean isBackground=false;
-            if(b)*/
-
-            loadNotifications(b);
+            loadNotifications();
         }
 
         return view;
     }
 
-    private void loadNotifications(final boolean isBackground) {
+    private void loadNotifications() {
 
         if (utils.isConnectingToInternet()) {
 
-            if (!isBackground)
-                loadingPanel.setVisibility(View.VISIBLE);
+            loadingPanel.setVisibility(View.VISIBLE);
 
             String strDate = "";
 
@@ -233,26 +228,21 @@ public class NotificationFragment extends Fragment {
                                 }
                                 refreshNotifications();
                             } else {
-                                if (!isBackground)
                                     utils.toast(2, 2, getString(R.string.warning_internet));
                             }
-
-                            if (!isBackground)
-                                loadingPanel.setVisibility(View.GONE);
+                            loadingPanel.setVisibility(View.GONE);
                         }
 
                         @Override
                         public void onException(Exception e) {
 
-                            if (!isBackground) {
+                            loadingPanel.setVisibility(View.GONE);
 
-                                loadingPanel.setVisibility(View.GONE);
+                            if (e == null)
+                                utils.toast(2, 2, getString(R.string.warning_internet));
+                            else
+                                utils.toast(1, 1, getString(R.string.no_new_notifications));
 
-                                if (e == null)
-                                    utils.toast(2, 2, getString(R.string.warning_internet));
-                                else
-                                    utils.toast(1, 1, getString(R.string.no_new_notifications));
-                            }
                         }
                     });
         } else {

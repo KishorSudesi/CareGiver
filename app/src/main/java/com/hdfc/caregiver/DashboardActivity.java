@@ -67,6 +67,7 @@ public class DashboardActivity extends AppCompatActivity implements
         public void onReceive(Context context, Intent intent) {
 
             try {
+                Utils.log(" 1 ", " RCVR ");
                 String message = intent
                         .getStringExtra(App42GCMService.ExtraMessage);
 
@@ -508,13 +509,19 @@ public class DashboardActivity extends AppCompatActivity implements
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         try {
-            Utils.log(String.valueOf(intent.getData()), " PUSH ");
-            if (intent != null && intent.getStringExtra(App42GCMService.ExtraMessage) != null) {
+            Utils.log(String.valueOf(intent.getStringExtra(App42GCMService.ExtraMessage)), " PUSH ");
+            if (intent.getStringExtra(App42GCMService.ExtraMessage) != null) {
 
                 if (CareGiver.getDbCon() != null) {
-
                     iWhichLoad = 2;
                     strMess = intent.getStringExtra(App42GCMService.ExtraMessage);
+
+                    AppUtils.fetchActivitiesSync(DashboardActivity.this);
+                    AppUtils.loadNotifications(DashboardActivity.this);
+                    //todo optional refersh
+                    AppUtils.refreshProvider(DashboardActivity.this);
+
+                    showPushDialog(strMess);
                 } else {
                     new LoadDataTask().execute();
                 }
@@ -733,7 +740,7 @@ public class DashboardActivity extends AppCompatActivity implements
                     }
 
                     if (Config.intSelectedMenu == Config.intNotificationScreen) {
-                        menuNotification(false);
+                        menuNotification(true);
                     }
                 }
 

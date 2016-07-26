@@ -365,7 +365,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         //loadingPanel.setVisibility(View.VISIBLE);
         if (progressDialog != null) {
-            progressDialog.setMessage(getString(R.string.process_login));
+            progressDialog.setMessage(getString(R.string.loading));
             progressDialog.setCancelable(false);
             progressDialog.show();
         }
