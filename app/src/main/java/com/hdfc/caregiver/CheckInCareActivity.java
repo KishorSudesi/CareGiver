@@ -472,6 +472,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     kitchenbitmaps.clear();
                     washroombitmaps.clear();
                     bedroombitmaps.clear();
+
+                    bViewLoaded =false;
                     goBack();
                 }
             });
@@ -600,10 +602,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             }
                                 if (subActivityName.equalsIgnoreCase("kitchen_equipments")){
                                     kitchen_equipments.setText(status);
-                                    if(!kitchen_equipments.getText().toString().equals(status)){
+                                    if(kitchen_equipments.getText().toString().equals("")){
                                         kitchenequipcheck.setChecked(true);
+                                    }else {
+                                        kitchenequipcheck.setChecked(false);
                                     }
-                                        kitchenequipcheck.setChecked(true);
                                     if (kitchenequipcheck.isChecked()) {
                                         kitchenequipmentstatus.setVisibility(View.VISIBLE);
                                         kitchenequipmentstatus.setText(getString(R.string.done));
@@ -616,10 +619,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 }
                                 if (subActivityName.equalsIgnoreCase("grocery")){
                                     grocery.setText(status);
-                                    if(!grocery.getText().toString().equals(status)){
+                                    if(grocery.getText().toString().equals("")){
                                         grocerycheck.setChecked(true);
+                                    }else {
+                                        grocerycheck.setChecked(false);
                                     }
-                                    grocerycheck.setChecked(true);
                                     if (grocerycheck.isChecked()) {
                                         grocerystatus.setVisibility(View.VISIBLE);
                                         grocerystatus.setText(getString(R.string.done));
@@ -641,10 +645,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                 if (subActivityName.equalsIgnoreCase("maid_services")){
                                     maidservices.setText(status);
-                                    if(!maidservices.getText().toString().equals(status)){
+                                    if(maidservices.getText().toString().equals("")){
                                         domesticcheck.setChecked(true);
+                                    }else {
+                                        domesticcheck.setChecked(false);
                                     }
-                                    domesticcheck.setChecked(true);
                                     if (domesticcheck.isChecked()) {
 
                                         domestichelpstatus.setVisibility(View.VISIBLE);
@@ -666,24 +671,27 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                 if (subActivityName.equalsIgnoreCase("electronic")){
                                     electronic.setText(status);
-                                    if(!electronic.getText().toString().equals(status)){
+                                    if(electronic.getText().toString().equals("")){
                                         electrocheck.setChecked(true);
+                                    }else {
+                                        electrocheck.setChecked(false);
                                     }
-                                    electrocheck.setChecked(true);
                                 }
                                 if (subActivityName.equalsIgnoreCase("home_appliances")){
                                     homeapplience.setText(status);
-                                    if(!homeapplience.getText().toString().equals(status)){
+                                    if(homeapplience.getText().toString().equals("")){
                                         homecheck.setChecked(true);
+                                    }else {
+                                        homecheck.setChecked(false);
                                     }
-                                    homecheck.setChecked(true);
                                 }
                                 if (subActivityName.equalsIgnoreCase("automobile")){
                                     automobile.setText(status);
-                                    if(!automobile.getText().toString().equals(status)){
+                                    if(automobile.getText().toString().equals("")){
                                         autocheck.setChecked(true);
+                                    }else {
+                                        autocheck.setChecked(false);
                                     }
-                                    autocheck.setChecked(true);
                                 }
                                 if (electrocheck.isChecked() && homecheck.isChecked()
                                         && autocheck.isChecked()) {
@@ -710,22 +718,71 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("hall")) {
                             hallimageModels = picture.get(k).getImageModels();
                            // setHallImages();
+                          /*  if (layouthall != null) {
+                                hallstatus.setVisibility(View.VISIBLE);
+                                hallstatus.setText(getString(R.string.pending));
+                                hallstatus.setTextColor(Color.RED);
+                            } else {
+                                hallstatus.setVisibility(View.VISIBLE);
+                                hallstatus.setText(getString(R.string.done));
+                                hallstatus.setTextColor(Color.BLUE);
+                            }*/
 
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("kitchen")) {
                             kitchenimageModels = picture.get(k).getImageModels();
                            // addKitchenImages();
+                           /* if (layoutkitchen != null) {
+                                kitchenstatus.setVisibility(View.VISIBLE);
+                                kitchenstatus.setText(getString(R.string.pending));
+                                kitchenstatus.setTextColor(Color.RED);
+                            } else {
+                                kitchenstatus.setVisibility(View.VISIBLE);
+                                kitchenstatus.setText(getString(R.string.done));
+                                kitchenstatus.setTextColor(Color.BLUE);
+                            }*/
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("washroom")) {
                             washroomimageModels = picture.get(k).getImageModels();
                           //  addWashroomImages();
+                          /*  if (layoutwashroom != null) {
+                                washroomstatus.setVisibility(View.VISIBLE);
+                                washroomstatus.setText(getString(R.string.pending));
+                                washroomstatus.setTextColor(Color.RED);
+                            } else {
+                                washroomstatus.setVisibility(View.VISIBLE);
+                                washroomstatus.setText(getString(R.string.done));
+                                washroomstatus.setTextColor(Color.BLUE);
+                            }*/
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("bedroom")) {
                             bedroomimageModels = picture.get(k).getImageModels();
                           //  addBedroomImages();
+                           /* if (layoutbedroom != null) {
+                                bedroomstatus.setVisibility(View.VISIBLE);
+                                bedroomstatus.setText(getString(R.string.pending));
+                                bedroomstatus.setTextColor(Color.RED);
+                            } else {
+                                bedroomstatus.setVisibility(View.VISIBLE);
+                                bedroomstatus.setText(getString(R.string.done));
+                                bedroomstatus.setTextColor(Color.BLUE);
+                            }*/
                         }
 
                     }
+                   /* if (hallstatus.getText().equals(getString(R.string.done))
+                            && kitchenstatus.getText().equals(getString(R.string.done))
+                            && washroomstatus.getText().equals(getString(R.string.done))
+                            && bedroomstatus.getText().equals(getString(R.string.done))) {
+
+                        uploadmediastatus.setVisibility(View.VISIBLE);
+                        uploadmediastatus.setText(getString(R.string.done));
+                        uploadmediastatus.setTextColor(Color.BLUE);
+                    } else {
+                        uploadmediastatus.setVisibility(View.VISIBLE);
+                        uploadmediastatus.setText(getString(R.string.pending));
+                        uploadmediastatus.setTextColor(Color.RED);
+                    }*/
                 }
             }
         } catch (Exception e) {
@@ -772,7 +829,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             cancel = true;
                         }
 
-                   /* if (!kitchenequipcheck.isChecked()) {
+                    if (!kitchenequipcheck.isChecked()) {
                         if (TextUtils.isEmpty(valkitchen)) {
                             kitchen_equipments.setError(getString(R.string.error_field_required));
                             focusView = kitchen_equipments;
@@ -813,7 +870,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             focusView = maidservices;
                             cancel = true;
                         }
-                    }*/
+                    }
 
                     if (cancel) {
                         focusView.requestFocus();
@@ -1030,6 +1087,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         kitchenbitmaps.clear();
         washroombitmaps.clear();
         bedroombitmaps.clear();
+
+        bViewLoaded =false;
         goBack();
     }
 
@@ -1924,6 +1983,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
 
                                     IMAGE_COUNT = 0;
+                                    bViewLoaded =false;
                                     utils.toast(2, 2, getString(R.string.data_upload));
                                     Intent intent = new Intent(CheckInCareActivity.this,
                                             DashboardActivity.class);
@@ -2350,6 +2410,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 mProgressDialog.dismiss();
                             //Utils.log(response.toString(), "Success");
                             IMAGE_COUNT = 0;
+                            bViewLoaded =false;
                             utils.toast(2, 2, getString(R.string.data_upload));
                             Intent intent = new Intent(CheckInCareActivity.this,
                                     DashboardActivity.class);
@@ -3250,6 +3311,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 if (item.equals("Y")) {
                     //  utils.toast(2, 2, getString(R.string.select_date));
                     waterstatus.setText(getString(R.string.yes));
+                    txtwater.setText("Due Date");
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -3298,6 +3360,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     //   utils.toast(2, 2, getString(R.string.select_date));
 
                     gasstatus.setText(getString(R.string.yes));
+                    txtgas.setText("Due Date");
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -3345,6 +3408,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     //  utils.toast(2, 2, getString(R.string.select_date));
 
                     electricitystatus.setText(getString(R.string.yes));
+                    txtelectricity.setText("Due Date");
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -3392,6 +3456,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     //   utils.toast(2, 2, getString(R.string.select_date));
 
                     telephonestatus.setText(getString(R.string.yes));
+                    txttelephone.setText("Due Date");
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -3532,7 +3597,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             if (!bViewLoaded) {
 
-                bViewLoaded =true;
+               bViewLoaded =true;
 
                 backgroundThreadHandler = new BackgroundThreadHandler();
                 Thread backgroundThreadImages = new BackgroundThreadImages();
