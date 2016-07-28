@@ -824,27 +824,29 @@ public class MilestoneActivity extends AppCompatActivity {
                         strName1 = String.valueOf(new Date().getDate() + "" + new Date().getTime());
                         strImageName1 = strName1 + ".jpeg";
 
-                        permissionHelper.verifyPermission(
-                                new String[]{getString(R.string.access_storage)},
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                new PermissionCallback() {
-                                    @Override
-                                    public void permissionGranted() {
-                                        //action to perform when permission granteed
-                                        isAllowed = true;
+                        if (!isFinishing()) {
+                            permissionHelper.verifyPermission(
+                                    new String[]{getString(R.string.access_storage)},
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    new PermissionCallback() {
+                                        @Override
+                                        public void permissionGranted() {
+                                            //action to perform when permission granteed
+                                            isAllowed = true;
 
-                                        if (isAllowed)
-                                            utils.selectImage(strImageName1, null,
-                                                    MilestoneActivity.this, false);
-                                    }
+                                            if (isAllowed)
+                                                utils.selectImage(strImageName1, null,
+                                                        MilestoneActivity.this, false);
+                                        }
 
-                                    @Override
-                                    public void permissionRefused() {
-                                        //action to perform when permission refused
-                                        isAllowed = false;
+                                        @Override
+                                        public void permissionRefused() {
+                                            //action to perform when permission refused
+                                            isAllowed = false;
+                                        }
                                     }
-                                }
-                        );
+                            );
+                        }
 
                         /*if (isAllowed)
                             utils.selectImage(strImageName1, null, MilestoneActivity.this, false);*/

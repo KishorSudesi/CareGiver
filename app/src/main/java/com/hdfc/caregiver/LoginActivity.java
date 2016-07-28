@@ -23,7 +23,6 @@ import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbCon;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AsyncApp42ServiceApi;
-import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
 import com.hdfc.views.CheckView;
@@ -134,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        CrashLogger.getInstance().init(LoginActivity.this);
+        //CrashLogger.getInstance().init(LoginActivity.this);
 
         editEmail.setVisibility(View.INVISIBLE);
         editPassword.setVisibility(View.INVISIBLE);
