@@ -338,14 +338,14 @@ public class DbHelper extends SQLiteOpenHelper {
         }
     }*/
 
-    public void moveToExternal() {
+    void moveToExternal() {
         try {
             File sd = Environment.getExternalStorageDirectory();
             //File data = Environment.getDataDirectory();
 
             if (sd.canWrite()) {
                 String currentDBPath = _ctxt.getDatabasePath(DATABASE_NAME).getAbsolutePath();
-                String backupDBPath = "backupname.db";
+                String backupDBPath = "caregiver";
                 File currentDB = new File(currentDBPath);
                 File backupDB = new File(sd, backupDBPath);
 

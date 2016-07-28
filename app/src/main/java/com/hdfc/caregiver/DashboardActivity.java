@@ -104,8 +104,6 @@ public class DashboardActivity extends AppCompatActivity implements
             if (isLoader && loadingPanel.getVisibility() == View.VISIBLE)
                 loadingPanel.setVisibility(View.GONE);
 
-            //CareGiver.getDbCon().getDb();
-
             if (isLoader)
                 AppUtils.fetchActivitiesSync(appCompatActivity);
         }
@@ -583,6 +581,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
+        CareGiver.getDbCon().getDb();
         //super.onBackPressed();
        /* if (CareGiver.dbCon != null) {
             CareGiver.dbCon.close();
