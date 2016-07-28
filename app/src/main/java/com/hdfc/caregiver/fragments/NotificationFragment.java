@@ -129,7 +129,8 @@ public class NotificationFragment extends Fragment {
         appUtils.createNotificationModel();
         loadingPanel.setVisibility(View.GONE);
 
-        notificationAdapter = new NotificationAdapter(getActivity(), Config.notificationModels);
+        notificationAdapter = new
+                NotificationAdapter(getActivity(), Config.notificationModels);
         listViewActivities.setAdapter(notificationAdapter);
 
         listViewActivities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -260,6 +261,8 @@ public class NotificationFragment extends Fragment {
 
         try {
 
+            boolean isLoaded = true;
+
             Cursor cursor = CareGiver.getDbCon().fetch(
                     DbHelper.strTableNameCollection,
                     new String[]{DbHelper.COLUMN_DOCUMENT},
@@ -285,7 +288,15 @@ public class NotificationFragment extends Fragment {
                     intent.putExtras(args);
                     startActivity(intent);
                     getActivity().finish();
+                } else {
+                    isLoaded = false;
                 }
+            } else {
+                isLoaded = false;
+            }
+
+            if (!isLoaded) {
+                utils.toast(2, 2, getString(R.string.sync_data_activity));
             }
 
             CareGiver.getDbCon().closeCursor(cursor);

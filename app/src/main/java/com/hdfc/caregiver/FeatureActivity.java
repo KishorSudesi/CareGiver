@@ -62,7 +62,6 @@ public class FeatureActivity extends AppCompatActivity {
     private static String strImageName = "";
     private static StorageService storageService;
     private static Handler backgroundThreadHandler;
-
     private static ActivityModel act;
     private static String strName, strCustomerName, strCustomerUrl;
     private static ArrayList<String> imagePaths = new ArrayList<>();
@@ -70,6 +69,7 @@ public class FeatureActivity extends AppCompatActivity {
     private static boolean bLoad, isCompleted = false;
     private static boolean bViewLoaded, mImageChanged;
     private static ArrayList<ImageModel> imageModels;
+    private boolean isAccessible;
     private int mImageCount, mImageUploadCount;
     private LinearLayout layout;
     private RelativeLayout loadingPanel;
@@ -93,6 +93,8 @@ public class FeatureActivity extends AppCompatActivity {
         Button cancel = (Button) findViewById(R.id.buttonBack);
         TextView textViewActivityName = (TextView) findViewById(R.id.txtActivityName);
         textViewTime = (TextView) findViewById(R.id.txtActivityTime);
+
+        isAccessible = true;
 
         permissionHelper = PermissionHelper.getInstance(this);
 
@@ -146,7 +148,9 @@ public class FeatureActivity extends AppCompatActivity {
             if (cursor1.getCount() > 0) {
                 cursor1.moveToFirst();
                 try {
-                    jsonObject = new JSONObject(cursor1.getString(0));
+                    if (cursor1.getString(0) != null && !cursor1.getString(0).equalsIgnoreCase("")) {
+                        jsonObject = new JSONObject(cursor1.getString(0));
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -156,20 +160,28 @@ public class FeatureActivity extends AppCompatActivity {
 
             String name = "";
             try {
-                if (jsonObject != null && jsonObject.getString("dependent_name") != null)
-                    name = jsonObject.optString("dependent_name");
+                if (jsonObject != null) {
 
-                if (jsonObject != null && imgLogoHeaderTaskDetail != null
-                        && jsonObject.getString("dependent_profile_url") != null
-                        && !jsonObject.getString("dependent_profile_url").equalsIgnoreCase("")) {
+                    if (jsonObject.getString("dependent_name") != null
+                            && !jsonObject.getString("dependent_name").equalsIgnoreCase("")) {
+                        name = jsonObject.optString("dependent_name");
+                    }
 
-                    Glide.with(FeatureActivity.this)
-                            .load(jsonObject.getString("dependent_profile_url"))
-                            .centerCrop()
-                            .bitmapTransform(new CropCircleTransformation(FeatureActivity.this))
-                            .placeholder(R.drawable.person_icon)
-                            .crossFade()
-                            .into(imgLogoHeaderTaskDetail);
+                    if (imgLogoHeaderTaskDetail != null
+                            && jsonObject.getString("dependent_profile_url") != null
+                            && !jsonObject.getString("dependent_profile_url").
+                            equalsIgnoreCase("")) {
+
+                        Glide.with(FeatureActivity.this)
+                                .load(jsonObject.getString("dependent_profile_url"))
+                                .centerCrop()
+                                .bitmapTransform(new CropCircleTransformation(FeatureActivity.this))
+                                .placeholder(R.drawable.person_icon)
+                                .crossFade()
+                                .into(imgLogoHeaderTaskDetail);
+                    }
+                } else {
+                    isAccessible = false;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -196,7 +208,9 @@ public class FeatureActivity extends AppCompatActivity {
             if (cursor2.getCount() > 0) {
                 cursor2.moveToFirst();
                 try {
-                    jsonObject1 = new JSONObject(cursor2.getString(0));
+                    if (cursor2.getString(0) != null && !cursor2.getString(0).equalsIgnoreCase("")) {
+                        jsonObject1 = new JSONObject(cursor2.getString(0));
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -206,8 +220,10 @@ public class FeatureActivity extends AppCompatActivity {
 
             try {
                 if (jsonObject1 != null) {
-                    if (jsonObject1.getString("customer_name") != null)
+                    if (jsonObject1.getString("customer_name") != null
+                            && !jsonObject1.getString("customer_name").equalsIgnoreCase("")) {
                         strCustomerName = jsonObject1.getString("customer_name");
+                    }
 
                     if (jsonObject1.getString("customer_profile_url") != null
                             && !jsonObject1.getString("customer_profile_url").
@@ -220,7 +236,7 @@ public class FeatureActivity extends AppCompatActivity {
             }
 
 
-            if (linearName != null) {
+            if (linearName != null && jsonObject1 != null) {
                 linearName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -262,6 +278,10 @@ public class FeatureActivity extends AppCompatActivity {
                         alertDialog.show();
                     }
                 });
+            } else {
+                if (jsonObject1 == null) {
+                    isAccessible = false;
+                }
             }
 
             String strActivityName = act.getStrActivityName();
@@ -804,7 +824,8 @@ public class FeatureActivity extends AppCompatActivity {
                             }
                             dialog.setCancelable(true);
 
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
                             dialog.show();
 
                         }
@@ -994,11 +1015,13 @@ public class FeatureActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
                 }
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 30, 1);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, 30, 1);
                 params.setMargins(10, 10, 10, 10);
                 textViewName.setTag(milestoneModel);
 
-                if (milestoneModel.getStrMilestoneScheduledDate() != null && !milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")) {
+                if (milestoneModel.getStrMilestoneScheduledDate() != null
+                        && !milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")) {
 
                     String strDate = milestoneModel.getStrMilestoneScheduledDate();
 
@@ -1018,10 +1041,12 @@ public class FeatureActivity extends AppCompatActivity {
 
                     if (date != null && milestoneDate != null) {
 
-                        if (milestoneDate.before(date) && !milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed"))
+                        if (milestoneDate.before(date) && !milestoneModel.getStrMilestoneStatus().
+                                equalsIgnoreCase("completed"))
                             milestoneModel.setStrMilestoneStatus("pending");
                         else {
-                            if (milestoneDate.after(date) && !milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed"))
+                            if (milestoneDate.after(date) && !milestoneModel.
+                                    getStrMilestoneStatus().equalsIgnoreCase("completed"))
                                 milestoneModel.setStrMilestoneStatus("inprocess");
                         }
                     } else milestoneModel.setStrMilestoneStatus("opened");
@@ -1081,16 +1106,20 @@ public class FeatureActivity extends AppCompatActivity {
                             utils.toast(2, 2, getString(R.string.save_image));
                         } else {
 
-                            final MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
+                            if (isAccessible) {
+                                final MilestoneModel milestoneModelObject = (MilestoneModel) v.getTag();
 
-                            Bundle args = new Bundle();
+                                Bundle args = new Bundle();
 
-                            Intent intent = new Intent(FeatureActivity.this, MilestoneActivity.class);
-                            args.putSerializable("Act", activityModel);
-                            args.putSerializable("Milestone", milestoneModelObject);
-                            args.putBoolean("WHICH_SCREEN", bWhichScreen);
-                            intent.putExtras(args);
-                            startActivity(intent);
+                                Intent intent = new Intent(FeatureActivity.this, MilestoneActivity.class);
+                                args.putSerializable("Act", activityModel);
+                                args.putSerializable("Milestone", milestoneModelObject);
+                                args.putBoolean("WHICH_SCREEN", bWhichScreen);
+                                intent.putExtras(args);
+                                startActivity(intent);
+                            } else {
+                                utils.toast(2, 2, getString(R.string.sync_data));
+                            }
                         }
                         //finish();
                     }

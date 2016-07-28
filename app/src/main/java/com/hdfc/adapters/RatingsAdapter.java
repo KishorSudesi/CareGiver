@@ -133,7 +133,10 @@ public class RatingsAdapter extends BaseAdapter {
                     if (cursor1.getCount() > 0) {
                         cursor1.moveToFirst();
                         try {
-                            jsonObject = new JSONObject(cursor1.getString(0));
+                            if (cursor1.getString(0) != null
+                                    && !cursor1.getString(0).equalsIgnoreCase("")) {
+                                jsonObject = new JSONObject(cursor1.getString(0));
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -142,8 +145,10 @@ public class RatingsAdapter extends BaseAdapter {
                     CareGiver.getDbCon().closeCursor(cursor1);
 
                     try {
-                        if (jsonObject != null && jsonObject.getString("customer_profile_url") != null
-                                && !jsonObject.getString("customer_profile_url").equalsIgnoreCase("")) {
+                        if (jsonObject != null
+                                && jsonObject.getString("customer_profile_url") != null
+                                && !jsonObject.getString("customer_profile_url").
+                                equalsIgnoreCase("")) {
                             Glide.with(_context)
                                     .load(jsonObject.getString("customer_profile_url"))
                                     .centerCrop()

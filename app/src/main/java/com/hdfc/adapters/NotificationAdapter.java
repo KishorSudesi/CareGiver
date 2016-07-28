@@ -163,7 +163,9 @@ public class NotificationAdapter extends BaseAdapter {
                 if (cursor.getCount() > 0) {
                     cursor.moveToFirst();
                     try {
-                        jsonObject = new JSONObject(cursor.getString(0));
+                        if (cursor.getString(0) != null && !cursor.getString(0).equalsIgnoreCase("")) {
+                            jsonObject = new JSONObject(cursor.getString(0));
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -217,10 +219,10 @@ public class NotificationAdapter extends BaseAdapter {
                 e.printStackTrace();
             }
 
-            if (!strName.equalsIgnoreCase(""))
+            if (strName != null && !strName.equalsIgnoreCase(""))
                 viewHolder.textViewName.setText(strName);
 
-            if (!strUrl.equalsIgnoreCase("")) {
+            if (strUrl != null && !strUrl.equalsIgnoreCase("")) {
 
                 Glide.with(_context)
                         .load(strUrl)
