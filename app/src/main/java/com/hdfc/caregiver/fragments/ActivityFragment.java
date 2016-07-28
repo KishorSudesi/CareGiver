@@ -1,5 +1,6 @@
 package com.hdfc.caregiver.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -205,13 +206,15 @@ public class ActivityFragment extends Fragment
 
                 if (!strUrl.equalsIgnoreCase("")) {
 
-                    Glide.with(context)
-                            .load(strUrl)
-                            .centerCrop()
-                            .bitmapTransform(new CropCircleTransformation(context))
-                            .placeholder(R.drawable.person_icon)
-                            .crossFade()
-                            .into(cvh.imagePerson);
+                    if (!((Activity) context).isFinishing()) {
+                        Glide.with(context)
+                                .load(strUrl)
+                                .centerCrop()
+                                .bitmapTransform(new CropCircleTransformation(context))
+                                .placeholder(R.drawable.person_icon)
+                                .crossFade()
+                                .into(cvh.imagePerson);
+                    }
                 }
             }
             return convertView;

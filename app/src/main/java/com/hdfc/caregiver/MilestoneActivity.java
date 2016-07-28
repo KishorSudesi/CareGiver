@@ -70,7 +70,7 @@ import pl.tajchert.nammu.PermissionCallback;
 
 public class MilestoneActivity extends AppCompatActivity {
 
-    private static int IMAGE_COUNT = 0;
+    //private static int IMAGE_COUNT = 0;
     private static ArrayList<FileModel> fileModels = new ArrayList<>();
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
@@ -79,14 +79,14 @@ public class MilestoneActivity extends AppCompatActivity {
     private static String strAlert;
     private static JSONObject jsonObject;
     private static ActivityModel act;
-    private static String strDependentMail;
+    private static String strDependentContact;
     private static String strName1;
     private static String strImageName1 = "";
     private static StorageService storageService;
     private static Handler backgroundThreadHandler;
     private static int iActivityPosition;
     private static boolean bEnabled, mImageChanged;
-    private static boolean isToDate = false, isFromDate = false;
+    //private static boolean isToDate = false, isFromDate = false;
     private static boolean isAllowed, bWhichScreen;
     private final Context context = this;
     private int iValidFlag = 0;
@@ -96,7 +96,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private SimpleTooltip simpleTooltip;
     private Utils utils;
     private PermissionHelper permissionHelper;
-    private String strValueReason = "";
+    //private String strValueReason = "";
   /*  private byte editTextType = 0;
     private byte TYPE_FROM = 1, TYPE_TO = 2;*/
 
@@ -112,6 +112,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         act = (ActivityModel) b.getSerializable("Act");
         bWhichScreen = b.getBoolean("WHICH_SCREEN", false);
+        strDependentContact = b.getString("DEPENDENT_CONTACT", "");
 
         bitmaps.clear();
 
@@ -512,7 +513,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                                                 getiChildfieldID()[i]);
                                                 spinnerChild.setVisibility(View.VISIBLE);
                                                 spinnerChild.setSelection(0);
-                                                strValueReason = spinnerChild.getSelectedItem().
+                                                //strValueReason = spinnerChild.getSelectedItem().
                                                         toString();
                                             } else if (strValue.equalsIgnoreCase("SuccessFul")) {
                                                 Spinner spinnerChild = (Spinner) layoutDialog.
@@ -1197,13 +1198,6 @@ public class MilestoneActivity extends AppCompatActivity {
                             String strDateNow = "";
                             Date dateNow = calendar.getTime();
                             strDateNow = Utils.convertDateToString(dateNow);
-
-                            int iCustomerPosition = Config.customerIdsAdded.indexOf(act.
-                                    getStrCustomerID());
-
-                            if (iCustomerPosition > -1)
-                                strDependentMail = Config.customerModels.get(iCustomerPosition).
-                                        getStrEmail();
 
                             jsonObject.put("created_by", Config.providerModel.getStrProviderId());
                             jsonObject.put("time", strDateNow);
@@ -2253,7 +2247,7 @@ public class MilestoneActivity extends AppCompatActivity {
                         public void onDocumentInserted(Storage response) {
                             try {
                                 if (response.isResponseSuccess()) {
-                                    sendPushToProvider();
+                                    sendPushToDependent();
 
 
                                 } else {
@@ -2297,35 +2291,42 @@ public class MilestoneActivity extends AppCompatActivity {
         }
     }
 
-    private void sendPushToProvider() {
+    private void sendPushToDependent() {
 
         if (utils.isConnectingToInternet()) {
 
             PushNotificationService pushNotificationService = new PushNotificationService(
                     MilestoneActivity.this);
 
-            pushNotificationService.sendPushToUser(strDependentMail, jsonObject.toString(),
-                    new App42CallBack() {
+            if (!strDependentContact.equalsIgnoreCase("")) {
 
-                        @Override
-                        public void onSuccess(Object o) {
+                pushNotificationService.sendPushToUser(strDependentContact, jsonObject.toString(),
+                        new App42CallBack() {
 
-                            strAlert = getString(R.string.activity_updated);
+                            @Override
+                            public void onSuccess(Object o) {
 
-                            if (o == null)
+                                strAlert = getString(R.string.activity_updated);
+
+                                if (o == null)
+                                    strAlert = getString(R.string.no_push_actiity_updated);
+
+                                goToActivityList(strAlert);
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                if (ex != null)
+                                    Utils.log(ex.getMessage(), " PUSH ");
                                 strAlert = getString(R.string.no_push_actiity_updated);
+                                goToActivityList(strAlert);
+                            }
+                        });
+            } else {
+                strAlert = getString(R.string.no_push_actiity_updated);
 
-                            goToActivityList(strAlert);
-                        }
-
-                        @Override
-                        public void onException(Exception ex) {
-                            if (ex != null)
-                                Utils.log(ex.getMessage(), " PUSH ");
-                            strAlert = getString(R.string.no_push_actiity_updated);
-                            goToActivityList(strAlert);
-                        }
-                    });
+                goToActivityList(strAlert);
+            }
         } else {
             strAlert = getString(R.string.no_push_actiity_updated);
 
@@ -2378,7 +2379,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     //////////////////////////////////
                     Calendar calendar = Calendar.getInstance();
                     String strTime = String.valueOf(calendar.getTimeInMillis());
-                    String strFileName = strTime + ".jpeg";
+                    //String strFileName = strTime + ".jpeg";
 
 
                     Date date = new Date();
@@ -2399,7 +2400,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                             Config.intWidth, Config.intHeight));
 
-                    IMAGE_COUNT++;
+                    //IMAGE_COUNT++;
 
                     mImageCount++;
                 }
@@ -2436,11 +2437,11 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     mImageCount++;
 
-                    IMAGE_COUNT++;
+                    //IMAGE_COUNT++;
 
                 }
 
-                IMAGE_COUNT++;
+                //IMAGE_COUNT++;
 
             } catch (Exception | OutOfMemoryError e) {
                 e.printStackTrace();
@@ -2460,7 +2461,7 @@ public class MilestoneActivity extends AppCompatActivity {
                         bitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(
                                 fileModel.getStrFileName()).getAbsolutePath(), Config.intWidth,
                                 Config.intHeight));
-                        IMAGE_COUNT++;
+                        //IMAGE_COUNT++;
 
                         fileModel.setNew(false);
                     }

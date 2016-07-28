@@ -404,15 +404,11 @@ public class AppUtils {
 
                             if (jsonObjectFeedback.getString("feedback_by_type").
                                     equalsIgnoreCase("customer")) {
-                                if (!Config.customerIds.contains(jsonObjectFeedback.
-                                        optString("feedback_by")))
                                     strCustomerId = jsonObjectFeedback.optString("feedback_by");
                             }
 
                             if (jsonObjectFeedback.getString("feedback_by_type").
                                     equalsIgnoreCase("dependent")) {
-                                if (!Config.dependentIds.contains(jsonObjectFeedback.
-                                        optString("feedback_by")))
                                     strDependentId = jsonObjectFeedback.optString("feedback_by");
                             }
                             insertClientIds(strCustomerId, strDependentId);
@@ -1263,10 +1259,13 @@ public class AppUtils {
 
                 while (!newCursor.isAfterLast()) {
 
+                    iRemoved = -1;
+
                     if (newCursor.getString(1) != null
                             && !newCursor.getString(1).equalsIgnoreCase("")) {
 
-                        iRemoved = newCursor.getInt(2);
+                        if (!newCursor.isNull(2))
+                            iRemoved = newCursor.getInt(2);
 
                         JSONObject jsonObject = new JSONObject(newCursor.getString(1));
 
@@ -1347,7 +1346,10 @@ public class AppUtils {
 
                 while (!newCursor.isAfterLast()) {
 
-                    iRemoved = newCursor.getInt(2);
+                    iRemoved = -1;
+
+                    if (!newCursor.isNull(2))
+                        iRemoved = newCursor.getInt(2);
 
                     if (newCursor.getString(1) != null && !newCursor.getString(1).equalsIgnoreCase("")) {
                         JSONObject jsonObjectDependent = new JSONObject(newCursor.getString(1));

@@ -583,6 +583,13 @@ public class DashboardActivity extends AppCompatActivity implements
     public void onBackPressed() {
         //CareGiver.getDbCon().getDb();
         //super.onBackPressed();
+
+
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntent);
+        finish();
        /* if (CareGiver.dbCon != null) {
             CareGiver.dbCon.close();
         }*/

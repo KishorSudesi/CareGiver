@@ -148,6 +148,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
                     Intent intent = new Intent(ClientProfileActivity.this, DashboardActivity.class);
                     Config.intSelectedMenu = Config.intClientScreen;
                     startActivity(intent);
+                    finish();
                 }
             });
         }
@@ -213,9 +214,17 @@ public class ClientProfileActivity extends AppCompatActivity  {
         mProgress.show();*/
     }
 
+    @Override
+    public void onBackPressed() {
+        //
 
+        Intent intent = new Intent(ClientProfileActivity.this, DashboardActivity.class);
+        Config.intSelectedMenu = Config.intClientScreen;
+        startActivity(intent);
+        finish();
+    }
 
-  /*  public class BackgroundThread extends Thread {
+    /*  public class BackgroundThread extends Thread {
         @Override
         public void run() {
             try {

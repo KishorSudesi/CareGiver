@@ -78,6 +78,7 @@ public class FeatureActivity extends AppCompatActivity {
     private boolean success;
     private TextView textViewTime;
     private LinearLayout linearLayoutAttach;
+    private String strDependentContact;
     private Button done;
     private PermissionHelper permissionHelper;
     private boolean isAllowed = false;
@@ -165,6 +166,11 @@ public class FeatureActivity extends AppCompatActivity {
                     if (jsonObject.getString("dependent_name") != null
                             && !jsonObject.getString("dependent_name").equalsIgnoreCase("")) {
                         name = jsonObject.optString("dependent_name");
+                    }
+
+                    if (jsonObject.getString("dependent_contact_no") != null
+                            && !jsonObject.getString("dependent_contact_no").equalsIgnoreCase("")) {
+                        strDependentContact = jsonObject.optString("dependent_contact_no");
                     }
 
                     if (imgLogoHeaderTaskDetail != null
@@ -1115,8 +1121,10 @@ public class FeatureActivity extends AppCompatActivity {
                                 args.putSerializable("Act", activityModel);
                                 args.putSerializable("Milestone", milestoneModelObject);
                                 args.putBoolean("WHICH_SCREEN", bWhichScreen);
+                                args.putString("DEPENDENT_CONTACT", strDependentContact);
                                 intent.putExtras(args);
                                 startActivity(intent);
+                                finish();
                             } else {
                                 utils.toast(2, 2, getString(R.string.sync_data));
                             }
