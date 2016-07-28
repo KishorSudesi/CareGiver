@@ -357,6 +357,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     dst.close();
                 }
             }
+           // Utils.log(sd,"path");
         } catch (Exception e) {
             e.printStackTrace();
         }
