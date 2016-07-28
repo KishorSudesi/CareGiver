@@ -829,48 +829,48 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             cancel = true;
                         }
 
-                    if (!kitchenequipcheck.isChecked()) {
-                        if (TextUtils.isEmpty(valkitchen)) {
-                            kitchen_equipments.setError(getString(R.string.error_field_required));
-                            focusView = kitchen_equipments;
-                            cancel = true;
+                        /*if (!kitchenequipcheck.isChecked()) {
+                            if (TextUtils.isEmpty(valkitchen)) {
+                                kitchen_equipments.setError(getString(R.string.error_field_required));
+                                focusView = kitchen_equipments;
+                                cancel = true;
+                            }
                         }
-                    }
-                    if (!grocerycheck.isChecked()) {
-                        if (TextUtils.isEmpty(valgrocery)) {
-                            grocery.setError(getString(R.string.error_field_required));
-                            focusView = grocery;
-                            cancel = true;
+                        if (!grocerycheck.isChecked()) {
+                            if (TextUtils.isEmpty(valgrocery)) {
+                                grocery.setError(getString(R.string.error_field_required));
+                                focusView = grocery;
+                                cancel = true;
+                            }
                         }
-                    }
-                    if (!electrocheck.isChecked()) {
-                        if (TextUtils.isEmpty(valelectronic)) {
-                            electronic.setError(getString(R.string.error_field_required));
-                            focusView = electronic;
-                            cancel = true;
+                        if (!electrocheck.isChecked()) {
+                            if (TextUtils.isEmpty(valelectronic)) {
+                                electronic.setError(getString(R.string.error_field_required));
+                                focusView = electronic;
+                                cancel = true;
+                            }
                         }
-                    }
-                    if (!homecheck.isChecked()) {
-                        if (TextUtils.isEmpty(valhomeapplience)) {
-                            homeapplience.setError(getString(R.string.error_field_required));
-                            focusView = homeapplience;
-                            cancel = true;
+                        if (!homecheck.isChecked()) {
+                            if (TextUtils.isEmpty(valhomeapplience)) {
+                                homeapplience.setError(getString(R.string.error_field_required));
+                                focusView = homeapplience;
+                                cancel = true;
+                            }
                         }
-                    }
-                    if (!autocheck.isChecked()) {
-                        if (TextUtils.isEmpty(valautomobile)) {
-                            automobile.setError(getString(R.string.error_field_required));
-                            focusView = automobile;
-                            cancel = true;
+                        if (!autocheck.isChecked()) {
+                            if (TextUtils.isEmpty(valautomobile)) {
+                                automobile.setError(getString(R.string.error_field_required));
+                                focusView = automobile;
+                                cancel = true;
+                            }
                         }
-                    }
-                    if (!domesticcheck.isChecked()) {
-                        if (TextUtils.isEmpty(valmaidservices)) {
-                            maidservices.setError(getString(R.string.error_field_required));
-                            focusView = maidservices;
-                            cancel = true;
-                        }
-                    }
+                        if (!domesticcheck.isChecked()) {
+                            if (TextUtils.isEmpty(valmaidservices)) {
+                                maidservices.setError(getString(R.string.error_field_required));
+                                focusView = maidservices;
+                                cancel = true;
+                            }
+                        }*/
 
                     if (cancel) {
                         focusView.requestFocus();
@@ -2518,7 +2518,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     Utils.log(String.valueOf(hallbitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
-                    imageView.setImageBitmap(hallbitmaps.get(i));
+                    //imageView.setImageBitmap(hallbitmaps.get(i));
+
+                    if (hallbitmaps.size() > 0 && i < hallbitmaps.size()) {
+                        imageView.setImageBitmap(hallbitmaps.get(i));
+                    }
+
                     imageView.setTag(hallimageModels.get(i));
                     imageView.setTag(R.id.three, i);
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -2583,7 +2588,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                     hallimageModels.remove(mImageModel);
 
-                                                    hallbitmaps.remove(mPosition);
+                                                    if (hallbitmaps.size() > 0 && mPosition < hallbitmaps.size()) {
+                                                        hallbitmaps.remove(mPosition);
+                                                    }
+
                                                     if (hallImageCount < 1) {
                                                         hallstatus.setVisibility(View.VISIBLE);
                                                         hallstatus.setText(getString(
@@ -2720,8 +2728,13 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     Utils.log(String.valueOf(kitchenbitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
-                    imageView.setImageBitmap(kitchenbitmaps.get(i));
+
                     imageView.setTag(kitchenimageModels.get(i));
+
+                    if (kitchenbitmaps.size() > 0 && i < kitchenbitmaps.size()) {
+                        imageView.setImageBitmap(kitchenbitmaps.get(i));
+                    }
+
                     imageView.setTag(R.id.three, i);
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
@@ -2785,7 +2798,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                     kitchenimageModels.remove(mImageModel);
 
-                                                    kitchenbitmaps.remove(mPosition);
+                                                    if (kitchenbitmaps.size() > 0 && mPosition < kitchenbitmaps.size()) {
+                                                        kitchenbitmaps.remove(mPosition);
+                                                    }
 
                                                     if (kitchenImageCount < 1) {
                                                         kitchenstatus.setVisibility(
@@ -2926,7 +2941,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     Utils.log(String.valueOf(washroombitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
-                    imageView.setImageBitmap(washroombitmaps.get(i));
+
+                    if (washroombitmaps.size() > 0 && i < washroombitmaps.size()) {
+                        imageView.setImageBitmap(washroombitmaps.get(i));
+                    }
+
                     imageView.setTag(washroomimageModels.get(i));
                     imageView.setTag(R.id.three, i);
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -2991,7 +3010,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                     washroomimageModels.remove(mImageModel);
 
-                                                    washroombitmaps.remove(mPosition);
+                                                    //washroombitmaps.remove(mPosition);
+
+                                                    if (washroombitmaps.size() > 0 && mPosition < washroombitmaps.size()) {
+                                                        washroombitmaps.remove(mPosition);
+                                                    }
+
                                                     if (washroomImageCount < 1) {
                                                         washroomstatus.setVisibility(View.VISIBLE);
                                                         washroomstatus.setText(getString(R.string.
@@ -3129,7 +3153,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     Utils.log(String.valueOf(bedroombitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
-                    imageView.setImageBitmap(bedroombitmaps.get(i));
+
+
+                    if (bedroombitmaps.size() > 0 && i < bedroombitmaps.size()) {
+                        imageView.setImageBitmap(bedroombitmaps.get(i));
+                    }
+
                     imageView.setTag(bedroomimageModels.get(i));
                     imageView.setTag(R.id.three, i);
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -3194,7 +3223,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                     bedroomimageModels.remove(mImageModel);
 
-                                                    bedroombitmaps.remove(mPosition);
+                                                    // bedroombitmaps.remove(mPosition);
+
+                                                    if (bedroombitmaps.size() > 0 && mPosition < bedroombitmaps.size()) {
+                                                        bedroombitmaps.remove(mPosition);
+                                                    }
+
 
                                                     if (bedroomImageCount < 1) {
                                                         bedroomstatus.setVisibility(View.VISIBLE);
