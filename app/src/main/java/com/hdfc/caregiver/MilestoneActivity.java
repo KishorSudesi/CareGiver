@@ -82,7 +82,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private static String strName1;
     private static String strImageName1 = "";
     private static StorageService storageService;
-    private static Handler backgroundThreadHandler;
+    private static Handler backgroundThreadHandler, backgroundThreadHandlerLoad;
     private static boolean bEnabled, mImageChanged;
     private static boolean bWhichScreen;//isAllowed
     private final Context context = this;
@@ -795,9 +795,9 @@ public class MilestoneActivity extends AppCompatActivity {
 
             loadingPanel.setVisibility(View.VISIBLE);
 
-            backgroundThreadHandler = new BackgroundThreadHandler();
-            Thread backgroundThreadImages = new BackgroundThreadImages();
-            backgroundThreadImages.start();
+            backgroundThreadHandlerLoad = new BackgroundThreadHandlerLoad();
+            Thread backgroundThreadImagesLoad = new BackgroundThreadImagesLoad();
+            backgroundThreadImagesLoad.start();
         }
     }
 
@@ -1789,6 +1789,15 @@ public class MilestoneActivity extends AppCompatActivity {
         }
     }
 
+    private class BackgroundThreadHandlerLoad extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            backgroundThreadHandler = new BackgroundThreadHandler();
+            Thread backgroundThreadImages = new BackgroundThreadImages();
+            backgroundThreadImages.start();
+        }
+    }
+
     private class BackgroundThread extends Thread {
         @Override
         public void run() {
@@ -1861,6 +1870,31 @@ public class MilestoneActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             backgroundThreadHandler.sendEmptyMessage(0);
+        }
+    }
+
+    private class BackgroundThreadImagesLoad extends Thread {
+        @Override
+        public void run() {
+            try {
+
+                for (FileModel fileModel : fileModels) {
+                    if (fileModel.getStrFileName() != null && !fileModel.getStrFileName().
+                            equalsIgnoreCase("")) {
+
+                        File file = utils.getInternalFileImages(fileModel.getStrFileName());
+
+                        if (!file.exists() || file.length() <= 0) {
+                            Utils.loadImageFromWeb(fileModel.getStrFileName(),
+                                    fileModel.getStrFileUrl());
+                        }
+
+                    }
+                }
+            } catch (Exception | OutOfMemoryError e) {
+                e.printStackTrace();
+            }
+            backgroundThreadHandlerLoad.sendEmptyMessage(0);
         }
     }
 

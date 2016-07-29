@@ -412,7 +412,7 @@ public class LoginActivity extends AppCompatActivity {
                         Utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
                 } catch (JSONException e1) {
                     e1.printStackTrace();
-                    Utils.toast(2, 2, getString(R.string.invalid_credentials), LoginActivity.this);
+                    Utils.toast(2, 2, getString(R.string.error), LoginActivity.this);
                 }
             }
         });

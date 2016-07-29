@@ -105,9 +105,10 @@ public class DashboardActivity extends AppCompatActivity implements
             if (isLoader) {
                 AppUtils.fetchActivitiesSync(appCompatActivity);
 
-                //fetch check in cares
+                //fetch check in cares,service,
                 AppUtils.fetchCheckInCareSync(appCompatActivity);
                 AppUtils.fetchServicesSync(appCompatActivity);
+                AppUtils.loadNotifications(appCompatActivity);
             }
         }
     }
