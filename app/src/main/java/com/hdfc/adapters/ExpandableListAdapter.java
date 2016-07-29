@@ -23,7 +23,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.hdfc.app42service.StorageService;
 import com.hdfc.caregiver.CheckInCareActivity;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
@@ -35,14 +34,9 @@ import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
-import com.shephertz.app42.paas.sdk.android.App42CallBack;
-import com.shephertz.app42.paas.sdk.android.storage.Query;
-import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
-import com.shephertz.app42.paas.sdk.android.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -400,156 +394,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
         //
 
-    }
-
-    private void fetchCheckInCareName(String iMonth, String iYear, String CustomerId,
-                                      String ProviderId) {
-
-        iMonth = iMonth; // - 1
-        Config.checkInCareModels.clear();
-
-        if (Utils.isConnectingToInternet(_context)) {
-
-            Date mydate = new Date();
-            String strDate = Utils.writeFormatDateMY.format(mydate);
-
-            StorageService storageService = new StorageService(_context);
-
-          /*  Query q2 = QueryBuilder.build("current_date", strDate,
-                    QueryBuilder.Operator.GREATER_THAN_EQUALTO);*/
-            Query q1 = QueryBuilder.build("year", iYear, QueryBuilder.
-                    Operator.EQUALS);
-            Query q2 = QueryBuilder.build("month", iMonth, QueryBuilder.
-                    Operator.EQUALS);
-            Query q3 = QueryBuilder.build("customer_id", CustomerId, QueryBuilder.
-                    Operator.EQUALS);
-            Query q4 = QueryBuilder.build("provider_id", ProviderId, QueryBuilder.
-                    Operator.EQUALS);
-
-            Query q5 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
-            Query q6 = QueryBuilder.compoundOperator(q3, QueryBuilder.Operator.AND, q4);
-            Query q7 = QueryBuilder.compoundOperator(q5, QueryBuilder.Operator.AND, q6);
-
-            storageService.findDocsByQueryOrderBy(Config.collectionCheckInCare, q7, 30000,
-                    0, "created_date", 1, new App42CallBack() {
-
-                        @Override
-                        public void onSuccess(Object o) {
-                            if (o != null) {
-
-                                Storage storage = (Storage) o;
-
-                                Utils.log(storage.toString(), "not ");
-                                Utils.log("Size : " + storage.getJsonDocList().size(), " not ");
-                                if (storage.getJsonDocList().size() > 0) {
-                                    try {
-                                        try {
-                                            for (int i = 0; i < storage.getJsonDocList().size(); i++) {
-
-                                                Storage.JSONDocument jsonDocument = storage.
-                                                        getJsonDocList().get(i);
-
-                                                String strDocument = jsonDocument.getJsonDoc();
-                                                String strDocumentId = jsonDocument.getDocId();
-
-                                                appUtils.createCheckInCareModel(strDocumentId, strDocument);
-
-                                            }
-                                            try {
-                                                // ArrayList<CheckInCareModel> checkInCareActivityNames = Config.checkInCareActivityNames;
-
-                                                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context);
-                                                View convertView = inf.inflate(R.layout.custom_dialog, null);
-
-                                                alertDialog.setTitle("Check In Care");
-
-                                                ListView listview = (ListView) convertView.findViewById(R.id.dialoglist);
-                                                Button create = (Button) convertView.findViewById(R.id.createnew);
-                                                Button cancel = (Button) convertView.findViewById(R.id.cancel);
-                                                CustomAlertAdapter arrayAdapter = new CustomAlertAdapter(_context, Config.checkInCareModels);
-                                                listview.setAdapter(arrayAdapter);
-                                               /* listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                    @Override
-                                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                        myalertDialog.dismiss();
-
-                                                    }
-                                                });
-*/
-                                                create.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
-                                                        Intent i = new Intent(_context, CheckInCareActivity.class);
-                                                        _context.startActivity(i);
-
-                                                    }
-                                                });
-                                                cancel.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
-                                                        myalertDialog.dismiss();
-
-                                                    }
-                                                });
-
-                                                alertDialog.setView(convertView);
-                                                myalertDialog = alertDialog.show();
-
-
-
-
-
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    } catch (Exception e) {
-
-                                    }
-                                }
-                            } else {
-                                utils.toast(2, 2, _context.getString(R.string.warning_internet));
-                            }
-
-                        }
-
-
-                        @Override
-                        public void onException(Exception e) {
-
-                                if (e == null)
-                                    utils.toast(2, 2, _context.getString(R.string.warning_internet));
-                                else
-                                    try {
-                                        final CharSequence[] items = {"Create New", "Cancel"};
-
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
-
-                                        builder.setTitle("Check In Care");
-                                        builder.setItems(items, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int item) {
-
-                                                if (items[item].equals("Create New")) {
-                                                    Intent i = new Intent(_context, CheckInCareActivity.class);
-                                                    _context.startActivity(i);
-
-                                                } else if (items[item].equals("Cancel")) {
-                                                    dialog.dismiss();
-                                                }
-                                            }
-                                        });
-                                        builder.show();
-                                    } catch (Exception ex) {
-                                        ex.printStackTrace();
-                                    }
-
-                        }
-                   });
-
-        }
     }
 
     @Override

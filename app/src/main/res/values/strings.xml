@@ -14,6 +14,7 @@
     <string name="my_tasks">My Tasks</string>
     <string name="header_creating_task">Creating Task</string>
     <string name="check_in_care">Check In Care</string>
+    <string name="check_in_care_service">Check-In Care</string>
     <string name="header_task_details">Task Details</string>
     <string name="user_ratings">Overall User Ratings</string>
     <string name="done">Done</string>
@@ -162,6 +163,7 @@
     <string name="activities">Activities</string>
     <string name="tasks">Tasks</string>
     <string name="hyphen">-</string>
+    <string name="service_category">Service Category</string>
     <string name="scheduled_to">Scheduled To</string>
     <string name="resetted_password">New password has been sent to your E-mail id</string>
     <string name="delete_image">Delete Image</string>
@@ -178,7 +180,6 @@
     <string name="attach_file">Attach File</string>
     <string name="click_attach">Click to Attach</string>
     <string name="create_new">Create New</string>
-
 
     <string name="access_storage">Access to External Storage</string>
 

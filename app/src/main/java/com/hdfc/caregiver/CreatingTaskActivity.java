@@ -244,6 +244,9 @@ public class CreatingTaskActivity extends AppCompatActivity {
                         valSearch = inputSearch.getText().toString().trim();
                         strServiceName = valSearchService;
 
+                        String strServiceCategory = Config.serviceCategorylist.
+                                get(inputSearchServices.getSelectedItemPosition());
+
 
                         if (TextUtils.isEmpty(valDateTime)) {
                             dateAnd.setError(getString(R.string.error_field_required));
@@ -331,9 +334,16 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                         if (iServicePosition > -1) {
 
-                                            loadingPanel.setVisibility(View.VISIBLE);
+                                            if (!strServiceCategory.equalsIgnoreCase(
+                                                    getString(R.string.check_in_care_service))) {
 
-                                            uploadData(serviceModel, dependentModel);
+                                                loadingPanel.setVisibility(View.VISIBLE);
+
+                                                uploadData(serviceModel, dependentModel);
+                                            } else {
+                                                isClicked = false;
+                                                utils.toast(2, 2, getString(R.string.coming_soon));
+                                            }
 
                                         } else {
                                             isClicked = false;
@@ -367,7 +377,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
         if (Config.strServcieIds.size() <= 0 || Config.serviceModels.size() <= 0
                 || Config.servicelist.size() <= 0 || Config.serviceNameModels.size() <= 0
                 || AppUtils.categorySet.size() <= 0) {
-            //todo refersh service
             fetchServices();
         }
     }
@@ -600,7 +609,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                     if (fieldModel.getStrFieldValues() != null && fieldModel.getStrFieldValues().
                             length > 0)
-                        jsonObjectField.put("values", utils.stringToJsonArray(fieldModel.
+                        jsonObjectField.put("values", Utils.stringToJsonArray(fieldModel.
                                 getStrFieldValues()));
 
                     if (fieldModel.isChild()) {
@@ -609,28 +618,28 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                         if (fieldModel.getStrChildType() != null && fieldModel.getStrChildType().
                                 length > 0)
-                            jsonObjectField.put("child_type", utils.stringToJsonArray(fieldModel.
+                            jsonObjectField.put("child_type", Utils.stringToJsonArray(fieldModel.
                                     getStrChildType()));
 
                         if (fieldModel.getStrChildValue() != null && fieldModel.getStrChildValue().
                                 length > 0)
-                            jsonObjectField.put("child_value", utils.stringToJsonArray(fieldModel.
+                            jsonObjectField.put("child_value", Utils.stringToJsonArray(fieldModel.
                                     getStrChildValue()));
 
                         if (fieldModel.getStrChildCondition() != null && fieldModel.
                                 getStrChildCondition().length > 0)
-                            jsonObjectField.put("child_condition", utils.stringToJsonArray(
+                            jsonObjectField.put("child_condition", Utils.stringToJsonArray(
                                     fieldModel.getStrChildCondition()));
 
                         if (fieldModel.getiChildfieldID() != null && fieldModel.getiChildfieldID().
                                 length > 0)
-                            jsonObjectField.put("child_field", utils.intToJsonArray(
+                            jsonObjectField.put("child_field", Utils.intToJsonArray(
                                     fieldModel.getiChildfieldID()));
                     }
 
                     if (fieldModel.getiArrayCount() > 0) {
                         jsonObjectField.put("array_fields", fieldModel.getiArrayCount());
-                        jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.
+                        jsonObjectField.put("array_type", Utils.stringToJsonArray(fieldModel.
                                 getStrArrayType()));
                         jsonObjectField.put("array_data", fieldModel.getStrArrayData());
                     }
