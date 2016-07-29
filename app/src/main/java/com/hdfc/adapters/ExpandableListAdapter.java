@@ -288,6 +288,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private void fetchAllCheckInCares(int iMonth, int iYear) {
 
+        Config.checkInCareModels.clear();
+
         String strEndDate = Utils.getCurrentMonthLastDate();
 
         String strMonth = String.valueOf(iMonth);
@@ -321,8 +323,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             newCursor.moveToFirst();
 
             try {
-
-                Config.checkInCareModels.clear();
 
                 while (!newCursor.isAfterLast()) {
 

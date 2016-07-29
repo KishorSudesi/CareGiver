@@ -41,6 +41,7 @@
     <string name="new_activity">New Activities Available</string>
     <string name="new_clients">New Clients Available</string>
 
+    <string name="upload_images">Upload Images successfully</string>
 
     <string name="error_confirm_password">Invalid Confirm Password</string>
     <string name="error_invalid_email">Invalid Email</string>
@@ -60,6 +61,8 @@
 
     <string name="GPSAlertDialogTitle">GPS Title</string>
     <string name="GPSAlertDialogMessage">GPS is searching</string>
+
+    <string name="select_image">Please Click + Button To Add Image</string>
 
     <string name="age">Age</string>
     <string name="health_condition">Health Condition</string>
@@ -89,6 +92,7 @@
     <string name="separator">  |  </string>
 
     <string name="attachments">View Attachments</string>
+    <string name="upload">Upload</string>
     <string name="noClients">No Clients</string>
 
     <string name="noFeedbacks">No Feedbacks</string>
@@ -223,6 +227,11 @@
     <string name="select_dependent">Select a Care Receipent</string>
     <string name="select_checkbox">Please Select Checkbox</string>
     <string name="select_date">Please Select Date</string>
+
+    <string name="upload_hall">Please Upload Hall Images</string>
+    <string name="upload_kitchen">Please Upload Kitchen Images</string>
+    <string name="upload_wash">Please Upload Washroom Images</string>
+    <string name="upload_bed">Please Upload Bedroom Images</string>
 
 
     <!--Dashboard Menu Strings-->
