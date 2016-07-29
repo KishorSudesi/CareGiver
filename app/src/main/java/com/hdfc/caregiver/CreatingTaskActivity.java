@@ -2,6 +2,7 @@ package com.hdfc.caregiver;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -34,8 +35,6 @@ import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
-
-import net.sqlcipher.Cursor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -363,13 +362,14 @@ public class CreatingTaskActivity extends AppCompatActivity {
         }
         refreshCustomerAdapter();
 
-        //loadingPanel.setVisibility(View.VISIBLE);
-        if (progressDialog != null) {
-            progressDialog.setMessage(getString(R.string.loading));
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+        refreshServices();
+
+        if (Config.strServcieIds.size() <= 0 || Config.serviceModels.size() <= 0
+                || Config.servicelist.size() <= 0 || Config.serviceNameModels.size() <= 0
+                || AppUtils.categorySet.size() <= 0) {
+            //todo refersh service
+            fetchServices();
         }
-        fetchServices();
     }
 
     private void refreshServiceAdapter() {
@@ -398,6 +398,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private void fetchServices() {
 
         if (Utils.isConnectingToInternet(CreatingTaskActivity.this)) {
+
+            if (progressDialog != null) {
+                progressDialog.setMessage(getString(R.string.loading));
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+            }
 
             String strDate = "";
 
@@ -458,6 +464,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                 }
                             }
                             refreshServices();
+                            if (progressDialog != null && progressDialog.isShowing())
+                                progressDialog.dismiss();
                         }
 
                         @Override
@@ -465,12 +473,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             if (e != null)
                                 Utils.log(e.getMessage(), " Service");
                             refreshServices();
+                            if (progressDialog != null && progressDialog.isShowing())
+                                progressDialog.dismiss();
                         }
                     });
         } else {
             refreshServices();
         }
-
     }
 
 
@@ -512,8 +521,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         refreshServiceAdapter();
         //refreshCustomerAdapter();
-        if (progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
 
     }
 

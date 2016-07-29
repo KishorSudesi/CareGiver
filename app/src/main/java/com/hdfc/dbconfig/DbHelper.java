@@ -2,15 +2,14 @@ package com.hdfc.dbconfig;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 
 import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
 import com.scottyab.aescrypt.AESCrypt;
-
-import net.sqlcipher.Cursor;
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SQLiteOpenHelper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,7 +49,7 @@ public class DbHelper extends SQLiteOpenHelper {
     //CREATE INDEX indexname ON tablename(columnname);
     public static final SimpleDateFormat sqlQueryFormat =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Utils.locale);
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
     private static final String DATABASE_NAME = "caregiver";
     private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
@@ -97,8 +96,8 @@ public class DbHelper extends SQLiteOpenHelper {
     // Open the database connection.
     public void open() {
         try {
-            SQLiteDatabase.loadLibs(_ctxt);
-            db = this.getWritableDatabase(dbPass);
+            //SQLiteDatabase.loadLibs(_ctxt);
+            db = this.getWritableDatabase(); //dbPass
         } catch (Exception | UnsatisfiedLinkError e1) {
            /* try {
                 if (originalFile.exists())

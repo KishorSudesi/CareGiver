@@ -33,10 +33,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hdfc.app42service.EmailService;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.Action;
+import com.shephertz.app42.paas.sdk.android.App42CallBack;
+import com.shephertz.app42.paas.sdk.android.email.EmailMIME;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -102,6 +105,8 @@ public class Utils {
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
     public final static SimpleDateFormat queryFormatday =
             new SimpleDateFormat("yyyyMMddHHmmss", locale);
+
+    private final static String SENDER_EMAIL = "adstringosoftware@gmail.com";
 
   /*  public final static SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd", Config.locale);*/
@@ -831,6 +836,7 @@ public class Utils {
         }
     }*/
 
+    //todo send sms
     public static void sendSMS(String reciever, String message) {
         URLConnection myURLConnection = null;
         URL myURL = null;
@@ -847,12 +853,29 @@ public class Utils {
             String response;
             while ((response = reader.readLine()) != null)
                 //print response
-                Log.d("RESPONSE", "" + response);
+                log("RESPONSE", "" + response);
             //finally close connection
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    //todo for sending email
+    public static void sendEmail(Context context, String sendTo, String sendSubject, String sendMsg) {
+
+        EmailService emailService = new EmailService(context);
+        emailService.getEmailService().sendMail(sendTo, sendSubject, sendMsg, SENDER_EMAIL,
+                EmailMIME.HTML_TEXT_MIME_TYPE, new App42CallBack() {
+                    public void onSuccess(Object response) {
+
+                    }
+
+                    public void onException(Exception ex) {
+                        System.out.println("Exception Message" + ex.getMessage());
+                    }
+
+                });
     }
 
     private static String buildRequestString(String reciever, String message) {

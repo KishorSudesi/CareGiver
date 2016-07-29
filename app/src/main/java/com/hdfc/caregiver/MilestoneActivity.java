@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ import com.hdfc.app42service.UploadService;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
+import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.libs.simpleTooltip.SimpleTooltip;
@@ -51,8 +53,6 @@ import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
-
-import net.sqlcipher.Cursor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,7 +70,6 @@ import pl.tajchert.nammu.PermissionCallback;
 
 public class MilestoneActivity extends AppCompatActivity {
 
-    private static int IMAGE_COUNT = 0;
     private static ArrayList<FileModel> fileModels = new ArrayList<>();
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
@@ -79,14 +78,12 @@ public class MilestoneActivity extends AppCompatActivity {
     private static String strAlert;
     private static JSONObject jsonObject;
     private static ActivityModel act;
-    private static String strDependentMail;
+    private static String strDependentContact;
     private static String strName1;
     private static String strImageName1 = "";
     private static StorageService storageService;
     private static Handler backgroundThreadHandler;
-    private static int iActivityPosition;
     private static boolean bEnabled, mImageChanged;
-    private static boolean isToDate = false, isFromDate = false;
     private static boolean isAllowed, bWhichScreen;
     private final Context context = this;
     private int iValidFlag = 0;
@@ -97,8 +94,6 @@ public class MilestoneActivity extends AppCompatActivity {
     private Utils utils;
     private PermissionHelper permissionHelper;
     private String strValueReason = "";
-  /*  private byte editTextType = 0;
-    private byte TYPE_FROM = 1, TYPE_TO = 2;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +107,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         act = (ActivityModel) b.getSerializable("Act");
         bWhichScreen = b.getBoolean("WHICH_SCREEN", false);
+        strDependentContact = b.getString("DEPENDENT_CONTACT", "");
 
         bitmaps.clear();
 
@@ -136,12 +132,6 @@ public class MilestoneActivity extends AppCompatActivity {
         Button buttonCancel = (Button) findViewById(R.id.buttonCancel);
         Button buttonDone = (Button) findViewById(R.id.buttonDone);
         Button buttonAttach = (Button) findViewById(R.id.dialogButtonAttach);
-
-        int iPosition = Config.strActivityIds.indexOf(act.getStrActivityID());
-
-        if (iPosition > -1) {
-            iActivityPosition = iPosition;
-        }
 
         simpleTooltip = null;
 
@@ -223,8 +213,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
             for (final FieldModel fieldModel : milestoneModelObject.getFieldModels()) {
 
-                //final FieldModel finalFieldModel = fieldModel;
-
                 LinearLayout linearLayout1 = new LinearLayout(MilestoneActivity.this);
                 linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -271,27 +259,14 @@ public class MilestoneActivity extends AppCompatActivity {
                                 || fieldModel.getStrFieldType().equalsIgnoreCase("date")
                                 || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
 
-
-                            /*if (!isFromDate) {
-                                isFromDate = true;
-                                editText.setTag(TYPE_FROM);
-                            } else if (isFromDate && !isToDate) {
-                                isToDate = true;
-                                editText.setTag(TYPE_TO);
-                            }*/
-
                             editText.setCompoundDrawablesWithIntrinsicBounds(getResources().
                                             getDrawable(R.drawable.calendar_date_picker),
                                     null, null, null);
-
-                            //editText.setInputType(InputType.TYPE_CLASS_DATETIME);
 
                             final SlideDateTimeListener listener = new SlideDateTimeListener() {
 
                                 @Override
                                 public void onDateTimeSet(Date date) {
-                                    // selectedDateTime = date.getDate()+"-"+date.getMonth()+"-"+date.getYear()+" "+
-                                    // date.getTime();
                                     // Do something with the date. This Date object contains
                                     // the date and time that the user has selected.
 
@@ -322,7 +297,6 @@ public class MilestoneActivity extends AppCompatActivity {
                                 Calendar cal = Calendar.getInstance(); // creates calendar
                                 cal.setTime(new Date()); // sets calendar time/date
                                 cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
-                                cal.getTime(); // returns new date object, one hour in the future
 
                                 Date date = cal.getTime();
                                 String date2 = Utils.writeFormat.format(date);
@@ -343,16 +317,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                         Date setDate = new Date();
 
-/*                                    if (finalFieldModel.getStrFieldData() != null
-                                            && !finalFieldModel.getStrFieldData().
-                                            equalsIgnoreCase("")) {
-                                        try {
-                                            setDate = Utils.writeFormat.parse(finalFieldModel.
-                                                    getStrFieldData());
-                                        } catch (ParseExcption e) {
-                                            e.printStackTerace();
-                                        }
-                                    }*/
                                         // Unparseable date: "2016-07-02T07:12:20.725Z" (at offset 4)
                                         if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")) {
                                             if (fieldModel.getStrFieldData() != null
@@ -389,38 +353,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 }
                                             }
                                         }
-                                        /*else {
 
-                                            if (v != null) {
-                                                try {
-                                                    editTextType = (byte) v.getTag();
-                                                } catch (Exception e) {
-
-                                                }
-
-                                                if (editTextType == TYPE_FROM) {
-                                                    if (milestoneModelObject.getStrMilestoneDate() != null
-                                                            && !milestoneModelObject.getStrMilestoneDate().
-                                                            equalsIgnoreCase("")) {
-                                                        try {
-                                                            setDate = Utils.readFormat.parse(milestoneModelObject.getStrMilestoneDate());
-                                                        } catch (ParseException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                } else if (editTextType == TYPE_TO) {
-                                                    if (fieldModel.getStrFieldData() != null
-                                                            && !fieldModel.getStrFieldData().
-                                                            equalsIgnoreCase("")) {
-                                                        try {
-                                                            setDate = Utils.writeFormat.parse(fieldModel.getStrFieldData());
-                                                        } catch (ParseException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }*/
                                         new SlideDateTimePicker.Builder(getSupportFragmentManager())
                                                 .setListener(listener)
                                                 .setInitialDate(setDate)
@@ -461,7 +394,6 @@ public class MilestoneActivity extends AppCompatActivity {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position,
                                                    long id) {
-
                             try {
 
                                 if (fieldModel.isChild()) {
@@ -500,28 +432,33 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 } else
                                                     editTextChild.setEnabled(false);
                                             }
-                                        } else if ((fieldModel.getStrChildType()[i]
-                                                .equalsIgnoreCase("radio")
-                                                || fieldModel.getStrChildType()[i].equalsIgnoreCase("dropdown")) && fieldModel.getStrChildCondition()[i].
-                                                equalsIgnoreCase("equals")) {
-                                            String strValue = spinner.getSelectedItem().
-                                                    toString();
-                                            if (strValue.equalsIgnoreCase("UnSuccessFul")) {
-                                                Spinner spinnerChild = (Spinner) layoutDialog.
-                                                        findViewById(fieldModel.
-                                                                getiChildfieldID()[i]);
-                                                spinnerChild.setVisibility(View.VISIBLE);
-                                                spinnerChild.setSelection(0);
-                                                strValueReason = spinnerChild.getSelectedItem().
+                                        } else if (fieldModel.getStrChildType()[i].
+                                                equalsIgnoreCase("dropdown")) {
+
+                                            if (fieldModel.getStrChildCondition()[i].
+                                                    equalsIgnoreCase("equals")) {
+                                                String strValue = spinner.getSelectedItem().
                                                         toString();
-                                            } else if (strValue.equalsIgnoreCase("SuccessFul")) {
-                                                Spinner spinnerChild = (Spinner) layoutDialog.
-                                                        findViewById(fieldModel.
-                                                                getiChildfieldID()[i]);
-                                                spinnerChild.setVisibility(View.GONE);
+
+                                                Spinner spinnerChild = null;
+                                                if (layoutDialog != null) {
+                                                    spinnerChild = (Spinner) layoutDialog.
+                                                            findViewById(fieldModel.
+                                                                    getiChildfieldID()[i]);
+                                                }
+
+                                                if (spinnerChild != null) {
+                                                    if (strValue.equalsIgnoreCase("UnSuccessFul")) {
+                                                        spinnerChild.setVisibility(View.VISIBLE);
+                                                        spinnerChild.setSelection(0);
+                                                        strValueReason = "";
+
+                                                    } else if (strValue.
+                                                            equalsIgnoreCase("SuccessFul")) {
+                                                        spinnerChild.setVisibility(View.GONE);
+                                                    }
+                                                }
                                             }
-
-
                                         }
                                     }
                                 }
@@ -543,7 +480,6 @@ public class MilestoneActivity extends AppCompatActivity {
                     }
 
                     spinner.setEnabled(bEnabled);
-                    //linearLayoutParent.addView(spinner);
                     linearLayout1.addView(spinner);
                 }
 
@@ -774,8 +710,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         iValidFlag = 0;
 
-                        String buttonText = button.getText().toString();
-
                         if (simpleTooltip != null && simpleTooltip.isShowing())
                             simpleTooltip.dismiss();
                         int id = (int) v.getTag();
@@ -783,30 +717,6 @@ public class MilestoneActivity extends AppCompatActivity {
                         if (layoutDialog != null) {
                             linearLayout = (LinearLayout) layoutDialog.findViewWithTag(
                                     R.id.linearparent);
-                        }
-
-                        if (buttonText.equals("Reschedule")) {
-                            // if (enteredDate != null && enteredDate != dateNow) {
-
-                            //}
-                            final Dialog dialog = new Dialog(MilestoneActivity.this);
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            dialog.setContentView(R.layout.dialog_reschedule_reson);
-
-                            TextView textView1 = (TextView) dialog.findViewById(R.id.tvCarla);
-                            TextView textView2 = (TextView) dialog.findViewById(R.id.tvProvider);
-                            TextView textView3 = (TextView) dialog.findViewById(R.id.tvOther);
-                            Button buttonOk = (Button) dialog.findViewById(R.id.btndialogOk);
-                            buttonOk.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                    iValidFlag = 1;
-                                    dialog.dismiss();
-                                }
-                            });
-                            dialog.show();
-
                         }
 
                         traverseEditTexts(layoutDialog, id, linearLayout, 1, iValidFlag);
@@ -820,33 +730,35 @@ public class MilestoneActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (simpleTooltip != null && simpleTooltip.isShowing())
                             simpleTooltip.dismiss();
-                        strName1 = String.valueOf(new Date().getDate() + "" + new Date().getTime());
-                        strImageName1 = strName1 + ".jpeg";
 
-                        permissionHelper.verifyPermission(
-                                new String[]{getString(R.string.access_storage)},
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                new PermissionCallback() {
-                                    @Override
-                                    public void permissionGranted() {
-                                        //action to perform when permission granteed
-                                        isAllowed = true;
+                        Calendar calendar = Calendar.getInstance();
 
-                                        if (isAllowed)
+                        strName1 = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
+
+                        strImageName1 = strName1;
+
+                        if (!isFinishing()) {
+                            permissionHelper.verifyPermission(
+                                    new String[]{getString(R.string.access_storage)},
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    new PermissionCallback() {
+                                        @Override
+                                        public void permissionGranted() {
+                                            //action to perform when permission granteed
+                                            isAllowed = true;
+
                                             utils.selectImage(strImageName1, null,
                                                     MilestoneActivity.this, false);
-                                    }
+                                        }
 
-                                    @Override
-                                    public void permissionRefused() {
-                                        //action to perform when permission refused
-                                        isAllowed = false;
+                                        @Override
+                                        public void permissionRefused() {
+                                            //action to perform when permission refused
+                                            isAllowed = false;
+                                        }
                                     }
-                                }
-                        );
-
-                        /*if (isAllowed)
-                            utils.selectImage(strImageName1, null, MilestoneActivity.this, false);*/
+                            );
+                        }
 
                     }
                 });
@@ -925,7 +837,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         goBack();
     }
 
@@ -938,12 +849,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
             Calendar calendar = Calendar.getInstance();
 
-            String strScheduledDate = "";
-
-            //int iPosition = Config.strActivityIds.indexOf(act.getStrActivityID());
-
-            if (iActivityPosition > -1)
-                Config.activityModels.get(iActivityPosition).clearMilestoneModel();
+            String strScheduledDate;
 
             int iIndex = 0;
 
@@ -958,10 +864,6 @@ public class MilestoneActivity extends AppCompatActivity {
                     Date date = calendar.getTime();
 
                     strScheduledDate = "";
-
-                    //if(iFlag==1)
-                    //milestoneModel.setStrMilestoneStatus("opened");
-
 
                     for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
 
@@ -991,7 +893,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                         boolean bFuture = true;
 
-                                        /////////////////////////////
                                         Date dateNow = null;
                                         String strdateCopy;
                                         Date enteredDate = null;
@@ -1020,10 +921,6 @@ public class MilestoneActivity extends AppCompatActivity {
                                         if (dateNow != null && enteredDate != null) {
 
                                             //Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
-
-                                            /*if (enteredDate.before(dateNow)) {
-                                                bFuture = false;
-                                            }*/
 
                                             if (enteredDate.compareTo(dateNow) < 0) {
                                                 bFuture = false;
@@ -1170,6 +1067,8 @@ public class MilestoneActivity extends AppCompatActivity {
                         //
                         //String strDate = milestoneModel.getStrMilestoneDate();
 
+                        //todo change message
+
                         String strPushMessage = Config.providerModel.getStrName()
                                 + getString(R.string.has_updated)
                           /*  + getString(R.string.activity)
@@ -1194,22 +1093,16 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         try {
 
-                            String strDateNow = "";
+                            String strDateNow;
                             Date dateNow = calendar.getTime();
                             strDateNow = Utils.convertDateToString(dateNow);
-
-                            int iCustomerPosition = Config.customerIdsAdded.indexOf(act.
-                                    getStrCustomerID());
-
-                            if (iCustomerPosition > -1)
-                                strDependentMail = Config.customerModels.get(iCustomerPosition).
-                                        getStrEmail();
 
                             jsonObject.put("created_by", Config.providerModel.getStrProviderId());
                             jsonObject.put("time", strDateNow);
                             jsonObject.put("user_type", "dependent");
                             jsonObject.put("user_id", act.getStrDependentID());
-                            jsonObject.put("activity_id", act.getStrActivityID());//todo add to care taker
+                            jsonObject.put("activity_id", act.getStrActivityID());
+                            //todo add for customer
                             jsonObject.put("created_by_type", "provider");
                             jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
                         } catch (JSONException e) {
@@ -1220,9 +1113,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     if (b) {
                         milestoneModel.setStrMilestoneDate(Utils.convertDateToString(date));
                     }
-
                     //break;
-                    //
                 }
 
                 if (!milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed")
@@ -1236,13 +1127,6 @@ public class MilestoneActivity extends AppCompatActivity {
                     strActivityStatus = "inprocess";
                     milestoneModel.setStrMilestoneStatus("inactive");
                 }
-
-                //
-                if (iActivityPosition > -1) {
-                    //Config.activityModels.get(iPosition).removeMilestoneModel(milestoneModel);
-                    Config.activityModels.get(iActivityPosition).setMilestoneModel(milestoneModel);
-                }
-                //
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1258,298 +1142,6 @@ public class MilestoneActivity extends AppCompatActivity {
         }
     }
 
-    /*private void traverseEditTextsNotValid(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
-
-        boolean b = true, bClose = true;
-
-        try {
-
-            Calendar calendar = Calendar.getInstance();
-
-            String strScheduledDate = "";
-
-            //int iPosition = Config.strActivityIds.indexOf(act.getStrActivityID());
-
-            if (iActivityPosition > -1)
-                Config.activityModels.get(iActivityPosition).clearMilestoneModel();
-
-            int iIndex = 0;
-
-            int iClose = 0;
-
-            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
-
-                iIndex++;
-
-                if (milestoneModel.getiMilestoneId() == iMileStoneId) {
-
-                    Date date = calendar.getTime();
-
-                    strScheduledDate = "";
-
-                    //if(iFlag==1)
-                    //milestoneModel.setStrMilestoneStatus("opened");
-
-
-                    for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
-
-                        //text
-                        if (fieldModel.getStrFieldType().equalsIgnoreCase("text")
-                                || fieldModel.getStrFieldType().equalsIgnoreCase("number")
-                                || fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
-                                || fieldModel.getStrFieldType().equalsIgnoreCase("date")
-                                || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
-
-                            EditText editText = (EditText) v.findViewById(fieldModel.getiFieldID());
-
-                            editText.setError(null);
-
-                            boolean b1 = (Boolean) editText.getTag(R.id.one);
-                            data = editText.getText().toString().trim();
-
-                            if (editText.isEnabled()) {
-                                if (b1 && !data.equalsIgnoreCase("")) {
-
-                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
-                                            || fieldModel.getStrFieldType().equalsIgnoreCase("date")
-                                            || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
-
-                                        boolean bFuture = true;
-
-                                        /////////////////////////////
-                                        dateNow = null;
-                                        enteredDate = null;
-
-                                        try {
-                                            strdateCopy = Utils.writeFormat.format(calendar.getTime());
-                                            dateNow = Utils.writeFormat.parse(strdateCopy);
-                                            enteredDate = Utils.writeFormat.parse(data);
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
-
-                                        if (dateNow != null && enteredDate != null) {
-
-                                            //Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
-
-                                            *//*if (enteredDate.before(dateNow)) {
-                                                bFuture = false;
-                                            }*//*
-
-                                            if (enteredDate.compareTo(dateNow) < 0) {
-                                                bFuture = false;
-                                            }
-                                        }
-                                        /////////////////////////////
-
-                                        if (iFlag == 2) {
-                                            if (enteredDate.compareTo(dateNow) < 0) {
-                                                bClose = false;
-                                                Utils.log(String.valueOf(date + " ! " + enteredDate), " NOW ");
-                                            }
-                                        }
-
-                                        if (bFuture) {
-
-                                            fieldModel.setStrFieldData(data);
-
-                                            String strDate = (String) editText.getTag(R.id.two);
-
-                                            if ((milestoneModel.isReschedule() || !milestoneModel.isReschedule())
-                                                    && milestoneModel.getStrMilestoneScheduledDate() != null
-                                                    && (!milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")
-                                                    || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase(""))
-                                                    && fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
-                                                    ) {
-
-                                                if (milestoneModel.getStrMilestoneScheduledDate() != null
-                                                        && !milestoneModel.getStrMilestoneScheduledDate().
-                                                        equalsIgnoreCase(""))
-                                                    milestoneModel.setReschedule(true);
-
-
-                                                milestoneModel.setStrMilestoneScheduledDate(strDate);
-
-                                                strScheduledDate = strDate;
-                                            }
-
-                                            if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
-                                                strActivityDoneDate = strDate;
-                                            }
-
-                                        } else {
-                                            //todo check
-                                            //  editText.setError(context.getString(R.string.invalid_date));
-                                            // b = false;
-                                        }
-                                    } else {
-
-
-                                        fieldModel.setStrFieldData(data);
-                                    }
-
-                                } else {
-                                    editText.setError(context.getString(R.string.error_field_required));
-                                    b = false;
-                                }
-                            }
-                        }
-
-                        //radio or dropdown
-                        if (fieldModel.getStrFieldType().equalsIgnoreCase("radio")
-                                || fieldModel.getStrFieldType().equalsIgnoreCase("dropdown")) {
-
-                            Spinner spinner = (Spinner) v.findViewById(fieldModel.getiFieldID());
-
-                            boolean b1 = (Boolean) spinner.getTag();
-
-                            String data = fieldModel.getStrFieldValues()[spinner.getSelectedItemPosition()];
-
-                            if (b1 && !data.equalsIgnoreCase("")) {
-                                fieldModel.setStrFieldData(data);
-                            } else {
-                                utils.toast(2, 2, getString(R.string.error_field_required));
-                                spinner.setBackgroundDrawable(getResources().getDrawable(R.drawable.edit_text));
-                                b = false;
-                            }
-                        }
-                        //
-
-                        //array
-                        if (fieldModel.getStrFieldType().equalsIgnoreCase("array")) {
-
-                            ArrayList<String> strMedicineNames = utils.getEditTextValueByTag(viewGroup, "medicine_name");
-                            ArrayList<String> strMedicineQty = utils.getEditTextValueByTag(viewGroup, "medicine_qty");
-
-                            int j = 0;
-
-                            if (strMedicineNames.size() > 0) {
-
-                                JSONObject jsonObject = new JSONObject();
-
-                                JSONArray jsonArray = new JSONArray();
-
-                                for (int i = 0; i < strMedicineNames.size(); i++) {
-
-                                    if (!strMedicineNames.get(i).equalsIgnoreCase("") && !strMedicineQty.get(i).equalsIgnoreCase("")) {
-                                        j++;
-                                        JSONObject jsonObjectMedicine = new JSONObject();
-
-                                        jsonObjectMedicine.put("medicine_name", strMedicineNames.get(i));
-                                        jsonObjectMedicine.put("medicine_qty", Integer.parseInt(strMedicineQty.get(i)));
-
-                                        jsonArray.put(jsonObjectMedicine);
-                                    }
-                                }
-                                jsonObject.put("array_data", jsonArray);
-
-                                fieldModel.setStrArrayData(jsonObject.toString());
-                            }
-
-                            if (j <= 0) {
-                                b = false;
-                                utils.toast(2, 2, getString(R.string.error_medicines));
-                            }
-                        }
-                    }
-
-                    if (b) {
-
-                        if (iFlag == 2 && bClose)
-                            milestoneModel.setStrMilestoneStatus("completed");
-
-                        if (iIndex == act.getMilestoneModels().size() && iFlag == 2 && bClose) {
-                            strActivityStatus = "completed";
-                        }
-
-                        //
-                        //String strDate = milestoneModel.getStrMilestoneDate();
-
-                        String strPushMessage = Config.providerModel.getStrName()
-                                + getString(R.string.has_updated)
-                          *//*  + getString(R.string.activity)
-                            + getString(R.string.space)*//*
-                                + getString(R.string.space)
-                                + act.getStrActivityName()
-                                + getString(R.string.hyphen)
-                           *//* + getString(R.string.milestone)*//*
-                                + getString(R.string.space)
-                                + milestoneModel.getStrMilestoneName();
-
-
-                        if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
-                            strPushMessage += getString(R.string.space) + getString(R.string.scheduled_to)
-                                    + getString(R.string.space) + strScheduledDate + getString(R.string.space);
-                        }
-
-                        jsonObject = new JSONObject();
-
-                        try {
-
-                            String strDateNow = "";
-                            Date dateNow = calendar.getTime();
-                            strDateNow = utils.convertDateToString(dateNow);
-
-                            int iCustomerPosition = Config.customerIdsAdded.indexOf(act.getStrCustomerID());
-
-                            if (iCustomerPosition > -1)
-                                strDependentMail = Config.customerModels.get(iCustomerPosition).getStrEmail();
-
-                            jsonObject.put("created_by", Config.providerModel.getStrProviderId());
-                            jsonObject.put("time", strDateNow);
-                            jsonObject.put("user_type", "dependent");
-                            jsonObject.put("user_id", act.getStrDependentID());
-                            jsonObject.put("activity_id", act.getStrActivityID());//todo add to care taker
-                            jsonObject.put("created_by_type", "provider");
-                            jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    if (b) {
-                        milestoneModel.setStrMilestoneDate(utils.convertDateToString(date));
-                    }
-
-                    //break;
-                    //
-                }
-
-                if (!milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed") && iIndex < act.getMilestoneModels().size()) {
-                    iClose++;
-                }
-
-                if (iFlag == 2 && strActivityStatus.equalsIgnoreCase("completed") && iClose > 0) {
-                    b = false;
-                    utils.toast(2, 2, getString(R.string.close_error));
-                    strActivityStatus = "inprocess";
-                    milestoneModel.setStrMilestoneStatus("inactive");
-                }
-
-                //
-                if (iActivityPosition > -1) {
-                    //Config.activityModels.get(iPosition).removeMilestoneModel(milestoneModel);
-                    Config.activityModels.get(iActivityPosition).setMilestoneModel(milestoneModel);
-                }
-                //
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (iFlag == 2 && !bClose) {
-            b = false;
-            utils.toast(2, 2, getString(R.string.close_date_error));
-        }
-
-
-        if (b) {
-
-            uploadImage(v, iMileStoneId, viewGroup, iFlag);
-
-        }
-    }*/
-
 
     private void uploadJson() {
         ///////////////////////
@@ -1563,13 +1155,6 @@ public class MilestoneActivity extends AppCompatActivity {
                 JSONObject jsonObjectMilestone = new JSONObject();
 
                 jsonObjectMilestone.put("id", milestoneModel.getiMilestoneId());
-
-                // if (milestoneModel.getiMilestoneId() == iMilestoneId) {
-                //JSONObject jsonObjectFiles =
-                //JSONObject jsonObjectFiles =
-                // jsonObjectMilestone.put("files", jsonArrayImagesAdded);
-
-                //}
 
                 jsonObjectMilestone.put("status", milestoneModel.getStrMilestoneStatus());
 
@@ -1598,7 +1183,6 @@ public class MilestoneActivity extends AppCompatActivity {
                 }
 
                 jsonObjectMilestone.put("files", jsonArrayFiles);
-                //todo add to corresponding milestone
 
                 JSONArray jsonArrayFields = new JSONArray();
 
@@ -1668,14 +1252,6 @@ public class MilestoneActivity extends AppCompatActivity {
             jsonObjectMileStone.put("status", strActivityStatus);
             jsonObjectMileStone.put("activity_done_date", strActivityDoneDate);
 
-            if (iActivityPosition > -1) {
-                //Config.activityModels.get(iPosition).removeMilestoneModel(milestoneModel);
-                Config.activityModels.get(iActivityPosition).setStrActivityStatus(
-                        strActivityStatus);
-                Config.activityModels.get(iActivityPosition).setStrActivityDoneDate(
-                        strActivityDoneDate);
-            }
-
             String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                     + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
@@ -1698,26 +1274,25 @@ public class MilestoneActivity extends AppCompatActivity {
                     jsonObject.put("status", strActivityStatus);
                     jsonObject.put("activity_done_date", strActivityDoneDate);
 
-                    //
-                    //appUtils.insertActivityDate(act.getStrActivityID(), jsonObject);
-                    /*String values1[] = {act.getStrActivityID(),
-                            "",
+                    String values1[] = {act.getStrActivityID(),
                             jsonObject.toString(),
-                            Config.collectionActivity, "0", "", "1"};
+                            Config.collectionActivity, "1", "1"};
 
                     // WHERE clause arguments
                     CareGiver.getDbCon().updateInsert(
                             DbHelper.strTableNameCollection,
-                            selection, values1, DbHelper.COLLECTION_FIELDS,
-                            selectionArgs);*/
-                    ////
+                            selection, values1, new String[]{"object_id", "document",
+                                    "collection_name", "new_updated", "updated"},
+                            selectionArgs);
+
+                    AppUtils.insertActivityDate(act.getStrActivityID(), jsonObject.toString());
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
 
             CareGiver.getDbCon().closeCursor(cursor);
-
 
             updateMileStones(jsonObjectMileStone);
 
@@ -1732,12 +1307,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
             loadingPanel.setVisibility(View.VISIBLE);
 
-            //  dialog.dismiss();
-
-            loadingPanel.setVisibility(View.VISIBLE);
-
-            //bLoad = true;
-
             Utils.log(jsonToUpdate.toString(), " JSON ");
 
             storageService.updateDocs(jsonToUpdate,
@@ -1745,6 +1314,23 @@ public class MilestoneActivity extends AppCompatActivity {
                     Config.collectionActivity, new App42CallBack() {
                         @Override
                         public void onSuccess(Object o) {
+
+                            ///
+                            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+                            String[] selectionArgs = {
+                                    act.getStrActivityID()
+                                    , Config.collectionActivity};
+
+                            String values1[] = {"0"};
+
+                            // WHERE clause arguments
+                            CareGiver.getDbCon().updateInsert(
+                                    DbHelper.strTableNameCollection,
+                                    selection, values1, new String[]{"updated"},
+                                    selectionArgs);
+                            //
                             insertNotification();
                         }
 
@@ -1764,12 +1350,6 @@ public class MilestoneActivity extends AppCompatActivity {
         permissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-   /* @Override
-    protected void onDestroy() {
-        permissionHelper.finish();
-        super.onDestroy();
-    }*/
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -1785,37 +1365,21 @@ public class MilestoneActivity extends AppCompatActivity {
                     case Config.START_CAMERA_REQUEST_CODE:
 
                         backgroundThreadHandler = new BackgroundThreadHandler();
-                        //  backgroundThreadHandlerDialog = new BackgroundThreadHandlerDialog();
                         strImageName1 = Utils.customerImageUri.getPath();
-                        // Thread backgroundTreadDialog1 = new BackgroundThreadDialog1();
                         Thread backgroundThreadCamera = new BackgroundThreadCamera();
                         backgroundThreadCamera.start();
-                        //  backgroundTreadDialog1.start();
                         break;
 
                     case Config.START_GALLERY_REQUEST_CODE:
                         backgroundThreadHandler = new BackgroundThreadHandler();
-                        //  backgroundThreadHandlerDialog = new BackgroundThreadHandlerDialog();
                         imagePaths.clear();
 
                         String[] all_path = intent.getStringArrayExtra("all_path");
 
-                       /* if (all_path.length + IMAGE_COUNT > 20) {
-
-                            for (int i = 0; i < (20 - IMAGE_COUNT); i++) {
-                                imagePaths.add(all_path[i]);
-                            }
-
-                        } else {*/
-
                         Collections.addAll(imagePaths, all_path);
 
-                        //}
-                        // Thread backgroundTreadDialog2 = new BackgroundThreadDialog2();
                         Thread backgroundThread = new BackgroundThread();
                         backgroundThread.start();
-                        //  backgroundTreadDialog2.start();
-
 
                         break;
                 }
@@ -1834,7 +1398,7 @@ public class MilestoneActivity extends AppCompatActivity {
             for (int i = 0; i < fileModels.size(); i++) {
                 try {
 
-                    //
+
                     ImageView imageView = new ImageView(MilestoneActivity.this);
                     imageView.setPadding(0, 0, 3, 0);
 
@@ -1842,26 +1406,14 @@ public class MilestoneActivity extends AppCompatActivity {
                             LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
-                    // linearLayout1.setLayoutParams(layoutParams);
 
                     imageView.setLayoutParams(layoutParams);
                     imageView.setImageBitmap(bitmaps.get(i));
-                    //imageView.setTag(bitmaps.get(i));
 
                     imageView.setTag(fileModels.get(i));
                     imageView.setTag(R.id.three, i);
 
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
-                    /*imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-
-                            return false;
-
-                        }
-                    });*/
-                    ///
 
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -1873,8 +1425,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
                             final Dialog dialog = new Dialog(MilestoneActivity.this);
                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-                            // final int mPosition = (int) v.getTag(R.id.three);
 
                             dialog.setContentView(R.layout.image_dialog_layout);
 
@@ -1891,7 +1441,6 @@ public class MilestoneActivity extends AppCompatActivity {
                             textViewClose.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    //mOriginal.
                                     dialog.dismiss();
                                 }
                             });
@@ -2007,56 +1556,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                             Upload.File file = fileList.get(0);
 
-                                            //JSONObject jsonObjectImages = new JSONObject();
-
-                                            //try {
-
-                                              /*  jsonObjectImages.put("file_name", fileModel.getStrFileName());
-                                                jsonObjectImages.put("file_url", file.getUrl());
-                                                jsonObjectImages.put("file_type", fileModel.getStrFileType());
-                                                jsonObjectImages.put("file_desc", fileModel.getStrFileDescription());
-                                                jsonObjectImages.put("file_path", fileModel.getStrFilePath());
-                                                jsonObjectImages.put("file_time", fileModel.getStrFileUploadTime());*/
-
-
-                                               /* FileModel fileModel1 = new FileModel(fileModel.getStrFileName(),
-                                                        file.getUrl(), fileModel.getStrFileType(),
-                                                        fileModel.getStrFileUploadTime(),
-                                                        fileModel.getStrFileDescription(),
-                                                        fileModel.getStrFilePath()
-                                                );
-
-
-                                                fileModels.add(fileModel1);
-        */
-                                            //jsonArrayImagesAdded.put(jsonObjectImages);
-
-                                            //
-                                               /* File newFile = new File(fileModel.getStrFilePath());
-                                                File renameFile = utils.getInternalFileImages(fileModel.getStrFileName());
-
-
-                                                try {
-                                                    utils.moveFile(newFile, renameFile);
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                }
-
-*/
-
-                                               /* arrayListFileModel.remove(fileModel);
-
-                                                if (arrayListFileModel.size() <= 0) {
-                                                    updateImages(iMileStoneId);
-                                                } else {
-                                                    uploadImage(v, iMileStoneId, viewGroup, iFlag);
-                                                }*/
-                                            //
-
-                                           /* } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }*/
-
                                             fileModels.get(mImageUploadCount).setNew(false);
                                             fileModels.get(mImageUploadCount).setStrFileUrl(file.
                                                     getUrl());
@@ -2074,11 +1573,6 @@ public class MilestoneActivity extends AppCompatActivity {
                                             }
 
                                         } else {
-                                           /* if (arrayListFileModel.size() <= 0) {
-                                                updateImages(iMileStoneId);
-                                            } else {
-                                                uploadImage(v, iMileStoneId, viewGroup, iFlag);
-                                            }*/
 
                                             mImageUploadCount++;
                                             if (mImageUploadCount >= fileModels.size()) {
@@ -2098,12 +1592,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                     if (e != null) {
                                         Utils.log(e.getMessage(), " Failure ");
-                                       /* if (arrayListFileModel.size() <= 0) {
-                                            updateImages(iMileStoneId);
-                                        } else {
-                                            uploadImage(v, iMileStoneId, viewGroup, iFlag);
-                                        }*/
-
 
                                         mImageUploadCount++;
                                         if (mImageUploadCount >= fileModels.size()) {
@@ -2128,9 +1616,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     }
                 }
             } else {
-                // if (fileModels.size() <= 0) {
                 updateImages(iMileStoneId);
-                // }
             }
         } else {
             loadingPanel.setVisibility(View.VISIBLE);
@@ -2146,95 +1632,25 @@ public class MilestoneActivity extends AppCompatActivity {
 
     private void updateImages(int iMilestoneId) {
 
-
         if (utils.isConnectingToInternet()) {
-
-            //int iIndex = 0;
-            if (iActivityPosition > -1)
-                Config.activityModels.get(iActivityPosition).clearMilestoneModel();
 
             try {
 
                 for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
-
-                    //iIndex++;
 
                     if (milestoneModel.getiMilestoneId() == iMilestoneId) {
 
                         milestoneModel.clearFileModel();
 
                         milestoneModel.setFileModels(fileModels);
-
-                       /* for (FileModel mFileModel: fileModels) {
-
-                            //JSONObject jsonObjectFiles = jsonArrayImagesAdded.getJSONObject(i);
-
-                            *//*FileModel fileModel = new FileModel(
-                                    fileModels.getString("file_name"),
-                                    fileModels.getString("file_url"),
-                                    jsonObjectFiles.getString("file_type"),
-                                    jsonObjectFiles.getString("file_time"),
-                                    jsonObjectFiles.getString("file_desc"),
-                                    jsonObjectFiles.getString("file_time")
-                            );*//*
-
-                            milestoneModel.setFileModel(mFileModel);
-                        }
-*/
-                    }
-
-                    if (iActivityPosition > -1) {
-                        //Config.activityModels.get(iPosition).removeMilestoneModel(milestoneModel);
-                        Config.activityModels.get(iActivityPosition).setMilestoneModel(
-                                milestoneModel);
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-       /*     if (iPosition > -1) {
-                //Config.activityModels.get(iPosition).removeMilestoneModel(milestoneModel);
-                Config.activityModels.get(iPosition).setMilestoneModel(milestoneModel);
-            }*/
-            //////////////////////////////
-
-          /*  for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
-                if(milestoneModel.getiMilestoneId()==iMilestoneId)
-                    milestoneModel.setFileModels(arrayListFileModel);
-            }
-
-            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
-                if(milestoneModel.getiMilestoneId()==iMilestoneId)
-                    Utils.log(String.valueOf(milestoneModel.getFileModels().size()), " SIZE ");
-            }
-*/
-          /*  JSONObject jsonToUpdate = null;
-
-            try {
-                jsonToUpdate = new JSONObject();
-                jsonToUpdate.put("files", jsonArrayImagesAdded);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
-
             uploadJson();
 
-            /*storageService.updateDocs(jsonToUpdate,
-                    act.getStrActivityID(),
-                    Config.collectionActivity, new App42CallBack() {
-                        @Override
-                        public void onSuccess(Object o) {
-                            //insertNotification()
-                            goToActivityList(getString(R.string.image_upload));
-                        }
-
-                        @Override
-                        public void onException(Exception e) {
-                            loadingPanel.setVisibility(View.GONE);
-                            utils.toast(2, 2, getString(R.string.warning_internet));
-                        }
-                    });*/
         } else {
             loadingPanel.setVisibility(View.GONE);
             utils.toast(2, 2, getString(R.string.warning_internet));
@@ -2253,9 +1669,7 @@ public class MilestoneActivity extends AppCompatActivity {
                         public void onDocumentInserted(Storage response) {
                             try {
                                 if (response.isResponseSuccess()) {
-                                    sendPushToProvider();
-
-
+                                    sendPushToDependent();
                                 } else {
                                     strAlert = getString(R.string.no_push_actiity_updated);
                                     goToActivityList(strAlert);
@@ -2297,35 +1711,42 @@ public class MilestoneActivity extends AppCompatActivity {
         }
     }
 
-    private void sendPushToProvider() {
+    private void sendPushToDependent() {
 
         if (utils.isConnectingToInternet()) {
 
             PushNotificationService pushNotificationService = new PushNotificationService(
                     MilestoneActivity.this);
 
-            pushNotificationService.sendPushToUser(strDependentMail, jsonObject.toString(),
-                    new App42CallBack() {
+            if (!strDependentContact.equalsIgnoreCase("")) {
 
-                        @Override
-                        public void onSuccess(Object o) {
+                pushNotificationService.sendPushToUser(strDependentContact, jsonObject.toString(),
+                        new App42CallBack() {
 
-                            strAlert = getString(R.string.activity_updated);
+                            @Override
+                            public void onSuccess(Object o) {
 
-                            if (o == null)
+                                strAlert = getString(R.string.activity_updated);
+
+                                if (o == null)
+                                    strAlert = getString(R.string.no_push_actiity_updated);
+
+                                goToActivityList(strAlert);
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                if (ex != null)
+                                    Utils.log(ex.getMessage(), " PUSH ");
                                 strAlert = getString(R.string.no_push_actiity_updated);
+                                goToActivityList(strAlert);
+                            }
+                        });
+            } else {
+                strAlert = getString(R.string.no_push_actiity_updated);
 
-                            goToActivityList(strAlert);
-                        }
-
-                        @Override
-                        public void onException(Exception ex) {
-                            if (ex != null)
-                                Utils.log(ex.getMessage(), " PUSH ");
-                            strAlert = getString(R.string.no_push_actiity_updated);
-                            goToActivityList(strAlert);
-                        }
-                    });
+                goToActivityList(strAlert);
+            }
         } else {
             strAlert = getString(R.string.no_push_actiity_updated);
 
@@ -2375,13 +1796,10 @@ public class MilestoneActivity extends AppCompatActivity {
             try {
                 for (int i = 0; i < imagePaths.size(); i++) {
 
-                    //////////////////////////////////
                     Calendar calendar = Calendar.getInstance();
-                    String strTime = String.valueOf(calendar.getTimeInMillis());
-                    String strFileName = strTime + ".jpeg";
+                    String strTime = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
 
-
-                    Date date = new Date();
+                    Date date = calendar.getTime();
 
                     File mCopyFile = utils.getInternalFileImages(strTime);
                     utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
@@ -2398,8 +1816,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                             Config.intWidth, Config.intHeight));
-
-                    IMAGE_COUNT++;
 
                     mImageCount++;
                 }
@@ -2418,7 +1834,6 @@ public class MilestoneActivity extends AppCompatActivity {
             try {
                 if (strImageName1 != null && !strImageName1.equalsIgnoreCase("")) {
 
-                    /////////////
                     File mCopyFile = utils.getInternalFileImages(strName1);
                     utils.copyFile(new File(strImageName1), mCopyFile);
                     Date date = new Date();
@@ -2436,11 +1851,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     mImageCount++;
 
-                    IMAGE_COUNT++;
-
                 }
-
-                IMAGE_COUNT++;
 
             } catch (Exception | OutOfMemoryError e) {
                 e.printStackTrace();
@@ -2460,12 +1871,10 @@ public class MilestoneActivity extends AppCompatActivity {
                         bitmaps.add(utils.getBitmapFromFile(utils.getInternalFileImages(
                                 fileModel.getStrFileName()).getAbsolutePath(), Config.intWidth,
                                 Config.intHeight));
-                        IMAGE_COUNT++;
 
                         fileModel.setNew(false);
                     }
                 }
-                //
             } catch (Exception | OutOfMemoryError e) {
                 e.printStackTrace();
             }

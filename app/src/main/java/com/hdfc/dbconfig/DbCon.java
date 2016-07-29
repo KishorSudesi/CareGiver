@@ -1,8 +1,7 @@
 package com.hdfc.dbconfig;
 
 import android.content.Context;
-
-import net.sqlcipher.Cursor;
+import android.database.Cursor;
 
 public class DbCon {
 

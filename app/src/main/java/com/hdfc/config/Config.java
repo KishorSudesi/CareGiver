@@ -21,7 +21,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -46,9 +45,9 @@ public class Config {
     public static final String collectionCheckInCare = "checkincare";
 
 
-    public static final String UPDATE_DATE = "2016-01-01T00:00:00.000Z";
+    ///public static final String UPDATE_DATE = "2016-01-01T00:00:00.000Z";
 
-    public static final Locale locale = Locale.ENGLISH;
+    //public static final Locale locale = Locale.ENGLISH;
     public static final int iSdkVersion = Build.VERSION.SDK_INT;
     public static final int iAppVersion = BuildConfig.VERSION_CODE;
 
@@ -57,12 +56,12 @@ public class Config {
 
     public static final int START_CAMERA_REQUEST_CODE = 1;
     public static final int START_GALLERY_REQUEST_CODE = 2;
-    public static final int CACHE_EXPIRE = 1;//In Minutes
+    //public static final int CACHE_EXPIRE = 1;//In Minutes
     public static final int intWidth = 300, intHeight = 300;
     public static final int intCompressWidth = 240, intCompressHeight = 240, iQuality = 80;
     /* public static final String[] weekNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};*/
-     public static final String[] months = {"January", "February", "March", "April", "May", "June",
-             "July", "August", "September", "October", "November", "December"};
+    /* public static final String[] months = {"January", "February", "March", "April", "May", "June",
+             "July", "August", "September", "October", "November", "December"};*/
     /*public static final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};*/
     public static final boolean isDebuggable = true;
     public static final String string = Utils.getStringJni();
@@ -74,7 +73,7 @@ public class Config {
     public static int intRatingsScreen = 4;
     public static int intNotificationScreen = 3;
     public static int intDashboardScreen = 1;
-    public static int intMileStoneScreen = 4;
+    //public static int intMileStoneScreen = 4;
     public static int intScreenWidth = 0;
     public static int intScreenHeight = 0;
     //public static int intCreateTaskScreen = 5;
@@ -106,7 +105,7 @@ public class Config {
     public static ArrayList<ClientModel> clientModels = new ArrayList<>();
 
     public static ArrayList<NotificationModel> notificationModels = new ArrayList<>();
-    public static ArrayList<String> strNotificationIds = new ArrayList<>();
+    //public static ArrayList<String> strNotificationIds = new ArrayList<>();
 
     public static ArrayList<CheckInCareModel> checkInCareModels = new ArrayList<>();
     //public static ArrayList<CheckInCareModel> checkInCareActivityNames = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.hdfc.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -18,8 +19,6 @@ import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.models.NotificationModel;
-
-import net.sqlcipher.Cursor;
 
 import org.json.JSONException;
 import org.json.JSONObject;

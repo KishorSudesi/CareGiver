@@ -1,7 +1,9 @@
 package com.hdfc.caregiver.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -28,8 +30,6 @@ import com.hdfc.models.ActivityModel;
 import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.MenuItem;
 import com.yydcdut.sdlv.SlideAndDragListView;
-
-import net.sqlcipher.Cursor;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -205,13 +205,15 @@ public class ActivityFragment extends Fragment
 
                 if (!strUrl.equalsIgnoreCase("")) {
 
-                    Glide.with(context)
-                            .load(strUrl)
-                            .centerCrop()
-                            .bitmapTransform(new CropCircleTransformation(context))
-                            .placeholder(R.drawable.person_icon)
-                            .crossFade()
-                            .into(cvh.imagePerson);
+                    if (!((Activity) context).isFinishing()) {
+                        Glide.with(context)
+                                .load(strUrl)
+                                .centerCrop()
+                                .bitmapTransform(new CropCircleTransformation(context))
+                                .placeholder(R.drawable.person_icon)
+                                .crossFade()
+                                .into(cvh.imagePerson);
+                    }
                 }
             }
             return convertView;

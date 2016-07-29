@@ -142,16 +142,6 @@ public class LoginActivity extends AppCompatActivity {
         button.setVisibility(View.INVISIBLE);
 
         loadingPanel.setVisibility(View.VISIBLE);
-
-        if (CareGiver.getDbCon() == null)
-            new LoadDataTask().execute();
-        else {
-            loadingPanel.setVisibility(View.GONE);
-            editEmail.setVisibility(View.VISIBLE);
-            editPassword.setVisibility(View.VISIBLE);
-            textView.setVisibility(View.VISIBLE);
-            button.setVisibility(View.VISIBLE);
-        }
     }
 
     private void showForgotPassword(){
@@ -290,6 +280,23 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (CareGiver.getDbCon() == null)
+            new LoadDataTask().execute();
+        else {
+
+            editEmail.setVisibility(View.VISIBLE);
+            editPassword.setVisibility(View.VISIBLE);
+            textView.setVisibility(View.VISIBLE);
+            button.setVisibility(View.VISIBLE);
+
+            if (sessionManager.isLoggedIn() && !sessionManager.getEmail().equalsIgnoreCase("")
+                    && !sessionManager.getProviderId().equalsIgnoreCase("")) {
+                goToDashboard(false);
+            }
+
+            loadingPanel.setVisibility(View.GONE);
+        }
     }
 
     public void validateLogin(View v) {
