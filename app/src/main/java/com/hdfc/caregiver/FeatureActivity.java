@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -38,8 +39,6 @@ import com.hdfc.views.TouchImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
-
-import net.sqlcipher.Cursor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -605,14 +604,12 @@ public class FeatureActivity extends AppCompatActivity {
                     UploadService uploadService = new UploadService(this);
 
                     uploadService.uploadImageCommon(mUploadImageModel.getStrImagePath(),
-                            mUploadImageModel.getStrImageDesc(), mUploadImageModel.getStrImageDesc(),
+                            mUploadImageModel.getStrImageName(), mUploadImageModel.getStrImageDesc(),
                             Config.providerModel.getStrEmail(), UploadFileType.IMAGE,
                             new App42CallBack() {
                                 public void onSuccess(Object response) {
 
                                     if (response != null) {
-
-
 
                                         Upload upload = (Upload) response;
                                         ArrayList<Upload.File> fileList = upload.getFileList();
@@ -1129,7 +1126,6 @@ public class FeatureActivity extends AppCompatActivity {
                                 utils.toast(2, 2, getString(R.string.sync_data));
                             }
                         }
-                        //finish();
                     }
                 });
             }
@@ -1155,30 +1151,25 @@ public class FeatureActivity extends AppCompatActivity {
                     String strTime = String.valueOf(calendar.getTimeInMillis());
                     String strFileName = strTime + ".jpeg";
 
-                    //File galleryFile = utils.createFileInternalImage(strFileName);
-                    //strImageName = galleryFile.getAbsolutePath();
-                    Date date = new Date();
+                    Date date = calendar.getTime();
 
                     File mCopyFile = utils.getInternalFileImages(strTime);
                     utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
 
-                    //utils.copyFile(new File(strImageName), mCopyFile);
-                    //
-
-                    ImageModel imageModel = new ImageModel(strTime, "", strTime, Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
+                    ImageModel imageModel = new ImageModel(strFileName, "", strTime,
+                            Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                     imageModel.setmIsNew(true);
 
                     imageModels.add(imageModel);
-                    //
 
-                    utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
+                    utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth,
+                            Config.intCompressHeight, Config.iQuality);
 
 
-                    bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(), Config.intWidth, Config.intHeight));
-
-                    IMAGE_COUNT++;
+                    bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
+                            Config.intWidth, Config.intHeight));
 
                     mImageCount++;
                 }
@@ -1199,11 +1190,15 @@ public class FeatureActivity extends AppCompatActivity {
 
                     utils.copyFile(new File(strImageName), mCopyFile);
 
-                    Date date = new Date();
-                    ImageModel imageModel = new ImageModel(strName, "", strName,
+                    Calendar calendar = Calendar.getInstance();
+                    String strTime = String.valueOf(calendar.getTimeInMillis());
+                    String strFileName = strTime + ".jpeg";
+
+                    Date date = calendar.getTime();
+
+                    ImageModel imageModel = new ImageModel(strFileName, "", strName,
                             Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                     imageModel.setmIsNew(true);
-                    //arrayListImageModel.add(imageModel);
 
                     imageModels.add(imageModel);
 
@@ -1214,8 +1209,6 @@ public class FeatureActivity extends AppCompatActivity {
                             Config.intHeight));
 
                     mImageCount++;
-
-                    IMAGE_COUNT++;
                 }
 
             } catch (Exception | OutOfMemoryError e) {
@@ -1238,8 +1231,6 @@ public class FeatureActivity extends AppCompatActivity {
                                 Config.intHeight));
 
                         imageModel.setmIsNew(false);
-
-                        IMAGE_COUNT++;
                     }
                 }
             } catch (Exception | OutOfMemoryError e) {

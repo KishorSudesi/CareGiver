@@ -2,6 +2,7 @@ package com.hdfc.libs;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.app42service.App42GCMService;
@@ -34,8 +35,6 @@ import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
-
-import net.sqlcipher.Cursor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -516,13 +515,13 @@ public class AppUtils {
 
             if (mQuery1 != null) { //strDate != null && !strDate.equalsIgnoreCase("")
 
-                finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
+                finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.OR,
                         q12);
             /*} else {
                 finalQuery = q12;
             }*/
 
-                storageService.findDocsByQuery(Config.collectionDependent, finalQuery,
+                storageService.findDocsByQuery(Config.collectionDependent, q12,
                         new App42CallBack() {
 
                             @Override
@@ -646,8 +645,14 @@ public class AppUtils {
             Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
                     GREATER_THAN);
 
+           /* Query q3 = QueryBuilder.build("customer_register", "true", QueryBuilder.Operator.
+                    EQUALS);*/
+
             if (mQuery1 != null) {
-                finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND, q12);
+                finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.OR, q12);
+
+                //fetch registered customers
+                //Query q4 = QueryBuilder.compoundOperator(finalQuery, QueryBuilder.Operator.AND, q3);
            /* } else {
                 finalQuery = q12;
             }*/
@@ -655,8 +660,7 @@ public class AppUtils {
                 finalQuery = mQuery1;
             }*/
 
-                storageService.findDocsByQuery(Config.collectionCustomer, finalQuery,
-                        new App42CallBack() {
+                storageService.findDocsByQuery(Config.collectionCustomer, q12, new App42CallBack() {
 
                             @Override
                             public void onSuccess(Object o) {
@@ -1259,13 +1263,14 @@ public class AppUtils {
 
                 while (!newCursor.isAfterLast()) {
 
-                    iRemoved = -1;
+                    //todo change logic after including assign module in carla
+                    iRemoved = 0;
 
                     if (newCursor.getString(1) != null
                             && !newCursor.getString(1).equalsIgnoreCase("")) {
 
-                        if (!newCursor.isNull(2))
-                            iRemoved = newCursor.getInt(2);
+                       /* if (!newCursor.isNull(2))
+                            iRemoved = newCursor.getInt(2);*/
 
                         JSONObject jsonObject = new JSONObject(newCursor.getString(1));
 
@@ -1346,7 +1351,8 @@ public class AppUtils {
 
                 while (!newCursor.isAfterLast()) {
 
-                    iRemoved = -1;
+                    //todo change logic after including assign module in carla
+                    iRemoved = 0;
 
                     if (!newCursor.isNull(2))
                         iRemoved = newCursor.getInt(2);

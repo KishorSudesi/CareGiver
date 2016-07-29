@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,8 +33,6 @@ import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
 
-import net.sqlcipher.Cursor;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,7 +40,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -79,7 +77,6 @@ public class MyProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_profile);
-        // textViewName = (TextView) findViewById(R.id.textCaregiverName);
 
         isAllowed = false;
 
@@ -91,7 +88,6 @@ public class MyProfileActivity extends AppCompatActivity {
         EditText email = (EditText) findViewById(R.id.input_email);
         Button signOut = (Button) findViewById(R.id.buttonLogOut);
         buttonContinue = (Button) findViewById(R.id.buttonContinue);
-        //ImageView pen = (ImageView) findViewById(R.id.imgPen);
         Button buttonBack = (Button) findViewById(R.id.buttonBack);
 
         sessionManager = new SessionManager(MyProfileActivity.this);
@@ -108,15 +104,10 @@ public class MyProfileActivity extends AppCompatActivity {
             });
         }
 
-        //Bundle b = getIntent().getExtras();
-        //intWhichScreen = b.getInt("WHICH_SCREEN", Config.intRatingsScreen);
-
         utils = new Utils(MyProfileActivity.this);
         appUtils = new AppUtils(MyProfileActivity.this);
         progressDialog = new ProgressDialog(MyProfileActivity.this);
         mProgress = new ProgressDialog(MyProfileActivity.this);
-        //appUtils = new AppUtils(MyProfileActivity.this);
-
 
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,23 +135,8 @@ public class MyProfileActivity extends AppCompatActivity {
                         }
                 );
 
-                //openProfilePicker();
             }
         });
-       /* imageplace.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GPSTracker gpsTracker = new GPSTracker(MyProfileActivity.this);
-
-                if (gpsTracker.getIsGPSTrackingEnabled()) {
-                    String city = gpsTracker.getLocality(MyProfileActivity.this);
-                    place.setText(city);
-                }else {
-                    gpsTracker.showSettingsAlert();
-                }
-            }
-        });
-        */
 
         if (signOut != null) {
             signOut.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +165,6 @@ public class MyProfileActivity extends AppCompatActivity {
             });
         }
 
-
         name.setEnabled(false);
         name.setFocusableInTouchMode(false);
         name.clearFocus();
@@ -207,9 +182,6 @@ public class MyProfileActivity extends AppCompatActivity {
             email.setFocusableInTouchMode(false);
             email.clearFocus();
         }
-
-
-        //  edit = (ImageView)findViewById(R.id.imgPen);
 
         buttonContinue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -284,7 +256,6 @@ public class MyProfileActivity extends AppCompatActivity {
 
                         appUtils.updateProviderJson(Config.providerModel.getStrProviderId(), true);
 
-                        // edit.setImageResource(R.mipmap.edit);
                         Flag = 0;
 
                         name.setEnabled(false);
@@ -306,22 +277,13 @@ public class MyProfileActivity extends AppCompatActivity {
                 }
             }
         });
-       /* backbutton = (ImageView)findViewById(R.id.imgBackArrow);
 
-        backbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goBack();
-            }
-        });
-        */
         if(Config.providerModel!=null) {
             if (email != null) {
                 email.setText(Config.providerModel.getStrEmail());
             }
             phone.setText(Config.providerModel.getStrContacts());
             place.setText(Config.providerModel.getStrAddress());
-            //textViewName.setText(Config.providerModel.getStrName());
             name.setText(Config.providerModel.getStrName());
 
             File file = null;
@@ -360,8 +322,12 @@ public class MyProfileActivity extends AppCompatActivity {
 
     private void openProfilePicker() {
         if (Flag == 1 && isAllowed) {
-            utils.selectImage(String.valueOf(new Date().getDate() + ""
-                    + new Date().getTime()) + ".jpeg", null, MyProfileActivity.this, true);
+
+            Calendar calendar = Calendar.getInstance();
+            String strFileName = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
+
+            utils.selectImage(String.valueOf(strFileName) + ".jpeg", null, MyProfileActivity.this,
+                    true);
         }
     }
 
@@ -417,6 +383,7 @@ public class MyProfileActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Object o) {
 
+                            //todo check date
                             CareGiver.getDbCon().updateProvider(
                                     new String[]{"DateTime('now')", "0"},
                                     new String[]{"updated_date", "updated"},
@@ -456,7 +423,6 @@ public class MyProfileActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) { //&& data != null
             try {
                 backgroundThreadHandler = new BackgroundThreadHandler();
-                //Utils.toast(1, 1, "Getting Image...");
                 mProgress.setMessage(getString(R.string.loading));
                 mProgress.show();
                 switch (requestCode) {
@@ -484,12 +450,6 @@ public class MyProfileActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-       /* BackgroundThread backgroundThread = new BackgroundThread();
-        backgroundThread.start();
-        backgroundThreadHandler = new BackgroundThreadHandler();
-
-        mProgress.setMessage(getResources().getString(R.string.loading));
-        mProgress.show();*/
     }
 
     private void goBack() {
@@ -609,25 +569,8 @@ public class MyProfileActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();]
         goBack();
     }
-
-   /* private class BackgroundThread extends Thread {
-        @Override
-        public void run() {
-            try {
-
-                File f = utils.getInternalFileImages(Config.providerModel.getStrProviderId());
-                Utils.log(f.getAbsolutePath(), " FP ");
-                bitmap = utils.getBitmapFromFile(f.getAbsolutePath(), Config.intWidth, Config.intHeight);
-
-                backgroundThreadHandler.sendEmptyMessage(0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
 
     private class BackgroundThreadHandler extends Handler {
         @Override
@@ -636,24 +579,7 @@ public class MyProfileActivity extends AppCompatActivity {
             if (mProgress.isShowing())
                 mProgress.dismiss();
 
-            /*if (profileImage != null && strCustomerImgName != null
-                    && !strCustomerImgName.equalsIgnoreCase("") && bitmap != null)
-                profileImage.setImageBitmap(bitmap);*/
-
-            /*if (!isImageChanged) {
-                if (bitmap != null)
-                    if (profileImage != null) {
-                        profileImage.setImageBitmap(bitmap);
-                    }
-                else
-                    utils.toast(2, 2, getString(R.string.error));
-            }*/
-
-
-            //if (isImageChanged) { //&& bitmap != nul
                 try {
-
-                    //Config.providerModel.setStrImgPath(strCustomerImgName);
                     sessionManager.saveProfileImage(strCustomerImgName);
 
                     Glide.with(MyProfileActivity.this)
@@ -664,19 +590,15 @@ public class MyProfileActivity extends AppCompatActivity {
                             .crossFade()
                             .into(profileImage);
 
-                    //appUtils.updateProviderJson(Config.providerModel.getStrProviderId(), true);
-
                     if (utils.isConnectingToInternet())
                         checkImage(false);
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            //}
         }
     }
 
-    //
     private class BackgroundThreadGallery extends Thread {
         @Override
         public void run() {
@@ -691,9 +613,6 @@ public class MyProfileActivity extends AppCompatActivity {
                     utils.copyInputStreamToFile(is, galleryFile);
                     utils.compressImageFromPath(strCustomerImgName, Config.intCompressWidth,
                             Config.intCompressHeight, Config.iQuality);
-                   /* bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth,
-                            Config.intHeight);*/
-                    //isImageChanged = true;
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
             } catch (Exception e) {
@@ -709,9 +628,6 @@ public class MyProfileActivity extends AppCompatActivity {
                 if (strCustomerImgName != null && !strCustomerImgName.equalsIgnoreCase("")) {
                     utils.compressImageFromPath(strCustomerImgName, Config.intCompressWidth,
                             Config.intCompressHeight, Config.iQuality);
-                    /*bitmap = utils.getBitmapFromFile(strCustomerImgName, Config.intWidth,
-                            Config.intHeight);*/
-                    //isImageChanged = true;
                 }
                 backgroundThreadHandler.sendEmptyMessage(0);
             } catch (Exception e) {

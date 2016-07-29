@@ -10,6 +10,7 @@ import com.shephertz.app42.paas.sdk.android.App42CacheManager;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.App42Response;
+import com.shephertz.app42.paas.sdk.android.email.EmailService;
 import com.shephertz.app42.paas.sdk.android.push.PushNotificationService;
 import com.shephertz.app42.paas.sdk.android.storage.OrderByType;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
@@ -35,6 +36,7 @@ public class AsyncApp42ServiceApi {
     private UserService userService;
     private StorageService storageService;
     private UploadService uploadService;
+    private EmailService emailService;
     private PushNotificationService pushNotificationService;
 
 
@@ -60,6 +62,7 @@ public class AsyncApp42ServiceApi {
         this.storageService = App42API.buildStorageService();
         this.uploadService = App42API.buildUploadService();
         this.pushNotificationService = App42API.buildPushNotificationService();
+        this.emailService = App42API.buildEmailService();
     }
 
     public static AsyncApp42ServiceApi instance(Context context) {
@@ -881,6 +884,12 @@ public class AsyncApp42ServiceApi {
             }
         }.start();
     }
+
+    public EmailService getEmailService() {
+        return this.emailService;
+    }
+
+
 
    /* public interface App42UserServiceListener {
         void onUserCreated(User response);

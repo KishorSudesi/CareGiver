@@ -1,6 +1,7 @@
 package com.hdfc.adapters;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,6 @@ import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.FeedBackModel;
-
-import net.sqlcipher.Cursor;
 
 import org.json.JSONException;
 import org.json.JSONObject;

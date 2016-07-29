@@ -3713,10 +3713,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         Date date = new Date();
 
-                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        File mCopyFile = utils.getInternalFileImages(strFileName);
                         utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime,
+                        ImageModel imageModel = new ImageModel(strFileName, "", strFileName,
                                 Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                         imageModel.setmIsNew(true);
@@ -3747,10 +3747,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         Date date = new Date();
 
-                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        File mCopyFile = utils.getInternalFileImages(strFileName);
                         utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime,
+                        ImageModel imageModel = new ImageModel(strFileName, "", strFileName,
                                 Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                         imageModel.setmIsNew(true);
@@ -3782,10 +3782,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         Date date = new Date();
 
-                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        File mCopyFile = utils.getInternalFileImages(strFileName);
                         utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime,
+                        ImageModel imageModel = new ImageModel(strFileName, "", strFileName,
                                 Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                         imageModel.setmIsNew(true);
@@ -3817,10 +3817,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         Date date = new Date();
 
-                        File mCopyFile = utils.getInternalFileImages(strTime);
+                        File mCopyFile = utils.getInternalFileImages(strFileName);
                         utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                        ImageModel imageModel = new ImageModel(strTime, "", strTime,
+                        ImageModel imageModel = new ImageModel(strFileName, "", strFileName,
                                 Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                         imageModel.setmIsNew(true);
@@ -3829,7 +3829,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         utils.compressImageFromPath(mCopyFile.getAbsolutePath(),
                                 Config.intCompressWidth, Config.intCompressHeight, Config.iQuality);
-
 
                         bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                                 Config.intWidth, Config.intHeight));
@@ -3857,12 +3856,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         String strName = String.valueOf(calendar.getTimeInMillis());
                         String strFileName = strName + ".jpeg";
 
-                        File mCopyFile = utils.getInternalFileImages(strName);
+                        File mCopyFile = utils.getInternalFileImages(strFileName);
 
                         utils.copyFile(new File(strImageName), mCopyFile);
 
                         Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName,
+                        ImageModel imageModel = new ImageModel(strFileName, "", strFileName,
                                 Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                         imageModel.setmIsNew(true);
 
@@ -3890,12 +3889,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         String strName = String.valueOf(calendar.getTimeInMillis());
                         String strFileName = strName + ".jpeg";
 
-                        File mCopyFile = utils.getInternalFileImages(strName);
+                        File mCopyFile = utils.getInternalFileImages(strFileName);
 
                         utils.copyFile(new File(strImageName), mCopyFile);
 
                         Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName,
+                        ImageModel imageModel = new ImageModel(strFileName, "", strFileName,
                                 Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                         imageModel.setmIsNew(true);
 
@@ -3923,12 +3922,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         String strName = String.valueOf(calendar.getTimeInMillis());
                         String strFileName = strName + ".jpeg";
 
-                        File mCopyFile = utils.getInternalFileImages(strName);
+                        File mCopyFile = utils.getInternalFileImages(strFileName);
 
                         utils.copyFile(new File(strImageName), mCopyFile);
 
                         Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName,
+                        ImageModel imageModel = new ImageModel(strFileName, "", strFileName,
                                 Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                         imageModel.setmIsNew(true);
 
@@ -3956,12 +3955,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         String strName = String.valueOf(calendar.getTimeInMillis());
                         String strFileName = strName + ".jpeg";
 
-                        File mCopyFile = utils.getInternalFileImages(strName);
+                        File mCopyFile = utils.getInternalFileImages(strFileName);
 
                         utils.copyFile(new File(strImageName), mCopyFile);
 
                         Date date = new Date();
-                        ImageModel imageModel = new ImageModel(strName, "", strName,
+                        ImageModel imageModel = new ImageModel(strFileName, "", strFileName,
                                 Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                         imageModel.setmIsNew(true);
 
