@@ -524,7 +524,7 @@ public class MyProfileActivity extends AppCompatActivity {
                                     appUtils.updateProviderJson(Config.providerModel.
                                             getStrProviderId(), false);
 
-                                    if (utils.isConnectingToInternet()) {
+                                   /* if (utils.isConnectingToInternet()) {
                                         Glide.with(MyProfileActivity.this)
                                                 .load(fileList.get(0).getUrl())
                                                 .centerCrop()
@@ -534,7 +534,7 @@ public class MyProfileActivity extends AppCompatActivity {
                                                 .crossFade()
                                                 .into(profileImage);
                                         updateProviderDoc(false);
-                                    }
+                                    }*/
 
                                 } else {
                                     if (!isBackground)

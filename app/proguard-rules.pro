@@ -94,9 +94,9 @@
  }
 
  #sql cipher
- -dontwarn net.sqlcipher.**
- -keep class net.sqlcipher.** { *; }
- -keep interface net.sqlcipher.** { *; }
+ #-dontwarn net.sqlcipher.**
+ #-keep class net.sqlcipher.** { *; }
+ #-keep interface net.sqlcipher.** { *; }
 
  #Glide
  -dontwarn com.bumptech.glide.**
