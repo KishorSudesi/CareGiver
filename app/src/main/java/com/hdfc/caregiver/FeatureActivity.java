@@ -77,7 +77,7 @@ public class FeatureActivity extends AppCompatActivity {
     private boolean success;
     private TextView textViewTime;
     private LinearLayout linearLayoutAttach;
-    private String strDependentContact;
+    private String strCustomerEmail;
     private Button done;
     private PermissionHelper permissionHelper;
     private boolean isAllowed = false;
@@ -167,11 +167,6 @@ public class FeatureActivity extends AppCompatActivity {
                         name = jsonObject.optString("dependent_name");
                     }
 
-                    if (jsonObject.getString("dependent_contact_no") != null
-                            && !jsonObject.getString("dependent_contact_no").equalsIgnoreCase("")) {
-                        strDependentContact = jsonObject.optString("dependent_contact_no");
-                    }
-
                     if (imgLogoHeaderTaskDetail != null
                             && jsonObject.getString("dependent_profile_url") != null
                             && !jsonObject.getString("dependent_profile_url").
@@ -228,6 +223,11 @@ public class FeatureActivity extends AppCompatActivity {
                     if (jsonObject1.getString("customer_name") != null
                             && !jsonObject1.getString("customer_name").equalsIgnoreCase("")) {
                         strCustomerName = jsonObject1.getString("customer_name");
+                    }
+
+                    if (jsonObject1.getString("customer_email") != null
+                            && !jsonObject1.getString("customer_email").equalsIgnoreCase("")) {
+                        strCustomerEmail = jsonObject1.optString("customer_email");
                     }
 
                     if (jsonObject1.getString("customer_profile_url") != null
@@ -1118,7 +1118,7 @@ public class FeatureActivity extends AppCompatActivity {
                                 args.putSerializable("Act", activityModel);
                                 args.putSerializable("Milestone", milestoneModelObject);
                                 args.putBoolean("WHICH_SCREEN", bWhichScreen);
-                                args.putString("DEPENDENT_CONTACT", strDependentContact);
+                                args.putString("CUSTOMER_EMAIL", strCustomerEmail);
                                 intent.putExtras(args);
                                 startActivity(intent);
                                 finish();
@@ -1153,11 +1153,11 @@ public class FeatureActivity extends AppCompatActivity {
 
                     Date date = calendar.getTime();
 
-                    File mCopyFile = utils.getInternalFileImages(strTime);
+                    File mCopyFile = utils.getInternalFileImages(strFileName);
                     utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
 
-                    ImageModel imageModel = new ImageModel(strFileName, "", strTime,
+                    ImageModel imageModel = new ImageModel(strFileName, "", strFileName,
                             Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
 
                     imageModel.setmIsNew(true);
@@ -1186,17 +1186,17 @@ public class FeatureActivity extends AppCompatActivity {
             try {
                 if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
 
-                    File mCopyFile = utils.getInternalFileImages(strName);
-
-                    utils.copyFile(new File(strImageName), mCopyFile);
-
                     Calendar calendar = Calendar.getInstance();
                     String strTime = String.valueOf(calendar.getTimeInMillis());
                     String strFileName = strTime + ".jpeg";
 
+                    File mCopyFile = utils.getInternalFileImages(strFileName);
+
+                    utils.copyFile(new File(strImageName), mCopyFile);
+
                     Date date = calendar.getTime();
 
-                    ImageModel imageModel = new ImageModel(strFileName, "", strName,
+                    ImageModel imageModel = new ImageModel(strFileName, "", strFileName,
                             Utils.convertDateToString(date), mCopyFile.getAbsolutePath());
                     imageModel.setmIsNew(true);
 

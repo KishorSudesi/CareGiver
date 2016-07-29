@@ -90,22 +90,25 @@ public class DashboardActivity extends AppCompatActivity implements
 
     public static void gotoSimpleActivityMenu(boolean isLoader) {
 
-        //appUtils.createCustomerModel();
-
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
             String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
 
-            appUtils.createActivityModel(strStartDate, strEndDate);
+            AppUtils.createActivityModel(strStartDate, strEndDate);
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
 
             if (isLoader && loadingPanel.getVisibility() == View.VISIBLE)
                 loadingPanel.setVisibility(View.GONE);
 
-            if (isLoader)
+            if (isLoader) {
                 AppUtils.fetchActivitiesSync(appCompatActivity);
+
+                //fetch check in cares
+                AppUtils.fetchCheckInCareSync(appCompatActivity);
+                AppUtils.fetchServicesSync(appCompatActivity);
+            }
         }
     }
 
@@ -115,7 +118,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
             String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
-            appUtils.createActivityModel(strStartDate, strEndDate);
+            AppUtils.createActivityModel(strStartDate, strEndDate);
 
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
@@ -137,7 +140,7 @@ public class DashboardActivity extends AppCompatActivity implements
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
             String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
 
-            appUtils.createActivityModel(strStartDate, strEndDate);
+            AppUtils.createActivityModel(strStartDate, strEndDate);
 
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
@@ -439,7 +442,7 @@ public class DashboardActivity extends AppCompatActivity implements
         String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
         String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
 
-        appUtils.createActivityModel(strStartDate, strEndDate);
+        AppUtils.createActivityModel(strStartDate, strEndDate);
         ActivityFragment.activityModels = Config.activityModels;
         ActivityFragment.mAdapter.notifyDataSetChanged();
         //

@@ -76,7 +76,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static Boolean editcheckincare = false;
     private static Utils utils;
     //private static ProgressDialog mProgress = null;
-    private static Handler backgroundThreadHandler;
+    private static Handler backgroundThreadHandler, backgroundThreadHandlerFetch;
     private static boolean isImageChanged = false;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> hallbitmaps = new ArrayList<>();
@@ -1970,7 +1970,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 + DbHelper.COLUMN_MILESTONE_ID + "=? ";
 
                                         String[] selectionArgs1 = {jsonDocument.getDocId(),
-                                                "0"
+                                                "-1"
                                         };
 
                                         CareGiver.getDbCon().updateInsert(
@@ -3633,9 +3633,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                bViewLoaded =true;
 
-                backgroundThreadHandler = new BackgroundThreadHandler();
-                Thread backgroundThreadImages = new BackgroundThreadImages();
-                backgroundThreadImages.start();
+                backgroundThreadHandlerFetch = new BackgroundThreadHandlerFetchImages();
+                Thread backgroundThreadImagesFetch = new BackgroundThreadFetchImages();
+                backgroundThreadImagesFetch.start();
             }
 
         } catch (Exception e) {
@@ -4066,6 +4066,96 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }
             }
             backgroundThreadHandler.sendEmptyMessage(0);
+        }
+    }
+
+    private class BackgroundThreadFetchImages extends Thread {
+        @Override
+        public void run() {
+
+            if (editcheckincare) {
+
+                try {
+                    for (ImageModel imageModel : hallimageModels) {
+                        if (imageModel.getStrImageUrl() != null
+                                && !imageModel.getStrImageUrl().equalsIgnoreCase("")) {
+
+                            File file = utils.getInternalFileImages(imageModel.getStrImageDesc());
+
+                            if (!file.exists() || file.length() <= 0) {
+                                Utils.loadImageFromWeb(imageModel.getStrImageDesc(),
+                                        imageModel.getStrImageUrl());
+                            }
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+
+
+                try {
+
+                    for (ImageModel imageModel : kitchenimageModels) {
+                        if (imageModel.getStrImageUrl() != null && !imageModel.getStrImageUrl().
+                                equalsIgnoreCase("")) {
+                            File file = utils.getInternalFileImages(imageModel.getStrImageDesc());
+
+                            if (!file.exists() || file.length() <= 0) {
+                                Utils.loadImageFromWeb(imageModel.getStrImageDesc(),
+                                        imageModel.getStrImageUrl());
+                            }
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+
+
+                try {
+
+                    for (ImageModel imageModel : washroomimageModels) {
+                        if (imageModel.getStrImageUrl() != null && !imageModel.getStrImageUrl().
+                                equalsIgnoreCase("")) {
+                            File file = utils.getInternalFileImages(imageModel.getStrImageDesc());
+
+                            if (!file.exists() || file.length() <= 0) {
+                                Utils.loadImageFromWeb(imageModel.getStrImageDesc(),
+                                        imageModel.getStrImageUrl());
+                            }
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+
+
+                try {
+
+                    for (ImageModel imageModel : bedroomimageModels) {
+                        if (imageModel.getStrImageUrl() != null && !imageModel.getStrImageUrl().
+                                equalsIgnoreCase("")) {
+                            File file = utils.getInternalFileImages(imageModel.getStrImageDesc());
+
+                            if (!file.exists() || file.length() <= 0) {
+                                Utils.loadImageFromWeb(imageModel.getStrImageDesc(),
+                                        imageModel.getStrImageUrl());
+                            }
+                        }
+                    }
+                } catch (Exception | OutOfMemoryError e) {
+                    e.printStackTrace();
+                }
+            }
+            backgroundThreadHandlerFetch.sendEmptyMessage(0);
+        }
+    }
+
+    private class BackgroundThreadHandlerFetchImages extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            backgroundThreadHandler = new BackgroundThreadHandler();
+            Thread backgroundThreadImages = new BackgroundThreadImages();
+            backgroundThreadImages.start();
         }
     }
 }

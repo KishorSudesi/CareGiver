@@ -932,6 +932,122 @@ public class Utils {
         return "";
     }
 
+    //load image from url
+    public static void loadImageFromWeb(String strFileName, String strFileUrl) {
+
+        strFileName = replaceSpace(strFileName.trim());
+        strFileUrl = replaceSpace(strFileUrl.trim());
+
+        File fileImage = createFileInternal("images/" + strFileName);
+
+        log(strFileName + " ~ " + strFileUrl, " PATHS ");
+
+        if (fileImage.length() <= 0) {
+
+            InputStream input;
+            try {
+
+                URL url = new URL(strFileUrl); //URLEncoder.encode(fileModel.getStrFileUrl(), "UTF-8")
+                input = url.openStream();
+                byte[] buffer = new byte[1500];
+                OutputStream output = new FileOutputStream(fileImage);
+                try {
+                    int bytesRead;
+                    while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
+                        output.write(buffer, 0, bytesRead);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    output.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static String replaceSpace(String string) {
+        string = string.replace(" ", "_");
+        return string;
+    }
+
+    public static String[] jsonToStringArray(JSONArray jsonArray) {
+
+        String strings[] = new String[0];
+
+        try {
+            int iLength = jsonArray.length();
+
+            strings = new String[iLength];
+
+            for (int i = 0; i < iLength; i++) {
+                strings[i] = jsonArray.getString(i);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return strings;
+    }
+
+    /*public boolean isPasswordValid(String password) {
+        return password.length() > 1;
+    }*/
+
+    public static int[] jsonToIntArray(JSONArray jsonArray) {
+
+        int ints[] = new int[0];
+
+        try {
+            int iLength = jsonArray.length();
+
+            ints = new int[iLength];
+
+            for (int i = 0; i < iLength; i++) {
+                ints[i] = jsonArray.getInt(i);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return ints;
+    }
+
+    public static JSONArray intToJsonArray(int ints[]) {
+
+        JSONArray jsonArray = new JSONArray();
+
+        try {
+            int iLength = ints.length;
+
+            for (int i = 0; i < iLength; i++) {
+                jsonArray.put(ints[i]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return jsonArray;
+    }
+
+    public static JSONArray stringToJsonArray(String string[]) {
+
+        JSONArray jsonArray = new JSONArray();
+
+        try {
+            //int iLength = string.length;
+
+            for (String aString : string) {
+                jsonArray.put(aString);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return jsonArray;
+    }
+
     //
     public boolean compressImageFromPath(String strPath, int reqWidth, int reqHeight, int iQuality) {
 
@@ -1050,45 +1166,7 @@ public class Utils {
         return file;
     }
 
-    /*public boolean isPasswordValid(String password) {
-        return password.length() > 1;
-    }*/
-
-    //load image from url
-    /*void loadImageFromWeb(String strFileName, String strFileUrl) {
-
-        strFileName = replaceSpace(strFileName.trim());
-        strFileUrl = replaceSpace(strFileUrl.trim());
-
-        File fileImage = createFileInternal("images/" + strFileName);
-
-        log(strFileName + " ~ " + strFileUrl, " PATHS ");
-
-        if (fileImage.length() <= 0) {
-
-            InputStream input;
-            try {
-
-                URL url = new URL(strFileUrl); //URLEncoder.encode(fileModel.getStrFileUrl(), "UTF-8")
-                input = url.openStream();
-                byte[] buffer = new byte[1500];
-                OutputStream output = new FileOutputStream(fileImage);
-                try {
-                    int bytesRead;
-                    while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
-                        output.write(buffer, 0, bytesRead);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    output.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+    /*
     public void moveFile(File file, File newFile) throws IOException {
         //File newFile = new File(dir, file.getName());
         FileChannel outputChannel = null;
@@ -1121,6 +1199,32 @@ public class Utils {
         }
     }
 
+ /*public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }*/
+
+    /*public void setDrawable(View v, Drawable drw) {
+        if (Build.VERSION.SDK_INT <= 16)
+            v.setBackgroundDrawable(drw);
+        else
+            v.setBackground(drw);
+    }
+
+    public void setStatusBarColor(String strColor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = ((Activity) _ctxt).getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.parseColor(strColor));
+        }
+    }*/
+
     public boolean isConnectingToInternet() {
         ConnectivityManager connectivity = (ConnectivityManager)
                 _ctxt.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -1134,6 +1238,61 @@ public class Utils {
         }
         return false;
     }
+
+    /*public EditText traverseEditTexts(ViewGroup v, Drawable all, Drawable current,
+                                      EditText editCurrent) {
+        EditText invalid = null;
+        for (int i = 0; i < v.getChildCount(); i++) {
+            Object child = v.getChildAt(i);
+            if (child instanceof EditText) {
+                EditText e = (EditText) child;
+
+                if (e.getId() == editCurrent.getId())
+                    setEditTextDrawable(e, current);
+                else
+                    setEditTextDrawable(e, all);
+            } else if (child instanceof ViewGroup) {
+                invalid = traverseEditTexts((ViewGroup) child, all, current, editCurrent);  // Recursive call.
+                if (invalid != null) {
+                    break;
+                }
+            }
+        }
+        return invalid;
+    }*/
+
+ /*public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }*/
+
+    /*public void setDrawable(View v, Drawable drw) {
+        if (Build.VERSION.SDK_INT <= 16)
+            v.setBackgroundDrawable(drw);
+        else
+            v.setBackground(drw);
+    }
+
+    public void setStatusBarColor(String strColor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = ((Activity) _ctxt).getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.parseColor(strColor));
+        }
+    }*/
+
+   /* public void setEditTextDrawable(EditText editText, Drawable drw) {
+        if (Build.VERSION.SDK_INT <= 16)
+            editText.setBackgroundDrawable(drw);
+        else
+            editText.setBackground(drw);
+    }*/
 
     /**
      * Shows the progress UI and hides the login form.
@@ -1176,6 +1335,38 @@ public class Utils {
 
         return isValid;
     }
+
+    /*public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }*/
+
+    //Application Specigfic Start
+
+   /* public Bitmap getBitmapFromFile(String strPath, int intWidth, int intHeight) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        Bitmap original = null;
+        if (strPath != null && !strPath.equalsIgnoreCase("")) {
+            try {
+                options.inJustDecodeBounds = true;
+                original = BitmapFactory.decodeFile(strPath, options);
+                options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, intWidth, intHeight);
+                options.inJustDecodeBounds = false;
+                original = BitmapFactory.decodeFile(strPath, options);
+            } catch (OutOfMemoryError | Exception oOm) {
+                oOm.printStackTrace();
+            }
+        }
+        return original;
+    }*/
+
+
+    //Application Specig=fic End
 
     public File createFileInternalImage(String strFileName) {
 
@@ -1243,6 +1434,23 @@ public class Utils {
         }
     }
 
+    /*public ArrayList<View> getViewsByTag(ViewGroup root, String tag) {
+        ArrayList<View> views = new ArrayList<>();
+        final int childCount = root.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = root.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                views.addAll(getViewsByTag((ViewGroup) child, tag));
+            }
+
+            final Object tagObj = child.getTag();
+            if (tagObj != null && tagObj.equals(tag)) {
+                views.add(child);
+            }
+        }
+        return views;
+    }*/
+
     public void selectFile(final String strFileName, final Fragment fragment,
                            final Activity activity, final boolean isSingle){
         try{
@@ -1291,32 +1499,6 @@ public class Utils {
         }
     }
 
- /*public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }*/
-
-    /*public void setDrawable(View v, Drawable drw) {
-        if (Build.VERSION.SDK_INT <= 16)
-            v.setBackgroundDrawable(drw);
-        else
-            v.setBackground(drw);
-    }
-
-    public void setStatusBarColor(String strColor) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = ((Activity) _ctxt).getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.parseColor(strColor));
-        }
-    }*/
-
     public void openCamera(String strFileName, Fragment fragment, final Activity activity) {
 
 
@@ -1338,61 +1520,6 @@ public class Utils {
         }
     }
 
-    /*public EditText traverseEditTexts(ViewGroup v, Drawable all, Drawable current,
-                                      EditText editCurrent) {
-        EditText invalid = null;
-        for (int i = 0; i < v.getChildCount(); i++) {
-            Object child = v.getChildAt(i);
-            if (child instanceof EditText) {
-                EditText e = (EditText) child;
-
-                if (e.getId() == editCurrent.getId())
-                    setEditTextDrawable(e, current);
-                else
-                    setEditTextDrawable(e, all);
-            } else if (child instanceof ViewGroup) {
-                invalid = traverseEditTexts((ViewGroup) child, all, current, editCurrent);  // Recursive call.
-                if (invalid != null) {
-                    break;
-                }
-            }
-        }
-        return invalid;
-    }*/
-
- /*public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }*/
-
-    /*public void setDrawable(View v, Drawable drw) {
-        if (Build.VERSION.SDK_INT <= 16)
-            v.setBackgroundDrawable(drw);
-        else
-            v.setBackground(drw);
-    }
-
-    public void setStatusBarColor(String strColor) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = ((Activity) _ctxt).getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.parseColor(strColor));
-        }
-    }*/
-
-   /* public void setEditTextDrawable(EditText editText, Drawable drw) {
-        if (Build.VERSION.SDK_INT <= 16)
-            editText.setBackgroundDrawable(drw);
-        else
-            editText.setBackground(drw);
-    }*/
-
     public void copyInputStreamToFile(InputStream in, File file) {
         try {
             OutputStream out = new FileOutputStream(file);
@@ -1407,38 +1534,6 @@ public class Utils {
             e.printStackTrace();
         }
     }
-
-    /*public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }*/
-
-    //Application Specigfic Start
-
-   /* public Bitmap getBitmapFromFile(String strPath, int intWidth, int intHeight) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        Bitmap original = null;
-        if (strPath != null && !strPath.equalsIgnoreCase("")) {
-            try {
-                options.inJustDecodeBounds = true;
-                original = BitmapFactory.decodeFile(strPath, options);
-                options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, intWidth, intHeight);
-                options.inJustDecodeBounds = false;
-                original = BitmapFactory.decodeFile(strPath, options);
-            } catch (OutOfMemoryError | Exception oOm) {
-                oOm.printStackTrace();
-            }
-        }
-        return original;
-    }*/
-
-
-    //Application Specig=fic End
 
     public Bitmap roundedBitmap(Bitmap bmp){
         Bitmap output = null;
@@ -1465,28 +1560,6 @@ public class Utils {
         }
         return output;
     }
-
-    public String replaceSpace(String string) {
-        string = string.replace(" ", "_");
-        return string;
-    }
-
-    /*public ArrayList<View> getViewsByTag(ViewGroup root, String tag) {
-        ArrayList<View> views = new ArrayList<>();
-        final int childCount = root.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            final View child = root.getChildAt(i);
-            if (child instanceof ViewGroup) {
-                views.addAll(getViewsByTag((ViewGroup) child, tag));
-            }
-
-            final Object tagObj = child.getTag();
-            if (tagObj != null && tagObj.equals(tag)) {
-                views.add(child);
-            }
-        }
-        return views;
-    }*/
 
     public Bitmap getBitmapFromFile(String strPath, int intWidth, int intHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -1548,78 +1621,6 @@ public class Utils {
         }
 
         return strDisplayDate;
-    }
-
-    public String[] jsonToStringArray(JSONArray jsonArray) {
-
-        String strings[] = new String[0];
-
-        try {
-            int iLength = jsonArray.length();
-
-            strings = new String[iLength];
-
-            for (int i = 0; i < iLength; i++) {
-                strings[i] = jsonArray.getString(i);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return strings;
-    }
-
-    public int[] jsonToIntArray(JSONArray jsonArray) {
-
-        int ints[] = new int[0];
-
-        try {
-            int iLength = jsonArray.length();
-
-            ints = new int[iLength];
-
-            for (int i = 0; i < iLength; i++) {
-                ints[i] = jsonArray.getInt(i);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return ints;
-    }
-
-    public JSONArray intToJsonArray(int ints[]) {
-
-        JSONArray jsonArray = new JSONArray();
-
-        try {
-            int iLength = ints.length;
-
-            for (int i = 0; i < iLength; i++) {
-                jsonArray.put(ints[i]);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return jsonArray;
-    }
-
-    public JSONArray stringToJsonArray(String string[]) {
-
-        JSONArray jsonArray = new JSONArray();
-
-        try {
-            //int iLength = string.length;
-
-            for (String aString : string) {
-                jsonArray.put(aString);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return jsonArray;
     }
 
 

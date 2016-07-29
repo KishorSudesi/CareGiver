@@ -86,7 +86,7 @@
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general"
-                android:text="@string/services"
+                android:text="@string/service_category"
                 android:textColor="@android:color/secondary_text_dark"
                 android:textSize="@dimen/label_text"
                 />
@@ -110,7 +110,7 @@
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general"
-                android:text="Service Category"
+                android:text="@string/services"
                 android:textColor="@android:color/secondary_text_dark"
                 android:textSize="@dimen/label_text" />
 

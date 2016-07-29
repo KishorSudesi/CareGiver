@@ -78,13 +78,13 @@ public class MilestoneActivity extends AppCompatActivity {
     private static String strAlert;
     private static JSONObject jsonObject;
     private static ActivityModel act;
-    private static String strDependentContact;
+    private static String strCustomerEmail;
     private static String strName1;
     private static String strImageName1 = "";
     private static StorageService storageService;
     private static Handler backgroundThreadHandler;
     private static boolean bEnabled, mImageChanged;
-    private static boolean isAllowed, bWhichScreen;
+    private static boolean bWhichScreen;//isAllowed
     private final Context context = this;
     private int iValidFlag = 0;
     private RelativeLayout loadingPanel;
@@ -107,7 +107,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         act = (ActivityModel) b.getSerializable("Act");
         bWhichScreen = b.getBoolean("WHICH_SCREEN", false);
-        strDependentContact = b.getString("DEPENDENT_CONTACT", "");
+        strCustomerEmail = b.getString("CUSTOMER_EMAIL", "");
 
         bitmaps.clear();
 
@@ -745,7 +745,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         @Override
                                         public void permissionGranted() {
                                             //action to perform when permission granteed
-                                            isAllowed = true;
+                                            //isAllowed = true;
 
                                             utils.selectImage(strImageName1, null,
                                                     MilestoneActivity.this, false);
@@ -754,7 +754,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         @Override
                                         public void permissionRefused() {
                                             //action to perform when permission refused
-                                            isAllowed = false;
+                                            //isAllowed = false;
                                         }
                                     }
                             );
@@ -1202,7 +1202,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     if (fieldModel.getStrFieldValues() != null && fieldModel.getStrFieldValues().
                             length > 0)
-                        jsonObjectField.put("values", utils.stringToJsonArray(fieldModel.
+                        jsonObjectField.put("values", Utils.stringToJsonArray(fieldModel.
                                 getStrFieldValues()));
 
                     if (fieldModel.isChild()) {
@@ -1211,29 +1211,29 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         if (fieldModel.getStrChildType() != null && fieldModel.getStrChildType().
                                 length > 0)
-                            jsonObjectField.put("child_type", utils.stringToJsonArray(fieldModel.
+                            jsonObjectField.put("child_type", Utils.stringToJsonArray(fieldModel.
                                     getStrChildType()));
 
                         if (fieldModel.getStrChildValue() != null && fieldModel.getStrChildValue().
                                 length > 0)
-                            jsonObjectField.put("child_value", utils.stringToJsonArray(fieldModel.
+                            jsonObjectField.put("child_value", Utils.stringToJsonArray(fieldModel.
                                     getStrChildValue()));
 
                         if (fieldModel.getStrChildCondition() != null && fieldModel.
                                 getStrChildCondition().length > 0)
-                            jsonObjectField.put("child_condition", utils.stringToJsonArray(
+                            jsonObjectField.put("child_condition", Utils.stringToJsonArray(
                                     fieldModel.getStrChildCondition()));
 
                         if (fieldModel.getiChildfieldID() != null && fieldModel.getiChildfieldID().
                                 length > 0)
-                            jsonObjectField.put("child_field", utils.intToJsonArray(fieldModel.
+                            jsonObjectField.put("child_field", Utils.intToJsonArray(fieldModel.
                                     getiChildfieldID()));
                     }
 
                     //
                     if (fieldModel.getiArrayCount() > 0) {
                         jsonObjectField.put("array_fields", fieldModel.getiArrayCount());
-                        jsonObjectField.put("array_type", utils.stringToJsonArray(fieldModel.
+                        jsonObjectField.put("array_type", Utils.stringToJsonArray(fieldModel.
                                 getStrArrayType()));
                         jsonObjectField.put("array_data", fieldModel.getStrArrayData());
                     }
@@ -1718,9 +1718,9 @@ public class MilestoneActivity extends AppCompatActivity {
             PushNotificationService pushNotificationService = new PushNotificationService(
                     MilestoneActivity.this);
 
-            if (!strDependentContact.equalsIgnoreCase("")) {
+            if (!strCustomerEmail.equalsIgnoreCase("")) {
 
-                pushNotificationService.sendPushToUser(strDependentContact, jsonObject.toString(),
+                pushNotificationService.sendPushToUser(strCustomerEmail, jsonObject.toString(),
                         new App42CallBack() {
 
                             @Override
@@ -1797,15 +1797,15 @@ public class MilestoneActivity extends AppCompatActivity {
                 for (int i = 0; i < imagePaths.size(); i++) {
 
                     Calendar calendar = Calendar.getInstance();
-                    String strTime = String.valueOf(calendar.getTimeInMillis()) + ".jpeg";
-
+                    String strTime = String.valueOf(calendar.getTimeInMillis());
+                    String strFileName = strTime + ".jpeg";
                     Date date = calendar.getTime();
 
-                    File mCopyFile = utils.getInternalFileImages(strTime);
+                    File mCopyFile = utils.getInternalFileImages(strFileName);
                     utils.copyFile(new File(imagePaths.get(i)), mCopyFile);
 
-                    FileModel fileModel = new FileModel(strTime, "", "IMAGE", Utils.
-                            convertDateToString(date), "DESC", mCopyFile.getAbsolutePath());
+                    FileModel fileModel = new FileModel(strFileName, "", "IMAGE", Utils.
+                            convertDateToString(date), strFileName, mCopyFile.getAbsolutePath());
 
                     fileModel.setNew(true);
 
@@ -1834,11 +1834,15 @@ public class MilestoneActivity extends AppCompatActivity {
             try {
                 if (strImageName1 != null && !strImageName1.equalsIgnoreCase("")) {
 
-                    File mCopyFile = utils.getInternalFileImages(strName1);
+                    Calendar calendar = Calendar.getInstance();
+                    String strTime = String.valueOf(calendar.getTimeInMillis());
+                    String strFileName = strTime + ".jpeg";
+
+                    File mCopyFile = utils.getInternalFileImages(strFileName);
                     utils.copyFile(new File(strImageName1), mCopyFile);
                     Date date = new Date();
-                    FileModel fileModel = new FileModel(strName1, "", "IMAGE", Utils.
-                            convertDateToString(date), "DESC", mCopyFile.getAbsolutePath());
+                    FileModel fileModel = new FileModel(strFileName, "", "IMAGE", Utils.
+                            convertDateToString(date), strFileName, mCopyFile.getAbsolutePath());
                     fileModel.setNew(true);
 
                     fileModels.add(fileModel);
