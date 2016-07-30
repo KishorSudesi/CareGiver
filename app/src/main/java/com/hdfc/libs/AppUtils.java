@@ -2742,7 +2742,8 @@ public class AppUtils {
                                         jsonObjectsubactivity.optString("status"),
                                         jsonObjectsubactivity.optString("due_status"),
                                         jsonObjectsubactivity.optString("due_date"),
-                                        jsonObjectsubactivity.optString("utility_name"));
+                                        jsonObjectsubactivity.optString("utility_name"),
+                                jsonObjectsubactivity.optString("checkbox_status"));
                                 subActivityModels.add(subActivityModel);
                             }
                             CheckInCareActivityModel checkInCareActivityModel =

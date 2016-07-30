@@ -567,6 +567,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     for (int i = 0; i < activity.size(); i++) {
                         String subActivityName;
                         String status;
+                        String checkboxstatus;
                         ArrayList<SubActivityModel> subActivityModels;
                         if (activity.get(i).getStrActivityName().
                                 equalsIgnoreCase("home_essentials")) {
@@ -577,6 +578,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 String dueStatus = subActivityModels.get(j).getStrDueStatus();
                                 String dueDate = subActivityModels.get(j).getStrDueDate();
                                 String utilityName = subActivityModels.get(j).getStrUtilityName();
+                                checkboxstatus = subActivityModels.get(j).getStrCheckboxStatus();
 
                                /* try {
                                      myNum = Integer.parseInt(dueStatus);
@@ -633,7 +635,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             }
                                 if (subActivityName.equalsIgnoreCase("kitchen_equipments")){
                                     kitchen_equipments.setText(status);
-                                    if(kitchen_equipments.getText().toString().equals("")){
+
+                                    if(checkboxstatus.equals("true")){
                                         kitchenequipcheck.setChecked(true);
                                     }else {
                                         kitchenequipcheck.setChecked(false);
@@ -650,7 +653,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 }
                                 if (subActivityName.equalsIgnoreCase("grocery")){
                                     grocery.setText(status);
-                                    if(grocery.getText().toString().equals("")){
+                                    if(checkboxstatus.equals("true")){
                                         grocerycheck.setChecked(true);
                                     }else {
                                         grocerycheck.setChecked(false);
@@ -673,10 +676,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             for (int j = 0; j < subActivityModels.size(); j++) {
                                 subActivityName = subActivityModels.get(j).getStrSubActivityName();
                                 status = subActivityModels.get(j).getStrStatus();
+                                checkboxstatus = subActivityModels.get(j).getStrCheckboxStatus();
 
                                 if (subActivityName.equalsIgnoreCase("maid_services")){
                                     maidservices.setText(status);
-                                    if(maidservices.getText().toString().equals("")){
+                                    if(checkboxstatus.equals("true")){
                                         domesticcheck.setChecked(true);
                                     }else {
                                         domesticcheck.setChecked(false);
@@ -699,10 +703,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             for (int j = 0; j < subActivityModels.size(); j++) {
                                 subActivityName = subActivityModels.get(j).getStrSubActivityName();
                                 status = subActivityModels.get(j).getStrStatus();
+                                checkboxstatus = subActivityModels.get(j).getStrCheckboxStatus();
 
                                 if (subActivityName.equalsIgnoreCase("electronic")){
                                     electronic.setText(status);
-                                    if(electronic.getText().toString().equals("")){
+                                    if(checkboxstatus.equals("true")){
                                         electrocheck.setChecked(true);
                                     }else {
                                         electrocheck.setChecked(false);
@@ -710,7 +715,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 }
                                 if (subActivityName.equalsIgnoreCase("home_appliances")){
                                     homeapplience.setText(status);
-                                    if(homeapplience.getText().toString().equals("")){
+                                    if(checkboxstatus.equals("true")){
                                         homecheck.setChecked(true);
                                     }else {
                                         homecheck.setChecked(false);
@@ -718,7 +723,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 }
                                 if (subActivityName.equalsIgnoreCase("automobile")){
                                     automobile.setText(status);
-                                    if(automobile.getText().toString().equals("")){
+                                    if(checkboxstatus.equals("true")){
                                         autocheck.setChecked(true);
                                     }else {
                                         autocheck.setChecked(false);
@@ -1899,12 +1904,14 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 JSONObject jsonObjectSubActivitiesHome = new JSONObject();
                 jsonObjectSubActivitiesHome.put("sub_activity_name", "kitchen_equipments");
                 jsonObjectSubActivitiesHome.put("status", kitchen_equipments.getText().toString());
+                jsonObjectSubActivitiesHome.put("checkbox_status", kitchenequipcheck.isChecked());
 
                 jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome);
 
                 JSONObject jsonObjectSubActivitiesHome1 = new JSONObject();
                 jsonObjectSubActivitiesHome1.put("sub_activity_name", "grocery");
                 jsonObjectSubActivitiesHome1.put("status", grocery.getText().toString());
+                jsonObjectSubActivitiesHome1.put("checkbox_status",grocerycheck.isChecked());
 
 
                 jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome1);
@@ -1967,6 +1974,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 JSONObject jsonObjectSubActivitiesDomestic = new JSONObject();
                 jsonObjectSubActivitiesDomestic.put("sub_activity_name", "maid_services");
                 jsonObjectSubActivitiesDomestic.put("status", maidservices.getText().toString());
+                jsonObjectSubActivitiesDomestic.put("checkbox_status", domesticcheck.isChecked());
 
                 jsonArraySubActivitiesDomestic.put(jsonObjectSubActivitiesDomestic);
 
@@ -1986,6 +1994,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 JSONObject jsonObjectSubActivitiesEquipment1 = new JSONObject();
                 jsonObjectSubActivitiesEquipment1.put("sub_activity_name", "electronic");
                 jsonObjectSubActivitiesEquipment1.put("status", electronic.getText().toString());
+                jsonObjectSubActivitiesEquipment1.put("checkbox_status", electrocheck.isChecked());
 
                 jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment1);
 
@@ -1993,6 +2002,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 JSONObject jsonObjectSubActivitiesEquipment2 = new JSONObject();
                 jsonObjectSubActivitiesEquipment2.put("sub_activity_name", "home_appliances");
                 jsonObjectSubActivitiesEquipment2.put("status", homeapplience.getText().toString());
+                jsonObjectSubActivitiesEquipment2.put("checkbox_status", homecheck.isChecked());
 
                 jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment2);
 
@@ -2000,6 +2010,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 JSONObject jsonObjectSubActivitiesEquipment3 = new JSONObject();
                 jsonObjectSubActivitiesEquipment3.put("sub_activity_name", "automobile");
                 jsonObjectSubActivitiesEquipment3.put("status", automobile.getText().toString());
+                jsonObjectSubActivitiesEquipment3.put("checkbox_status", autocheck.isChecked() );
 
                 jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment3);
 
@@ -2346,12 +2357,14 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 JSONObject jsonObjectSubActivitiesHome = new JSONObject();
                 jsonObjectSubActivitiesHome.put("sub_activity_name", "kitchen_equipments");
                 jsonObjectSubActivitiesHome.put("status", kitchen_equipments.getText().toString());
+                jsonObjectSubActivitiesHome.put("checkbox_status", kitchenequipcheck.isChecked());
 
                 jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome);
 
                 JSONObject jsonObjectSubActivitiesHome1 = new JSONObject();
                 jsonObjectSubActivitiesHome1.put("sub_activity_name", "grocery");
                 jsonObjectSubActivitiesHome1.put("status", grocery.getText().toString());
+                jsonObjectSubActivitiesHome1.put("checkbox_status", grocerycheck.isChecked());
 
 
                 jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome1);
@@ -2414,6 +2427,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 JSONObject jsonObjectSubActivitiesDomestic = new JSONObject();
                 jsonObjectSubActivitiesDomestic.put("sub_activity_name", "maid_services");
                 jsonObjectSubActivitiesDomestic.put("status", maidservices.getText().toString());
+                jsonObjectSubActivitiesDomestic.put("checkbox_status", grocerycheck.isChecked());
 
                 jsonArraySubActivitiesDomestic.put(jsonObjectSubActivitiesDomestic);
 
@@ -2433,6 +2447,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 JSONObject jsonObjectSubActivitiesEquipment1 = new JSONObject();
                 jsonObjectSubActivitiesEquipment1.put("sub_activity_name", "electronic");
                 jsonObjectSubActivitiesEquipment1.put("status", electronic.getText().toString());
+                jsonObjectSubActivitiesEquipment1.put("checkbox_status", electrocheck.isChecked());
 
                 jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment1);
 
@@ -2440,6 +2455,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 JSONObject jsonObjectSubActivitiesEquipment2 = new JSONObject();
                 jsonObjectSubActivitiesEquipment2.put("sub_activity_name", "home_appliances");
                 jsonObjectSubActivitiesEquipment2.put("status", homeapplience.getText().toString());
+                jsonObjectSubActivitiesEquipment2.put("checkbox_status", homecheck.isChecked());
 
                 jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment2);
 
@@ -2447,6 +2463,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 JSONObject jsonObjectSubActivitiesEquipment3 = new JSONObject();
                 jsonObjectSubActivitiesEquipment3.put("sub_activity_name", "automobile");
                 jsonObjectSubActivitiesEquipment3.put("status", automobile.getText().toString());
+                jsonObjectSubActivitiesEquipment3.put("checkbox_status", autocheck.isChecked());
 
                 jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment3);
 

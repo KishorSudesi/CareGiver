@@ -11,13 +11,15 @@ public class SubActivityModel {
     private String strDueStatus = "";
     private String strDueDate = "";
     private String strUtilityName = "";
+    private String strCheckboxStatus = "";
 
-    public SubActivityModel(String strSubActivityName, String strStatus, String strDueStatus,String strDueDate,String strUtilityName) {
+    public SubActivityModel(String strSubActivityName, String strStatus, String strDueStatus,String strDueDate,String strUtilityName,String strCheckboxStatus) {
         this.strSubActivityName = strSubActivityName;
         this.strStatus = strStatus;
         this.strDueStatus = strDueStatus;
         this.strDueDate = strDueDate;
         this.strUtilityName = strUtilityName;
+        this.strCheckboxStatus = strCheckboxStatus;
 
     }
 
@@ -59,6 +61,14 @@ public class SubActivityModel {
 
     public void setStrUtilityName(String strUtilityName) {
         this.strUtilityName = strUtilityName;
+    }
+
+    public String getStrCheckboxStatus() {
+        return strCheckboxStatus;
+    }
+
+    public void setStrCheckboxStatus(String strCheckboxStatus) {
+        this.strUtilityName = strCheckboxStatus;
     }
 
 
