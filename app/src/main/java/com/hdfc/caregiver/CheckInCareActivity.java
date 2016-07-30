@@ -80,6 +80,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static Boolean isUploadKitchenImage = false;
     private static Boolean isUploadWashImage = false;
     private static Boolean isUploadBedImage = false;
+
+    private static Boolean isUploadedHall = false;
+    private static Boolean isUploadedKitchen = false;
+    private static Boolean isUploadedWash = false;
+    private static Boolean isUploadedBed = false;
+
     private static Utils utils;
     //private static ProgressDialog mProgress = null;
     private static Handler backgroundThreadHandler, backgroundThreadHandlerFetch;
@@ -743,71 +749,38 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("hall")) {
                             hallimageModels = picture.get(k).getImageModels();
                            // setHallImages();
-                          /*  if (layouthall != null) {
-                                hallstatus.setVisibility(View.VISIBLE);
-                                hallstatus.setText(getString(R.string.pending));
-                                hallstatus.setTextColor(Color.RED);
-                            } else {
-                                hallstatus.setVisibility(View.VISIBLE);
-                                hallstatus.setText(getString(R.string.done));
-                                hallstatus.setTextColor(Color.BLUE);
-                            }*/
+                            if(hallimageModels.size()>0){
+                                isUploadHallImage = true;
+                            }
+
 
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("kitchen")) {
                             kitchenimageModels = picture.get(k).getImageModels();
                            // addKitchenImages();
-                           /* if (layoutkitchen != null) {
-                                kitchenstatus.setVisibility(View.VISIBLE);
-                                kitchenstatus.setText(getString(R.string.pending));
-                                kitchenstatus.setTextColor(Color.RED);
-                            } else {
-                                kitchenstatus.setVisibility(View.VISIBLE);
-                                kitchenstatus.setText(getString(R.string.done));
-                                kitchenstatus.setTextColor(Color.BLUE);
-                            }*/
+                            if(kitchenimageModels.size()>0){
+                                isUploadKitchenImage = true;
+                            }
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("washroom")) {
                             washroomimageModels = picture.get(k).getImageModels();
                           //  addWashroomImages();
-                          /*  if (layoutwashroom != null) {
-                                washroomstatus.setVisibility(View.VISIBLE);
-                                washroomstatus.setText(getString(R.string.pending));
-                                washroomstatus.setTextColor(Color.RED);
-                            } else {
-                                washroomstatus.setVisibility(View.VISIBLE);
-                                washroomstatus.setText(getString(R.string.done));
-                                washroomstatus.setTextColor(Color.BLUE);
-                            }*/
+                            if(washroomimageModels.size()>0){
+                                isUploadWashImage = true;
+                            }
+
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("bedroom")) {
                             bedroomimageModels = picture.get(k).getImageModels();
                           //  addBedroomImages();
-                           /* if (layoutbedroom != null) {
-                                bedroomstatus.setVisibility(View.VISIBLE);
-                                bedroomstatus.setText(getString(R.string.pending));
-                                bedroomstatus.setTextColor(Color.RED);
-                            } else {
-                                bedroomstatus.setVisibility(View.VISIBLE);
-                                bedroomstatus.setText(getString(R.string.done));
-                                bedroomstatus.setTextColor(Color.BLUE);
-                            }*/
+                            if(bedroomimageModels.size()>0){
+                                isUploadBedImage = true;
+                            }
+
                         }
 
                     }
-                   /* if (hallstatus.getText().equals(getString(R.string.done))
-                            && kitchenstatus.getText().equals(getString(R.string.done))
-                            && washroomstatus.getText().equals(getString(R.string.done))
-                            && bedroomstatus.getText().equals(getString(R.string.done))) {
 
-                        uploadmediastatus.setVisibility(View.VISIBLE);
-                        uploadmediastatus.setText(getString(R.string.done));
-                        uploadmediastatus.setTextColor(Color.BLUE);
-                    } else {
-                        uploadmediastatus.setVisibility(View.VISIBLE);
-                        uploadmediastatus.setText(getString(R.string.pending));
-                        uploadmediastatus.setTextColor(Color.RED);
-                    }*/
                 }
             }
         } catch (Exception e) {
@@ -854,34 +827,35 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             cancel = true;
                         }
 
-                    if(!isUploadHallImage && hallimageModels.size() > 0){
-                        hallstatus.setError(getString(R.string.upload_hall));
-                        utils.toast(2, 2, getString(R.string.upload_hall));
-                        focusView = hallstatus;
-                        cancel = true;
+                        if (!isUploadHallImage && hallimageModels.size() > 0 ) {
+                            hallstatus.setError(getString(R.string.upload_hall));
+                            utils.toast(2, 2, getString(R.string.upload_hall));
+                            focusView = hallstatus;
+                            cancel = true;
 
-                    }
-                    if(!isUploadKitchenImage && kitchenimageModels.size() > 0){
-                        kitchenstatus.setError(getString(R.string.upload_kitchen));
-                        utils.toast(2, 2, getString(R.string.upload_kitchen));
-                        focusView = kitchenstatus;
-                        cancel = true;
+                        }
+                        if (!isUploadKitchenImage && kitchenimageModels.size() > 0) {
+                            kitchenstatus.setError(getString(R.string.upload_kitchen));
+                            utils.toast(2, 2, getString(R.string.upload_kitchen));
+                            focusView = kitchenstatus;
+                            cancel = true;
 
-                    }
-                    if(!isUploadWashImage && washroomimageModels.size() > 0){
-                        washroomstatus.setError(getString(R.string.upload_wash));
-                        utils.toast(2, 2, getString(R.string.upload_wash));
-                        focusView = washroomstatus;
-                        cancel = true;
+                        }
+                        if (!isUploadWashImage && washroomimageModels.size() > 0 ) {
+                            washroomstatus.setError(getString(R.string.upload_wash));
+                            utils.toast(2, 2, getString(R.string.upload_wash));
+                            focusView = washroomstatus;
+                            cancel = true;
 
-                    }
-                    if(!isUploadBedImage && bedroomimageModels.size() > 0){
-                        bedroomstatus.setError(getString(R.string.upload_bed));
-                        utils.toast(2, 2, getString(R.string.upload_bed));
-                        focusView = bedroomstatus;
-                        cancel = true;
+                        }
+                        if (!isUploadBedImage && bedroomimageModels.size() > 0 ) {
+                            bedroomstatus.setError(getString(R.string.upload_bed));
+                            utils.toast(2, 2, getString(R.string.upload_bed));
+                            focusView = bedroomstatus;
+                            cancel = true;
 
-                    }
+                        }
+
 
                         /*if (!kitchenequipcheck.isChecked()) {
                             if (TextUtils.isEmpty(valkitchen)) {
@@ -2111,10 +2085,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                     IMAGE_COUNT = 0;
                                     bViewLoaded =false;
-                                    isUploadHallImage=false;
+                                    /*isUploadHallImage=false;
                                     isUploadKitchenImage=false;
                                     isUploadWashImage=false;
-                                    isUploadBedImage=false;
+                                    isUploadBedImage=false;*/
                                     utils.toast(2, 2, getString(R.string.data_upload));
                                     Intent intent = new Intent(CheckInCareActivity.this,
                                             DashboardActivity.class);
@@ -2593,7 +2567,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     uploadbedroombtn.setVisibility(View.VISIBLE);
                 }
 
-             /*   mProgress.setMessage(getString(R.string.loading));
+                /*   mProgress.setMessage(getString(R.string.loading));
                 mProgress.show();*/
                 switch (requestCode) {
                     case Config.START_CAMERA_REQUEST_CODE:
