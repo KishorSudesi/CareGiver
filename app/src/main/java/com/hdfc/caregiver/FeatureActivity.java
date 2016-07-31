@@ -56,13 +56,13 @@ import pl.tajchert.nammu.PermissionCallback;
 
 public class FeatureActivity extends AppCompatActivity {
 
-    public static int IMAGE_COUNT = 0;
+    //public static int IMAGE_COUNT = 0;
     //private static int iActivityPosition = -1;
     private static String strImageName = "";
     private static StorageService storageService;
     private static Handler backgroundThreadHandler, backgroundThreadHandlerLoad;
     private static ActivityModel act;
-    private static String strName, strCustomerName, strCustomerUrl;
+    private static String strName, strCustomerName, strCustomerUrl, strDependentName;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
     private static boolean bLoad, isCompleted = false;
@@ -103,7 +103,7 @@ public class FeatureActivity extends AppCompatActivity {
 
         bLoad = false;
 
-        IMAGE_COUNT = 0;
+        //IMAGE_COUNT = 0;
         mImageUploadCount = 0;
         //multiBitmapLoader = new MultiBitmapLoader(FeatureActivity.this);
 
@@ -165,6 +165,7 @@ public class FeatureActivity extends AppCompatActivity {
                     if (jsonObject.getString("dependent_name") != null
                             && !jsonObject.getString("dependent_name").equalsIgnoreCase("")) {
                         name = jsonObject.optString("dependent_name");
+                        strDependentName = jsonObject.optString("dependent_name");
                     }
 
                     if (imgLogoHeaderTaskDetail != null
@@ -235,11 +236,12 @@ public class FeatureActivity extends AppCompatActivity {
                             equalsIgnoreCase("")) {
                         strCustomerUrl = jsonObject1.getString("customer_profile_url");
                     }
+                } else {
+                    isAccessible = false;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
 
             if (linearName != null && jsonObject1 != null) {
                 linearName.setOnClickListener(new View.OnClickListener() {
@@ -283,10 +285,6 @@ public class FeatureActivity extends AppCompatActivity {
                         alertDialog.show();
                     }
                 });
-            } else {
-                if (jsonObject1 == null) {
-                    isAccessible = false;
-                }
             }
 
             String strActivityName = act.getStrActivityName();
@@ -345,7 +343,7 @@ public class FeatureActivity extends AppCompatActivity {
         mImageChanged = false;
         bitmaps.clear();
         //imageModels.clear();
-        IMAGE_COUNT = 0;
+        //IMAGE_COUNT = 0;
 
         if (bWhichScreen)
             Config.intSelectedMenu = Config.intNotificationScreen;
@@ -361,90 +359,101 @@ public class FeatureActivity extends AppCompatActivity {
 
     private void updateImages() {
 
+        JSONObject jsonToUpdate = null;
+
+        JSONArray jsonArrayImagesAdded = new JSONArray();
+
+        try {
+            jsonToUpdate = new JSONObject();
+
+            ArrayList<ImageModel> mTImageModels = new ArrayList<>();
+
+            if (imageModels.size() > 0) {
+
+                for (ImageModel mUpdateImageModel : imageModels) {
+
+                    JSONObject jsonObjectImages = new JSONObject();
+
+                    jsonObjectImages.put("image_name", mUpdateImageModel.getStrImageName());
+                    jsonObjectImages.put("image_url", mUpdateImageModel.getStrImageUrl());
+                    jsonObjectImages.put("image_description", mUpdateImageModel.getStrImageDesc());
+                    jsonObjectImages.put("image_taken", mUpdateImageModel.getStrImageTime());
+
+                    jsonArrayImagesAdded.put(jsonObjectImages);
+                    mTImageModels.add(mUpdateImageModel);
+                }
+            } else {
+
+                jsonArrayImagesAdded.put("{\"0\":\"empty\"}");
+            }
+
+            jsonToUpdate.put("images", jsonArrayImagesAdded);
+
+            //Config.activityModels.get(iActivityPosition).clearImageModel();
+            //Config.activityModels.get(iActivityPosition).setImageModels(mTImageModels);
+            imageModels = mTImageModels;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (utils.isConnectingToInternet()) {
 
-            JSONObject jsonToUpdate = null;
+            final JSONArray jsonArray = jsonArrayImagesAdded;
 
-            JSONArray jsonArrayImagesAdded = new JSONArray();
-
-            try {
-                jsonToUpdate = new JSONObject();
-
-                ArrayList<ImageModel> mTImageModels = new ArrayList<>();
-
-                if (imageModels.size() > 0) {
-
-                    for (ImageModel mUpdateImageModel : imageModels) {
-
-                        JSONObject jsonObjectImages = new JSONObject();
-
-                        jsonObjectImages.put("image_name", mUpdateImageModel.getStrImageName());
-                        jsonObjectImages.put("image_url", mUpdateImageModel.getStrImageUrl());
-                        jsonObjectImages.put("image_description", mUpdateImageModel.getStrImageDesc());
-                        jsonObjectImages.put("image_taken", mUpdateImageModel.getStrImageTime());
-
-                        jsonArrayImagesAdded.put(jsonObjectImages);
-                        mTImageModels.add(mUpdateImageModel);
-                    }
-                } else {
-
-                    jsonArrayImagesAdded.put("{\"0\":\"empty\"}");
-                }
-
-                jsonToUpdate.put("images", jsonArrayImagesAdded);
-
-                //Config.activityModels.get(iActivityPosition).clearImageModel();
-                //Config.activityModels.get(iActivityPosition).setImageModels(mTImageModels);
-                imageModels = mTImageModels;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
-
-            String[] selectionArgs = {
-                    act.getStrActivityID()
-                    , Config.collectionActivity};
-
-            Cursor cursor = CareGiver.getDbCon().fetch(DbHelper.strTableNameCollection,
-                    DbHelper.COLLECTION_FIELDS, selection, selectionArgs, null, "0, 1", true,
-                    null, null
-            );
-
-            if (cursor.getCount() > 0) {
-                cursor.moveToFirst();
-
-                try {
-                    JSONObject jsonObject = new JSONObject(cursor.getString(2));
-                    jsonObject.put("images", jsonArrayImagesAdded);
-
-                    //
-                    String values1[] = {act.getStrActivityID(),
-                            "",
-                            jsonObject.toString(),
-                            Config.collectionActivity, "0", "", "1"};
-
-                    // WHERE clause arguments
-                    CareGiver.getDbCon().updateInsert(
-                            DbHelper.strTableNameCollection,
-                            selection, values1, DbHelper.COLLECTION_FIELDS,
-                            selectionArgs);
-                    ////
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            CareGiver.getDbCon().closeCursor(cursor);
+            loadingPanel.setVisibility(View.VISIBLE);
 
             storageService.updateDocs(jsonToUpdate,
                     act.getStrActivityID(),
                     Config.collectionActivity, new App42CallBack() {
                         @Override
                         public void onSuccess(Object o) {
-                            IMAGE_COUNT = 0;
+                            //IMAGE_COUNT = 0;
+
+
+                            //
+                            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+                            String[] selectionArgs = {
+                                    act.getStrActivityID()
+                                    , Config.collectionActivity};
+
+                            Cursor cursor = CareGiver.getDbCon().fetch(
+                                    DbHelper.strTableNameCollection,
+                                    DbHelper.COLLECTION_FIELDS, selection, selectionArgs,
+                                    null, "0, 1", true,
+                                    null, null
+                            );
+
+                            if (cursor.getCount() > 0) {
+                                cursor.moveToFirst();
+
+                                try {
+                                    JSONObject jsonObject = new JSONObject(cursor.getString(2));
+                                    jsonObject.put("images", jsonArray);
+
+                                    //
+                                    String values1[] = {act.getStrActivityID(),
+                                            "",
+                                            jsonObject.toString(),
+                                            Config.collectionActivity, "0", "", "1"};
+
+                                    // WHERE clause arguments
+                                    CareGiver.getDbCon().updateInsert(
+                                            DbHelper.strTableNameCollection,
+                                            selection, values1, DbHelper.COLLECTION_FIELDS,
+                                            selectionArgs);
+                                    ////
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            CareGiver.getDbCon().closeCursor(cursor);
+
+
+                            ///
                             goToActivityList(getString(R.string.image_upload));
                         }
 
@@ -455,99 +464,9 @@ public class FeatureActivity extends AppCompatActivity {
                         }
                     });
         } else {
-            loadingPanel.setVisibility(View.GONE);
             utils.toast(2, 2, getString(R.string.warning_internet));
         }
     }
-
-    // The method that displays the popup.
-   /* private void showStatusPopup(final Activity context, Point p) {
-
-        // Inflate the popup_layout.xml
-        //LinearLayout viewGroup = (LinearLayout) context.findViewById(R.id.llStatusChangePopup);
-        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = layoutInflater.inflate(R.layout.header_task_detail_attach, null);
-
-        // Creating the PopupWindow
-        PopupWindow changeStatusPopUp = new PopupWindow(context);
-        changeStatusPopUp.setContentView(layout);
-        changeStatusPopUp.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-        changeStatusPopUp.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
-        changeStatusPopUp.setFocusable(true);
-
-        // Some offset to align the popup a bit to the left, and a bit down, relative to button's position.
-        int OFFSET_X = -20;
-        int OFFSET_Y = 155;
-
-        //Clear the default translucent background
-        changeStatusPopUp.setBackgroundDrawable(new BitmapDrawable());
-
-        // Displaying the popup at the specified location, + offsets.
-        changeStatusPopUp.showAtLocation(layout, Gravity.NO_GRAVITY, p.x + OFFSET_X, p.y + OFFSET_Y);
-        ImageView imageCamera = (ImageView) layout.findViewById(R.id.imageView);
-        ImageView imageGallery = (ImageView) layout.findViewById(R.id.imageView2);
-
-
-        imageCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission(FeatureActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
-                int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission(FeatureActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                if (hasReadExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(FeatureActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
-                    return;
-                }
-                if (hasWriteExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(FeatureActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 124);
-                    return;
-                }
-
-                strName = String.valueOf(new Date().getDate() + "" + new Date().getTime());
-                strImageName = strName + ".jpeg";
-
-                utils.selectImage(strImageName, null, FeatureActivity.this, false);
-            }
-        });
-
-        imageGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission(FeatureActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
-                int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission(FeatureActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                if (hasReadExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(FeatureActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
-                    return;
-                }
-                if (hasWriteExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(FeatureActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 124);
-                    return;
-                }
-
-                strName = String.valueOf(new Date().getDate() + "" + new Date().getTime());
-                strImageName = strName + ".jpeg";
-
-                utils.selectImage(strImageName, null, FeatureActivity.this, false);
-            }
-        });
-    }*/
-
-   /* @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-
-        int[] location = new int[2];
-        ImageView attach = (ImageView) findViewById(R.id.imgAttachHeaderTaskDetail);
-
-        // Get the x, y location and store it in the location[] array
-        // location[0] = x, location[1] = y.
-        if (attach != null) {
-            attach.getLocationOnScreen(location);
-        }
-
-        //Initialize the Point with x, and y positions
-        p = new Point();
-        p.x = location[0];
-        p.y = location[1];
-    }*/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -692,7 +611,7 @@ public class FeatureActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         permissionHelper.finish();
-        IMAGE_COUNT = 0;
+        //IMAGE_COUNT = 0;
         mImageCount = 0;
         mImageChanged = false;
         mImageUploadCount = 0;
@@ -729,16 +648,6 @@ public class FeatureActivity extends AppCompatActivity {
                     imageView.setTag(imageModels.get(i));
                     imageView.setTag(R.id.three, i);
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
-                    /*imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-
-
-
-                            return false;
-                        }
-                    });*/
 
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -913,7 +822,6 @@ public class FeatureActivity extends AppCompatActivity {
 
                             } else {
                                 if (mImageChanged) {
-                                    loadingPanel.setVisibility(View.VISIBLE);
                                     updateImages();
                                 } else
                                     utils.toast(2, 2, "Select a Image");
@@ -935,7 +843,7 @@ public class FeatureActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         //Open popup window
                         //if (p != null)
-                        if (IMAGE_COUNT < 20) {
+                        // if (IMAGE_COUNT < 20) {
                             //showStatusPopup(FeatureActivity.this, p);
                             Calendar calendar = Calendar.getInstance();
                             strName = String.valueOf(calendar.getTimeInMillis());
@@ -964,9 +872,9 @@ public class FeatureActivity extends AppCompatActivity {
 
                             /*if (isAllowed)
                                 utils.selectFile(strImageName, null, FeatureActivity.this, false);*/
-                        } else {
+                       /* } else {
                             utils.toast(2, 2, "Maximum 20 Images only Allowed");
-                        }
+                        }*/
 
                     }
                 });
@@ -984,9 +892,16 @@ public class FeatureActivity extends AppCompatActivity {
 
                 loadingPanel.setVisibility(View.VISIBLE);
 
-                backgroundThreadHandlerLoad = new BackgroundThreadHandlerLoad();
-                Thread backgroundThreadImagesLoad = new BackgroundThreadImagesLoad();
-                backgroundThreadImagesLoad.start();
+                if (Utils.isConnectingToInternet(FeatureActivity.this)) {
+
+                    backgroundThreadHandlerLoad = new BackgroundThreadHandlerLoad();
+                    Thread backgroundThreadImagesLoad = new BackgroundThreadImagesLoad();
+                    backgroundThreadImagesLoad.start();
+                } else {
+                    backgroundThreadHandler = new BackgroundThreadHandler();
+                    Thread backgroundThreadImages = new BackgroundThreadImages();
+                    backgroundThreadImages.start();
+                }
             }
 
         } catch (Exception e) {
@@ -1023,6 +938,16 @@ public class FeatureActivity extends AppCompatActivity {
                 params.setMargins(10, 10, 10, 10);
                 textViewName.setTag(milestoneModel);
 
+                //todo check this logic
+                if (milestoneModel.getStrMilestoneScheduledDate() == null
+                        || milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")) {
+                    if (milestoneModel.getStrMilestoneDate() != null
+                            && !milestoneModel.getStrMilestoneDate().equalsIgnoreCase("")
+                            && !milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed"))
+                        milestoneModel.setStrMilestoneStatus("opened");
+                }
+
+
                 if (milestoneModel.getStrMilestoneScheduledDate() != null
                         && !milestoneModel.getStrMilestoneScheduledDate().equalsIgnoreCase("")) {
 
@@ -1052,7 +977,9 @@ public class FeatureActivity extends AppCompatActivity {
                                     getStrMilestoneStatus().equalsIgnoreCase("completed"))
                                 milestoneModel.setStrMilestoneStatus("inprocess");
                         }
-                    } else milestoneModel.setStrMilestoneStatus("opened");
+                    } else {
+                        milestoneModel.setStrMilestoneStatus("opened");
+                    }
                 }
 
                 final String strMilestoneStatus = milestoneModel.getStrMilestoneStatus();
@@ -1119,6 +1046,7 @@ public class FeatureActivity extends AppCompatActivity {
                                 args.putSerializable("Milestone", milestoneModelObject);
                                 args.putBoolean("WHICH_SCREEN", bWhichScreen);
                                 args.putString("CUSTOMER_EMAIL", strCustomerEmail);
+                                args.putString("DEPENDENT_NAME", strDependentName);
                                 intent.putExtras(args);
                                 startActivity(intent);
                                 finish();

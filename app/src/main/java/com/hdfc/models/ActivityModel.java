@@ -33,6 +33,9 @@ public class ActivityModel implements Serializable {
     private String strActivityDoneDate;
     private String strActivityProviderStatus;
 
+    private String strDisplayTime;
+    private String strDisplayDate;
+
     private boolean bActivityOverdue;
     private boolean iActivityDisplayFlag;
 
@@ -69,6 +72,26 @@ public class ActivityModel implements Serializable {
         this.imageModels = imageModels;
         this.videoModels = videoModels;
         this.feedBackModels = feedBackModels;
+    }
+
+    public String getStrDisplayTime() {
+        return strDisplayTime;
+    }
+
+    public void setStrDisplayTime(String strDisplayTime) {
+        this.strDisplayTime = strDisplayTime;
+    }
+
+    public String getStrDisplayDate() {
+        return strDisplayDate;
+    }
+
+    public void setStrDisplayDate(String strDisplayDate) {
+        this.strDisplayDate = strDisplayDate;
+    }
+
+    public boolean isiActivityDisplayFlag() {
+        return iActivityDisplayFlag;
     }
 
     public String getStrCreatedBy() {

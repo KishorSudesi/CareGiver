@@ -695,12 +695,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                             response.getJsonDocList().get(0).getDocId(),
                                             response.getJsonDocList().get(0).getJsonDoc());
 
-                                    strPushMessage = Config.providerModel.getStrName() +
-                                            getString(R.string.has_created) +
-                                            serviceModel.getStrServiceName()
-                                            + getString(R.string.to) +
-                                            dependentModel.getStrName() +
-                                            getString(R.string.on) + strDate;
+                                    strPushMessage = getString(R.string.notification_closure_body_1)
+                                            + getString(R.string.notification_service_create)
+                                            + serviceModel.getStrServiceName()
+                                            + getString(R.string.by)
+                                            + dependentModel.getStrName()
+                                            + getString(R.string.notification_service_create_2);
 
                                     jsonObject = new JSONObject();
 
@@ -949,15 +949,17 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                             strAlert = getString(R.string.activity_added);
 
-                            if (o == null)
+                            if (o == null) {
                                 strAlert = getString(R.string.no_push_actiity_added);
+                            } else Utils.log(o.toString(), " PUSH 1");
 
                             goToActivityList(strAlert);
                         }
 
                         @Override
                         public void onException(Exception ex) {
-                            Utils.log(ex.getMessage(), " STRING ");
+                            if (ex != null)
+                                Utils.log(ex.getMessage(), " STRING ");
                             strAlert = getString(R.string.no_push_actiity_added);
                             goToActivityList(strAlert);
                         }

@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hdfc.app42service.EmailService;
-import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.Action;
@@ -82,11 +81,11 @@ public class Utils {
     public static final Locale locale = Locale.ENGLISH;
 
     public final static SimpleDateFormat readFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale);
-    public final static SimpleDateFormat readFormatLocal =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", locale);
+            new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss.SSS'Z'", locale);
+    /* public final static SimpleDateFormat readFormatLocal =
+             new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS", locale);*/
     public final static SimpleDateFormat readFormatLocalDB =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", locale);
+            new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS", locale);
     public final static SimpleDateFormat writeFormat = new
             SimpleDateFormat("kk:mm dd MMM yyyy", locale);
     public final static SimpleDateFormat writeFormatDate = new
@@ -102,9 +101,9 @@ public class Utils {
     public final static SimpleDateFormat writeFormatTime = new
             SimpleDateFormat("kk:mm", locale); // aa
     public final static SimpleDateFormat queryFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
+            new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss.SSS", locale);
     public final static SimpleDateFormat queryFormatday =
-            new SimpleDateFormat("yyyyMMddHHmmss", locale);
+            new SimpleDateFormat("yyyyMMddkkmmss", locale);
 
     private final static String SENDER_EMAIL = "adstringosoftware@gmail.com";
 
@@ -135,14 +134,14 @@ public class Utils {
         Config.intScreenHeight = metrics.heightPixels;
 
         readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        readFormatLocal.setTimeZone(TimeZone.getTimeZone("UTC"));
+        //readFormatLocal.setTimeZone(TimeZone.getDefault());
         queryFormat.setTimeZone(TimeZone.getDefault());
         readFormatLocalDB.setTimeZone(TimeZone.getDefault());
     }
 
     public Utils() {
         readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        readFormatLocal.setTimeZone(TimeZone.getTimeZone("UTC"));
+        //readFormatLocal.setTimeZone(TimeZone.getDefault());
         queryFormat.setTimeZone(TimeZone.getDefault());
         readFormatLocalDB.setTimeZone(TimeZone.getDefault());
     }
@@ -720,7 +719,7 @@ public class Utils {
         return date; //
     }
 
-    public static String convertDateToStringQueryLocal(Date dtDate) {
+    /*public static String convertDateToStringQueryLocal(Date dtDate) {
 
         String date = null;
 
@@ -732,7 +731,7 @@ public class Utils {
 
         //log("Utils", String.valueOf(date)); //Mon Sep 14 00:00:00 IST 2015
         return date; //
-    }
+    }*/
 
     public static Date convertStringToDateQuery(String strDate) {
 
@@ -788,6 +787,56 @@ public class Utils {
             if (date != null)
                 strDisplayDate = writeFormat.format(date);
         }
+
+        return strDisplayDate;
+    }
+
+    public static String formatDateInsertActivity(String strDate) {
+
+        String strDisplayDate = "06-03-2016 20:55:00";
+
+        if (strDate != null && !strDate.equalsIgnoreCase("")) {
+            Date date = convertStringToDate(strDate);
+
+            if (date != null)
+                strDisplayDate = readFormatLocalDB.format(date);
+        }
+
+        return strDisplayDate;
+    }
+
+    public static String displayActivityTime(String strDate) {
+
+        String strDisplayDate = "";
+
+        Date date;
+        try {
+            date = Utils.readFormatLocalDB.parse(strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            date = new Date();
+        }
+
+        if (date != null)
+            strDisplayDate = writeFormatTime.format(date);
+
+        return strDisplayDate;
+    }
+
+    public static String displayActivityDate(String strDate) {
+
+        String strDisplayDate = "";
+
+        Date date;
+        try {
+            date = Utils.readFormatLocalDB.parse(strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            date = new Date();
+        }
+
+        if (date != null)
+            strDisplayDate = writeFormat.format(date);
 
         return strDisplayDate;
     }
@@ -863,16 +912,15 @@ public class Utils {
 
     //todo for sending email
     public static void sendEmail(Context context, String sendTo, String sendSubject, String sendMsg) {
-
         EmailService emailService = new EmailService(context);
         emailService.getEmailService().sendMail(sendTo, sendSubject, sendMsg, SENDER_EMAIL,
                 EmailMIME.HTML_TEXT_MIME_TYPE, new App42CallBack() {
                     public void onSuccess(Object response) {
-
+                        Utils.log("Sent MAil", "1");
                     }
 
                     public void onException(Exception ex) {
-                        System.out.println("Exception Message" + ex.getMessage());
+                        Utils.log("Sent MAil" + ex.getMessage(), "0");
                     }
 
                 });
@@ -1504,7 +1552,7 @@ public class Utils {
 
         try {
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            FeatureActivity.IMAGE_COUNT = FeatureActivity.IMAGE_COUNT + 1;
+            //FeatureActivity.IMAGE_COUNT = FeatureActivity.IMAGE_COUNT + 1;
             File file = createFileInternalImage(strFileName);
             customerImageUri = Uri.fromFile(file);
             if (file != null) {
@@ -1608,20 +1656,4 @@ public class Utils {
         }
         return strValues;
     }
-
-    public String formatDateTime(String strDate) {
-
-        String strDisplayDate = "06-03-2016 20:55:00";
-
-        if (strDate != null && !strDate.equalsIgnoreCase("")) {
-            Date date = convertStringToDate(strDate);
-
-            if (date != null)
-                strDisplayDate = writeFormatTime.format(date);
-        }
-
-        return strDisplayDate;
-    }
-
-
 }

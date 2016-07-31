@@ -113,10 +113,13 @@ public class SessionManager {
 
     public String getSyncDate() {
 
-        String strClientDate;
+        String strClientDate = "";
 
         try {
-            strClientDate = AESCrypt.decrypt(Config.string, pref.getString(KEY_SYNC_DATE, ""));
+            String strTemp = pref.getString(KEY_SYNC_DATE, "");
+
+            if (!strTemp.equalsIgnoreCase(""))
+                strClientDate = AESCrypt.decrypt(Config.string, strTemp);
         } catch (Exception e) {
             e.printStackTrace();
             strClientDate = "";

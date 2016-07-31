@@ -133,7 +133,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
         CrashLogger.getInstance().init(LoginActivity.this);
 
         editEmail.setVisibility(View.INVISIBLE);

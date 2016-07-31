@@ -3,6 +3,7 @@
 
     <string name="back">Back</string>
     <string name="ok">OK</string>
+    <string name="by">&#160;By&#160;</string>
     <string name="cancel">Cancel</string>
     <string name="update">Update</string>
     <string name="updating">Updating…</string>
@@ -32,6 +33,7 @@
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
     <string name="forgot">Forgot?</string>
+    <string name="for_text">&#160;For&#160;</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="submit">Submit</string>
     <string name="reschedule">Reschedule</string>
@@ -168,7 +170,7 @@
     <string name="tasks">Tasks</string>
     <string name="hyphen">-</string>
     <string name="service_category">Service Category</string>
-    <string name="scheduled_to">Scheduled To</string>
+    <string name="scheduled_to">&#160;and Scheduled At&#160;</string>
     <string name="resetted_password">New password has been sent to your E-mail id</string>
     <string name="delete_image">Delete Image</string>
     <string name="delete_file">Delete File</string>
@@ -267,7 +269,27 @@
     <!--Google Strings-->
     <string name="google_app_id">910502819263</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--Notifications Strings-->
+    <string name="notification_body_1">Notification from New Zeal Care Services.The task&#160;</string>
+    <string name="notification_body_2">&#160;has been updated&#160;</string>
+    <string name="notification_body_3">&#160; On Activity&#160;</string>
+    <string name="notification_body_4">&#160; by&#160;</string>
+
+    <string name="notification_closure_body_1">Notification from New Zeal Care Services.</string>
+    <string name="notification_closure_body_2">Thank you for using&#160;</string>
+    <string name="notification_closure_body_3">&#160;from our Care Services.</string>
+    <string name="notification_closure_body_4">Please share your feedback on the overall experience with our service.</string>
+
+    <string name="notification_closure_body_provider_2">The service request for &#160;</string>
+    <string name="notification_closure_body_provider_3">&#160; with New Zeal Care Services has been rescheduled. We deeply regret the inconvenience caused.</string>
+
+    <string name="notification_closure_body_dependnet_2">&#160;has been rescheduled. As per request by &#160;</string>
+    <string name="notification_checkincare">Notification from New Zeal Care Services. Check in Care summary has been updated.</string>
+
+
+    <string name="notification_service_create">&#160;Service Request for&#160;</string>
+    <string name="notification_service_create_2">&#160;has been received.</string>
+
     <string name="save_settings">Save Profile</string>
     <string name="edit_settings">Edit Profile</string>
 

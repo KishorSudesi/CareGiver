@@ -41,13 +41,8 @@ import java.util.ArrayList;
 
 public class NotificationFragment extends Fragment {
 
-    private NotificationAdapter notificationAdapter;
-    //private static ProgressDialog progressDialog;
-    private RelativeLayout loadingPanel;
-    private Utils utils;
-    private AppUtils appUtils;
-    private ListView listViewActivities;
-
+    public static NotificationAdapter notificationAdapter;
+    public static ListView listViewActivities;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -56,9 +51,22 @@ public class NotificationFragment extends Fragment {
 
             if (message != null && !message.equalsIgnoreCase("")) {
                 showPushDialog(message);
+
+                AppUtils.fetchActivitiesSync(getActivity());
+                AppUtils.loadNotifications(getActivity());
+                //todo optional refersh
+                AppUtils.refreshProvider(getActivity());
+
+                //todo optional fetch check in cares,services
+                AppUtils.fetchCheckInCareSync(getActivity());
+                AppUtils.fetchServicesSync(getActivity());
             }
         }
     };
+    //private static ProgressDialog progressDialog;
+    private RelativeLayout loadingPanel;
+    private Utils utils;
+    private AppUtils appUtils;
 
     public NotificationFragment() {
         // Required empty public constructor
@@ -125,7 +133,7 @@ public class NotificationFragment extends Fragment {
         boolean b = bundle.getBoolean("RELOAD", false);
 
         loadingPanel.setVisibility(View.VISIBLE);
-        appUtils.createNotificationModel();
+        AppUtils.createNotificationModel();
         loadingPanel.setVisibility(View.GONE);
 
         notificationAdapter = new
@@ -251,7 +259,7 @@ public class NotificationFragment extends Fragment {
     }
 
     private void refreshNotifications() {
-        appUtils.createNotificationModel();
+        AppUtils.createNotificationModel();
         notificationAdapter.notifyDataSetChanged();
         listViewActivities.scheduleLayoutAnimation();
     }

@@ -254,7 +254,6 @@ public class MyProfileActivity extends AppCompatActivity {
                         Config.providerModel.setStrAddress(place.getText().toString());
                         Config.providerModel.setStrName(name.getText().toString());
 
-                        appUtils.updateProviderJson(Config.providerModel.getStrProviderId(), true);
 
                         Flag = 0;
 
@@ -382,6 +381,9 @@ public class MyProfileActivity extends AppCompatActivity {
                     Config.collectionProvider, new App42CallBack() {
                         @Override
                         public void onSuccess(Object o) {
+
+                            appUtils.updateProviderJson(Config.providerModel.getStrProviderId(),
+                                    true);
 
                             //todo check date
                             CareGiver.getDbCon().updateProvider(
@@ -592,6 +594,9 @@ public class MyProfileActivity extends AppCompatActivity {
 
                     if (utils.isConnectingToInternet())
                         checkImage(false);
+                    else
+                        Utils.toast(2, 2, getString(R.string.warning_internet),
+                                MyProfileActivity.this);
 
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -11,6 +11,7 @@ import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.caregiver.fragments.ActivityFragment;
 import com.hdfc.caregiver.fragments.DashboardFragment;
+import com.hdfc.caregiver.fragments.NotificationFragment;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
@@ -216,6 +217,13 @@ public class AppUtils {
                                                         context);
                                             } else {
                                                 //todo for refresh adapter
+
+                                                createNotificationModel();
+                                                if (NotificationFragment.notificationAdapter != null) {
+                                                    NotificationFragment.notificationAdapter.
+                                                            notifyDataSetChanged();
+                                                }
+
                                             }
                                         }
                                         CareGiver.getDbCon().dbTransactionSuccessFull();
@@ -381,18 +389,14 @@ public class AppUtils {
                         "0"
                 };
 
-                Utils.log(jsonObject.getString("activity_date").substring(0,
-                        jsonObject.getString("activity_date").length() - 1), " Actual Date 0");
+                Utils.log(jsonObject.getString("activity_date"), " Actual Date 0");
 
-                String strActivityDate = Utils.convertDateToStringQueryLocal(Utils.
-                        convertStringToDateQuery(jsonObject.getString("activity_date").substring(0,
-                                jsonObject.getString("activity_date").length() - 1)));
+
+                String strActivityDate = Utils.formatDateInsertActivity(jsonObject.getString("activity_date"));
 
                 Utils.log(strActivityDate, " Converted Date 0 ");
 
-                String valuesActivity[] = {strDocumentId,
-                        "0",
-                        strActivityDate};
+                String valuesActivity[] = {strDocumentId, "0", strActivityDate};
 
                 CareGiver.getDbCon().updateInsert(
                         DbHelper.strTableNameMilestone,
@@ -448,10 +452,9 @@ public class AppUtils {
 
                             if (!jsonObjectMilestone.getString("scheduled_date")
                                     .equalsIgnoreCase("")) {
-                                strMilestoneDate = Utils.convertDateToStringQueryLocal(
-                                    Utils.convertStringToDateQuery(jsonObjectMilestone.getString(
-                                            "scheduled_date").substring(0, jsonObjectMilestone.
-                                            getString("scheduled_date").length() - 1)));
+                                strMilestoneDate =
+                                        Utils.formatDateInsertActivity(jsonObjectMilestone.getString(
+                                                "scheduled_date"));
                             }
 
                             String values[] = {strDocumentId,
@@ -1141,7 +1144,8 @@ public class AppUtils {
 
             String strQuery = "SELECT a." + DbHelper.COLUMN_DOCUMENT + " AS C1 , b."
                     + DbHelper.COLUMN_MILESTONE_ID + " AS C2, b." + DbHelper.COLUMN_OBJECT_ID
-                    + " AS C3 FROM " + DbHelper.strTableNameCollection + " AS a INNER JOIN "
+                    + " AS C3, b." + DbHelper.COLUMN_MILESTONE_DATE + " AS C4 "
+                    + " FROM " + DbHelper.strTableNameCollection + " AS a INNER JOIN "
                     + DbHelper.strTableNameMilestone + " AS b ON a.object_id=b.object_id  WHERE b."
                     + DbHelper.COLUMN_MILESTONE_DATE + ">= Datetime('" + strStartDate + "') AND b."
                     + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "')"
@@ -1170,7 +1174,8 @@ public class AppUtils {
 
                         JSONObject jsonObject = new JSONObject(newCursor.getString(0));
 
-                        createActivityModel(jsonObject, newCursor.getString(2), isActivity);
+                        createActivityModel(jsonObject, newCursor.getString(2), isActivity,
+                                newCursor.getString(3));
                     }
                     newCursor.moveToNext();
                 }
@@ -1183,7 +1188,7 @@ public class AppUtils {
     }
 
     private static void createActivityModel(JSONObject jsonObject, String strDocumentId,
-                                            boolean isActivity) {
+                                            boolean isActivity, String strDate) {
         try {
 
             if (jsonObject.has("dependent_id")) {
@@ -1197,6 +1202,9 @@ public class AppUtils {
                 activityModel.setStrCustomerID(jsonObject.optString("customer_id"));
                 activityModel.setStrActivityStatus(jsonObject.optString("status"));
                 activityModel.setStrActivityDesc(jsonObject.optString("activity_desc"));
+
+                activityModel.setStrDisplayDate(Utils.displayActivityDate(strDate));
+                activityModel.setStrDisplayTime(Utils.displayActivityTime(strDate));
 
                 activityModel.setStrCreatedBy(jsonObject.optString("created_by"));
 
@@ -1727,52 +1735,7 @@ public class AppUtils {
     }
     //////////////////////////
 
-    public void updateProviderJson(String strProviderId, boolean bWhich) {
-
-        try {
-
-            Cursor cursor = CareGiver.getDbCon().fetch(
-                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                    DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
-                    new String[]{Config.collectionProvider, strProviderId}, null, "0, 1", true,
-                    null, null
-            );
-
-            String strDocument = "";
-
-            if (cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                strDocument = cursor.getString(0);
-            }
-            CareGiver.getDbCon().closeCursor(cursor);
-
-            if (!strDocument.equalsIgnoreCase("")) {
-
-                JSONObject jsonObject = new JSONObject(strDocument);
-
-                if (jsonObject.has("provider_email")) {
-
-                    if (bWhich) {
-                        jsonObject.put("provider_contact_no", Config.providerModel.getStrContacts());
-                        jsonObject.put("provider_address", Config.providerModel.getStrAddress());
-                        jsonObject.put("provider_name", Config.providerModel.getStrName());
-                    } else {
-                        jsonObject.put("provider_profile_url", Config.providerModel.getStrImgUrl());
-                    }
-
-                    CareGiver.getDbCon().updateProvider(
-                            new String[]{"DateTime('now')", jsonObject.toString(), "1"},
-                            new String[]{"updated_date", "document", "updated"},
-                            new String[]{Config.providerModel.getStrProviderId(),
-                                    Config.collectionProvider});
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void createNotificationModel() {
+    public static void createNotificationModel() {
 
         Cursor cursor = null;
         try {
@@ -1845,6 +1808,51 @@ public class AppUtils {
         } catch (JSONException e) {
             e.printStackTrace();
             CareGiver.getDbCon().closeCursor(cursor);
+        }
+    }
+
+    public void updateProviderJson(String strProviderId, boolean bWhich) {
+
+        try {
+
+            Cursor cursor = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                    new String[]{Config.collectionProvider, strProviderId}, null, "0, 1", true,
+                    null, null
+            );
+
+            String strDocument = "";
+
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                strDocument = cursor.getString(0);
+            }
+            CareGiver.getDbCon().closeCursor(cursor);
+
+            if (!strDocument.equalsIgnoreCase("")) {
+
+                JSONObject jsonObject = new JSONObject(strDocument);
+
+                if (jsonObject.has("provider_email")) {
+
+                    if (bWhich) {
+                        jsonObject.put("provider_contact_no", Config.providerModel.getStrContacts());
+                        jsonObject.put("provider_address", Config.providerModel.getStrAddress());
+                        jsonObject.put("provider_name", Config.providerModel.getStrName());
+                    } else {
+                        jsonObject.put("provider_profile_url", Config.providerModel.getStrImgUrl());
+                    }
+
+                    CareGiver.getDbCon().updateProvider(
+                            new String[]{"DateTime('now')", jsonObject.toString(), "1"},
+                            new String[]{"updated_date", "document", "updated"},
+                            new String[]{Config.providerModel.getStrProviderId(),
+                                    Config.collectionProvider});
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -2001,16 +2009,17 @@ public class AppUtils {
                                 dependentModel.setIntAge(jsonObjectDependent.
                                         getInt("dependent_age"));
                             } catch (Exception e) {
+                                int iAge = 0;
                                 try {
                                     String strAge = jsonObjectDependent.getString("dependent_age");
 
-                                    int iAge = 0;
                                     if (!strAge.equalsIgnoreCase(""))
                                         iAge = Integer.parseInt(strAge);
 
                                     dependentModel.setIntAge(iAge);
                                 } catch (Exception e1) {
                                     e1.printStackTrace();
+                                    iAge = 0;
                                 }
                             }
                         }

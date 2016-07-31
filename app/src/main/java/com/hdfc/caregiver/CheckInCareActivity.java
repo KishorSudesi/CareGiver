@@ -32,6 +32,8 @@ import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
 import com.bumptech.glide.Glide;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+import com.hdfc.app42service.App42GCMService;
+import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.config.CareGiver;
@@ -69,23 +71,20 @@ import pl.tajchert.nammu.PermissionCallback;
 public class CheckInCareActivity extends AppCompatActivity implements View.OnClickListener,
         AdapterView.OnItemSelectedListener {
     private static final int DIALOG_DOWNLOAD_PROGRESS1 = 1;
-    private static RelativeLayout loadingPanelhall,loadingPanelkitchen,loadingPanelwash,loadingPanelbed;
     private static final String[] option = {"N", "Y"};
     public static Uri uri;
     public static Bitmap bitmap = null;
     private static String strImageName = "", strClientName = "";
-    private static int IMAGE_COUNT = 0;
+    //private static int IMAGE_COUNT = 0;
     private static Boolean editcheckincare = false;
     private static Boolean isUploadHallImage = false;
     private static Boolean isUploadKitchenImage = false;
     private static Boolean isUploadWashImage = false;
     private static Boolean isUploadBedImage = false;
-
     private static Boolean isUploadedHall = false;
     private static Boolean isUploadedKitchen = false;
     private static Boolean isUploadedWash = false;
     private static Boolean isUploadedBed = false;
-
     private static Utils utils;
     //private static ProgressDialog mProgress = null;
     private static Handler backgroundThreadHandler, backgroundThreadHandlerFetch;
@@ -104,6 +103,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static boolean bViewLoaded, mImageChanged;
     private static StorageService storageService;
     public String item = "";
+    private RelativeLayout loadingPanelhall, loadingPanelkitchen, loadingPanelwash, loadingPanelbed;
+    private String strCustomerEmail;
     private int isClicked = 0;
     private int isHallFlag = 0;
     private boolean isClick = false;
@@ -337,6 +338,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             strClientName = Config.customerModel.getStrName();
             //strImageName = Config.customerModel.getStrCustomerID();
             strImageName = Config.customerModel.getStrImgUrl();
+            strCustomerEmail = Config.customerModel.getStrEmail();
         }
 
         if (clientnametxt != null) {
@@ -2034,6 +2036,30 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 e.printStackTrace();
             }
 
+
+            //notification
+            //todo UI for common notifications
+            String strPushMessage = getString(R.string.notification_checkincare);
+
+            final JSONObject jsonObject = new JSONObject();
+
+            try {
+
+                String strDateNow;
+                Calendar calendar = Calendar.getInstance();
+                Date dateNow = calendar.getTime();
+                strDateNow = Utils.convertDateToString(dateNow);
+
+                jsonObject.put("created_by", Config.providerModel.getStrProviderId());
+                jsonObject.put("time", strDateNow);
+                jsonObject.put("user_type", "dependent");
+                //todo add for customer
+                jsonObject.put("created_by_type", "provider");
+                jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             storageService.insertDocs(Config.collectionCheckInCare, jsonObjectCheckinCare,
                     new AsyncApp42ServiceApi.App42StorageServiceListener() {
 
@@ -2090,17 +2116,19 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 selection1, values1, DbHelper.CCARE_FIELDS,
                                                 selectionArgs1);
 
+                                        sendPush(jsonObject);
+
                                     }
                                     ///
 
 
-                                    IMAGE_COUNT = 0;
+                                    //IMAGE_COUNT = 0;
                                     bViewLoaded =false;
                                     /*isUploadHallImage=false;
                                     isUploadKitchenImage=false;
                                     isUploadWashImage=false;
                                     isUploadBedImage=false;*/
-                                    utils.toast(2, 2, getString(R.string.data_upload));
+                                    utils.toast(1, 1, getString(R.string.data_upload));
                                     Intent intent = new Intent(CheckInCareActivity.this,
                                             DashboardActivity.class);
                                     Config.intSelectedMenu = Config.intClientScreen;
@@ -2487,46 +2515,30 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 e.printStackTrace();
             }
 
-
-        /////////////////////////udpate to DB
-        ///
-        String values[] = {Config.checkInCareModel.getStrDocumentID(),
-                "",
-                jsonObjectCheckinCare.toString(),
-                Config.collectionCheckInCare, "0", "", "1"};
-
-        String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                + DbHelper.COLUMN_COLLECTION_NAME + "=?";
-
-        // WHERE clause arguments
-        String[] selectionArgs = {Config.checkInCareModel.getStrDocumentID(),
-                Config.collectionCheckInCare};
-        CareGiver.getDbCon().updateInsert(
-                DbHelper.strTableNameCollection,
-                selection, values, DbHelper.COLLECTION_FIELDS,
-                selectionArgs);
-
-
-        String values1[] = {Config.checkInCareModel.getStrDocumentID(),
-                "-1",
-                strSelectedDate,
-                Config.customerModel.getStrCustomerID()
-        };
-
-        String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                + DbHelper.COLUMN_MILESTONE_ID + "=? ";
-
-        String[] selectionArgs1 = {Config.checkInCareModel.getStrDocumentID(),
-                "-1"
-        };
-
-        CareGiver.getDbCon().updateInsert(
-                DbHelper.strTableNameMilestone,
-                selection1, values1, DbHelper.CCARE_FIELDS,
-                selectionArgs1);
-        /////////////////////////udpate to DB
-
         if (utils.isConnectingToInternet()) {
+
+            String strPushMessage = getString(R.string.notification_checkincare);
+
+            final JSONObject jsonObject1 = new JSONObject();
+
+            try {
+
+                String strDateNow;
+                Calendar calendar = Calendar.getInstance();
+                Date dateNow = calendar.getTime();
+                strDateNow = Utils.convertDateToString(dateNow);
+
+                jsonObject1.put("created_by", Config.providerModel.getStrProviderId());
+                jsonObject1.put("time", strDateNow);
+                jsonObject1.put("user_type", "dependent");
+                //todo add for customer
+                jsonObject1.put("created_by_type", "provider");
+                jsonObject1.put(App42GCMService.ExtraMessage, strPushMessage);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            final JSONObject jsonObject = jsonObjectCheckinCare;
 
             storageService.updateDocs(jsonObjectCheckinCare,
                     Config.checkInCareModel.getStrDocumentID(),
@@ -2535,10 +2547,53 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         public void onSuccess(Object response) {
                             if (mProgressDialog.isShowing())
                                 mProgressDialog.dismiss();
+
+                            ////////////////////////////////////////
+                            /////////////////////////udpate to DB
+                            ///todo enable offline sync
+                            String values[] = {Config.checkInCareModel.getStrDocumentID(),
+                                    "",
+                                    jsonObject.toString(),
+                                    Config.collectionCheckInCare, "0", "", "1"};
+
+                            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+                            // WHERE clause arguments
+                            String[] selectionArgs = {Config.checkInCareModel.getStrDocumentID(),
+                                    Config.collectionCheckInCare};
+                            CareGiver.getDbCon().updateInsert(
+                                    DbHelper.strTableNameCollection,
+                                    selection, values, DbHelper.COLLECTION_FIELDS,
+                                    selectionArgs);
+
+
+                            String values1[] = {Config.checkInCareModel.getStrDocumentID(),
+                                    "-1",
+                                    strSelectedDate,
+                                    Config.customerModel.getStrCustomerID()
+                            };
+
+                            String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                    + DbHelper.COLUMN_MILESTONE_ID + "=? ";
+
+                            String[] selectionArgs1 = {Config.checkInCareModel.getStrDocumentID(),
+                                    "-1"
+                            };
+
+                            CareGiver.getDbCon().updateInsert(
+                                    DbHelper.strTableNameMilestone,
+                                    selection1, values1, DbHelper.CCARE_FIELDS,
+                                    selectionArgs1);
+
+                            sendPush(jsonObject1);
+                            /////////////////////////udpate to DB
+                            ////////////////////////////////////////
+
                             //Utils.log(response.toString(), "Success");
-                            IMAGE_COUNT = 0;
+                            //IMAGE_COUNT = 0;
                             bViewLoaded =false;
-                            utils.toast(2, 2, getString(R.string.data_upload));
+                            utils.toast(1, 1, getString(R.string.data_upload));
                             Intent intent = new Intent(CheckInCareActivity.this,
                                     DashboardActivity.class);
                             Config.intSelectedMenu = Config.intClientScreen;
@@ -3777,9 +3832,20 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                bViewLoaded =true;
 
-                backgroundThreadHandlerFetch = new BackgroundThreadHandlerFetchImages();
-                Thread backgroundThreadImagesFetch = new BackgroundThreadFetchImages();
-                backgroundThreadImagesFetch.start();
+                mProgressDialog = new ProgressDialog(this);
+                mProgressDialog.setMessage(getString(R.string.loading));
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.show();
+
+                if (Utils.isConnectingToInternet(CheckInCareActivity.this)) {
+                    backgroundThreadHandlerFetch = new BackgroundThreadHandlerFetchImages();
+                    Thread backgroundThreadImagesFetch = new BackgroundThreadFetchImages();
+                    backgroundThreadImagesFetch.start();
+                } else {
+                    backgroundThreadHandler = new BackgroundThreadHandler();
+                    Thread backgroundThreadImages = new BackgroundThreadImages();
+                    backgroundThreadImages.start();
+                }
             }
 
         } catch (Exception e) {
@@ -3812,6 +3878,34 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         super.onStop();
     }
 
+    private void sendPush(JSONObject jsonObject) {
+
+        if (utils.isConnectingToInternet()) {
+
+            PushNotificationService pushNotificationService = new PushNotificationService(
+                    CheckInCareActivity.this);
+
+            if (!strCustomerEmail.equalsIgnoreCase("")) {
+
+                pushNotificationService.sendPushToUser(strCustomerEmail, jsonObject.toString(),
+                        new App42CallBack() {
+
+                            @Override
+                            public void onSuccess(Object o) {
+                                if (o != null)
+                                    Utils.log(o.toString(), " PUSH2 1");
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                if (ex != null)
+                                    Utils.log(ex.getMessage(), " PUSH2 0");
+                            }
+                        });
+            }
+        }
+    }
+
     private class BackgroundThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -3841,6 +3935,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 addBedroomImages();
             }
 
+            if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                mProgressDialog.dismiss();
+            }
         }
     }
 
@@ -3873,7 +3970,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                                 Config.intWidth, Config.intHeight));
 
-                        IMAGE_COUNT++;
+                        //IMAGE_COUNT++;
 
                         hallImageCount++;
                     }
@@ -3908,7 +4005,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                                 Config.intWidth, Config.intHeight));
 
-                        IMAGE_COUNT++;
+                        //IMAGE_COUNT++;
 
                         kitchenImageCount++;
                     }
@@ -3943,7 +4040,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                                 Config.intWidth, Config.intHeight));
 
-                        IMAGE_COUNT++;
+                        //IMAGE_COUNT++;
 
                         washroomImageCount++;
                     }
@@ -3977,7 +4074,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                                 Config.intWidth, Config.intHeight));
 
-                        IMAGE_COUNT++;
+                        //IMAGE_COUNT++;
 
                         bedroomImageCount++;
                     }
@@ -4019,7 +4116,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         hallImageCount++;
 
-                        IMAGE_COUNT++;
+                        //IMAGE_COUNT++;
                     }
 
                 } catch (Exception | OutOfMemoryError e) {
@@ -4052,7 +4149,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         kitchenImageCount++;
 
-                        IMAGE_COUNT++;
+                        //IMAGE_COUNT++;
                     }
 
                 } catch (Exception | OutOfMemoryError e) {
@@ -4085,7 +4182,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         washroomImageCount++;
 
-                        IMAGE_COUNT++;
+                        //IMAGE_COUNT++;
                     }
 
                 } catch (Exception | OutOfMemoryError e) {
@@ -4118,7 +4215,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         bedroomImageCount++;
 
-                        IMAGE_COUNT++;
+                        //IMAGE_COUNT++;
                     }
 
                 } catch (Exception | OutOfMemoryError e) {
@@ -4145,7 +4242,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             imageModel.setmIsNew(false);
 
-                            IMAGE_COUNT++;
+                            //IMAGE_COUNT++;
                         }
                     }
                 } catch (Exception | OutOfMemoryError e) {
@@ -4164,7 +4261,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             imageModel.setmIsNew(false);
 
-                            IMAGE_COUNT++;
+                            //IMAGE_COUNT++;
                         }
                     }
                 } catch (Exception | OutOfMemoryError e) {
@@ -4183,7 +4280,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             imageModel.setmIsNew(false);
 
-                            IMAGE_COUNT++;
+                            //IMAGE_COUNT++;
                         }
                     }
                 } catch (Exception | OutOfMemoryError e) {
@@ -4202,7 +4299,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             imageModel.setmIsNew(false);
 
-                            IMAGE_COUNT++;
+                            //IMAGE_COUNT++;
                         }
                     }
                 } catch (Exception | OutOfMemoryError e) {
@@ -4293,6 +4390,47 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             backgroundThreadHandlerFetch.sendEmptyMessage(0);
         }
     }
+
+   /* private void insertNotification(final JSONObject jsonObject) {
+
+        if (utils.isConnectingToInternet()) {
+
+            storageService.insertDocs(Config.collectionNotification, jsonObject,
+                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+
+                        @Override
+                        public void onDocumentInserted(Storage response) {
+                            try {
+                                if (response.isResponseSuccess()) {
+                                    sendPush(jsonObject);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onUpdateDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onFindDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onInsertionFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onFindDocFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onUpdateDocFailed(App42Exception ex) {
+                        }
+                    });
+        }
+    }*/
 
     private class BackgroundThreadHandlerFetchImages extends Handler {
         @Override

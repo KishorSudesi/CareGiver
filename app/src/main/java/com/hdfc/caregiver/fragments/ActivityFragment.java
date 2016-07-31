@@ -121,8 +121,7 @@ public class ActivityFragment extends Fragment
 
                 cvh.textMessage.setText(strMessage);
 
-                cvh.textTime.setText(Utils.formatDate(activityModels.get(position).
-                        getStrActivityDate()));
+                cvh.textTime.setText(activityModels.get(position).getStrDisplayDate());
 
                 if (activityModels.get(position).getStrCreatedBy() != null
                         && !activityModels.get(position).getStrCreatedBy().equalsIgnoreCase("")
@@ -162,8 +161,7 @@ public class ActivityFragment extends Fragment
                 if (activityModels.get(position).getStrActivityStatus().
                         equalsIgnoreCase("inprocess")) {
                     cvh.imageTiming.setBackgroundResource(R.drawable.circle);
-                    cvh.imageTiming.setText(utils.formatDateTime(activityModels.get(position).
-                            getStrActivityDate()));
+                    cvh.imageTiming.setText(activityModels.get(position).getStrDisplayTime());
                     cvh.imageTiming.setTextColor(context.getResources().getColor(
                             R.color.colorAccent));
                     cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(
@@ -331,11 +329,11 @@ public class ActivityFragment extends Fragment
 
         //swipe left
 
-        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)-30)
+      /*  mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)-30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.blue))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
                 .setIcon(getResources().getDrawable(R.mipmap.location_action))
-                .build());
+                .build());*/
 
         mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.blue))
@@ -393,48 +391,78 @@ public class ActivityFragment extends Fragment
                 }
                 break;
             case MenuItem.DIRECTION_RIGHT:
-                ActivityModel activityModel = activityModels.get(itemPosition);
+
+                String strNo = "";
+
+                if (activityModels.get(itemPosition).getStrDependentID() != null &&
+                        !activityModels.get(itemPosition).getStrDependentID().equalsIgnoreCase("")) {
+
+                    Cursor cursor1 = CareGiver.getDbCon().fetch(
+                            DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                            DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID
+                                    + "=?",
+                            new String[]{Config.collectionDependent,
+                                    activityModels.get(itemPosition).getStrDependentID()
+                            },
+                            null, "0,1", true, null, null
+                    );
+
+
+                    if (cursor1.getCount() > 0) {
+                        cursor1.moveToFirst();
+                        try {
+                            if (cursor1.getString(0) != null && !cursor1.getString(0).
+                                    equalsIgnoreCase("")) {
+                                JSONObject jsonObject = null;
+                                jsonObject = new JSONObject(cursor1.getString(0));
+                                strNo = jsonObject.optString("dependent_contact_no");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    CareGiver.getDbCon().closeCursor(cursor1);
+                }
+
                 switch (buttonPosition) {
-                    case 0:
+                   /* case 0:
 
-                       /* int iPosition3 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
-                        String strNo4 = Config.dependentModels.get(iPosition3).getStrAddress();*/
+                       *//* int iPosition3 = Config.dependentIds.indexOf(activityModel.getStrDependentID());
+                        String strNo4 = Config.dependentModels.get(iPosition3).getStrAddress();*//*
                         //Toast.makeText(getContext(), strNo4, Toast.LENGTH_LONG).show();
-                        return Menu.ITEM_SCROLL_BACK;
-                    case 1:
-                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                        return Menu.ITEM_SCROLL_BACK;*/
+                    case 0:
+                        try {
+                            Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
 
-                        int iPosition = Config.dependentIds.indexOf(activityModel.
-                                getStrDependentID());
+                            if (!strNo.equalsIgnoreCase("")) {
 
-                        String strNo2 = "";
-
-                        if (iPosition > -1 && Config.dependentModels.size() > 0)
-                            strNo2 = Config.dependentModels.get(iPosition).getStrContacts();
-
-                        if (!strNo2.equalsIgnoreCase("")) {
-
-                            sendIntent.putExtra("sms_body", activityModel.getStrActivityName());
-                            sendIntent.putExtra("address", strNo2);
-                            sendIntent.setType("vnd.android-dir/mms-sms");
-                            startActivity(sendIntent);
+                                sendIntent.putExtra("sms_body", activityModels.get(itemPosition).
+                                        getStrActivityName());
+                                sendIntent.putExtra("address", strNo);
+                                sendIntent.setType("vnd.android-dir/mms-sms");
+                                startActivity(sendIntent);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            if (!strNo.equalsIgnoreCase("")) {
+                                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                                intent.setData(Uri.parse("smsto:" + Uri.encode(strNo)));
+                                startActivity(intent);
+                            }
                         }
                         return Menu.ITEM_SCROLL_BACK;
-                    case 2:
-
-                        int iPosition2 = Config.dependentIds.indexOf(activityModel.
-                                getStrDependentID());
-
-                        String strNo3 = "";
-
-                        if (iPosition2 > -1 && Config.dependentModels.size() > 0)
-                            strNo3 = Config.dependentModels.get(iPosition2).getStrContacts();
-
-                        if (!strNo3.equalsIgnoreCase("")) {
-                            Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                            String strNo1 = "tel:" + String.valueOf(strNo3);
-                            callIntent.setData(Uri.parse(strNo1));
-                            startActivity(callIntent);
+                    case 1:
+                        try {
+                            if (!strNo.equalsIgnoreCase("")) {
+                                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                                String strNo1 = "tel:" + String.valueOf(strNo);
+                                callIntent.setData(Uri.parse(strNo1));
+                                startActivity(callIntent);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                         return Menu.ITEM_SCROLL_BACK;
                 }

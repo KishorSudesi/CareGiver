@@ -78,6 +78,10 @@ public class DashboardActivity extends AppCompatActivity implements
                     //todo optional refersh
                     AppUtils.refreshProvider(DashboardActivity.this);
 
+                    //todo optional fetch check in cares,services
+                    AppUtils.fetchCheckInCareSync(DashboardActivity.this);
+                    AppUtils.fetchServicesSync(DashboardActivity.this);
+
                     if (Config.intSelectedMenu != Config.intNotificationScreen)
                         showPushDialog(message);
                 }
@@ -90,6 +94,9 @@ public class DashboardActivity extends AppCompatActivity implements
 
     public static void gotoSimpleActivityMenu(boolean isLoader) {
 
+        if (isLoader && loadingPanel.getVisibility() == View.VISIBLE)
+            loadingPanel.setVisibility(View.GONE);
+
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
@@ -98,18 +105,15 @@ public class DashboardActivity extends AppCompatActivity implements
             AppUtils.createActivityModel(strStartDate, strEndDate);
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
+        }
 
-            if (isLoader && loadingPanel.getVisibility() == View.VISIBLE)
-                loadingPanel.setVisibility(View.GONE);
+        if (isLoader) {
+            AppUtils.fetchActivitiesSync(appCompatActivity);
 
-            if (isLoader) {
-                AppUtils.fetchActivitiesSync(appCompatActivity);
-
-                //fetch check in cares,service,
-                AppUtils.fetchCheckInCareSync(appCompatActivity);
-                AppUtils.fetchServicesSync(appCompatActivity);
-                AppUtils.loadNotifications(appCompatActivity);
-            }
+            //fetch check in cares,service,
+            AppUtils.fetchCheckInCareSync(appCompatActivity);
+            AppUtils.fetchServicesSync(appCompatActivity);
+            AppUtils.loadNotifications(appCompatActivity);
         }
     }
 
@@ -523,6 +527,10 @@ public class DashboardActivity extends AppCompatActivity implements
                     //todo optional refersh
                     AppUtils.refreshProvider(DashboardActivity.this);
 
+                    //todo optional fetch check in cares,services
+                    AppUtils.fetchCheckInCareSync(DashboardActivity.this);
+                    AppUtils.fetchServicesSync(DashboardActivity.this);
+
                     showPushDialog(strMess);
                 } else {
                     new LoadDataTask().execute();
@@ -759,6 +767,10 @@ public class DashboardActivity extends AppCompatActivity implements
                     AppUtils.loadNotifications(DashboardActivity.this);
                     //todo optional refersh
                     AppUtils.refreshProvider(DashboardActivity.this);
+
+                    //todo optional fetch check in cares,services
+                    AppUtils.fetchCheckInCareSync(DashboardActivity.this);
+                    AppUtils.fetchServicesSync(DashboardActivity.this);
 
                     showPushDialog(strMess);
                 }

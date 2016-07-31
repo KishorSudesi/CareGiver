@@ -6,7 +6,6 @@ package com.hdfc.adapters;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AlertDialog;
@@ -340,26 +339,36 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         CareGiver.getDbCon().closeCursor(newCursor);
 
         if (Config.checkInCareModels.size() <= 0) {
-            final CharSequence[] items = {_context.getString(R.string.create_new),
-                    _context.getString(R.string.cancel)};
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context);
+            View convertView = inf.inflate(R.layout.custom_dialog, null);
 
-            builder.setTitle(_context.getString(R.string.check_in_care));
-            builder.setItems(items, new DialogInterface.OnClickListener() {
+            alertDialog.setTitle(_context.getString(R.string.check_in_care));
+
+            ListView listview = (ListView) convertView.findViewById(R.id.dialoglist);
+            Button create = (Button) convertView.findViewById(R.id.createnew);
+            Button cancel = (Button) convertView.findViewById(R.id.cancel);
+            listview.setVisibility(View.GONE);
+
+            create.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int item) {
+                public void onClick(View view) {
+                    Intent i = new Intent(_context, CheckInCareActivity.class);
+                    _context.startActivity(i);
 
-                    if (items[item].equals(_context.getString(R.string.create_new))) {
-                        Intent i = new Intent(_context, CheckInCareActivity.class);
-                        _context.startActivity(i);
-
-                    } else if (items[item].equals(_context.getString(R.string.cancel))) {
-                        dialog.dismiss();
-                    }
                 }
             });
-            builder.show();
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    myalertDialog.dismiss();
+
+                }
+            });
+
+            alertDialog.setView(convertView);
+            myalertDialog = alertDialog.show();
+
         } else {
             final AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context);
             View convertView = inf.inflate(R.layout.custom_dialog, null);

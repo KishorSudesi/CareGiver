@@ -93,7 +93,8 @@ public class MilestoneActivity extends AppCompatActivity {
     private SimpleTooltip simpleTooltip;
     private Utils utils;
     private PermissionHelper permissionHelper;
-    private String strValueReason = "";
+    private String strCloseUser, strCloseStatus, strDependentName;
+    private boolean isDateChanged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +109,10 @@ public class MilestoneActivity extends AppCompatActivity {
         act = (ActivityModel) b.getSerializable("Act");
         bWhichScreen = b.getBoolean("WHICH_SCREEN", false);
         strCustomerEmail = b.getString("CUSTOMER_EMAIL", "");
+        strDependentName = b.getString("DEPENDENT_NAME", "");
+
+        strCloseStatus = "";
+        strCloseUser = "";
 
         bitmaps.clear();
 
@@ -263,6 +268,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                             getDrawable(R.drawable.calendar_date_picker),
                                     null, null, null);
 
+                            editText.setFocusableInTouchMode(false);
+
                             final SlideDateTimeListener listener = new SlideDateTimeListener() {
 
                                 @Override
@@ -311,6 +318,14 @@ public class MilestoneActivity extends AppCompatActivity {
                                 editText.setEnabled(true);
                                 //editText.setFocusable(true);
                                 //editText.setClickable(true);
+
+                                if (milestoneModelObject.getStrMilestoneScheduledDate() != null
+                                        && !milestoneModelObject.getStrMilestoneScheduledDate().
+                                        equalsIgnoreCase("")) {
+                                    editText.setTag(R.id.two,
+                                            milestoneModelObject.getStrMilestoneScheduledDate());
+                                }
+
                                 editText.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -451,11 +466,12 @@ public class MilestoneActivity extends AppCompatActivity {
                                                     if (strValue.equalsIgnoreCase("UnSuccessFul")) {
                                                         spinnerChild.setVisibility(View.VISIBLE);
                                                         spinnerChild.setSelection(0);
-                                                        strValueReason = "";
+                                                        strCloseStatus = "UnSuccessFul";
 
                                                     } else if (strValue.
                                                             equalsIgnoreCase("SuccessFul")) {
                                                         spinnerChild.setVisibility(View.GONE);
+                                                        strCloseStatus = "SuccessFul";
                                                     }
                                                 }
                                             }
@@ -719,7 +735,13 @@ public class MilestoneActivity extends AppCompatActivity {
                                     R.id.linearparent);
                         }
 
-                        traverseEditTexts(layoutDialog, id, linearLayout, 1, iValidFlag);
+                        if (button.getText().toString().equalsIgnoreCase(getString(R.string.update))
+                                || button.getText().toString().equalsIgnoreCase
+                                (getString(R.string.reschedule))) {
+                            iValidFlag = 1;
+                        }
+
+                        traverseEditTexts(layoutDialog, id, linearLayout, 1);
                     }
                 });
             }
@@ -777,7 +799,8 @@ public class MilestoneActivity extends AppCompatActivity {
                             linearLayout = (LinearLayout) layoutDialog.findViewWithTag(
                                     R.id.linearparent);
                         }
-                        traverseEditTexts(layoutDialog, id, linearLayout, 2, 0);
+                        iValidFlag = 1;
+                        traverseEditTexts(layoutDialog, id, linearLayout, 2);
                     }
                 });
             }
@@ -795,9 +818,15 @@ public class MilestoneActivity extends AppCompatActivity {
 
             loadingPanel.setVisibility(View.VISIBLE);
 
-            backgroundThreadHandlerLoad = new BackgroundThreadHandlerLoad();
-            Thread backgroundThreadImagesLoad = new BackgroundThreadImagesLoad();
-            backgroundThreadImagesLoad.start();
+            if (Utils.isConnectingToInternet(MilestoneActivity.this)) {
+                backgroundThreadHandlerLoad = new BackgroundThreadHandlerLoad();
+                Thread backgroundThreadImagesLoad = new BackgroundThreadImagesLoad();
+                backgroundThreadImagesLoad.start();
+            } else {
+                backgroundThreadHandler = new BackgroundThreadHandler();
+                Thread backgroundThreadImages = new BackgroundThreadImages();
+                backgroundThreadImages.start();
+            }
         }
     }
 
@@ -840,8 +869,7 @@ public class MilestoneActivity extends AppCompatActivity {
         goBack();
     }
 
-    private void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag,
-                                   int iValidflag) {
+    private void traverseEditTexts(ViewGroup v, int iMileStoneId, ViewGroup viewGroup, int iFlag) {
 
         boolean b = true, bClose = true;
 
@@ -856,6 +884,8 @@ public class MilestoneActivity extends AppCompatActivity {
             int iClose = 0;
 
             for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
+
+                isDateChanged = true;
 
                 iIndex++;
 
@@ -926,21 +956,35 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 bFuture = false;
                                             }
                                         }
+
+                                        String strDate = (String) editText.getTag(R.id.two);
+
+                                        if (iValidFlag == 1) {
+
+                                            isDateChanged = milestoneModel.getStrMilestoneScheduledDate()
+                                                    != null && !milestoneModel.
+                                                    getStrMilestoneScheduledDate().
+                                                    equalsIgnoreCase(strDate);
+
+                                            if (!isDateChanged)
+                                                bFuture = true;
+                                        }
+
+
                                         /////////////////////////////
 
-                                        if (iFlag == 2) {
-                                            if (enteredDate.compareTo(dateNow) < 0) {
+                                        if (iFlag == 2 && !bFuture) {
+                                            if (dateNow.compareTo(enteredDate) < 0) {
                                                 bClose = false;
-                                                Utils.log(String.valueOf(date + " ! " + enteredDate)
+                                                Utils.log(String.valueOf(dateNow + " ! " + enteredDate)
                                                         , " NOW ");
                                             }
                                         }
 
+
                                         if (bFuture) {
 
                                             fieldModel.setStrFieldData(data);
-
-                                            String strDate = (String) editText.getTag(R.id.two);
 
                                             if ((milestoneModel.isReschedule()
                                                     || !milestoneModel.isReschedule())
@@ -961,7 +1005,6 @@ public class MilestoneActivity extends AppCompatActivity {
                                                         getStrMilestoneScheduledDate().
                                                         equalsIgnoreCase(""))
                                                     milestoneModel.setReschedule(true);
-
 
                                                 milestoneModel.setStrMilestoneScheduledDate(strDate);
 
@@ -1003,6 +1046,15 @@ public class MilestoneActivity extends AppCompatActivity {
 
                             if (b1 && !data.equalsIgnoreCase("")) {
                                 fieldModel.setStrFieldData(data);
+
+                                //todo check this logic
+                                if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
+
+                                    if (fieldModel.getStrFieldLabel().equalsIgnoreCase("Reason")) {
+                                        strCloseUser = data;
+                                    }
+                                }
+
                             } else {
                                 utils.toast(2, 2, getString(R.string.error_field_required));
                                 spinner.setBackgroundDrawable(getResources().getDrawable(
@@ -1064,30 +1116,54 @@ public class MilestoneActivity extends AppCompatActivity {
                             strActivityStatus = "completed";
                         }
 
-                        //
-                        //String strDate = milestoneModel.getStrMilestoneDate();
-
                         //todo change message
+                        String strPushMessage = "";
 
-                        String strPushMessage = Config.providerModel.getStrName()
-                                + getString(R.string.has_updated)
-                          /*  + getString(R.string.activity)
-                            + getString(R.string.space)*/
-                                + getString(R.string.space)
-                                + act.getStrActivityName()
-                                + getString(R.string.hyphen)
-                           /* + getString(R.string.milestone)*/
-                                + getString(R.string.space)
-                                + milestoneModel.getStrMilestoneName();
+                        if (strActivityStatus.equalsIgnoreCase("completed")) {
+                            //todo complete
 
+                            if (strCloseStatus.equalsIgnoreCase("SuccessFul")) {
+                                strPushMessage = getString(R.string.notification_closure_body_1)
+                                        + getString(R.string.notification_closure_body_2)
+                                        + act.getStrActivityName()
+                                        + getString(R.string.notification_closure_body_3)
+                                        + getString(R.string.notification_closure_body_4);
+                            }
 
-                        if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
-                            strPushMessage += getString(R.string.space)
-                                    + getString(R.string.scheduled_to)
-                                    + getString(R.string.space)
-                                    + strScheduledDate + getString(R.string.space);
-                            //todo check date format
+                            if (strCloseStatus.equalsIgnoreCase("UnSuccessFul")) {
+                                if (strCloseUser.equalsIgnoreCase("Customer")) {
+                                    strPushMessage = getString(R.string.notification_closure_body_1)
+                                            + getString(R.string.notification_closure_body_provider_2)
+                                            + act.getStrActivityName()
+                                            + getString(R.string.notification_closure_body_provider_3);
+                                } else {
+                                    strPushMessage = getString(R.string.notification_closure_body_1)
+                                            + getString(R.string.notification_closure_body_provider_2)
+                                            + act.getStrActivityName()
+                                            + getString(R.string.notification_closure_body_dependnet_2)
+                                            + strDependentName;
+                                }
+                            }
+
+                        } else {
+                            strPushMessage = "";
+                            strPushMessage += getString(R.string.notification_body_1)
+                                    + milestoneModel.getStrMilestoneName()
+                                    + getString(R.string.notification_body_2);
+
+                            if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
+                                strPushMessage += getString(R.string.scheduled_to)
+                                        + Utils.formatDate(strScheduledDate);
+                            }
+
+                            strPushMessage += getString(R.string.for_text) + strDependentName
+                                    + getString(R.string.notification_body_3)
+                                    + act.getStrActivityName()
+                                    + getString(R.string.notification_body_4)
+                                    + Config.providerModel.getStrName();
                         }
+
+                        //todo check date format
 
                         jsonObject = new JSONObject();
 
@@ -1252,97 +1328,97 @@ public class MilestoneActivity extends AppCompatActivity {
             jsonObjectMileStone.put("status", strActivityStatus);
             jsonObjectMileStone.put("activity_done_date", strActivityDoneDate);
 
-            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+            if (utils.isConnectingToInternet()) {
 
-            String[] selectionArgs = {
-                    act.getStrActivityID()
-                    , Config.collectionActivity};
+                loadingPanel.setVisibility(View.VISIBLE);
 
-            Cursor cursor = CareGiver.getDbCon().fetch(DbHelper.strTableNameCollection,
-                    DbHelper.COLLECTION_FIELDS, selection, selectionArgs, null, "0, 1", true,
-                    null, null
-            );
-
-            if (cursor.getCount() > 0) {
-                cursor.moveToFirst();
-
-                try {
-                    JSONObject jsonObject = new JSONObject(cursor.getString(2));
-
-                    jsonObject.put("milestones", jsonArrayMilestones);
-                    jsonObject.put("status", strActivityStatus);
-                    jsonObject.put("activity_done_date", strActivityDoneDate);
-
-                    String values1[] = {act.getStrActivityID(),
-                            jsonObject.toString(),
-                            Config.collectionActivity, "1", "1"};
-
-                    // WHERE clause arguments
-                    CareGiver.getDbCon().updateInsert(
-                            DbHelper.strTableNameCollection,
-                            selection, values1, new String[]{"object_id", "document",
-                                    "collection_name", "new_updated", "updated"},
-                            selectionArgs);
-
-                    AppUtils.insertActivityDate(act.getStrActivityID(), jsonObject.toString());
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                updateMileStones(jsonObjectMileStone, jsonArrayMilestones);
+            } else {
+                utils.toast(2, 2, getString(R.string.warning_internet));
             }
-
-            CareGiver.getDbCon().closeCursor(cursor);
-
-            updateMileStones(jsonObjectMileStone);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void updateMileStones(JSONObject jsonToUpdate) {
+    private void updateMileStones(JSONObject jsonToUpdate, final JSONArray jsonArrayMilestones) {
 
-        if (utils.isConnectingToInternet()) {
+        Utils.log(jsonToUpdate.toString(), " JSON ");
 
-            loadingPanel.setVisibility(View.VISIBLE);
+        storageService.updateDocs(jsonToUpdate,
+                act.getStrActivityID(),
+                Config.collectionActivity, new App42CallBack() {
+                    @Override
+                    public void onSuccess(Object o) {
 
-            Utils.log(jsonToUpdate.toString(), " JSON ");
+                        String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
-            storageService.updateDocs(jsonToUpdate,
-                    act.getStrActivityID(),
-                    Config.collectionActivity, new App42CallBack() {
-                        @Override
-                        public void onSuccess(Object o) {
+                        String[] selectionArgs = {
+                                act.getStrActivityID()
+                                , Config.collectionActivity};
 
-                            ///
-                            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+                        Cursor cursor = CareGiver.getDbCon().fetch(DbHelper.strTableNameCollection,
+                                DbHelper.COLLECTION_FIELDS, selection, selectionArgs, null, "0, 1", true,
+                                null, null
+                        );
 
-                            String[] selectionArgs = {
-                                    act.getStrActivityID()
-                                    , Config.collectionActivity};
+                        if (cursor.getCount() > 0) {
+                            cursor.moveToFirst();
 
-                            String values1[] = {"0"};
+                            try {
+                                JSONObject jsonObject = new JSONObject(cursor.getString(2));
 
-                            // WHERE clause arguments
-                            CareGiver.getDbCon().updateInsert(
-                                    DbHelper.strTableNameCollection,
-                                    selection, values1, new String[]{"updated"},
-                                    selectionArgs);
-                            //
-                            insertNotification();
+                                jsonObject.put("milestones", jsonArrayMilestones);
+                                jsonObject.put("status", strActivityStatus);
+                                jsonObject.put("activity_done_date", strActivityDoneDate);
+
+                                String values1[] = {act.getStrActivityID(),
+                                        jsonObject.toString(),
+                                        Config.collectionActivity, "1", "1"};
+
+                                // WHERE clause arguments
+                                CareGiver.getDbCon().updateInsert(
+                                        DbHelper.strTableNameCollection,
+                                        selection, values1, new String[]{"object_id", "document",
+                                                "collection_name", "new_updated", "updated"},
+                                        selectionArgs);
+
+                                AppUtils.insertActivityDate(act.getStrActivityID(), jsonObject.toString());
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
 
-                        @Override
-                        public void onException(Exception e) {
-                            loadingPanel.setVisibility(View.GONE);
-                            utils.toast(2, 2, getString(R.string.warning_internet));
-                        }
-                    });
-        } else {
-            utils.toast(2, 2, getString(R.string.warning_internet));
-        }
+                        CareGiver.getDbCon().closeCursor(cursor);
+
+                        ///
+                        String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+
+                        String[] selectionArgs1 = {
+                                act.getStrActivityID()
+                                , Config.collectionActivity};
+
+                        String values1[] = {"0"};
+
+                        // WHERE clause arguments
+                        CareGiver.getDbCon().updateInsert(
+                                DbHelper.strTableNameCollection,
+                                selection1, values1, new String[]{"updated"},
+                                selectionArgs1);
+                        //
+                        insertNotification();
+                    }
+
+                    @Override
+                    public void onException(Exception e) {
+                        loadingPanel.setVisibility(View.GONE);
+                        utils.toast(2, 2, getString(R.string.warning_internet));
+                    }
+                });
     }
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -1657,10 +1733,14 @@ public class MilestoneActivity extends AppCompatActivity {
         }
     }
 
-
     private void insertNotification() {
 
         if (utils.isConnectingToInternet()) {
+
+           /* String strHtml="";
+
+            Utils.sendEmail(MilestoneActivity.this, "balamscint@gmail.com", act.getStrActivityName(),
+                    "test");*/
 
             storageService.insertDocs(Config.collectionNotification, jsonObject,
                     new AsyncApp42ServiceApi.App42StorageServiceListener() {
@@ -1728,8 +1808,9 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                 strAlert = getString(R.string.activity_updated);
 
-                                if (o == null)
+                                if (o == null) {
                                     strAlert = getString(R.string.no_push_actiity_updated);
+                                } else Utils.log(o.toString(), " PUSH 1");
 
                                 goToActivityList(strAlert);
                             }
@@ -1758,7 +1839,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         loadingPanel.setVisibility(View.GONE);
 
-        utils.toast(2, 2, strAlert);
+        utils.toast(1, 1, strAlert);
 
         mImageCount = 0;
         mImageChanged = false;
@@ -1856,7 +1937,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     fileModels.add(fileModel);
 
-                    utils.compressImageFromPath(strImageName1, Config.intCompressWidth,
+                    utils.compressImageFromPath(mCopyFile.getAbsolutePath(), Config.intCompressWidth,
                             Config.intCompressHeight, Config.iQuality);
 
                     bitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
