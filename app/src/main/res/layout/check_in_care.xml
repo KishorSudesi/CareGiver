@@ -26,6 +26,17 @@
         android:layout_height="1dp"
         android:background="@drawable/colorful_textview"/>
 
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        style="@style/GenericProgressBackground1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:visibility="gone">
+
+        <ProgressBar style="@style/GenericProgressIndicator" />
+    </RelativeLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -559,8 +570,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -686,8 +697,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -750,8 +761,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -872,8 +883,8 @@
                 style="@style/GenericProgressBackground1"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:padding="5dp"
                 android:layout_toLeftOf="@+id/uploadhallbtn"
+                android:padding="5dp"
                 android:visibility="gone">
 
                 <ProgressBar style="@style/GenericProgressIndicator" />
@@ -883,11 +894,11 @@
                     android:id="@+id/uploadhallbtn"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:padding="5dp"
-                    android:gravity="center"
                     android:layout_alignParentRight="true"
+                    android:layout_margin="5dp"
                     android:background="@drawable/button_success"
+                    android:gravity="center"
+                    android:padding="5dp"
                     android:text="@string/upload"
                     android:textColor="@color/colorWhite"
                     />
@@ -953,8 +964,8 @@
                     style="@style/GenericProgressBackground1"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:padding="5dp"
                     android:layout_toLeftOf="@+id/uploadkitchenbtn"
+                    android:padding="5dp"
                     android:visibility="gone">
 
                     <ProgressBar style="@style/GenericProgressIndicator" />
@@ -964,11 +975,11 @@
                     android:id="@+id/uploadkitchenbtn"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:padding="5dp"
-                    android:gravity="center"
                     android:layout_alignParentRight="true"
+                    android:layout_margin="5dp"
                     android:background="@drawable/button_success"
+                    android:gravity="center"
+                    android:padding="5dp"
                     android:text="@string/upload"
                     android:textColor="@color/colorWhite"
                     />
@@ -1034,8 +1045,8 @@
                     style="@style/GenericProgressBackground1"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:padding="5dp"
                     android:layout_toLeftOf="@+id/uploadwashroombtn"
+                    android:padding="5dp"
                     android:visibility="gone">
 
                     <ProgressBar style="@style/GenericProgressIndicator" />
@@ -1045,11 +1056,11 @@
                     android:id="@+id/uploadwashroombtn"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:padding="5dp"
-                    android:gravity="center"
                     android:layout_alignParentRight="true"
+                    android:layout_margin="5dp"
                     android:background="@drawable/button_success"
+                    android:gravity="center"
+                    android:padding="5dp"
                     android:text="@string/upload"
                     android:textColor="@color/colorWhite"
                     />
@@ -1115,8 +1126,8 @@
                     style="@style/GenericProgressBackground1"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:padding="5dp"
                     android:layout_toLeftOf="@+id/uploadbedroombtn"
+                    android:padding="5dp"
                     android:visibility="gone">
 
                     <ProgressBar style="@style/GenericProgressIndicator" />
@@ -1126,11 +1137,11 @@
                     android:id="@+id/uploadbedroombtn"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:padding="5dp"
-                    android:gravity="center"
                     android:layout_alignParentRight="true"
+                    android:layout_margin="5dp"
                     android:background="@drawable/button_success"
+                    android:gravity="center"
+                    android:padding="5dp"
                     android:text="@string/upload"
                     android:textColor="@color/colorWhite"
                     />

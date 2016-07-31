@@ -103,6 +103,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static boolean bViewLoaded, mImageChanged;
     private static StorageService storageService;
     public String item = "";
+    private RelativeLayout loadingPanel;
     private RelativeLayout loadingPanelhall, loadingPanelkitchen, loadingPanelwash, loadingPanelbed;
     private String strCustomerEmail;
     private int isClicked = 0;
@@ -254,6 +255,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         datetxt = (TextView) findViewById(R.id.datetxt);
 
         LinearLayout layoutDate = (LinearLayout) findViewById(R.id.linearDate);
+        loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
         if (layoutDate != null) {
             layoutDate.setOnClickListener(new View.OnClickListener() {
@@ -3832,10 +3834,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                bViewLoaded =true;
 
-                mProgressDialog = new ProgressDialog(this);
+               /* mProgressDialog = new ProgressDialog(this);
                 mProgressDialog.setMessage(getString(R.string.loading));
                 mProgressDialog.setCancelable(false);
-                mProgressDialog.show();
+                mProgressDialog.show();*/
+
+                loadingPanel.setVisibility(View.VISIBLE);
 
                 if (Utils.isConnectingToInternet(CheckInCareActivity.this)) {
                     backgroundThreadHandlerFetch = new BackgroundThreadHandlerFetchImages();
@@ -3935,9 +3939,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 addBedroomImages();
             }
 
-            if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            loadingPanel.setVisibility(View.GONE);
+           /* if (mProgressDialog != null && mProgressDialog.isShowing()) {
                 mProgressDialog.dismiss();
-            }
+            }*/
         }
     }
 
