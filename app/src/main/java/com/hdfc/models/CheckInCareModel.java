@@ -12,7 +12,6 @@ public class CheckInCareModel {
     private String strStatus = "";
     private String strMonth = "";
     private String strYear = "";
-    private String strHouseName = "";
     private String strCreatedDate = "";
     private String strCurrentDate = "";
     private String strUpdatedDate = "";
@@ -34,7 +33,7 @@ public class CheckInCareModel {
     }
 
     public CheckInCareModel(String strDocumentID,String strName, String strStatus, String strMonth, String strYear,
-                            String strHouseName, String strCreatedDate, String strUpdatedDate,
+                             String strCreatedDate, String strUpdatedDate,
                             String strCustomerID, String strDependentID, String strCurrentDate,
                             String strCheckInCareName, String strMediaComment, ArrayList<PictureModel> pictureModels,
                             ArrayList<CheckInCareActivityModel> checkInCareActivityModels) {
@@ -43,7 +42,6 @@ public class CheckInCareModel {
         this.strStatus = strStatus;
         this.strMonth = strMonth;
         this.strYear = strYear;
-        this.strHouseName = strHouseName;
         this.strCreatedDate = strCreatedDate;
         this.strUpdatedDate = strUpdatedDate;
         this.strCustomerID = strCustomerID;
@@ -97,13 +95,7 @@ public class CheckInCareModel {
         this.strYear = strYear;
     }
 
-    public String getStrHouseName() {
-        return strHouseName;
-    }
 
-    public void setStrHouseName(String strHouseName) {
-        this.strHouseName = strHouseName;
-    }
 
     public String getStrCreatedDate() {
         return strCreatedDate;

@@ -127,6 +127,48 @@
                     android:padding="10dp" />
 
             </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/colorful_textview" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.6"
+                    android:gravity="left|center"
+                    android:padding="10dp"
+                    android:text="CheckInCare Receipents"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <Spinner
+                    android:id="@+id/dependentspinner"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.4"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:visibility="gone"
+                     />
+
+                <EditText
+                    android:id="@+id/dependentname1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.4"
+                    android:maxLength="80"
+                    android:padding="10dp"
+                    android:visibility="gone"/>
+
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -1105,7 +1147,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
-                android:layout_margin="5dp"
+                android:layout_margin="10dp"
                 android:background="@drawable/header_gradient"
                 android:orientation="horizontal">
 

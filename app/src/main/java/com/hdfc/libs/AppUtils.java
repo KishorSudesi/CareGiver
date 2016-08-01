@@ -2672,7 +2672,7 @@ public class AppUtils {
             checkInCareModel.setStrCreatedDate(jsonObjectCheck.optString("created_date"));
             checkInCareModel.setStrMediaComment(jsonObjectCheck.optString("media_comment"));
             checkInCareModel.setStrProviderID(jsonObjectCheck.optString("provider_id"));
-            checkInCareModel.setStrHouseName(jsonObjectCheck.optString("house_name"));
+            checkInCareModel.setStrDependentID(jsonObjectCheck.optString("dependent_id"));
             checkInCareModel.setStrCurrentDate(jsonObjectCheck.optString("current_date"));
             checkInCareModel.setStrMonth(jsonObjectCheck.optString("month"));
             checkInCareModel.setStrYear(jsonObjectCheck.optString("year"));
