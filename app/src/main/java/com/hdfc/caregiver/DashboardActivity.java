@@ -469,6 +469,12 @@ public class DashboardActivity extends AppCompatActivity implements
         textViewFeedback.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         //Config.intSelectedMenu = Config.intRatingsScreen;
         gotoFeedback();
+
+        //todo servcie
+
+        /*Intent in = new Intent(DashboardActivity.this, UpdateService.class);
+        in.putExtra("updateAll", true);
+        startService(in);*/
     }
 
     @Override
@@ -480,7 +486,7 @@ public class DashboardActivity extends AppCompatActivity implements
         App42GCMController.storeRegistrationId(this, gcmRegId);
         if (!App42GCMController.isApp42Registerd(DashboardActivity.this)) {
             App42GCMController.registerOnApp42(App42API.getLoggedInUser(), gcmRegId, this);
-            //Utils.log(gcmRegId, " GCM ");
+            Utils.log(gcmRegId, " GCM ");
         }
     }
 

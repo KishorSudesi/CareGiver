@@ -1,11 +1,12 @@
 package com.hdfc.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by balamurugan@adstringo.in on 01-01-2016.
  */
-public class DependentModel {
+public class DependentModel implements Serializable {
 
     private String strName;
     private String strRelation;

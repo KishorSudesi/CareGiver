@@ -106,7 +106,7 @@
    public *;
  }
 
-  #sql glide circle
+  #glide circle
   -dontwarn jp.wasabeef.**
   -keep class com.jp.wasabeef.** { *; }
   -keep interface jp.wasabeef.** { *; }

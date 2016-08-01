@@ -8,6 +8,7 @@ package com.hdfc.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -185,6 +186,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                              View convertView, final ViewGroup parent) {
 
         final CustomerModel customerModel = (CustomerModel)getGroup(groupPosition);
+        final ArrayList<DependentModel> dependentModels = Config.clientModels.get(groupPosition).
+                getDependentModels();
         ViewHolder viewHolder;
 
         if (convertView == null) {
@@ -272,7 +275,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                     //fetchCheckInCareName(imonth, iyear, Config.customerModel.getStrCustomerID(), Config.providerModel.getStrProviderId());
 
-                    fetchAllCheckInCares(imonth, iyear);
+                    fetchAllCheckInCares(imonth, iyear, dependentModels);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -285,7 +288,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     }
 
-    private void fetchAllCheckInCares(int iMonth, int iYear) {
+    private void fetchAllCheckInCares(int iMonth, int iYear, final ArrayList<DependentModel>
+            dependentModels) {
 
         Config.checkInCareModels.clear();
 
@@ -354,6 +358,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(_context, CheckInCareActivity.class);
+                    Bundle b = new Bundle();
+                    b.putSerializable("DEPENDENTS", dependentModels);
+                    i.putExtras(b);
                     _context.startActivity(i);
 
                 }
@@ -386,6 +393,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(_context, CheckInCareActivity.class);
+                    Bundle b = new Bundle();
+                    b.putSerializable("DEPENDENTS", dependentModels);
+                    i.putExtras(b);
                     _context.startActivity(i);
 
                 }
