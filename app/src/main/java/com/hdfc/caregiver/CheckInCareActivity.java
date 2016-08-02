@@ -141,6 +141,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private ProgressDialog mProgressDialog;
     private String items[], strSelectedDate;
     private Spinner dependentspinner;
+    private Bundle bundle;
     private static ArrayList<DependentModel> dependent = new ArrayList<>();
 
     private PermissionHelper permissionHelper;
@@ -244,9 +245,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             try {
                 dependentname.setVisibility(View.GONE);
                 dependentspinner.setVisibility(View.VISIBLE);
-                Bundle b = getIntent().getExtras();
-                if (b != null) {
-                    dependent = (ArrayList<DependentModel>) b.getSerializable("DEPENDENTS");
+                bundle = getIntent().getExtras();
+                if (bundle != null) {
+                    dependent = (ArrayList<DependentModel>) bundle.getSerializable("DEPENDENTS");
 
                 }
 
@@ -315,6 +316,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 @Override
                 public void onClick(View v) {
                     isClicked = 4;
+                    datetxt.setError(null);
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
                             .setListener(listener)
                             .setInitialDate(new Date())
@@ -566,6 +568,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     bedroombitmaps.clear();
 
                     bViewLoaded =false;
+                    editcheckincare=false;
                     goBack();
                 }
             });
@@ -604,12 +607,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         ////////////////////////////////editcheckincare
 
         try {
-            Bundle getBundle = getIntent().getExtras();
+            bundle = getIntent().getExtras();
             //CheckInCareModel checkInCareModel = null;
             int mPosition = -1;
-            if (getBundle != null) {
-                editcheckincare = getBundle.getBoolean("editcheckincare");
-                mPosition = getBundle.getInt("itemposition");
+            if (bundle != null) {
+                editcheckincare = bundle.getBoolean("editcheckincare");
+                mPosition = bundle.getInt("itemposition");
             } else {
                 editcheckincare = false;
                 mPosition = -1;
@@ -640,6 +643,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }else{
                     checkincarename.setEnabled(true);
                 }
+
+                dependentId = Config.checkInCareModel.getStrDependentID();
 
                 ///////////////////////////////////////////////////////fetch depedent
                 Cursor cursor1 = CareGiver.getDbCon().fetch(
@@ -950,6 +955,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     valautomobile = automobile.getText().toString().trim();
                     valmaidservices = maidservices.getText().toString().trim();
                     valmediacomment = mediacomment.getText().toString().trim();
+
 
 
                         if (TextUtils.isEmpty(valdate)) {
@@ -1274,6 +1280,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         bedroombitmaps.clear();
 
         bViewLoaded =false;
+        editcheckincare=false;
         goBack();
     }
 
@@ -1333,7 +1340,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                     isUploadHallImage = true;
                                                     uploadhallbtn.setEnabled(false);
                                                     uploadhallbtn.setText(getString(R.string.upload_images_sucees));
-                                                    uploadhallbtn.setBackgroundColor(Color.GREEN);
                                                     buttonHallAdd.setEnabled(false);
                                                     for ( int i = 0; i < layouthall.getChildCount();  i++ ){
                                                         View view = layouthall.getChildAt(i);
@@ -1473,7 +1479,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                     isUploadKitchenImage = true;
                                                     uploadkitchenbtn.setEnabled(false);
                                                     uploadkitchenbtn.setText(getString(R.string.upload_images_sucees));
-                                                    uploadkitchenbtn.setBackgroundColor(Color.GREEN);
                                                     buttonKitchenAdd.setEnabled(false);
                                                     for ( int i = 0; i < layoutkitchen.getChildCount();  i++ ){
                                                         View view = layoutkitchen.getChildAt(i);
@@ -1611,7 +1616,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                     isUploadWashImage = true;
                                                     uploadwashroombtn.setEnabled(false);
                                                     uploadwashroombtn.setText(getString(R.string.upload_images_sucees));
-                                                    uploadwashroombtn.setBackgroundColor(Color.GREEN);
                                                     buttonWashroomAdd.setEnabled(false);
                                                     for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
                                                         View view = layoutwashroom.getChildAt(i);
@@ -1750,7 +1754,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                     isUploadBedImage = true;
                                                     uploadbedroombtn.setEnabled(false);
                                                     uploadwashroombtn.setText(getString(R.string.upload_images_sucees));
-                                                    uploadwashroombtn.setBackgroundColor(Color.GREEN);
                                                     buttonBedroomAdd.setEnabled(false);
                                                     for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
                                                         View view = layoutbedroom.getChildAt(i);
@@ -2341,7 +2344,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 String strYear = Utils.writeFormatDateYear.format(mydate);
 
                 jsonObjectCheckinCare.put("created_date", strCreateDate);
-              //  jsonObjectCheckinCare.put("dependent_id", dependentId);
+                jsonObjectCheckinCare.put("dependent_id", dependentId);
                 jsonObjectCheckinCare.put("provider_id", Config.providerModel.getStrProviderId());
                 jsonObjectCheckinCare.put("updated_date", "");
                 jsonObjectCheckinCare.put("current_date", datetxt.getText().toString());
@@ -2729,6 +2732,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             //IMAGE_COUNT = 0;
                             bViewLoaded =false;
                             utils.toast(1, 1, getString(R.string.data_upload));
+                            editcheckincare=false;
                             Intent intent = new Intent(CheckInCareActivity.this,
                                     DashboardActivity.class);
                             Config.intSelectedMenu = Config.intClientScreen;
