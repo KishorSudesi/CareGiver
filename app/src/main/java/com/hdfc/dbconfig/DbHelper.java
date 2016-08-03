@@ -7,16 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 
-import com.hdfc.config.Config;
 import com.hdfc.libs.Utils;
-import com.scottyab.aescrypt.AESCrypt;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
-import java.security.GeneralSecurityException;
-import java.text.SimpleDateFormat;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -26,6 +22,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DEFAULT_DB_DATE = "2016-01-01T06:04:57.691Z";
     public static final String COLUMN_OBJECT_ID = "object_id";
     public static final String COLUMN_CUSTOMER_ID = "customer_id";
+    public static final String COLUMN_PROVIDER_ID = "provider_id";
     public static final String COLUMN_MILESTONE_DATE = "milestone_date";
     public static final String COLUMN_MILESTONE_ID = "milestone_id";
     public static final String COLUMN_UPDATE_DATE = "updated_date";
@@ -34,36 +31,35 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CLIENT_FLAG = "client_flag";
     public static final String COLUMN_NEW_UPDATED = "new_updated";
     public static final String COLLECTION_FIELDS[] = {"object_id", "updated_date", "document",
-            "collection_name", "status", "client_flag", "new_updated"};
+            "collection_name", "client_flag", "new_updated", "provider_id"};
 
     public static final String COLLECTION_FIELDS_CD[] = {"object_id", "updated_date", "document",
-            "collection_name"};
+            "collection_name", "provider_id", "new_updated"};
 
     public static final String COLLECTION_FIELDS_CLIENTS[] = {"object_id",
-            "collection_name", "status"};
+            "collection_name", "provider_id"};
 
-    public static final String MILESTONE_FIELDS[] = {"object_id", "milestone_id", "milestone_date"};
+    public static final String MILESTONE_FIELDS[] = {"object_id", "milestone_id", "milestone_date",
+            "provider_id", "status"};
     public static final String CCARE_FIELDS[] = {"object_id", "milestone_id", "milestone_date",
-            "customer_id"};
-    public static final String DATE_FORMAT_DB = "yyyy-MM-dd HH:mm:ss.SSS";
-    //CREATE INDEX indexname ON tablename(columnname);
-    public static final SimpleDateFormat sqlQueryFormat =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Utils.locale);
-    private static final int DATABASE_VERSION = 13;
+            "customer_id", "provider_id"};
+
+    private static final int DATABASE_VERSION = 15;
     private static final String DATABASE_NAME = "caregiver";
-    private static String dbPass = ""; //"hdfc@12#$";//
+    //private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
     private static SQLiteDatabase db;
     //private Utils utils;
     private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection
             + " ( id integer primary key autoincrement, object_id VARCHAR(50), updated_date "
-            + "datetime, document text, collection_name VARCHAR(50), status integer, "
-            + "client_flag integer, updated integer, new_updated integer)";
+            + "datetime, document text, collection_name VARCHAR(50), "
+            + "client_flag integer, new_updated integer, provider_id VARCHAR(50))";
     //doc_date datetime,
 
     private String strMilestoneQuery = "CREATE TABLE " + strTableNameMilestone + " ( id integer "
             + "primary key autoincrement, object_id VARCHAR(50), milestone_id integer,"
-            + " milestone_date datetime, customer_id VARCHAR(50))";
+            + " milestone_date datetime, customer_id VARCHAR(50), provider_id VARCHAR(50)," +
+            " status VARCHAR(50))";
 
     /*private String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
             " name VARCHAR(100), url VARCHAR(300), file_type VARCHAR(10),  file_hash VARCHAR(50))";
@@ -78,11 +74,11 @@ public class DbHelper extends SQLiteOpenHelper {
         //originalFile = context.getDatabasePath(DATABASE_NAME);
         this._ctxt = context;
 
-        try {
+       /* try {
             dbPass = AESCrypt.decrypt(Config.string, "IqSKDxDO7p2HjCs+8R4Z0A==");
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     static synchronized DbHelper getInstance(Context ctx) {

@@ -6,10 +6,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-     <uses-permission android:name="android.permission.CALL_PHONE" />
-     <uses-permission android:name="android.permission.SEND_SMS" />-->
+    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -95,14 +95,6 @@
             </intent-filter>
         </activity>
 
-        <!-- <receiver android:name="com.shephertz.app42.paas.sdk.android.App42BroadcastReceiver">
-             <intent-filter>
-                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-             </intent-filter>
-         </receiver>
-         <receiver android:name="com.shephertz.app42.paas.sdk.android.AlarmReceiver" />
-
-         <service android:name="com.shephertz.app42.paas.sdk.android.App42DataSyncService" />-->
         <service android:name="com.hdfc.app42service.App42GCMService" />
 
         <receiver
@@ -126,6 +118,17 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
+        <service
+            android:name="com.hdfc.services.SyncService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+
+        <!--   <receiver android:name="com.hdfc.receiver.BootReceiver">
+               <intent-filter>
+                   <action android:name="android.intent.action.BOOT_COMPLETED" />
+               </intent-filter>
+           </receiver>-->
 
     </application>
 

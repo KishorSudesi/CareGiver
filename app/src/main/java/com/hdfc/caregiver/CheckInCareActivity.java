@@ -18,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,12 +26,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
-import com.bumptech.glide.Glide;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.app42service.App42GCMService;
@@ -44,7 +43,6 @@ import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
-import com.hdfc.models.ActivityModel;
 import com.hdfc.models.CheckInCareActivityModel;
 import com.hdfc.models.DependentModel;
 import com.hdfc.models.ImageModel;
@@ -67,7 +65,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import pl.tajchert.nammu.PermissionCallback;
 
 /**
@@ -86,8 +83,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static Boolean isUploadKitchenImage = false;
     private static Boolean isUploadWashImage = false;
     private static Boolean isUploadBedImage = false;
-    private boolean isAccessible;
-
     private static Utils utils;
     //private static ProgressDialog mProgress = null;
     private static Handler backgroundThreadHandler, backgroundThreadHandlerFetch;
@@ -105,7 +100,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static boolean isCompleted = false, bLoad;
     private static boolean bViewLoaded, mImageChanged;
     private static StorageService storageService;
+    private static ArrayList<DependentModel> dependent = new ArrayList<>();
     public String item = "",dependentId = "";
+    private boolean isAccessible;
     private RelativeLayout loadingPanel;
     private RelativeLayout loadingPanelhall, loadingPanelkitchen, loadingPanelwash, loadingPanelbed;
     private String strCustomerEmail;
@@ -114,7 +111,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private boolean isClick = false;
     private Button buttonHallAdd,buttonKitchenAdd,buttonWashroomAdd,buttonBedroomAdd;
     private Button uploadhallbtn,uploadkitchenbtn,uploadwashroombtn,uploadbedroombtn ;
-
     private EditText electronic, homeapplience, automobile, maidservices, kitchen_equipments,
             grocery, mediacomment, checkincarename,dependentname;
     private TextView datetxt;
@@ -142,9 +138,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private String items[], strSelectedDate;
     private Spinner dependentspinner;
     private Bundle bundle;
-    private static ArrayList<DependentModel> dependent = new ArrayList<>();
-
     private PermissionHelper permissionHelper;
+
+    private ProgressBar progressBar;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -276,6 +272,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         /////////////////////////////////end
 
         mainlinearlayout = (LinearLayout) findViewById(R.id.mainlinearlayout);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         permissionHelper = PermissionHelper.getInstance(this);
 
@@ -417,13 +414,15 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         }
 
         if (client != null) {
-            Glide.with(CheckInCareActivity.this)
+           /* Glide.with(CheckInCareActivity.this)
                     .load(strImageName)
                     .centerCrop()
                     .bitmapTransform(new CropCircleTransformation(CheckInCareActivity.this))
                     .placeholder(R.drawable.person_icon)
                     .crossFade()
-                    .into(client);
+                    .into(client);*/
+
+            Utils.loadGlide(CheckInCareActivity.this, strImageName, client, progressBar);
         }
 
         if (electrocheck.isChecked() && homecheck.isChecked() && autocheck.isChecked()) {
@@ -609,13 +608,13 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         try {
             bundle = getIntent().getExtras();
             //CheckInCareModel checkInCareModel = null;
-            int mPosition = -1;
+            //int mPosition = -1;
             if (bundle != null) {
                 editcheckincare = bundle.getBoolean("editcheckincare");
-                mPosition = bundle.getInt("itemposition");
+                //mPosition = bundle.getInt("itemposition");
             } else {
                 editcheckincare = false;
-                mPosition = -1;
+                //mPosition = -1;
                 //checkInCareModel = null;
             }
             if (editcheckincare && Config.checkInCareModel != null) {
@@ -649,8 +648,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 ///////////////////////////////////////////////////////fetch depedent
                 Cursor cursor1 = CareGiver.getDbCon().fetch(
                         DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
-                        new String[]{Config.collectionDependent, Config.checkInCareModel.getStrDependentID()},
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID
+                                + "=? and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
+                        new String[]{Config.collectionDependent,
+                                Config.checkInCareModel.getStrDependentID(),
+                                Config.providerModel.getStrProviderId()
+                        },
                         null, "0,1", true, null, null
                 );
 
@@ -659,7 +662,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 if (cursor1.getCount() > 0) {
                     cursor1.moveToFirst();
                     try {
-                        if (cursor1.getString(0) != null && !cursor1.getString(0).equalsIgnoreCase("")) {
+                        if (cursor1.getString(0) != null
+                                && !cursor1.getString(0).equalsIgnoreCase("")) {
                             jsonObject = new JSONObject(cursor1.getString(0));
                         }
                     } catch (JSONException e) {
@@ -676,9 +680,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         if (jsonObject.getString("dependent_name") != null
                                 && !jsonObject.getString("dependent_name").equalsIgnoreCase("")) {
                             strDependentName = jsonObject.optString("dependent_name");
-
                         }
-
 
                     } else {
                         isAccessible = false;
@@ -2214,7 +2216,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         String values[] = {jsonDocument.getDocId(),
                                                 jsonDocument.getUpdatedAt(),
                                                 jsonDocument.getJsonDoc(),
-                                                Config.collectionCheckInCare, "0", "", "1"};
+                                                Config.collectionCheckInCare, "", "1",
+                                                Config.providerModel.getStrProviderId()
+                                        };
 
                                         String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                                 + DbHelper.COLUMN_COLLECTION_NAME + "=?";
@@ -2234,10 +2238,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 convertStringToDateQuery(jsonObject.getString("activity_date").substring(0,
                                                         jsonObject.getString("activity_date").length() - 1)));*/
 
+                                        //todo fetch from session if offline sync update enabled
                                         String values1[] = {jsonDocument.getDocId(),
                                                 "-1",
                                                 strSelectedDate,
-                                                Config.customerModel.getStrCustomerID()
+                                                Config.customerModel.getStrCustomerID(),
+                                                Config.providerModel.getStrProviderId()
                                         };
 
                                         String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
@@ -2691,7 +2697,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             String values[] = {Config.checkInCareModel.getStrDocumentID(),
                                     "",
                                     jsonObject.toString(),
-                                    Config.collectionCheckInCare, "0", "", "1"};
+                                    Config.collectionCheckInCare, "", "1",
+                                    Config.providerModel.getStrProviderId()
+                            };
 
                             String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                     + DbHelper.COLUMN_COLLECTION_NAME + "=?";
@@ -2705,10 +2713,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                     selectionArgs);
 
 
+                            //todo fetch from session if offline sync update enabled
                             String values1[] = {Config.checkInCareModel.getStrDocumentID(),
                                     "-1",
                                     strSelectedDate,
-                                    Config.customerModel.getStrCustomerID()
+                                    Config.customerModel.getStrCustomerID(),
+                                    Config.providerModel.getStrProviderId()
                             };
 
                             String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
@@ -4059,6 +4069,52 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    private void insertNotification(final JSONObject jsonObject) {
+
+        if (utils.isConnectingToInternet()) {
+
+            storageService.insertDocs(Config.collectionNotification, jsonObject,
+                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+
+                        @Override
+                        public void onDocumentInserted(Storage response) {
+                            try {
+                                if (response.isResponseSuccess()) {
+                                    //sendPush(jsonObject);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onUpdateDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onFindDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onInsertionFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onFindDocFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onUpdateDocFailed(App42Exception ex) {
+                        }
+                    });
+        }
+    }
+
+    private void hideSoftKeyboard(View v) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
     private class BackgroundThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -4545,47 +4601,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private void insertNotification(final JSONObject jsonObject) {
-
-        if (utils.isConnectingToInternet()) {
-
-            storageService.insertDocs(Config.collectionNotification, jsonObject,
-                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
-
-                        @Override
-                        public void onDocumentInserted(Storage response) {
-                            try {
-                                if (response.isResponseSuccess()) {
-                                    //sendPush(jsonObject);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onUpdateDocSuccess(Storage response) {
-                        }
-
-                        @Override
-                        public void onFindDocSuccess(Storage response) {
-                        }
-
-                        @Override
-                        public void onInsertionFailed(App42Exception ex) {
-                        }
-
-                        @Override
-                        public void onFindDocFailed(App42Exception ex) {
-                        }
-
-                        @Override
-                        public void onUpdateDocFailed(App42Exception ex) {
-                        }
-                    });
-        }
-    }
-
     private class BackgroundThreadHandlerFetchImages extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -4593,10 +4608,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             Thread backgroundThreadImages = new BackgroundThreadImages();
             backgroundThreadImages.start();
         }
-    }
-    private void hideSoftKeyboard(View v){
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
 

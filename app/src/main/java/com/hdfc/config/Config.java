@@ -29,7 +29,6 @@ import java.util.Map;
 public class Config {
 
     public static final String dbName = "newzeal";
-    //public static final String strPreferenceName = "CARE_GIVER";
 
     public static final String collectionService = "service";
     public static final String collectionServiceHistory = "servicehistory";
@@ -44,10 +43,6 @@ public class Config {
     public static final String collectionLoginLog = "login_log";
     public static final String collectionCheckInCare = "checkincare";
 
-
-    ///public static final String UPDATE_DATE = "2016-01-01T00:00:00.000Z";
-
-    //public static final Locale locale = Locale.ENGLISH;
     public static final int iSdkVersion = Build.VERSION.SDK_INT;
     public static final int iAppVersion = BuildConfig.VERSION_CODE;
 
@@ -58,7 +53,8 @@ public class Config {
     public static final int START_GALLERY_REQUEST_CODE = 2;
     //public static final int CACHE_EXPIRE = 1;//In Minutes
     public static final int intWidth = 300, intHeight = 300;
-    public static final int intCompressWidth = 240, intCompressHeight = 240, iQuality = 80;
+    //todo fix the dimension and quality
+    public static final int intCompressWidth = 300, intCompressHeight = 300, iQuality = 70;
     /* public static final String[] weekNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};*/
     /* public static final String[] months = {"January", "February", "March", "April", "May", "June",
              "July", "August", "September", "October", "November", "December"};*/
@@ -66,7 +62,7 @@ public class Config {
     public static final boolean isDebuggable = true;
     public static final String string = Utils.getStringJni();
     public static final boolean release = false;
-    public static final boolean DEVELOPMENT = false;
+    public static final boolean DEVELOPMENT = true;
     //Login specific //User Specific clear at logout or whenever needed
     public final static String strCustomerImageName = "provider_image";
     public static int intClientScreen = 2;
@@ -125,8 +121,6 @@ public class Config {
 
     public static ArrayList<String> strDependentNames = new ArrayList<>();
     public static ArrayList<String> strCustomerNames = new ArrayList<>();
-
-    //public static String strProviderUrl = "";
 
     public enum ActivityStatus {NEW, OPEN, INPROCESS, COMPLETED}
 

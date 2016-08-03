@@ -21,11 +21,11 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
-import com.bumptech.glide.Glide;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.config.CareGiver;
@@ -51,7 +51,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import pl.tajchert.nammu.PermissionCallback;
 
 public class FeatureActivity extends AppCompatActivity {
@@ -81,6 +80,7 @@ public class FeatureActivity extends AppCompatActivity {
     private Button done;
     private PermissionHelper permissionHelper;
     private boolean isAllowed = false;
+    private ProgressBar progressBar1, progressBar2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +90,8 @@ public class FeatureActivity extends AppCompatActivity {
         ImageView imgLogoHeaderTaskDetail = (ImageView) findViewById(R.id.imgLogoHeaderTaskDetail);
         done = (Button) findViewById(R.id.buttonVegetibleDone);
         linearLayoutAttach = (LinearLayout) findViewById(R.id.linearLayout1);
+        progressBar1 = (ProgressBar) findViewById(R.id.progressBar1);
+        progressBar2 = (ProgressBar) findViewById(R.id.progressBar2);
         Button cancel = (Button) findViewById(R.id.buttonBack);
         TextView textViewActivityName = (TextView) findViewById(R.id.txtActivityName);
         textViewTime = (TextView) findViewById(R.id.txtActivityTime);
@@ -173,13 +175,18 @@ public class FeatureActivity extends AppCompatActivity {
                             && !jsonObject.getString("dependent_profile_url").
                             equalsIgnoreCase("")) {
 
-                        Glide.with(FeatureActivity.this)
+                        /*Glide.with(FeatureActivity.this)
                                 .load(jsonObject.getString("dependent_profile_url"))
                                 .centerCrop()
                                 .bitmapTransform(new CropCircleTransformation(FeatureActivity.this))
                                 .placeholder(R.drawable.person_icon)
                                 .crossFade()
-                                .into(imgLogoHeaderTaskDetail);
+                                .into(imgLogoHeaderTaskDetail);*/
+
+                        Utils.loadGlide(FeatureActivity.this,
+                                jsonObject.getString("dependent_profile_url"),
+                                imgLogoHeaderTaskDetail,
+                                progressBar1);
                     }
                 } else {
                     isAccessible = false;
@@ -260,14 +267,17 @@ public class FeatureActivity extends AppCompatActivity {
 
                             textName.setText(strCustomerName);
 
-                            Glide.with(FeatureActivity.this)
+                            /*Glide.with(FeatureActivity.this)
                                     .load(strCustomerUrl)
                                     .centerCrop()
                                     .bitmapTransform(new CropCircleTransformation(
                                             FeatureActivity.this))
                                     .placeholder(R.drawable.person_icon)
                                     .crossFade()
-                                    .into(imageDialog);
+                                    .into(imageDialog);*/
+
+                            Utils.loadGlide(FeatureActivity.this, strCustomerUrl, imageDialog,
+                                    progressBar2);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -437,7 +447,9 @@ public class FeatureActivity extends AppCompatActivity {
                                     String values1[] = {act.getStrActivityID(),
                                             "",
                                             jsonObject.toString(),
-                                            Config.collectionActivity, "0", "", "1"};
+                                            Config.collectionActivity, "", "2",
+                                            act.getStrProviderID()
+                                    };
 
                                     // WHERE clause arguments
                                     CareGiver.getDbCon().updateInsert(

@@ -19,14 +19,30 @@
             android:background="@drawable/border_right_blue"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/roundedImageView"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="@dimen/margin_general"
-                android:padding="@dimen/padding_general"
-                android:src="@drawable/person_icon" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_gravity="center_horizontal">
+
+                <ImageView
+                    android:id="@+id/roundedImageView"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="@dimen/margin_general"
+                    android:padding="@dimen/padding_general"
+                    android:src="@drawable/person_icon" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/margin_general"
+                    android:padding="@dimen/padding_general"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 

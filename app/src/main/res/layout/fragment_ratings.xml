@@ -61,6 +61,14 @@
                     android:layout_weight="0.5"
                     android:paddingTop="12dp" />
 
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="0.5"
+                    android:paddingTop="12dp"
+                    android:visibility="gone" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

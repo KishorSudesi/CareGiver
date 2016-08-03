@@ -81,6 +81,7 @@ public class NotificationFragment extends Fragment {
     }
 
     private void showPushDialog(final String strMessage) {
+        Utils.clearNotifications(getActivity());
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.app_name));
         builder.setMessage(strMessage);
@@ -216,7 +217,9 @@ public class NotificationFragment extends Fragment {
                                             String values[] = {jsonDocList.get(i).getDocId(),
                                                     jsonDocList.get(i).getUpdatedAt(),
                                                     jsonDocList.get(i).getJsonDoc(),
-                                                    Config.collectionNotification, "1", "", "1"};
+                                                    Config.collectionNotification, "", "1",
+                                                    Config.providerModel.getStrProviderId()
+                                            };
 
                                             Utils.log(" 1 ", " 2 ");
                                             CareGiver.getDbCon().insert(

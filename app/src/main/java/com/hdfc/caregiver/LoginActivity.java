@@ -453,7 +453,7 @@ public class LoginActivity extends AppCompatActivity {
                                             String values[] = {jsonDocument.getDocId(),
                                                     jsonDocument.getUpdatedAt(),
                                                     jsonDocument.getJsonDoc(),
-                                                    Config.collectionProvider, "1", "", "1"};
+                                                    Config.collectionProvider, "", "1", ""};
 
                                             String selection = DbHelper.COLUMN_OBJECT_ID +
                                                     " = ? and " + DbHelper.COLUMN_COLLECTION_NAME
@@ -579,7 +579,7 @@ public class LoginActivity extends AppCompatActivity {
                 jsonObject.put("source", "caregiver");
                 jsonObject.put("user_type", "provider");
                 jsonObject.put("device_id", Utils.getDeviceID(LoginActivity.this));
-                jsonObject.put("os", "android");
+                jsonObject.put("os", Config.strOs);
                 jsonObject.put("sdk_version", Config.iSdkVersion);
                 jsonObject.put("app_version", Config.iAppVersion);
                 jsonObject.put("time", strDateNow);

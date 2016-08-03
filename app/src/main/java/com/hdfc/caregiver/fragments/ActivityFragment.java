@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.CreatingTaskActivity;
 import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
@@ -35,8 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 
 public class ActivityFragment extends Fragment
@@ -176,9 +173,11 @@ public class ActivityFragment extends Fragment
 
                     cursor = CareGiver.getDbCon().fetch(
                         DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                            DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
+                            DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID
+                                    + "=?" + " and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
                         new String[]{Config.collectionDependent,
-                                activityModels.get(position).getStrDependentID()
+                                activityModels.get(position).getStrDependentID(),
+                                activityModels.get(position).getStrProviderID()
                         },
                         null, "0,1", true, null, null
                     );
@@ -204,13 +203,15 @@ public class ActivityFragment extends Fragment
                 if (!strUrl.equalsIgnoreCase("")) {
 
                     if (!((Activity) context).isFinishing()) {
-                        Glide.with(context)
+                      /*  Glide.with(context)
                                 .load(strUrl)
                                 .centerCrop()
                                 .bitmapTransform(new CropCircleTransformation(context))
                                 .placeholder(R.drawable.person_icon)
                                 .crossFade()
-                                .into(cvh.imagePerson);
+                                .into(cvh.imagePerson);*/
+
+                        Utils.loadGlide(context, strUrl, cvh.imagePerson, null);
                     }
                 }
             }
@@ -400,9 +401,10 @@ public class ActivityFragment extends Fragment
                     Cursor cursor1 = CareGiver.getDbCon().fetch(
                             DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
                             DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID
-                                    + "=?",
+                                    + "=?" + " and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
                             new String[]{Config.collectionDependent,
-                                    activityModels.get(itemPosition).getStrDependentID()
+                                    activityModels.get(itemPosition).getStrDependentID(),
+                                    activityModels.get(itemPosition).getStrProviderID()
                             },
                             null, "0,1", true, null, null
                     );

@@ -156,6 +156,9 @@ public class DashboardActivity extends AppCompatActivity implements
     }
 
     private void showPushDialog(final String strMessage) {
+
+        Utils.clearNotifications(DashboardActivity.this);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
         builder.setTitle(getString(R.string.app_name));
         builder.setMessage(strMessage);
@@ -285,6 +288,11 @@ public class DashboardActivity extends AppCompatActivity implements
 
                         if (Utils.isConnectingToInternet(DashboardActivity.this)) {
                             Utils.toast(1, 1, getString(R.string.updating), DashboardActivity.this);
+
+                            //update service
+                            /*Intent serviceIntent = new Intent(DashboardActivity.this, SyncService.class);
+                            startService(serviceIntent);*/
+
                             AppUtils.syncAll(DashboardActivity.this);
                         } else {
                             Utils.toast(2, 2, getString(R.string.warning_internet),
@@ -300,6 +308,11 @@ public class DashboardActivity extends AppCompatActivity implements
                     public void onClick(View v) {
                         if (Utils.isConnectingToInternet(DashboardActivity.this)) {
                             Utils.toast(1, 1, getString(R.string.updating), DashboardActivity.this);
+
+                            //update service
+                           /* Intent serviceIntent = new Intent(DashboardActivity.this, SyncService.class);
+                            startService(serviceIntent);*/
+
                             AppUtils.syncAll(DashboardActivity.this);
                         } else {
                             Utils.toast(2, 2, getString(R.string.warning_internet),
@@ -689,6 +702,7 @@ public class DashboardActivity extends AppCompatActivity implements
             e.printStackTrace();
         }
 
+
         if (dateNow != null && dateSynced != null) {
             long diff = dateNow.getTime() - dateSynced.getTime();
 
@@ -764,6 +778,7 @@ public class DashboardActivity extends AppCompatActivity implements
                     }
 
                     if (Config.intSelectedMenu == Config.intNotificationScreen) {
+                        AppUtils.fetchActivitiesSync(DashboardActivity.this);
                         menuNotification(true);
                     }
                 }

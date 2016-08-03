@@ -1,6 +1,7 @@
 package com.hdfc.libs;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,10 +30,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.hdfc.app42service.EmailService;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
@@ -69,6 +76,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 // import android.app.NotificationManager;
 
@@ -1096,6 +1105,49 @@ public class Utils {
         return jsonArray;
     }
 
+    public static void clearNotifications(Context context) {
+        NotificationManager notifManager = (NotificationManager) context.
+                getSystemService(Context.NOTIFICATION_SERVICE);
+        notifManager.cancelAll();
+    }
+
+    public static void loadGlide(Context context, String strImage, final ImageView view,
+                                 final ProgressBar progressBar) {
+        try {
+            Glide.with(context)
+                    .load(strImage)
+                    .asBitmap()
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .error(R.drawable.person_icon)
+                    .transform(new CropCircleTransformation(context)) //bitmapTransform
+                    .placeholder(R.drawable.person_icon)
+                    //.crossFade()
+                    .listener(new RequestListener<String, Bitmap>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<Bitmap> target,
+                                                   boolean isFirstResource) {
+                            if (progressBar != null)
+                                progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Bitmap resource, String model,
+                                                       Target<Bitmap> target,
+                                                       boolean isFromMemoryCache,
+                                                       boolean isFirstResource) {
+                            if (progressBar != null)
+                                progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+                    .into(view);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     //
     public boolean compressImageFromPath(String strPath, int reqWidth, int reqHeight, int iQuality) {
 
@@ -1191,62 +1243,6 @@ public class Utils {
         }
     }
 
-    public File getInternalFileImages(String strFileName) {
-
-        File file = null;
-        try {
-            File mFolder = new File(_ctxt.getFilesDir(), "images/");
-            file = new File(_ctxt.getFilesDir(), "images/" + strFileName);
-
-            //
-            if (!mFolder.exists()) {
-                mFolder.mkdir();
-            }
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            //
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
-
-    /*
-    public void moveFile(File file, File newFile) throws IOException {
-        //File newFile = new File(dir, file.getName());
-        FileChannel outputChannel = null;
-        FileChannel inputChannel = null;
-        try {
-            outputChannel = new FileOutputStream(newFile).getChannel();
-            inputChannel = new FileInputStream(file).getChannel();
-            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
-            inputChannel.close();
-            file.delete();
-        } finally {
-            if (inputChannel != null) inputChannel.close();
-            if (outputChannel != null) outputChannel.close();
-        }
-    }
-*/
-    public void copyFile(File file, File newFile) throws IOException {
-        //File newFile = new File(dir, file.getName());
-        FileChannel outputChannel = null;
-        FileChannel inputChannel = null;
-        try {
-            outputChannel = new FileOutputStream(newFile).getChannel();
-            inputChannel = new FileInputStream(file).getChannel();
-            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
-            inputChannel.close();
-            //file.delete();
-        } finally {
-            if (inputChannel != null) inputChannel.close();
-            if (outputChannel != null) outputChannel.close();
-        }
-    }
-
  /*public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for ( int j = 0; j < bytes.length; j++ ) {
@@ -1273,18 +1269,27 @@ public class Utils {
         }
     }*/
 
-    public boolean isConnectingToInternet() {
-        ConnectivityManager connectivity = (ConnectivityManager)
-                _ctxt.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivity != null) {
-            NetworkInfo[] info = connectivity.getAllNetworkInfo();
-            if (info != null)
-                for (NetworkInfo anInfo : info)
-                    if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
-                        return true;
-                    }
+    public File getInternalFileImages(String strFileName) {
+
+        File file = null;
+        try {
+            File mFolder = new File(_ctxt.getFilesDir(), "images/");
+            file = new File(_ctxt.getFilesDir(), "images/" + strFileName);
+
+            //
+            if (!mFolder.exists()) {
+                mFolder.mkdir();
+            }
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            //
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return false;
+        return file;
     }
 
     /*public EditText traverseEditTexts(ViewGroup v, Drawable all, Drawable current,
@@ -1342,6 +1347,85 @@ public class Utils {
             editText.setBackground(drw);
     }*/
 
+    /*
+    public void moveFile(File file, File newFile) throws IOException {
+        //File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+    }
+*/
+    public void copyFile(File file, File newFile) throws IOException {
+        //File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            //file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+    }
+
+    /*public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }*/
+
+    //Application Specigfic Start
+
+   /* public Bitmap getBitmapFromFile(String strPath, int intWidth, int intHeight) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        Bitmap original = null;
+        if (strPath != null && !strPath.equalsIgnoreCase("")) {
+            try {
+                options.inJustDecodeBounds = true;
+                original = BitmapFactory.decodeFile(strPath, options);
+                options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, intWidth, intHeight);
+                options.inJustDecodeBounds = false;
+                original = BitmapFactory.decodeFile(strPath, options);
+            } catch (OutOfMemoryError | Exception oOm) {
+                oOm.printStackTrace();
+            }
+        }
+        return original;
+    }*/
+
+
+    //Application Specig=fic End
+
+    public boolean isConnectingToInternet() {
+        ConnectivityManager connectivity = (ConnectivityManager)
+                _ctxt.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            if (info != null)
+                for (NetworkInfo anInfo : info)
+                    if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+        }
+        return false;
+    }
+
     /**
      * Shows the progress UI and hides the login form.
      */
@@ -1384,37 +1468,22 @@ public class Utils {
         return isValid;
     }
 
-    /*public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }*/
+    /*public ArrayList<View> getViewsByTag(ViewGroup root, String tag) {
+        ArrayList<View> views = new ArrayList<>();
+        final int childCount = root.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = root.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                views.addAll(getViewsByTag((ViewGroup) child, tag));
+            }
 
-    //Application Specigfic Start
-
-   /* public Bitmap getBitmapFromFile(String strPath, int intWidth, int intHeight) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        Bitmap original = null;
-        if (strPath != null && !strPath.equalsIgnoreCase("")) {
-            try {
-                options.inJustDecodeBounds = true;
-                original = BitmapFactory.decodeFile(strPath, options);
-                options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, intWidth, intHeight);
-                options.inJustDecodeBounds = false;
-                original = BitmapFactory.decodeFile(strPath, options);
-            } catch (OutOfMemoryError | Exception oOm) {
-                oOm.printStackTrace();
+            final Object tagObj = child.getTag();
+            if (tagObj != null && tagObj.equals(tag)) {
+                views.add(child);
             }
         }
-        return original;
+        return views;
     }*/
-
-
-    //Application Specig=fic End
 
     public File createFileInternalImage(String strFileName) {
 
@@ -1481,23 +1550,6 @@ public class Utils {
             e.printStackTrace();
         }
     }
-
-    /*public ArrayList<View> getViewsByTag(ViewGroup root, String tag) {
-        ArrayList<View> views = new ArrayList<>();
-        final int childCount = root.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            final View child = root.getChildAt(i);
-            if (child instanceof ViewGroup) {
-                views.addAll(getViewsByTag((ViewGroup) child, tag));
-            }
-
-            final Object tagObj = child.getTag();
-            if (tagObj != null && tagObj.equals(tag)) {
-                views.add(child);
-            }
-        }
-        return views;
-    }*/
 
     public void selectFile(final String strFileName, final Fragment fragment,
                            final Activity activity, final boolean isSingle){

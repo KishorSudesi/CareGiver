@@ -7,6 +7,7 @@ import android.database.Cursor;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.StorageService;
+import com.hdfc.app42service.UploadService;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.caregiver.fragments.ActivityFragment;
@@ -37,6 +38,8 @@ import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
+import com.shephertz.app42.paas.sdk.android.upload.Upload;
+import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,11 +61,11 @@ public class AppUtils {
     private static StorageService storageService;
     //private static Date startDate, endDate;
     //private Context context;
-    private Utils utils;
+    //private Utils utils;
 
     public AppUtils(Context context) {
 
-        utils = new Utils(context);
+        //utils = new Utils(context);
         //progressDialog = new ProgressDialog(context);
         storageService = new StorageService(context);
        /* sharedPreferences = context.getSharedPreferences(Config.strPreferenceName, Context.MODE_PRIVATE);
@@ -156,7 +159,7 @@ public class AppUtils {
 
             CareGiver.getDbCon().closeCursor(cursor);
 
-            SessionManager sessionManager = new SessionManager(context);
+            final SessionManager sessionManager = new SessionManager(context);
 
             StorageService storageService = new StorageService(context);
 
@@ -199,7 +202,8 @@ public class AppUtils {
                                             String values[] = {jsonDocList.get(i).getDocId(),
                                                     jsonDocList.get(i).getUpdatedAt(),
                                                     jsonDocList.get(i).getJsonDoc(),
-                                                    Config.collectionNotification, "1", "", "1"};
+                                                    Config.collectionNotification, "", "1",
+                                                    sessionManager.getProviderId()};
 
                                             CareGiver.getDbCon().insert(
                                                     DbHelper.strTableNameCollection,
@@ -306,7 +310,8 @@ public class AppUtils {
                                     String values[] = {jsonDocument.getDocId(),
                                             jsonDocument.getUpdatedAt(),
                                             jsonDocument.getJsonDoc(),
-                                            Config.collectionActivity, "0", "", "1"};
+                                            Config.collectionActivity, "", "1",
+                                            sessionManager.getProviderId()};
 
                                     String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                             + DbHelper.COLUMN_COLLECTION_NAME + "=?";
@@ -391,12 +396,13 @@ public class AppUtils {
 
                 Utils.log(jsonObject.getString("activity_date"), " Actual Date 0");
 
-
-                String strActivityDate = Utils.formatDateInsertActivity(jsonObject.getString("activity_date"));
+                String strActivityDate = Utils.formatDateInsertActivity(jsonObject.
+                        getString("activity_date"));
 
                 Utils.log(strActivityDate, " Converted Date 0 ");
 
-                String valuesActivity[] = {strDocumentId, "0", strActivityDate};
+                String valuesActivity[] = {strDocumentId, "0", strActivityDate,
+                        jsonObject.optString("provider_id"), jsonObject.optString("status")};
 
                 CareGiver.getDbCon().updateInsert(
                         DbHelper.strTableNameMilestone,
@@ -404,7 +410,8 @@ public class AppUtils {
                         selectionArgsActivity);
 
                 insertClientIds(jsonObject.optString("customer_id"),
-                        jsonObject.optString("dependent_id"));
+                        jsonObject.optString("dependent_id"),
+                        jsonObject.optString("provider_id"));
 
                 //feedback
                 if (jsonObject.has("feedbacks")) {
@@ -428,7 +435,8 @@ public class AppUtils {
                                     equalsIgnoreCase("dependent")) {
                                     strDependentId = jsonObjectFeedback.optString("feedback_by");
                             }
-                            insertClientIds(strCustomerId, strDependentId);
+                            insertClientIds(strCustomerId, strDependentId,
+                                    jsonObject.optString("provider_id"));
                         }
                     }
 
@@ -457,9 +465,9 @@ public class AppUtils {
                                                 "scheduled_date"));
                             }
 
-                            String values[] = {strDocumentId,
-                                    jsonObjectMilestone.getString("id"),
-                                    strMilestoneDate};
+                            String values[] = {strDocumentId, jsonObjectMilestone.getString("id"),
+                                    strMilestoneDate, jsonObject.optString("provider_id"),
+                                    jsonObjectMilestone.optString("status")};
 
                             String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                     + DbHelper.COLUMN_MILESTONE_ID + "=? ";
@@ -486,6 +494,8 @@ public class AppUtils {
 
         if (Utils.isConnectingToInternet(context)) {
 
+            final SessionManager sessionManager = new SessionManager(context);
+
             String strDate = "";
 
             Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionDependent);
@@ -502,8 +512,9 @@ public class AppUtils {
 
             Cursor cursor1 = CareGiver.getDbCon().fetch(
                     DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_OBJECT_ID},
-                    DbHelper.COLUMN_COLLECTION_NAME + "=?",
-                    new String[]{Config.collectionDependent}, null, null, true, null, null
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
+                    new String[]{Config.collectionDependent, sessionManager.getProviderId()},
+                    null, null, true, null, null
             );
 
             ArrayList<String> strDependentIds = new ArrayList<>();
@@ -560,7 +571,9 @@ public class AppUtils {
                                                 String values[] = {jsonDocument.getDocId(),
                                                         jsonDocument.getUpdatedAt(),
                                                         jsonDocument.getJsonDoc(),
-                                                        Config.collectionDependent
+                                                        Config.collectionDependent,
+                                                        sessionManager.getProviderId(),
+                                                        "1"
                                                 };
 
                                                 String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
@@ -615,6 +628,8 @@ public class AppUtils {
 
         if (Utils.isConnectingToInternet(context)) {
 
+            final SessionManager sessionManager = new SessionManager(context);
+
             String strDate = "";
 
             Cursor cursor = CareGiver.getDbCon().getMaxDate(Config.collectionCustomer);
@@ -631,8 +646,9 @@ public class AppUtils {
 
             Cursor cursor1 = CareGiver.getDbCon().fetch(
                     DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_OBJECT_ID},
-                    DbHelper.COLUMN_COLLECTION_NAME + "=?",
-                    new String[]{Config.collectionCustomer}, null, null, true, null, null
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
+                    new String[]{Config.collectionCustomer, sessionManager.getProviderId()},
+                    null, null, true, null, null
             );
 
             // and " + DbHelper.COLUMN_DOCUMENT + "=?
@@ -699,7 +715,9 @@ public class AppUtils {
                                                 String values[] = {jsonDocument.getDocId(),
                                                         jsonDocument.getUpdatedAt(),
                                                         jsonDocument.getJsonDoc(),
-                                                        Config.collectionCustomer
+                                                        Config.collectionCustomer,
+                                                        sessionManager.getProviderId(),
+                                                        "1"
                                                 };
 
                                                 String selection = DbHelper.COLUMN_OBJECT_ID
@@ -800,7 +818,8 @@ public class AppUtils {
 
                                                 insertClientIds(jsonObject.getString("customer_id"),
                                                         jsonObject.getString("dependent_id"),
-                                                        jsonObject.optInt("removed"));
+                                                        jsonObject.optInt("removed"),
+                                                        sessionManager.getProviderId());
 
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
@@ -840,20 +859,22 @@ public class AppUtils {
         }
     }
 
-    private static void insertClientIds(String strCustomerId, String strDependentId) {
+    private static void insertClientIds(String strCustomerId, String strDependentId,
+                                        String strProviderId) {
 
         try {
-
+            //customer
             if (!strCustomerId.equalsIgnoreCase("")) {
                 Cursor cursor = CareGiver.getDbCon().fetch(
                         DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
-                        new String[]{Config.collectionCustomer, strCustomerId}, null, "0, 1", true,
-                        null, null
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID
+                                + "=? and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
+                        new String[]{Config.collectionCustomer, strCustomerId, strProviderId},
+                        null, "0, 1", true, null, null
                 );
 
                 if (cursor.getCount() <= 0) {
-                    String values[] = {strCustomerId, Config.collectionCustomer, "0"};
+                    String values[] = {strCustomerId, Config.collectionCustomer, strProviderId};
 
                     CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values,
                             DbHelper.COLLECTION_FIELDS_CLIENTS);
@@ -866,14 +887,15 @@ public class AppUtils {
             if (!strDependentId.equalsIgnoreCase("")) {
                 Cursor cursor1 = CareGiver.getDbCon().fetch(
                         DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
-                        new String[]{Config.collectionDependent, strDependentId}, null, "0, 1", true,
-                        null, null
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID
+                                + "=? and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
+                        new String[]{Config.collectionDependent, strDependentId, strProviderId},
+                        null, "0, 1", true, null, null
                 );
 
                 if (cursor1.getCount() <= 0) {
 
-                    String values1[] = {strDependentId, Config.collectionDependent, "0"};
+                    String values1[] = {strDependentId, Config.collectionDependent, strProviderId};
 
                     CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values1,
                             DbHelper.COLLECTION_FIELDS_CLIENTS);
@@ -887,21 +909,24 @@ public class AppUtils {
         }
     }
 
-    private static void insertClientIds(String strCustomerId, String strDependentId, int iRemoved) {
+    private static void insertClientIds(String strCustomerId, String strDependentId, int iRemoved,
+                                        String strProviderId) {
 
         try {
 
             if (!strCustomerId.equalsIgnoreCase("")) {
                 Cursor cursor = CareGiver.getDbCon().fetch(
                         DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
-                        new String[]{Config.collectionCustomer, strCustomerId}, null, "0, 1", true,
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID
+                                + "=? and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
+                        new String[]{Config.collectionCustomer, strCustomerId, strProviderId},
+                        null, "0, 1", true,
                         null, null
                 );
 
                 if (cursor.getCount() <= 0) {
-                    String values[] = {strCustomerId, "", "", Config.collectionCustomer, "0",
-                            String.valueOf(iRemoved), "1"};
+                    String values[] = {strCustomerId, "", "", Config.collectionCustomer,
+                            String.valueOf(iRemoved), "1", strProviderId};
 
                     CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values,
                             DbHelper.COLLECTION_FIELDS);
@@ -924,15 +949,18 @@ public class AppUtils {
             if (!strDependentId.equalsIgnoreCase("")) {
                 Cursor cursor1 = CareGiver.getDbCon().fetch(
                         DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                        DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
-                        new String[]{Config.collectionDependent, strDependentId}, null, "0, 1", true,
+                        DbHelper.COLUMN_COLLECTION_NAME + "=? and "
+                                + DbHelper.COLUMN_OBJECT_ID + "=? and "
+                                + DbHelper.COLUMN_PROVIDER_ID + "=?",
+                        new String[]{Config.collectionDependent, strDependentId, strProviderId},
+                        null, "0, 1", true,
                         null, null
                 );
 
                 if (cursor1.getCount() <= 0) {
 
-                    String values1[] = {strDependentId, "", "", Config.collectionDependent, "0",
-                            String.valueOf(iRemoved), "1"};
+                    String values1[] = {strDependentId, "", "", Config.collectionDependent,
+                            String.valueOf(iRemoved), "1", strProviderId};
 
                     CareGiver.getDbCon().insert(DbHelper.strTableNameCollection, values1,
                             DbHelper.COLLECTION_FIELDS);
@@ -1095,7 +1123,9 @@ public class AppUtils {
                                     String values[] = {jsonDocument.getDocId(),
                                             jsonDocument.getUpdatedAt(),
                                             jsonDocument.getJsonDoc(),
-                                            Config.collectionProvider, "1", "", "1"};
+                                            Config.collectionProvider, "", "1",
+                                            sessionManager.getProviderId()
+                                    };
 
                                     String selection = DbHelper.COLUMN_OBJECT_ID +
                                             " = ? and " + DbHelper.COLUMN_COLLECTION_NAME
@@ -1126,13 +1156,19 @@ public class AppUtils {
     public static void syncAll(Context context) {
 
         //todo add to Intent Service
+        Utils.log(" 1 ", " syncAll ");
         fetchActivitiesSync(context);
+        Utils.log(" 2 ", " syncAll ");
         loadNotifications(context);
+        Utils.log(" 3 ", " syncAll ");
         refreshProvider(context);
+        Utils.log(" 4 ", " syncAll ");
 
         //todo optional fetch check in cares,services
         fetchCheckInCareSync(context);
+        Utils.log(" 5 ", " syncAll ");
         fetchServicesSync(context);
+        Utils.log(" 6 ", " syncAll ");
     }
 
     public static void createActivityModel(String strStartDate, String strEndDate) {
@@ -1150,8 +1186,9 @@ public class AppUtils {
                     + DbHelper.COLUMN_MILESTONE_DATE + ">= Datetime('" + strStartDate + "') AND b."
                     + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "')"
                     + " AND a." + DbHelper.COLUMN_COLLECTION_NAME + "='" + Config.collectionActivity
-                    + "'"
-                    + " AND b." + DbHelper.COLUMN_MILESTONE_ID + "!=-1 ORDER BY"
+                    + "' AND a." + DbHelper.COLUMN_PROVIDER_ID + "='"
+                    + Config.providerModel.getStrProviderId()
+                    + "' AND b." + DbHelper.COLUMN_MILESTONE_ID + "!=-1 ORDER BY"
                     + " b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC";
 
             Utils.log(strQuery, " QUERY ");
@@ -1601,7 +1638,9 @@ public class AppUtils {
                                     String values[] = {jsonDocument.getDocId(),
                                             jsonDocument.getUpdatedAt(),
                                             jsonDocument.getJsonDoc(),
-                                            Config.collectionCheckInCare, "0", "", "1"};
+                                            Config.collectionCheckInCare, "", "1",
+                                            sessionManager.getProviderId()
+                                    };
 
                                     String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                             + DbHelper.COLUMN_COLLECTION_NAME + "=?";
@@ -1623,7 +1662,8 @@ public class AppUtils {
                                             String values1[] = {jsonDocument.getDocId(),
                                                     "-1",
                                                     jsonObject.optString("created_date_actual"),
-                                                    jsonObject.optString("customer_id")
+                                                    jsonObject.optString("customer_id"),
+                                                    jsonObject.optString("provider_id")
                                             };
 
                                             String selection1 = DbHelper.COLUMN_OBJECT_ID
@@ -1680,6 +1720,8 @@ public class AppUtils {
         Query q1 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
                 GREATER_THAN);
 
+        final SessionManager sessionManager = new SessionManager(context);
+
         StorageService storageService = new StorageService(context);
 
         storageService.findDocsByQueryOrderBy(Config.collectionService, q1, 30000, 0,
@@ -1705,7 +1747,9 @@ public class AppUtils {
                                     String values[] = {jsonDocument.getDocId(),
                                             jsonDocument.getUpdatedAt(),
                                             jsonDocument.getJsonDoc(),
-                                            Config.collectionService, "0", "", "1"};
+                                            Config.collectionService, "", "1",
+                                            sessionManager.getProviderId()
+                                    };
 
                                     String selection = DbHelper.COLUMN_OBJECT_ID + "=? and "
                                             + DbHelper.COLUMN_COLLECTION_NAME + "=?";
@@ -1811,10 +1855,9 @@ public class AppUtils {
         }
     }
 
-    public void updateProviderJson(String strProviderId, boolean bWhich) {
+    public static void updateProviderJson(String strProviderId, boolean bWhich) {
 
         try {
-
             Cursor cursor = CareGiver.getDbCon().fetch(
                     DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
                     DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
@@ -1845,14 +1888,199 @@ public class AppUtils {
                     }
 
                     CareGiver.getDbCon().updateProvider(
-                            new String[]{"DateTime('now')", jsonObject.toString(), "1"},
-                            new String[]{"updated_date", "document", "updated"},
+                            new String[]{"", jsonObject.toString(), "3"},
+                            new String[]{"updated_date", "document", "new_updated"},
                             new String[]{Config.providerModel.getStrProviderId(),
                                     Config.collectionProvider});
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    //offline update
+    public static void checkImage(final Context context, final SessionManager sessionManager) {
+
+        try {
+
+            UploadService uploadService = new UploadService(context);
+
+            Utils.log(" 1 ", " Check Image ");
+
+            uploadService.removeImage(Config.strCustomerImageName, sessionManager.getEmail(),
+                    new App42CallBack() {
+                        public void onSuccess(Object response) {
+                            Utils.log(" 1- ", " Check Image ");
+                            if (response != null)
+                                Utils.log(response.toString(), " Check Image ");
+                            uploadImage(context, sessionManager);
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                            Utils.log(" 2- ", " Check Image ");
+                            if (e != null) {
+                                Utils.log(e.getMessage(), " Check Image ");
+                               /* App42Exception exception = (App42Exception)e;
+                                int appErrorCode = exception.getAppErrorCode();
+                                if(appErrorCode == 2102){
+                                    // Handle here for Not found (Files for the User 'Nick' does not Exist )
+                                }
+                                else if(appErrorCode == 1401){
+                                    // handle here for Client is not authorized
+                                }
+                                else if(appErrorCode == 1500){
+                                    // handle here for Internal Server Error
+                                }*/
+                                uploadImage(context, sessionManager);
+                            }
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void uploadImage(final Context context, final SessionManager sessionManager) {
+
+        try {
+            if (Utils.isConnectingToInternet(context)) {
+
+                UploadService uploadService = new UploadService(context);
+
+                Utils.log(" 2 ", " Upload Image ");
+
+                uploadService.uploadImageCommon(sessionManager.getProfileImage(),
+                        Config.strCustomerImageName,
+                        "Profile Picture", sessionManager.getEmail(),
+                        UploadFileType.IMAGE, new App42CallBack() {
+
+                            public void onSuccess(Object response) {
+
+                                if (response != null) {
+                                    Utils.log(response.toString(), " Upload Image ");
+
+                                    Upload upload = (Upload) response;
+                                    ArrayList<Upload.File> fileList = upload.getFileList();
+
+                                    if (fileList.size() > 0) {
+                                        createProviderModel(sessionManager.getProviderId());
+                                        Config.providerModel.setStrImgUrl(fileList.get(0).getUrl());
+                                        updateProviderJson(sessionManager.getProviderId(), false);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onException(Exception e) {
+                                if (e != null)
+                                    Utils.log(e.getMessage(), " Upload Image ");
+                            }
+                        });
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateAllDocs(Context context, final SessionManager sessionManager) {
+
+        Cursor cursor = null;
+
+        try {
+
+            cursor = CareGiver.getDbCon().fetch(
+                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT,
+                            DbHelper.COLUMN_COLLECTION_NAME, DbHelper.COLUMN_OBJECT_ID},
+                    "(" + DbHelper.COLUMN_PROVIDER_ID + "=? OR " + DbHelper.COLUMN_OBJECT_ID
+                            + "=?) AND " + DbHelper.COLUMN_NEW_UPDATED + "=?",
+                    new String[]{sessionManager.getProviderId(), sessionManager.getProviderId(), "3"},
+                    null, null, true, null, null
+            );
+
+            Utils.log(String.valueOf(cursor.getCount()), " Count ");
+
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+
+                JSONObject jsonObject;
+
+                while (!cursor.isAfterLast()) {
+
+                    if (!cursor.getString(0).equalsIgnoreCase("")
+                            && !cursor.getString(1).equalsIgnoreCase("")
+                            && !cursor.getString(2).equalsIgnoreCase("")) {
+
+                        Utils.log(cursor.getString(1)
+                                + " ~ " + cursor.getString(2), " Docs ");
+
+                        jsonObject = new JSONObject(cursor.getString(0));
+
+                        if (Utils.isConnectingToInternet(context)) {
+
+                            final String strCollectionName = cursor.getString(1);
+                            final String strObjectId = cursor.getString(2);
+
+                            Utils.log(" 1 ", " Call Docs ");
+
+                            StorageService storageService = new StorageService(context);
+
+                            storageService.updateDocs(jsonObject, strObjectId, strCollectionName,
+                                    new App42CallBack() {
+                                        @Override
+                                        public void onSuccess(Object o) {
+
+                                            if (o != null)
+                                                Utils.log(o.toString(), " Update Docs ");
+
+                                            String selection = DbHelper.COLUMN_OBJECT_ID + "=? and "
+                                                    + DbHelper.COLUMN_COLLECTION_NAME + "=? ";
+
+                                            String[] selectionArgs;
+
+                                            if (!strCollectionName.equalsIgnoreCase(
+                                                    Config.collectionProvider)) {
+                                                selection += "and " + DbHelper.COLUMN_PROVIDER_ID
+                                                        + "=?";
+
+                                                // WHERE clause arguments
+                                                selectionArgs = new String[]{strObjectId,
+                                                        strCollectionName,
+                                                        sessionManager.getProviderId()};
+                                            } else {
+                                                selectionArgs = new String[]{strObjectId,
+                                                        strCollectionName};
+
+                                                sessionManager.saveProfileImage("N");
+                                            }
+
+                                            CareGiver.getDbCon().update(
+                                                    DbHelper.strTableNameCollection,
+                                                    selection, new String[]{"0"},
+                                                    new String[]{DbHelper.COLUMN_NEW_UPDATED},
+                                                    selectionArgs);
+                                        }
+
+                                        @Override
+                                        public void onException(Exception e) {
+                                            if (e != null)
+                                                Utils.log(e.getMessage(), " Update Docs ");
+                                        }
+                                    });
+                        }
+                    }
+
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            CareGiver.getDbCon().closeCursor(cursor);
         }
     }
 
@@ -2105,7 +2333,7 @@ public class AppUtils {
         CareGiver.getDbCon().closeCursor(newCursor);
     }
 
-    public void fetchActivities(String strProviderId) {
+    public void fetchActivities(final String strProviderId) {
 
         Query q1 = QueryBuilder.build("provider_id", strProviderId,
                 QueryBuilder.Operator.EQUALS);
@@ -2157,7 +2385,7 @@ public class AppUtils {
                                     String values[] = {jsonDocument.getDocId(),
                                             jsonDocument.getUpdatedAt(),
                                             jsonDocument.getJsonDoc(), Config.collectionActivity,
-                                            "0", "", "1"};
+                                            "", "1", strProviderId};
 
                                     String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                             + DbHelper.COLUMN_COLLECTION_NAME + "=?";

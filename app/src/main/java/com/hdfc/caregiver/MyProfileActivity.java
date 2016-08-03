@@ -18,9 +18,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
-import com.bumptech.glide.Glide;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.config.CareGiver;
@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import pl.tajchert.nammu.PermissionCallback;
 
 /**
@@ -73,6 +72,7 @@ public class MyProfileActivity extends AppCompatActivity {
     private PermissionHelper permissionHelper;
     private SessionManager sessionManager;
 
+    private ProgressBar progressBar;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +84,7 @@ public class MyProfileActivity extends AppCompatActivity {
         phone = (EditText) findViewById(R.id.input_mobile);
         place = (EditText) findViewById(R.id.input_place);
         profileImage = (ImageView) findViewById(R.id.person_icon);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         EditText email = (EditText) findViewById(R.id.input_email);
         Button signOut = (Button) findViewById(R.id.buttonLogOut);
@@ -130,7 +131,8 @@ public class MyProfileActivity extends AppCompatActivity {
                             public void permissionRefused() {
                                 //action to perform when permission refused
                                 isAllowed = false;
-                                //todo notify user with reason for asking permission
+                                Utils.toast(2, 2, getString(R.string.access_storage_false),
+                                        MyProfileActivity.this);
                             }
                         }
                 );
@@ -149,7 +151,8 @@ public class MyProfileActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             AppUtils.logout(getApplicationContext());
-                            Intent dashboardIntent = new Intent(MyProfileActivity.this, LoginActivity.class);
+                            Intent dashboardIntent = new Intent(MyProfileActivity.this,
+                                    LoginActivity.class);
                             startActivity(dashboardIntent);
                             finish();
                         }
@@ -254,7 +257,6 @@ public class MyProfileActivity extends AppCompatActivity {
                         Config.providerModel.setStrAddress(place.getText().toString());
                         Config.providerModel.setStrName(name.getText().toString());
 
-
                         Flag = 0;
 
                         name.setEnabled(false);
@@ -269,8 +271,17 @@ public class MyProfileActivity extends AppCompatActivity {
                         place.setFocusableInTouchMode(false);
                         place.clearFocus();
 
+                        AppUtils.updateProviderJson(Config.providerModel.getStrProviderId(), true);
+                       /* CareGiver.getDbCon().updateProvider(
+                                new String[]{"3"},
+                                new String[]{"updated"},
+                                new String[]{Config.providerModel.getStrProviderId(),
+                                        Config.collectionProvider});*/
+
                         if (utils.isConnectingToInternet()) {
                             updateProviderDoc(false);
+                        } else {
+                            utils.toast(1, 1, getString(R.string.account_updated));
                         }
                     }
                 }
@@ -292,7 +303,8 @@ public class MyProfileActivity extends AppCompatActivity {
             try {
                 strPath = sessionManager.getProfileImage();
 
-                if (strPath != null && !strPath.equalsIgnoreCase("") && !strPath.equalsIgnoreCase("N"))
+                if (strPath != null && !strPath.equalsIgnoreCase("")
+                        && !strPath.equalsIgnoreCase("N"))
                     file = new File(strPath);
 
             } catch (Exception e) {
@@ -305,13 +317,15 @@ public class MyProfileActivity extends AppCompatActivity {
                 strImage = Config.providerModel.getStrImgUrl();
             }
 
-            Glide.with(MyProfileActivity.this)
+            /*Glide.with(MyProfileActivity.this)
                     .load(strImage)
                     .centerCrop()
                     .bitmapTransform(new CropCircleTransformation(MyProfileActivity.this))
                     .placeholder(R.drawable.person_icon)
                     .crossFade()
-                    .into(profileImage);
+                    .into(profileImage);*/
+
+            Utils.loadGlide(MyProfileActivity.this, strImage, profileImage, progressBar);
         }
     }
 
@@ -382,17 +396,12 @@ public class MyProfileActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Object o) {
 
-                            appUtils.updateProviderJson(Config.providerModel.getStrProviderId(),
-                                    true);
-
-                            //todo check date
                             CareGiver.getDbCon().updateProvider(
-                                    new String[]{"DateTime('now')", "0"},
-                                    new String[]{"updated_date", "updated"},
+                                    new String[]{"4"},
+                                    new String[]{"new_updated"},
                                     new String[]{Config.providerModel.getStrProviderId(),
                                             Config.collectionProvider});
 
-                            //todo for scenario when offline image save and data in online
                             sessionManager.saveProfileImage("N");
 
                             if (!isBackground) {
@@ -523,20 +532,10 @@ public class MyProfileActivity extends AppCompatActivity {
                                 if (fileList.size() > 0) {
 
                                     Config.providerModel.setStrImgUrl(fileList.get(0).getUrl());
-                                    appUtils.updateProviderJson(Config.providerModel.
+                                    AppUtils.updateProviderJson(Config.providerModel.
                                             getStrProviderId(), false);
 
-                                   /* if (utils.isConnectingToInternet()) {
-                                        Glide.with(MyProfileActivity.this)
-                                                .load(fileList.get(0).getUrl())
-                                                .centerCrop()
-                                                .bitmapTransform(new CropCircleTransformation(
-                                                        MyProfileActivity.this))
-                                                .placeholder(R.drawable.person_icon)
-                                                .crossFade()
-                                                .into(profileImage);
-                                        updateProviderDoc(false);
-                                    }*/
+                                    updateProviderDoc(false);
 
                                 } else {
                                     if (!isBackground)
@@ -584,19 +583,23 @@ public class MyProfileActivity extends AppCompatActivity {
                 try {
                     sessionManager.saveProfileImage(strCustomerImgName);
 
-                    Glide.with(MyProfileActivity.this)
+                   /* Glide.with(MyProfileActivity.this)
                             .load(sessionManager.getProfileImage())
                             .centerCrop()
                             .bitmapTransform(new CropCircleTransformation(MyProfileActivity.this))
                             .placeholder(R.drawable.person_icon)
                             .crossFade()
-                            .into(profileImage);
+                            .into(profileImage);*/
+
+
+                    Utils.loadGlide(MyProfileActivity.this, sessionManager.getProfileImage(),
+                            profileImage, progressBar);
 
                     if (utils.isConnectingToInternet())
                         checkImage(false);
-                    else
+                   /* else
                         Utils.toast(2, 2, getString(R.string.warning_internet),
-                                MyProfileActivity.this);
+                                MyProfileActivity.this);*/
 
                 } catch (Exception e) {
                     e.printStackTrace();

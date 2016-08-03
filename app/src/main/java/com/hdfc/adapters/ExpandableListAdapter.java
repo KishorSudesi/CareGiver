@@ -20,9 +20,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.CheckInCareActivity;
 import com.hdfc.caregiver.ClientProfileActivity;
 import com.hdfc.caregiver.R;
@@ -39,8 +39,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
@@ -102,6 +100,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
 
             viewHolder.age = (TextView) convertView.findViewById(R.id.textViewClient_age);
+            viewHolder.progressBar2 = (ProgressBar) convertView.findViewById(R.id.progressBar2);
 
             //viewHolder.problem = (TextView) convertView.findViewById(R.id.textViewClient_problem);
             //viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
@@ -134,13 +133,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             viewHolder.customer.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
         }*/
 
-        Glide.with(_context)
+       /* Glide.with(_context)
                 .load(dependentModel.getStrImageUrl())
                 .centerCrop()
                 .bitmapTransform(new CropCircleTransformation(_context))
                 .placeholder(R.drawable.person_icon)
                 .crossFade()
-                .into(viewHolder.customer);
+                .into(viewHolder.customer);*/
+
+        Utils.loadGlide(_context, dependentModel.getStrImageUrl(), viewHolder.customer,
+                viewHolder.progressBar2);
 
         viewHolder.address.setText(dependentModel.getStrAddress());
 
@@ -201,6 +203,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             viewHolder.contact = (TextView)convertView.findViewById(R.id.textViewContact);
             viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);
             viewHolder.insert = (ImageButton)convertView.findViewById(R.id.insert);
+            viewHolder.progressBar1 = (ProgressBar) convertView.findViewById(R.id.progressBar1);
             viewHolder.linearTextHeader = (LinearLayout) convertView.findViewById(R.id.linearText);
 
             viewHolder.imageWrapper = (LinearLayout) convertView.findViewById(R.id.imageWrapper);
@@ -226,13 +229,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             viewHolder.client.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
         }*/
 
-        Glide.with(_context)
+        /*Glide.with(_context)
                 .load(customerModel.getStrImgUrl())
                 .centerCrop()
                 .bitmapTransform(new CropCircleTransformation(_context))
                 .placeholder(R.drawable.person_icon)
                 .crossFade()
-                .into(viewHolder.client);
+                .into(viewHolder.client);*/
+
+        Utils.loadGlide(_context, customerModel.getStrImgUrl(), viewHolder.client,
+                viewHolder.progressBar1);
 
         viewHolder.imageWrapper.setOnClickListener(new View.OnClickListener() {
 
@@ -311,8 +317,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 + DbHelper.COLUMN_MILESTONE_DATE + ">= Datetime('" + strStartDate + "') AND b."
                 + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "') AND b."
                 + DbHelper.COLUMN_CUSTOMER_ID + "='" + Config.customerModel.getStrCustomerID()
-                + "' AND b." + DbHelper.COLUMN_MILESTONE_ID
-                + "=-1 AND a." + DbHelper.COLUMN_COLLECTION_NAME + "='" + Config.collectionCheckInCare + "'"
+                + "' AND a." + DbHelper.COLUMN_PROVIDER_ID + "='"
+                + Config.providerModel.getStrProviderId() + "' AND b."
+                + DbHelper.COLUMN_MILESTONE_ID + "=-1 AND a." + DbHelper.COLUMN_COLLECTION_NAME
+                + "='" + Config.collectionCheckInCare + "'"
                 + " ORDER BY b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC";
 
         //LIMIT 0, 30000
@@ -430,5 +438,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ImageView client, customer;
         ImageButton insert;
         LinearLayout linearTextHeader, linearTextChild, imageWrapper;
+        ProgressBar progressBar1, progressBar2;
     }
 }

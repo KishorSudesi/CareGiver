@@ -57,11 +57,24 @@
             android:layout_marginTop="20dp"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/imageClientProfile"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:layout_gravity="center_horizontal"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+
+                <ImageView
+                    android:id="@+id/imageClientProfile"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/textViewClientProfileName"
@@ -96,8 +109,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:drawablePadding="15dp"
                 android:drawableLeft="@drawable/age"
+                android:drawablePadding="15dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -115,8 +128,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:drawablePadding="15dp"
                 android:drawableLeft="@drawable/health"
+                android:drawablePadding="15dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                  />
 
@@ -134,8 +147,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:drawablePadding="15dp"
                 android:drawableLeft="@drawable/acc_type"
+                android:drawablePadding="15dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -152,8 +165,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:drawablePadding="15dp"
                 android:drawableLeft="@drawable/location"
+                android:drawablePadding="15dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
 
@@ -176,8 +189,8 @@
               android:id="@+id/imageCall"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:paddingTop="@dimen/edit_text_margin"
               android:drawablePadding="15dp"
+              android:paddingTop="@dimen/edit_text_margin"
               android:src="@drawable/contact" />
 
             <TextView
@@ -203,8 +216,8 @@
                   android:id="@+id/imageLocation"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                android:paddingTop="@dimen/edit_text_margin"
                 android:drawablePadding="15dp"
+                android:paddingTop="@dimen/edit_text_margin"
                 android:src="@drawable/location" />
 
 

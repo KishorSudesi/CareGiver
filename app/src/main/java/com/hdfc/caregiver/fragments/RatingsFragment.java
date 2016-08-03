@@ -13,17 +13,15 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hdfc.adapters.RatingsAdapter;
 import com.hdfc.caregiver.MyProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.SessionManager;
+import com.hdfc.libs.Utils;
 
 import java.io.File;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 
 public class RatingsFragment extends Fragment {
@@ -155,13 +153,15 @@ public class RatingsFragment extends Fragment {
             strImage = Config.providerModel.getStrImgUrl();
         }
 
-        Glide.with(getActivity())
+       /* Glide.with(getActivity())
                 .load(strImage)
                 .centerCrop()
                 .bitmapTransform(new CropCircleTransformation(getActivity()))
                 .placeholder(R.drawable.person_icon)
                 .crossFade()
-                .into(imageProfilePic);
+                .into(imageProfilePic);*/
+
+        Utils.loadGlide(getActivity(), strImage, imageProfilePic, null);
 
         RatingsAdapter ratingsAdapter = new RatingsAdapter(getContext(), Config.feedBackModels);
         listratings.setAdapter(ratingsAdapter);

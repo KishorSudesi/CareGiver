@@ -25,12 +25,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/imageClients"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_margin="15dp"
-                android:padding="@dimen/padding_general" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/imageClients"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="15dp" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar1"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="15dp"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
@@ -74,5 +87,7 @@
             android:src="@mipmap/add_icon" />
 
     </LinearLayout>
-</LinearLayout>
+
+    </LinearLayout>
+
 </android.support.v7.widget.CardView>

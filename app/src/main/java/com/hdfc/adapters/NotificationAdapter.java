@@ -11,21 +11,20 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
+import com.hdfc.libs.Utils;
 import com.hdfc.models.NotificationModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Sudesi infotech on 5/26/2016.
@@ -79,6 +78,7 @@ public class NotificationAdapter extends BaseAdapter {
             viewHolder.textViewText = (TextView) convertView.findViewById(R.id.textViewText);
             viewHolder.textViewTime = (TextView) convertView.findViewById(R.id.textViewTime);
             viewHolder.textReadMore = (TextView) convertView.findViewById(R.id.textReadMore);
+            viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
             viewHolder.roundedImageView = (ImageView) convertView.
                     findViewById(R.id.roundedImageView);
             viewHolder.linearLayout = (LinearLayout) convertView.findViewById(R.id.activityList);
@@ -223,13 +223,16 @@ public class NotificationAdapter extends BaseAdapter {
 
             if (strUrl != null && !strUrl.equalsIgnoreCase("")) {
 
-                Glide.with(_context)
+               /* Glide.with(_context)
                         .load(strUrl)
                         .centerCrop()
                         .bitmapTransform(new CropCircleTransformation(_context))
                         .placeholder(R.drawable.person_icon)
                         .crossFade()
-                        .into(viewHolder.roundedImageView);
+                        .into(viewHolder.roundedImageView);*/
+
+                Utils.loadGlide(_context, strUrl, viewHolder.roundedImageView,
+                        viewHolder.progressBar);
 
             }
         }
@@ -244,5 +247,6 @@ public class NotificationAdapter extends BaseAdapter {
         TextView textViewTime;
         ImageView roundedImageView;
         LinearLayout linearLayout;
+        ProgressBar progressBar;
     }
 }

@@ -10,13 +10,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hdfc.config.Config;
+import com.hdfc.libs.Utils;
 import com.hdfc.services.GPSTracker;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Admin on 28-01-2016.
@@ -35,6 +34,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
     private String strClientAddress;
     private String strMobileNo;
 
+    private ProgressBar progressBar;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +46,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
         TextView address = (TextView) findViewById(R.id.editTextAddress);
         TextView mobile = (TextView) findViewById(R.id.editTextMobileNumber);
         editLocation = (TextView) findViewById(R.id.editTextGetDirection);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         ImageView btnGetLocation = (ImageView) findViewById(R.id.imageLocation);
         LinearLayout dialNubmer = (LinearLayout) findViewById(R.id.dialNumber);
 
@@ -192,13 +193,15 @@ public class ClientProfileActivity extends AppCompatActivity  {
                 getSystemService(Context.LOCATION_SERVICE);*/
 
         if (clientProfile != null) {
-            Glide.with(ClientProfileActivity.this)
+           /* Glide.with(ClientProfileActivity.this)
                     .load(strUrl)
                     .centerCrop()
                     .bitmapTransform(new CropCircleTransformation(ClientProfileActivity.this))
                     .placeholder(R.drawable.person_icon)
                     .crossFade()
-                    .into(clientProfile);
+                    .into(clientProfile);*/
+
+            Utils.loadGlide(ClientProfileActivity.this, strUrl, clientProfile, progressBar);
         }
     }
 

@@ -189,6 +189,7 @@
     <string name="create_new">Create New</string>
 
     <string name="access_storage">Access to External Storage</string>
+    <string name="access_storage_false">We need Access to External Storage to Proceed</string>
 
     <!--Mislestone Related-->
     <string name="medicine_name">Medicine Name</string>

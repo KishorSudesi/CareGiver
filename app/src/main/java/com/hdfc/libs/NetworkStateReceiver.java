@@ -15,7 +15,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private Boolean connected;
 
     public NetworkStateReceiver() {
-        listeners = new ArrayList<NetworkStateReceiverListener>();
+        listeners = new ArrayList<>();
         connected = null;
     }
 
@@ -52,7 +52,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         if (connected == null || listener == null)
             return;
 
-        if (connected == true)
+        if (connected)
             listener.networkAvailable();
         else
             listener.networkUnavailable();
@@ -63,9 +63,9 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         notifyState(l);
     }
 
-    public void removeListener(NetworkStateReceiverListener l) {
+    /*public void removeListener(NetworkStateReceiverListener l) {
         listeners.remove(l);
-    }
+    }*/
 
     public interface NetworkStateReceiverListener {
         void networkAvailable();

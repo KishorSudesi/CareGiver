@@ -451,10 +451,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                     Storage.JSONDocument jsonDocument = jsonDocList.get(i);
 
                                     try {
+                                        //todo fetch from session if offline sync update enabled
                                         String values[] = {jsonDocument.getDocId(),
                                                 jsonDocument.getUpdatedAt(),
                                                 jsonDocument.getJsonDoc(),
-                                                Config.collectionService, "0", "", "1"};
+                                                Config.collectionService, "", "1",
+                                                Config.providerModel.getStrProviderId()
+                                        };
 
                                         String selection = DbHelper.COLUMN_OBJECT_ID + "=? and "
                                                 + DbHelper.COLUMN_COLLECTION_NAME + "=?";
@@ -674,10 +677,13 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                     strDateNow = Utils.convertDateToString(dateNow);
 
+                                    //todo fetch from session if offline sync update enabled
                                     String values[] = {response.getJsonDocList().get(0).getDocId(),
                                             "",
                                             response.getJsonDocList().get(0).getJsonDoc(),
-                                            Config.collectionActivity, "0", "", "1"};
+                                            Config.collectionActivity, "", "1",
+                                            Config.providerModel.getStrProviderId()
+                                    };
 
                                     String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
                                             + DbHelper.COLUMN_COLLECTION_NAME + "=?";

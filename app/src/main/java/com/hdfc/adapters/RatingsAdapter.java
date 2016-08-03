@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
@@ -22,8 +22,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 
 /**
@@ -70,6 +68,7 @@ public class RatingsAdapter extends BaseAdapter {
             viewHolder.time = (TextView) convertView.findViewById(R.id.txtTime);
             viewHolder.image = (ImageView) convertView.findViewById(R.id.imageViewRatingsItem);
             viewHolder.smiley = (ImageView) convertView.findViewById(R.id.imageViewRatingsSmily);
+            viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -148,13 +147,17 @@ public class RatingsAdapter extends BaseAdapter {
                                 && jsonObject.getString("customer_profile_url") != null
                                 && !jsonObject.getString("customer_profile_url").
                                 equalsIgnoreCase("")) {
-                            Glide.with(_context)
+
+                            /*Glide.with(_context)
                                     .load(jsonObject.getString("customer_profile_url"))
                                     .centerCrop()
                                     .bitmapTransform(new CropCircleTransformation(_context))
                                     .placeholder(R.drawable.person_icon)
                                     .crossFade()
-                                    .into(viewHolder.image);
+                                    .into(viewHolder.image);*/
+
+                            Utils.loadGlide(_context, jsonObject.getString("customer_profile_url")
+                                    , viewHolder.image, viewHolder.progressBar);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -170,5 +173,6 @@ public class RatingsAdapter extends BaseAdapter {
     private class ViewHolder {
         TextView feedback, time;
         ImageView image, smiley;
+        ProgressBar progressBar;
     }
 }
