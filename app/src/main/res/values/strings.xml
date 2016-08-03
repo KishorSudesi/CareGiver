@@ -237,6 +237,11 @@
     <string name="upload_wash">Please Upload Washroom Images</string>
     <string name="upload_bed">Please Upload Bedroom Images</string>
 
+    <string name="upload_hall_success">Already Uploaded Hall Images</string>
+    <string name="upload_kitchen_success">Already Uploaded Kitchen Images</string>
+    <string name="upload_wash_success">Already Uploaded Washroom Images</string>
+    <string name="upload_bed_success">Already Uploaded Bedroom Images</string>
+
 
     <!--Dashboard Menu Strings-->
     <string name="menu_activities">Activities</string>

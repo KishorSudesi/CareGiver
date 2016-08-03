@@ -299,6 +299,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         layoutkitchen = (LinearLayout) findViewById(R.id.linear_kitchen);
         layoutwashroom = (LinearLayout) findViewById(R.id.linear_washroom);
         layoutbedroom = (LinearLayout) findViewById(R.id.linear_bedroom);
+
+        /*layouthall.setOnClickListener(this);
+        layoutkitchen.setOnClickListener(this);
+        layoutwashroom.setOnClickListener(this);
+        layoutbedroom.setOnClickListener(this);*/
         //MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(CheckInCareActivity.this);
 
         utils = new Utils(CheckInCareActivity.this);
@@ -568,6 +573,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                     bViewLoaded =false;
                     editcheckincare=false;
+                    isUploadHallImage=false;
+                    isUploadKitchenImage=false;
+                    isUploadWashImage=false;
+                    isUploadBedImage=false;
                     goBack();
                 }
             });
@@ -623,6 +632,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 uploadkitchenbtn.setVisibility(View.GONE);
                 uploadwashroombtn.setVisibility(View.GONE);
                 uploadbedroombtn.setVisibility(View.GONE);
+
+                isUploadHallImage = false;
+                isUploadKitchenImage=false;
+                isUploadWashImage=false;
+                isUploadBedImage=false;
+
 
                 dependentspinner.setVisibility(View.GONE);
                 dependentname.setVisibility(View.VISIBLE);
@@ -888,33 +903,33 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("hall")) {
                             hallimageModels = picture.get(k).getImageModels();
                            // setHallImages();
-                            if(hallimageModels.size()>0){
+                           /* if(hallimageModels.size()>0){
                                 isUploadHallImage = true;
-                            }
+                            }*/
 
 
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("kitchen")) {
                             kitchenimageModels = picture.get(k).getImageModels();
                            // addKitchenImages();
-                            if(kitchenimageModels.size()>0){
+                           /* if(kitchenimageModels.size()>0){
                                 isUploadKitchenImage = true;
-                            }
+                            }*/
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("washroom")) {
                             washroomimageModels = picture.get(k).getImageModels();
                           //  addWashroomImages();
-                            if(washroomimageModels.size()>0){
+                           /* if(washroomimageModels.size()>0){
                                 isUploadWashImage = true;
                             }
-
+*/
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("bedroom")) {
                             bedroomimageModels = picture.get(k).getImageModels();
                           //  addBedroomImages();
-                            if(bedroomimageModels.size()>0){
+                           /* if(bedroomimageModels.size()>0){
                                 isUploadBedImage = true;
-                            }
+                            }*/
 
                         }
 
@@ -1130,47 +1145,112 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }
                 break;
             case R.id.buttonHallAdd:
-                utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareActivity.this, false);
+                if(isUploadHallImage){
+                    utils.toast(2, 2, getString(R.string.upload_hall_success));
+
+                }else {
+                    utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
+                            + ".jpeg", null, CheckInCareActivity.this, false);
+                }
 
                 break;
             case R.id.buttonKitchenAdd:
-                utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareActivity.this, false);
+                if(isUploadKitchenImage){
+                    utils.toast(2, 2, getString(R.string.upload_kitchen_success));
+
+                }else {
+                    utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
+                            + ".jpeg", null, CheckInCareActivity.this, false);
+                }
 
                 break;
             case R.id.buttonWashroomAdd:
-                utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareActivity.this, false);
+                if(isUploadWashImage){
+                    utils.toast(2, 2, getString(R.string.upload_wash_success));
+
+                }else {
+                    utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
+                            + ".jpeg", null, CheckInCareActivity.this, false);
+                }
 
                 break;
             case R.id.buttonBedroomAdd:
-                utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
-                        + ".jpeg", null, CheckInCareActivity.this, false);
+                if(isUploadBedImage){
+                    utils.toast(2, 2, getString(R.string.upload_bed_success));
+
+                }else {
+                    utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
+                            + ".jpeg", null, CheckInCareActivity.this, false);
+                }
 
                 break;
 
             case R.id.uploadhallbtn:
                 hallstatus.setError(null);
-                uploadHallImage();
+                if(isUploadHallImage){
+                    utils.toast(2, 2, getString(R.string.upload_hall_success));
+
+                }else {
+                    uploadHallImage();
+                }
 
                 break;
             case R.id.uploadkitchenbtn:
                 kitchenstatus.setError(null);
-                uploadKitchenImage();
+                if(isUploadKitchenImage){
+                    utils.toast(2, 2, getString(R.string.upload_kitchen_success));
+
+                }else {
+                    uploadKitchenImage();
+                }
 
                 break;
             case R.id.uploadwashroombtn:
                 washroomstatus.setError(null);
-                uploadWashroomImage();
+                if(isUploadWashImage){
+                    utils.toast(2, 2, getString(R.string.upload_wash_success));
+
+                }else {
+                    uploadWashroomImage();
+                }
 
                 break;
             case R.id.uploadbedroombtn:
                 bedroomstatus.setError(null);
-                uploadBedroomImage();
+                if(isUploadBedImage){
+                    utils.toast(2, 2, getString(R.string.upload_bed_success));
+
+                }else {
+                    uploadBedroomImage();
+                }
 
                 break;
 
+            /*case R.id.linear_hall:
+                for ( int i = 0; i < layouthall.getChildCount();  i++ ){
+                        View view = layouthall.getChildAt(i);
+                        view.setEnabled(false); // Or whatever you want to do with the view.
+                    }
+
+                break;
+            case R.id.linear_kitchen:
+               for ( int i = 0; i < layoutkitchen.getChildCount();  i++ ){
+                        View view = layoutkitchen.getChildAt(i);
+                        view.setEnabled(false); // Or whatever you want to do with the view.
+                    }
+                break;
+            case R.id.linear_washroom:
+               for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
+                        View view = layoutwashroom.getChildAt(i);
+                        view.setEnabled(false); // Or whatever you want to do with the view.
+                    }
+                break;
+            case R.id.linear_bedroom:
+               for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
+                        View view = layoutbedroom.getChildAt(i);
+                        view.setEnabled(false); // Or whatever you want to do with the view.
+                    }
+               break;*/
 
         }
         if (electrocheck.isChecked() && homecheck.isChecked() && autocheck.isChecked()) {
@@ -1283,6 +1363,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
         bViewLoaded =false;
         editcheckincare=false;
+        isUploadHallImage=false;
+        isUploadKitchenImage=false;
+        isUploadWashImage=false;
+        isUploadBedImage=false;
         goBack();
     }
 
@@ -1340,14 +1424,28 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                       //  uploadKitchenImage();
                                                     utils.toast(2, 2, getString(R.string.upload_images));
                                                     isUploadHallImage = true;
-                                                    uploadhallbtn.setEnabled(false);
+                                                    //uploadhallbtn.setEnabled(false);
                                                     uploadhallbtn.setText(getString(R.string.upload_images_sucees));
-                                                    buttonHallAdd.setEnabled(false);
+                                                   // buttonHallAdd.setEnabled(false);
+
                                                     for ( int i = 0; i < layouthall.getChildCount();  i++ ){
                                                         View view = layouthall.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
+                                                        view.setFocusable(false);
                                                     }
-
+                                                   /* for ( int i = 0; i < layoutkitchen.getChildCount();  i++ ){
+                                                        View view = layoutkitchen.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }
+                                                    for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
+                                                        View view = layoutwashroom.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }
+                                                    for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
+                                                        View view = layoutbedroom.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }
+*/
                                                 } else {
                                                     uploadHallImage();
                                                 }
@@ -1479,13 +1577,27 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                     //  if (washroomimageModels != null && washroomimageModels.size() > 0) {
                                                     utils.toast(2, 2, getString(R.string.upload_images));
                                                     isUploadKitchenImage = true;
-                                                    uploadkitchenbtn.setEnabled(false);
+                                                   // uploadkitchenbtn.setEnabled(false);
                                                     uploadkitchenbtn.setText(getString(R.string.upload_images_sucees));
-                                                    buttonKitchenAdd.setEnabled(false);
+                                                    //buttonKitchenAdd.setEnabled(false);
+
                                                     for ( int i = 0; i < layoutkitchen.getChildCount();  i++ ){
                                                         View view = layoutkitchen.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
+                                                        view.setFocusable(false);
                                                     }
+                                                    /*for ( int i = 0; i < layouthall.getChildCount();  i++ ){
+                                                        View view = layouthall.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }
+                                                    for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
+                                                        View view = layoutwashroom.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }
+                                                    for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
+                                                        View view = layoutbedroom.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }*/
 
                                                     //    }
                                                 } else {
@@ -1616,13 +1728,27 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                     //  if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
                                                     utils.toast(2, 2, getString(R.string.upload_images));
                                                     isUploadWashImage = true;
-                                                    uploadwashroombtn.setEnabled(false);
+                                                   // uploadwashroombtn.setEnabled(false);
                                                     uploadwashroombtn.setText(getString(R.string.upload_images_sucees));
-                                                    buttonWashroomAdd.setEnabled(false);
+                                                   // buttonWashroomAdd.setEnabled(false);
+
                                                     for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
                                                         View view = layoutwashroom.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
+                                                        view.setFocusable(false);
                                                     }
+                                                    /*for ( int i = 0; i < layouthall.getChildCount();  i++ ){
+                                                        View view = layouthall.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }
+                                                    for ( int i = 0; i < layoutkitchen.getChildCount();  i++ ){
+                                                        View view = layoutkitchen.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }
+                                                    for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
+                                                        View view = layoutbedroom.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }*/
                                                     //  }
                                                 } else {
                                                     uploadWashroomImage();
@@ -1754,13 +1880,28 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                     }*/
                                                     utils.toast(2, 2, getString(R.string.upload_images));
                                                     isUploadBedImage = true;
-                                                    uploadbedroombtn.setEnabled(false);
-                                                    uploadwashroombtn.setText(getString(R.string.upload_images_sucees));
-                                                    buttonBedroomAdd.setEnabled(false);
+                                                   // uploadbedroombtn.setEnabled(false);
+                                                    uploadbedroombtn.setText(getString(R.string.upload_images_sucees));
+                                                   // buttonBedroomAdd.setEnabled(false);
+
                                                     for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
                                                         View view = layoutbedroom.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
+                                                        view.setFocusable(false);
                                                     }
+                                                    /*for ( int i = 0; i < layouthall.getChildCount();  i++ ){
+                                                        View view = layouthall.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }
+                                                    for ( int i = 0; i < layoutkitchen.getChildCount();  i++ ){
+                                                        View view = layoutkitchen.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }
+                                                    for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
+                                                        View view = layoutwashroom.getChildAt(i);
+                                                        view.setEnabled(false); // Or whatever you want to do with the view.
+                                                    }*/
+
                                                 } else {
                                                     uploadBedroomImage();
                                                 }
@@ -2849,7 +2990,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 uploadmediastatus.setTextColor(Color.RED);
             }
 
-
             for (int i = 0; i < hallimageModels.size(); i++) {
                 try {
                     final ImageView imageView = new ImageView(CheckInCareActivity.this);
@@ -2870,6 +3010,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                     if (hallbitmaps.size() > 0 && i < hallbitmaps.size()) {
                         imageView.setImageBitmap(hallbitmaps.get(i));
+
                     }
 
                     imageView.setTag(hallimageModels.get(i));
@@ -2877,138 +3018,141 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
 
+
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
-                            final ImageModel mImageModel = (ImageModel) v.getTag();
+                            if (!isUploadHallImage) {
+                                final ImageModel mImageModel = (ImageModel) v.getTag();
 
-                            final int mPosition = (int) v.getTag(R.id.three);
+                                final int mPosition = (int) v.getTag(R.id.three);
 
-                            final Dialog dialog = new Dialog(CheckInCareActivity.this);
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                final Dialog dialog = new Dialog(CheckInCareActivity.this);
+                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-                            dialog.setContentView(R.layout.image_dialog_layout);
+                                dialog.setContentView(R.layout.image_dialog_layout);
 
-                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
-                                    R.id.imgOriginal);
-                            TextView textViewClose = (TextView) dialog.findViewById(
-                                    R.id.textViewClose);
-                            Button buttonDelete = (Button) dialog.findViewById(
-                                    R.id.textViewTitle);
+                                TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                                        R.id.imgOriginal);
+                                TextView textViewClose = (TextView) dialog.findViewById(
+                                        R.id.textViewClose);
+                                Button buttonDelete = (Button) dialog.findViewById(
+                                        R.id.textViewTitle);
 
-                            if (isCompleted)
-                                buttonDelete.setVisibility(View.INVISIBLE);
+                                if (isCompleted)
+                                    buttonDelete.setVisibility(View.INVISIBLE);
 
 
-                            textViewClose.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    //mOriginal.
-                                    dialog.dismiss();
-                                }
-                            });
+                                textViewClose.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //mOriginal.
+                                        dialog.dismiss();
+                                    }
+                                });
 
-                            buttonDelete.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
+                                buttonDelete.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
 
-                                    //
-                                    final AlertDialog.Builder alertbox =
-                                            new AlertDialog.Builder(CheckInCareActivity.this);
-                                    alertbox.setTitle(getString(R.string.delete_image));
-                                    alertbox.setMessage(getString(R.string.confirm_delete_image));
-                                    alertbox.setPositiveButton(getString(R.string.yes),
-                                            new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
+                                        //
+                                        final AlertDialog.Builder alertbox =
+                                                new AlertDialog.Builder(CheckInCareActivity.this);
+                                        alertbox.setTitle(getString(R.string.delete_image));
+                                        alertbox.setMessage(getString(R.string.confirm_delete_image));
+                                        alertbox.setPositiveButton(getString(R.string.yes),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface arg0, int arg1) {
 
-                                            try {
-                                                File fDelete = utils.getInternalFileImages(
-                                                        mImageModel.getStrImageName());
+                                                        try {
+                                                            File fDelete = utils.getInternalFileImages(
+                                                                    mImageModel.getStrImageName());
 
-                                                if (fDelete.exists()) {
-                                                    success = fDelete.delete();
+                                                            if (fDelete.exists()) {
+                                                                success = fDelete.delete();
 
-                                                    if (mImageModel.ismIsNew())
-                                                        hallImageCount--;
+                                                                if (mImageModel.ismIsNew())
+                                                                    hallImageCount--;
 
-                                                    mImageChanged = true;
+                                                                mImageChanged = true;
 
-                                                    hallimageModels.remove(mImageModel);
+                                                                hallimageModels.remove(mImageModel);
 
-                                                    if (hallbitmaps.size() > 0 && mPosition < hallbitmaps.size()) {
-                                                        hallbitmaps.remove(mPosition);
-                                                    }
+                                                                if (hallbitmaps.size() > 0 && mPosition < hallbitmaps.size()) {
+                                                                    hallbitmaps.remove(mPosition);
+                                                                }
 
-                                                    if (hallImageCount < 1) {
-                                                       // uploadhallbtn.setVisibility(View.GONE);
-                                                        hallstatus.setVisibility(View.VISIBLE);
-                                                        hallstatus.setText(getString(
-                                                                R.string.pending));
-                                                        hallstatus.setTextColor(Color.RED);
-                                                        if (kitchenstatus.
-                                                                getText().toString().equals("Done")
-                                                                && hallstatus.
-                                                                getText().toString().equals("Done")
-                                                                && washroomstatus.
-                                                                getText().toString().equals("Done")
-                                                                && bedroomstatus.
-                                                                getText().toString().
-                                                                equals("Done")) {
+                                                                if (hallImageCount < 1) {
+                                                                    // uploadhallbtn.setVisibility(View.GONE);
+                                                                    hallstatus.setVisibility(View.VISIBLE);
+                                                                    hallstatus.setText(getString(
+                                                                            R.string.pending));
+                                                                    hallstatus.setTextColor(Color.RED);
+                                                                    if (kitchenstatus.
+                                                                            getText().toString().equals("Done")
+                                                                            && hallstatus.
+                                                                            getText().toString().equals("Done")
+                                                                            && washroomstatus.
+                                                                            getText().toString().equals("Done")
+                                                                            && bedroomstatus.
+                                                                            getText().toString().
+                                                                            equals("Done")) {
 
-                                                            uploadmediastatus.setVisibility(
-                                                                    View.VISIBLE);
-                                                            uploadmediastatus.setText(getString(
-                                                                    R.string.done));
-                                                            uploadmediastatus.setTextColor(
-                                                                    Color.BLUE);
-                                                        } else {
-                                                            uploadmediastatus.setVisibility(
-                                                                    View.VISIBLE);
-                                                            uploadmediastatus.setText(getString(
-                                                                    R.string.pending));
-                                                            uploadmediastatus.setTextColor(
-                                                                    Color.RED);
+                                                                        uploadmediastatus.setVisibility(
+                                                                                View.VISIBLE);
+                                                                        uploadmediastatus.setText(getString(
+                                                                                R.string.done));
+                                                                        uploadmediastatus.setTextColor(
+                                                                                Color.BLUE);
+                                                                    } else {
+                                                                        uploadmediastatus.setVisibility(
+                                                                                View.VISIBLE);
+                                                                        uploadmediastatus.setText(getString(
+                                                                                R.string.pending));
+                                                                        uploadmediastatus.setTextColor(
+                                                                                Color.RED);
+                                                                    }
+                                                                }
+                                                            }
+                                                            if (success) {
+                                                                utils.toast(2, 2, getString(
+                                                                        R.string.file_deleted));
+
+                                                            }
+                                                            arg0.dismiss();
+                                                            dialog.dismiss();
+                                                            addHallImages();
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
                                                         }
                                                     }
-                                                }
-                                                if (success) {
-                                                    utils.toast(2, 2, getString(
-                                                            R.string.file_deleted));
+                                                });
+                                        alertbox.setNegativeButton(getString(R.string.no),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface arg0, int arg1) {
+                                                        arg0.dismiss();
+                                                    }
+                                                });
+                                        alertbox.show();
+                                        //
+                                    }
+                                });
 
-                                                }
-                                                arg0.dismiss();
-                                                dialog.dismiss();
-                                                addHallImages();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-                                    alertbox.setNegativeButton(getString(R.string.no),
-                                            new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
-                                            arg0.dismiss();
-                                        }
-                                    });
-                                    alertbox.show();
-                                    //
+
+                                try {
+                                    mOriginal.setImageBitmap(hallbitmaps.get(mPosition));
+                                    //, Config.intWidth, Config.intHeight)
+                                } catch (OutOfMemoryError oOm) {
+                                    oOm.printStackTrace();
                                 }
-                            });
+                                dialog.setCancelable(true);
 
+                                dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                                dialog.show();
 
-                            try {
-                                mOriginal.setImageBitmap(hallbitmaps.get(mPosition));
-                                //, Config.intWidth, Config.intHeight)
-                            } catch (OutOfMemoryError oOm) {
-                                oOm.printStackTrace();
                             }
-                            dialog.setCancelable(true);
-
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
-                            dialog.show();
-
                         }
                     });
 
@@ -3017,6 +3161,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
             }
+
         } else {
             hallstatus.setVisibility(View.VISIBLE);
             hallstatus.setText(getString(R.string.pending));
@@ -3092,136 +3237,138 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onClick(View v) {
 
-                            final ImageModel mImageModel = (ImageModel) v.getTag();
+                            if (!isUploadKitchenImage) {
+                                final ImageModel mImageModel = (ImageModel) v.getTag();
 
-                            final int mPosition = (int) v.getTag(R.id.three);
+                                final int mPosition = (int) v.getTag(R.id.three);
 
-                            final Dialog dialog = new Dialog(CheckInCareActivity.this);
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                final Dialog dialog = new Dialog(CheckInCareActivity.this);
+                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-                            dialog.setContentView(R.layout.image_dialog_layout);
+                                dialog.setContentView(R.layout.image_dialog_layout);
 
-                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
-                                    R.id.imgOriginal);
-                            TextView textViewClose = (TextView) dialog.findViewById(
-                                    R.id.textViewClose);
-                            Button buttonDelete = (Button) dialog.findViewById(
-                                    R.id.textViewTitle);
+                                TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                                        R.id.imgOriginal);
+                                TextView textViewClose = (TextView) dialog.findViewById(
+                                        R.id.textViewClose);
+                                Button buttonDelete = (Button) dialog.findViewById(
+                                        R.id.textViewTitle);
 
-                            if (isCompleted)
-                                buttonDelete.setVisibility(View.INVISIBLE);
+                                if (isCompleted)
+                                    buttonDelete.setVisibility(View.INVISIBLE);
 
 
-                            textViewClose.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    //mOriginal.
-                                    dialog.dismiss();
-                                }
-                            });
+                                textViewClose.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //mOriginal.
+                                        dialog.dismiss();
+                                    }
+                                });
 
-                            buttonDelete.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
+                                buttonDelete.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
 
-                                    //
-                                    final AlertDialog.Builder alertbox =
-                                            new AlertDialog.Builder(CheckInCareActivity.this);
-                                    alertbox.setTitle(getString(R.string.delete_image));
-                                    alertbox.setMessage(getString(R.string.confirm_delete_image));
-                                    alertbox.setPositiveButton(getString(R.string.yes),
-                                            new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
+                                        //
+                                        final AlertDialog.Builder alertbox =
+                                                new AlertDialog.Builder(CheckInCareActivity.this);
+                                        alertbox.setTitle(getString(R.string.delete_image));
+                                        alertbox.setMessage(getString(R.string.confirm_delete_image));
+                                        alertbox.setPositiveButton(getString(R.string.yes),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface arg0, int arg1) {
 
-                                            try {
-                                                File fDelete = utils.getInternalFileImages(
-                                                        mImageModel.getStrImageName());
+                                                        try {
+                                                            File fDelete = utils.getInternalFileImages(
+                                                                    mImageModel.getStrImageName());
 
-                                                if (fDelete.exists()) {
-                                                    success = fDelete.delete();
+                                                            if (fDelete.exists()) {
+                                                                success = fDelete.delete();
 
-                                                    if (mImageModel.ismIsNew())
-                                                        kitchenImageCount--;
+                                                                if (mImageModel.ismIsNew())
+                                                                    kitchenImageCount--;
 
-                                                    mImageChanged = true;
+                                                                mImageChanged = true;
 
-                                                    kitchenimageModels.remove(mImageModel);
+                                                                kitchenimageModels.remove(mImageModel);
 
-                                                    if (kitchenbitmaps.size() > 0 && mPosition < kitchenbitmaps.size()) {
-                                                        kitchenbitmaps.remove(mPosition);
-                                                    }
+                                                                if (kitchenbitmaps.size() > 0 && mPosition < kitchenbitmaps.size()) {
+                                                                    kitchenbitmaps.remove(mPosition);
+                                                                }
 
-                                                    if (kitchenImageCount < 1) {
-                                                      //  uploadkitchenbtn.setVisibility(View.GONE);
-                                                        kitchenstatus.setVisibility(
-                                                                View.VISIBLE);
-                                                        kitchenstatus.setText(getString(
-                                                                R.string.pending));
-                                                        kitchenstatus.setTextColor(Color.RED);
+                                                                if (kitchenImageCount < 1) {
+                                                                    //  uploadkitchenbtn.setVisibility(View.GONE);
+                                                                    kitchenstatus.setVisibility(
+                                                                            View.VISIBLE);
+                                                                    kitchenstatus.setText(getString(
+                                                                            R.string.pending));
+                                                                    kitchenstatus.setTextColor(Color.RED);
 
-                                                        if (hallstatus.getText().toString().
-                                                                equals("Done")
-                                                                && kitchenstatus.
-                                                                getText().toString().equals("Done")
-                                                                && washroomstatus.
-                                                                getText().toString().equals("Done")
-                                                                && bedroomstatus.
-                                                                getText().toString().
-                                                                equals("Done")) {
+                                                                    if (hallstatus.getText().toString().
+                                                                            equals("Done")
+                                                                            && kitchenstatus.
+                                                                            getText().toString().equals("Done")
+                                                                            && washroomstatus.
+                                                                            getText().toString().equals("Done")
+                                                                            && bedroomstatus.
+                                                                            getText().toString().
+                                                                            equals("Done")) {
 
-                                                            uploadmediastatus.setVisibility(
-                                                                    View.VISIBLE);
-                                                            uploadmediastatus.setText(
-                                                                    getString(R.string.done));
-                                                            uploadmediastatus.setTextColor(
-                                                                    Color.BLUE);
-                                                        } else {
-                                                            uploadmediastatus.setVisibility(
-                                                                    View.VISIBLE);
-                                                            uploadmediastatus.setText(getString(
-                                                                    R.string.pending));
-                                                            uploadmediastatus.setTextColor(
-                                                                    Color.RED);
+                                                                        uploadmediastatus.setVisibility(
+                                                                                View.VISIBLE);
+                                                                        uploadmediastatus.setText(
+                                                                                getString(R.string.done));
+                                                                        uploadmediastatus.setTextColor(
+                                                                                Color.BLUE);
+                                                                    } else {
+                                                                        uploadmediastatus.setVisibility(
+                                                                                View.VISIBLE);
+                                                                        uploadmediastatus.setText(getString(
+                                                                                R.string.pending));
+                                                                        uploadmediastatus.setTextColor(
+                                                                                Color.RED);
+                                                                    }
+                                                                }
+                                                            }
+                                                            if (success) {
+                                                                utils.toast(2, 2, getString(
+                                                                        R.string.file_deleted));
+
+                                                            }
+                                                            arg0.dismiss();
+                                                            dialog.dismiss();
+                                                            addKitchenImages();
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
                                                         }
                                                     }
-                                                }
-                                                if (success) {
-                                                    utils.toast(2, 2, getString(
-                                                            R.string.file_deleted));
+                                                });
+                                        alertbox.setNegativeButton(getString(R.string.no),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface arg0, int arg1) {
+                                                        arg0.dismiss();
+                                                    }
+                                                });
+                                        alertbox.show();
+                                        //
+                                    }
+                                });
 
-                                                }
-                                                arg0.dismiss();
-                                                dialog.dismiss();
-                                                addKitchenImages();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-                                    alertbox.setNegativeButton(getString(R.string.no),
-                                            new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
-                                            arg0.dismiss();
-                                        }
-                                    });
-                                    alertbox.show();
-                                    //
+
+                                try {
+                                    mOriginal.setImageBitmap(kitchenbitmaps.get(mPosition));
+                                    //, Config.intWidth, Config.intHeight)
+                                } catch (OutOfMemoryError oOm) {
+                                    oOm.printStackTrace();
                                 }
-                            });
+                                dialog.setCancelable(true);
 
+                                dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                                dialog.show();
 
-                            try {
-                                mOriginal.setImageBitmap(kitchenbitmaps.get(mPosition));
-                                //, Config.intWidth, Config.intHeight)
-                            } catch (OutOfMemoryError oOm) {
-                                oOm.printStackTrace();
                             }
-                            dialog.setCancelable(true);
-
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
-                            dialog.show();
-
                         }
                     });
 
@@ -3230,6 +3377,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
             }
+
         } else {
             kitchenstatus.setVisibility(View.VISIBLE);
             kitchenstatus.setText(getString(R.string.pending));
@@ -3305,138 +3453,140 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onClick(View v) {
 
-                            final ImageModel mImageModel = (ImageModel) v.getTag();
+                            if (!isUploadWashImage) {
+                                final ImageModel mImageModel = (ImageModel) v.getTag();
 
-                            final int mPosition = (int) v.getTag(R.id.three);
+                                final int mPosition = (int) v.getTag(R.id.three);
 
-                            final Dialog dialog = new Dialog(CheckInCareActivity.this);
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                final Dialog dialog = new Dialog(CheckInCareActivity.this);
+                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-                            dialog.setContentView(R.layout.image_dialog_layout);
+                                dialog.setContentView(R.layout.image_dialog_layout);
 
-                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
-                                    R.id.imgOriginal);
-                            TextView textViewClose = (TextView) dialog.findViewById(
-                                    R.id.textViewClose);
-                            Button buttonDelete = (Button) dialog.findViewById(
-                                    R.id.textViewTitle);
+                                TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                                        R.id.imgOriginal);
+                                TextView textViewClose = (TextView) dialog.findViewById(
+                                        R.id.textViewClose);
+                                Button buttonDelete = (Button) dialog.findViewById(
+                                        R.id.textViewTitle);
 
-                            if (isCompleted)
-                                buttonDelete.setVisibility(View.INVISIBLE);
+                                if (isCompleted)
+                                    buttonDelete.setVisibility(View.INVISIBLE);
 
 
-                            textViewClose.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    //mOriginal.
-                                    dialog.dismiss();
-                                }
-                            });
+                                textViewClose.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //mOriginal.
+                                        dialog.dismiss();
+                                    }
+                                });
 
-                            buttonDelete.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
+                                buttonDelete.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
 
-                                    //
-                                    final AlertDialog.Builder alertbox =
-                                            new AlertDialog.Builder(CheckInCareActivity.this);
-                                    alertbox.setTitle(getString(R.string.delete_image));
-                                    alertbox.setMessage(getString(R.string.confirm_delete_image));
-                                    alertbox.setPositiveButton(getString(R.string.yes),
-                                            new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
+                                        //
+                                        final AlertDialog.Builder alertbox =
+                                                new AlertDialog.Builder(CheckInCareActivity.this);
+                                        alertbox.setTitle(getString(R.string.delete_image));
+                                        alertbox.setMessage(getString(R.string.confirm_delete_image));
+                                        alertbox.setPositiveButton(getString(R.string.yes),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface arg0, int arg1) {
 
-                                            try {
-                                                File fDelete = utils.getInternalFileImages(
-                                                        mImageModel.getStrImageName());
+                                                        try {
+                                                            File fDelete = utils.getInternalFileImages(
+                                                                    mImageModel.getStrImageName());
 
-                                                if (fDelete.exists()) {
-                                                    success = fDelete.delete();
+                                                            if (fDelete.exists()) {
+                                                                success = fDelete.delete();
 
-                                                    if (mImageModel.ismIsNew())
-                                                        washroomImageCount--;
+                                                                if (mImageModel.ismIsNew())
+                                                                    washroomImageCount--;
 
-                                                    mImageChanged = true;
+                                                                mImageChanged = true;
 
-                                                    washroomimageModels.remove(mImageModel);
+                                                                washroomimageModels.remove(mImageModel);
 
-                                                    //washroombitmaps.remove(mPosition);
+                                                                //washroombitmaps.remove(mPosition);
 
-                                                    if (washroombitmaps.size() > 0 && mPosition < washroombitmaps.size()) {
-                                                        washroombitmaps.remove(mPosition);
-                                                    }
+                                                                if (washroombitmaps.size() > 0 && mPosition < washroombitmaps.size()) {
+                                                                    washroombitmaps.remove(mPosition);
+                                                                }
 
-                                                    if (washroomImageCount < 1) {
-                                                      //  uploadwashroombtn.setVisibility(View.GONE);
-                                                        washroomstatus.setVisibility(View.VISIBLE);
-                                                        washroomstatus.setText(getString(R.string.
-                                                                pending));
-                                                        washroomstatus.setTextColor(Color.RED);
-                                                        if (hallstatus.getText().toString().
-                                                                equals(getString(R.string.done))
-                                                                && washroomstatus.getText().
-                                                                toString().equals(getString(
-                                                                R.string.done))
-                                                                && kitchenstatus.getText().
-                                                                toString().equals(getString(
-                                                                R.string.done))
-                                                                && bedroomstatus.getText().
-                                                                toString().equals(getString(
-                                                                R.string.done))) {
+                                                                if (washroomImageCount < 1) {
+                                                                    //  uploadwashroombtn.setVisibility(View.GONE);
+                                                                    washroomstatus.setVisibility(View.VISIBLE);
+                                                                    washroomstatus.setText(getString(R.string.
+                                                                            pending));
+                                                                    washroomstatus.setTextColor(Color.RED);
+                                                                    if (hallstatus.getText().toString().
+                                                                            equals(getString(R.string.done))
+                                                                            && washroomstatus.getText().
+                                                                            toString().equals(getString(
+                                                                            R.string.done))
+                                                                            && kitchenstatus.getText().
+                                                                            toString().equals(getString(
+                                                                            R.string.done))
+                                                                            && bedroomstatus.getText().
+                                                                            toString().equals(getString(
+                                                                            R.string.done))) {
 
-                                                            uploadmediastatus.setVisibility(
-                                                                    View.VISIBLE);
-                                                            uploadmediastatus.setText(
-                                                                    getString(R.string.done));
-                                                            uploadmediastatus.setTextColor(
-                                                                    Color.BLUE);
-                                                        } else {
-                                                            uploadmediastatus.setVisibility(
-                                                                    View.VISIBLE);
-                                                            uploadmediastatus.setText(getString(
-                                                                    R.string.pending));
-                                                            uploadmediastatus.setTextColor(
-                                                                    Color.RED);
+                                                                        uploadmediastatus.setVisibility(
+                                                                                View.VISIBLE);
+                                                                        uploadmediastatus.setText(
+                                                                                getString(R.string.done));
+                                                                        uploadmediastatus.setTextColor(
+                                                                                Color.BLUE);
+                                                                    } else {
+                                                                        uploadmediastatus.setVisibility(
+                                                                                View.VISIBLE);
+                                                                        uploadmediastatus.setText(getString(
+                                                                                R.string.pending));
+                                                                        uploadmediastatus.setTextColor(
+                                                                                Color.RED);
+                                                                    }
+                                                                }
+                                                            }
+                                                            if (success) {
+                                                                utils.toast(2, 2, getString(
+                                                                        R.string.file_deleted));
+
+                                                            }
+                                                            arg0.dismiss();
+                                                            dialog.dismiss();
+                                                            addWashroomImages();
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
                                                         }
                                                     }
-                                                }
-                                                if (success) {
-                                                    utils.toast(2, 2, getString(
-                                                            R.string.file_deleted));
+                                                });
+                                        alertbox.setNegativeButton(getString(R.string.no),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface arg0, int arg1) {
+                                                        arg0.dismiss();
+                                                    }
+                                                });
+                                        alertbox.show();
+                                        //
+                                    }
+                                });
 
-                                                }
-                                                arg0.dismiss();
-                                                dialog.dismiss();
-                                                addWashroomImages();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-                                    alertbox.setNegativeButton(getString(R.string.no),
-                                            new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
-                                            arg0.dismiss();
-                                        }
-                                    });
-                                    alertbox.show();
-                                    //
+
+                                try {
+                                    mOriginal.setImageBitmap(washroombitmaps.get(mPosition));
+                                    //, Config.intWidth, Config.intHeight)
+                                } catch (OutOfMemoryError oOm) {
+                                    oOm.printStackTrace();
                                 }
-                            });
+                                dialog.setCancelable(true);
 
+                                dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                                dialog.show();
 
-                            try {
-                                mOriginal.setImageBitmap(washroombitmaps.get(mPosition));
-                                //, Config.intWidth, Config.intHeight)
-                            } catch (OutOfMemoryError oOm) {
-                                oOm.printStackTrace();
                             }
-                            dialog.setCancelable(true);
-
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
-                            dialog.show();
-
                         }
                     });
 
@@ -3445,6 +3595,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
             }
+
         } else {
             washroomstatus.setVisibility(View.VISIBLE);
             washroomstatus.setText(getString(R.string.pending));
@@ -3519,140 +3670,142 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onClick(View v) {
 
-                            final ImageModel mImageModel = (ImageModel) v.getTag();
+                            if (!isUploadBedImage) {
+                                final ImageModel mImageModel = (ImageModel) v.getTag();
 
-                            final int mPosition = (int) v.getTag(R.id.three);
+                                final int mPosition = (int) v.getTag(R.id.three);
 
-                            final Dialog dialog = new Dialog(CheckInCareActivity.this);
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                final Dialog dialog = new Dialog(CheckInCareActivity.this);
+                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-                            dialog.setContentView(R.layout.image_dialog_layout);
+                                dialog.setContentView(R.layout.image_dialog_layout);
 
-                            TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
-                                    R.id.imgOriginal);
-                            TextView textViewClose = (TextView) dialog.findViewById(
-                                    R.id.textViewClose);
-                            Button buttonDelete = (Button) dialog.findViewById(
-                                    R.id.textViewTitle);
+                                TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                                        R.id.imgOriginal);
+                                TextView textViewClose = (TextView) dialog.findViewById(
+                                        R.id.textViewClose);
+                                Button buttonDelete = (Button) dialog.findViewById(
+                                        R.id.textViewTitle);
 
-                            if (isCompleted)
-                                buttonDelete.setVisibility(View.INVISIBLE);
-
-
-                            textViewClose.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    //mOriginal.
-                                    dialog.dismiss();
-                                }
-                            });
-
-                            buttonDelete.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                    //
-                                    final AlertDialog.Builder alertbox =
-                                            new AlertDialog.Builder(CheckInCareActivity.this);
-                                    alertbox.setTitle(getString(R.string.delete_image));
-                                    alertbox.setMessage(getString(R.string.confirm_delete_image));
-                                    alertbox.setPositiveButton(getString(R.string.yes),
-                                            new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
-
-                                            try {
-                                                File fDelete = utils.getInternalFileImages
-                                                        (mImageModel.getStrImageName());
-
-                                                if (fDelete.exists()) {
-                                                    success = fDelete.delete();
-
-                                                    if (mImageModel.ismIsNew())
-                                                        bedroomImageCount--;
-
-                                                    mImageChanged = true;
-
-                                                    bedroomimageModels.remove(mImageModel);
-
-                                                    // bedroombitmaps.remove(mPosition);
-
-                                                    if (bedroombitmaps.size() > 0 && mPosition < bedroombitmaps.size()) {
-                                                        bedroombitmaps.remove(mPosition);
-                                                    }
+                                if (isCompleted)
+                                    buttonDelete.setVisibility(View.INVISIBLE);
 
 
-                                                    if (bedroomImageCount < 1) {
-                                                      //  uploadbedroombtn.setVisibility(View.GONE);
-                                                        bedroomstatus.setVisibility(View.VISIBLE);
-                                                        bedroomstatus.setText(getString(
-                                                                R.string.pending));
-                                                        bedroomstatus.setTextColor(Color.RED);
-                                                        if (hallstatus.getText().toString().
-                                                                equals(getString(R.string.done))
-                                                                && bedroomstatus.getText().
-                                                                toString().equals(getString(
-                                                                R.string.done))
-                                                                && kitchenstatus.getText().
-                                                                toString().equals(getString(
-                                                                R.string.done))
-                                                                && washroomstatus.getText().
-                                                                toString().equals(getString(
-                                                                R.string.done))) {
+                                textViewClose.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //mOriginal.
+                                        dialog.dismiss();
+                                    }
+                                });
 
-                                                            uploadmediastatus.
-                                                                    setVisibility(View.VISIBLE);
-                                                            uploadmediastatus.
-                                                                    setText(getString(R.string.done));
-                                                            uploadmediastatus.
-                                                                    setTextColor(Color.BLUE);
-                                                        } else {
-                                                            uploadmediastatus.setVisibility(
-                                                                    View.VISIBLE);
-                                                            uploadmediastatus.setText
-                                                                    (getString(R.string.pending));
-                                                            uploadmediastatus.setTextColor(
-                                                                    Color.RED);
+                                buttonDelete.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        //
+                                        final AlertDialog.Builder alertbox =
+                                                new AlertDialog.Builder(CheckInCareActivity.this);
+                                        alertbox.setTitle(getString(R.string.delete_image));
+                                        alertbox.setMessage(getString(R.string.confirm_delete_image));
+                                        alertbox.setPositiveButton(getString(R.string.yes),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                                        try {
+                                                            File fDelete = utils.getInternalFileImages
+                                                                    (mImageModel.getStrImageName());
+
+                                                            if (fDelete.exists()) {
+                                                                success = fDelete.delete();
+
+                                                                if (mImageModel.ismIsNew())
+                                                                    bedroomImageCount--;
+
+                                                                mImageChanged = true;
+
+                                                                bedroomimageModels.remove(mImageModel);
+
+                                                                // bedroombitmaps.remove(mPosition);
+
+                                                                if (bedroombitmaps.size() > 0 && mPosition < bedroombitmaps.size()) {
+                                                                    bedroombitmaps.remove(mPosition);
+                                                                }
+
+
+                                                                if (bedroomImageCount < 1) {
+                                                                    //  uploadbedroombtn.setVisibility(View.GONE);
+                                                                    bedroomstatus.setVisibility(View.VISIBLE);
+                                                                    bedroomstatus.setText(getString(
+                                                                            R.string.pending));
+                                                                    bedroomstatus.setTextColor(Color.RED);
+                                                                    if (hallstatus.getText().toString().
+                                                                            equals(getString(R.string.done))
+                                                                            && bedroomstatus.getText().
+                                                                            toString().equals(getString(
+                                                                            R.string.done))
+                                                                            && kitchenstatus.getText().
+                                                                            toString().equals(getString(
+                                                                            R.string.done))
+                                                                            && washroomstatus.getText().
+                                                                            toString().equals(getString(
+                                                                            R.string.done))) {
+
+                                                                        uploadmediastatus.
+                                                                                setVisibility(View.VISIBLE);
+                                                                        uploadmediastatus.
+                                                                                setText(getString(R.string.done));
+                                                                        uploadmediastatus.
+                                                                                setTextColor(Color.BLUE);
+                                                                    } else {
+                                                                        uploadmediastatus.setVisibility(
+                                                                                View.VISIBLE);
+                                                                        uploadmediastatus.setText
+                                                                                (getString(R.string.pending));
+                                                                        uploadmediastatus.setTextColor(
+                                                                                Color.RED);
+                                                                    }
+
+                                                                }
+                                                            }
+                                                            if (success) {
+                                                                utils.toast(2, 2, getString(R.string.
+                                                                        file_deleted));
+
+                                                            }
+                                                            arg0.dismiss();
+                                                            dialog.dismiss();
+                                                            addBedroomImages();
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
                                                         }
-
                                                     }
-                                                }
-                                                if (success) {
-                                                    utils.toast(2, 2, getString(R.string.
-                                                            file_deleted));
+                                                });
+                                        alertbox.setNegativeButton(getString(R.string.no),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface arg0, int arg1) {
+                                                        arg0.dismiss();
+                                                    }
+                                                });
+                                        alertbox.show();
+                                        //
+                                    }
+                                });
 
-                                                }
-                                                arg0.dismiss();
-                                                dialog.dismiss();
-                                                addBedroomImages();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-                                    alertbox.setNegativeButton(getString(R.string.no),
-                                            new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
-                                            arg0.dismiss();
-                                        }
-                                    });
-                                    alertbox.show();
-                                    //
+
+                                try {
+                                    mOriginal.setImageBitmap(bedroombitmaps.get(mPosition));
+                                    //, Config.intWidth, Config.intHeight)
+                                } catch (OutOfMemoryError oOm) {
+                                    oOm.printStackTrace();
                                 }
-                            });
+                                dialog.setCancelable(true);
 
+                                dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+                                dialog.show();
 
-                            try {
-                                mOriginal.setImageBitmap(bedroombitmaps.get(mPosition));
-                                //, Config.intWidth, Config.intHeight)
-                            } catch (OutOfMemoryError oOm) {
-                                oOm.printStackTrace();
                             }
-                            dialog.setCancelable(true);
-
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
-                            dialog.show();
-
                         }
                     });
 
@@ -3661,6 +3814,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
             }
+
         } else {
             bedroomstatus.setVisibility(View.VISIBLE);
             bedroomstatus.setText(getString(R.string.pending));
@@ -3921,6 +4075,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     public void permissionGranted() {
                         //action to perform when permission granteed
                         isAllowed = true;
+
                         utils.selectImage(String.valueOf(new Date().getDate() + ""
                                 + new Date().getTime())
                                 + ".jpeg", null, CheckInCareActivity.this, false);
@@ -3951,7 +4106,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     public void onClick(View v) {
                         isHallFlag = 1;
                         mainlinearlayout.requestFocus();
-                        selectImage();
+                        if(isUploadHallImage){
+                            utils.toast(2, 2, getString(R.string.upload_hall_success));
+
+                        }else {
+                            selectImage();
+                        }
                     }
                 });
             }
@@ -3963,7 +4123,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         isHallFlag = 2;
 
                         mainlinearlayout.requestFocus();
-                        selectImage();
+                        if(isUploadKitchenImage){
+                            utils.toast(2, 2, getString(R.string.upload_kitchen_success));
+
+                        }else {
+                            selectImage();
+                        }
                         }
                 });
             }
@@ -3973,7 +4138,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     public void onClick(View v) {
                         isHallFlag = 3;
                         mainlinearlayout.requestFocus();
-                        selectImage();
+                        if(isUploadWashImage){
+                            utils.toast(2, 2, getString(R.string.upload_wash_success));
+
+                        }else {
+                            selectImage();
+                        }
                         }
                 });
             }
@@ -3983,7 +4153,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     public void onClick(View v) {
                         isHallFlag = 4;
                         mainlinearlayout.requestFocus();
-                        selectImage();
+                        if(isUploadBedImage){
+                            utils.toast(2, 2, getString(R.string.upload_bed_success));
+
+                        }else {
+                            selectImage();
+                        }
                     }
                 });
             }
