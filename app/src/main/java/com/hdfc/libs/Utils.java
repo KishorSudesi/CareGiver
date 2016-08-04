@@ -1513,10 +1513,10 @@ public class Utils {
                 @Override
                 public void onClick(DialogInterface dialog, int item) {
                     //System.out.println(items[item].equals("Take Photo"));
-                    if (items[item].equals("Take Photo")) {
+                    if (items[item].equals(_ctxt.getString(R.string.take_photo))) {
                         openCamera(strFileName, fragment, activity);
 
-                    } else if (items[item].equals("Choose from Library")) {
+                    } else if (items[item].equals(_ctxt.getString(R.string.choose_library))) {
 
                         Intent intent;
 
@@ -1527,10 +1527,10 @@ public class Utils {
 
                             if (fragment != null)
                                 fragment.startActivityForResult(Intent.createChooser(intent,
-                                        "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
+                                        _ctxt.getString(R.string.select_picture)), Config.START_GALLERY_REQUEST_CODE);
                             else
                                 activity.startActivityForResult(Intent.createChooser(intent,
-                                        "Select a Picture"), Config.START_GALLERY_REQUEST_CODE);
+                                        _ctxt.getString(R.string.select_picture)), Config.START_GALLERY_REQUEST_CODE);
                         } else {
                             intent = new Intent(Action.ACTION_MULTIPLE_PICK);
 
@@ -1542,7 +1542,7 @@ public class Utils {
                                         Config.START_GALLERY_REQUEST_CODE);
                         }
 
-                    } else if (items[item].equals("Cancel")) {
+                    } else if (items[item].equals(_ctxt.getString(R.string.cancel))) {
                         dialog.dismiss();
                     }
                 }
