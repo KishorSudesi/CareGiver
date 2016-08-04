@@ -237,6 +237,10 @@
     <string name="upload_kitchen">Please Upload Kitchen Images</string>
     <string name="upload_wash">Please Upload Washroom Images</string>
     <string name="upload_bed">Please Upload Bedroom Images</string>
+    <string name="upload_all">Please Upload All Images</string>
+
+    <string name="due_date">Please Select Due Date</string>
+
 
     <string name="upload_hall_success">Already Uploaded Hall Images</string>
     <string name="upload_kitchen_success">Already Uploaded Kitchen Images</string>
