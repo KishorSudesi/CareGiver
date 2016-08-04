@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
@@ -946,8 +947,8 @@ public class FeatureActivity extends AppCompatActivity {
                     textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
                 }
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, 30, 1);
-                params.setMargins(10, 10, 10, 10);
+                        ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT, 1);
+                params.setMargins(5, 5, 5, 5);
                 textViewName.setTag(milestoneModel);
 
                 //todo check this logic
@@ -1035,6 +1036,7 @@ public class FeatureActivity extends AppCompatActivity {
                 }
 
                 textViewName.setLayoutParams(params);
+                //sv.addView(textViewName);
 
                 if (linearLayout != null) {
                     linearLayout.addView(textViewName);
