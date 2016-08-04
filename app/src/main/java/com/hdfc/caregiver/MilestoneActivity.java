@@ -427,8 +427,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                                         editText.setText(selectedHour + ":"
                                                                 + selectedMinute);
                                                         //todo check logic
-                                                        editText.setTag(R.id.two, Utils.writeFormatTime.
-                                                                format(selectedHour + ":" + selectedMinute));
+                                                        /*editText.setTag(R.id.two, Utils.writeFormatTime.
+                                                                format(selectedHour + ":" + selectedMinute));*/
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
