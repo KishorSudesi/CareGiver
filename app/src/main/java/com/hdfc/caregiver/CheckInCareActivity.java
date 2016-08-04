@@ -249,8 +249,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                 strDependent = new ArrayList<>();
 
-                for(DependentModel dependentModel: dependent){
-                    strDependent.add(dependentModel.getStrName());
+                if (dependent != null && dependent.size() > 0) {
+                    for (DependentModel dependentModel : dependent) {
+                        strDependent.add(dependentModel.getStrName());
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -2362,11 +2364,14 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         };
 
                                         String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                                + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+                                                + DbHelper.COLUMN_COLLECTION_NAME + "=?"
+                                                + DbHelper.COLUMN_PROVIDER_ID + "=?";
 
                                         // WHERE clause arguments
                                         String[] selectionArgs = {jsonDocument.getDocId(),
-                                                Config.collectionCheckInCare};
+                                                Config.collectionCheckInCare,
+                                                Config.providerModel.getStrProviderId()
+                                        };
                                         CareGiver.getDbCon().updateInsert(
                                                 DbHelper.strTableNameCollection,
                                                 selection, values, DbHelper.COLLECTION_FIELDS,
@@ -2843,11 +2848,14 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             };
 
                             String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?"
+                                    + DbHelper.COLUMN_PROVIDER_ID + "=?";
 
                             // WHERE clause arguments
                             String[] selectionArgs = {Config.checkInCareModel.getStrDocumentID(),
-                                    Config.collectionCheckInCare};
+                                    Config.collectionCheckInCare,
+                                    Config.providerModel.getStrProviderId()
+                            };
                             CareGiver.getDbCon().updateInsert(
                                     DbHelper.strTableNameCollection,
                                     selection, values, DbHelper.COLLECTION_FIELDS,

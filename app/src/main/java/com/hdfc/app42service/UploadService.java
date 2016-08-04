@@ -28,12 +28,19 @@ public class UploadService {
         //desc, this);
     }*/
 
-    public void uploadImageCommon(String imagePath, String fileName, String desc, String userName, UploadFileType fileType, App42CallBack callBack) {
+    public void uploadImageCommon(String imagePath, String fileName, String desc, String userName,
+                                  UploadFileType fileType, App42CallBack callBack) {
         //utils.showProgress(true, formView, progressView);
 
         asyncService.uploadImageForUser(fileName, userName, imagePath, fileType, desc, callBack);
         //asyncService.uploadImage(fileName, imagePath, UploadFileType.IMAGE,
         //desc, this);
+    }
+
+    public void uploadImageService(String imagePath, String fileName, String desc, String userName,
+                                   UploadFileType fileType, App42CallBack callBack) {
+
+        asyncService.uploadImageForUser(fileName, userName, imagePath, fileType, desc, callBack);
     }
 
     /*public void uploadFile(String imagePath, String fileName, String desc, UploadFileType fileType, App42CallBack callBack) {
@@ -62,6 +69,11 @@ public class UploadService {
 
     public void removeImage(String fileName, String userName, App42CallBack app42CallBack) {
         asyncService.removeImageByUser(fileName, userName, app42CallBack);
+    }
+
+    public void removeImageByUserService(String fileName, String userName, App42CallBack
+            app42CallBack) {
+        asyncService.removeImageByUserService(fileName, userName, app42CallBack);
     }
 
    /* public void getImageCount(String userName, App42CallBack app42CallBack) {

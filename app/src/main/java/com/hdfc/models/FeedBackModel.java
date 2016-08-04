@@ -14,12 +14,41 @@ public class FeedBackModel implements Serializable {
     private String strFeedBackTime;
     private String strFeedBackByUrl;
 
-    public FeedBackModel(String strFeedBackMessage, String strFeedBackBy, int intFeedBackRating, String strFeedBackTime, String strFeedBackByUrl) {
+    private String strActivityName;
+    private String strDependentId;
+    private String strActivityDate;
+
+    public FeedBackModel(String strFeedBackMessage, String strFeedBackBy, int intFeedBackRating,
+                         String strFeedBackTime, String strFeedBackByUrl) {
         this.strFeedBackMessage = strFeedBackMessage;
         this.strFeedBackBy = strFeedBackBy;
         this.intFeedBackRating = intFeedBackRating;
         this.strFeedBackTime = strFeedBackTime;
         this.strFeedBackByUrl = strFeedBackByUrl;
+    }
+
+    public String getStrActivityName() {
+        return strActivityName;
+    }
+
+    public void setStrActivityName(String strActivityName) {
+        this.strActivityName = strActivityName;
+    }
+
+    public String getStrDependentId() {
+        return strDependentId;
+    }
+
+    public void setStrDependentId(String strDependentId) {
+        this.strDependentId = strDependentId;
+    }
+
+    public String getStrActivityDate() {
+        return strActivityDate;
+    }
+
+    public void setStrActivityDate(String strActivityDate) {
+        this.strActivityDate = strActivityDate;
     }
 
     public boolean isbFeedBackReport() {

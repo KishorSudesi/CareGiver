@@ -52,6 +52,11 @@ public class Config {
     public static final int START_CAMERA_REQUEST_CODE = 1;
     public static final int START_GALLERY_REQUEST_CODE = 2;
     //public static final int CACHE_EXPIRE = 1;//In Minutes
+
+    public static final String SERVICE_MESSAGE = "com.hdfc.services.SyncService.INTENT_MESSAGE";
+    public static final String SERVICE_RESULT = "com.hdfc.services.SyncService.INTENT_RESULT";
+    public static final String SERVICE_RESULT_VALUE = "message";
+
     public static final int intWidth = 300, intHeight = 300;
     //todo fix the dimension and quality
     public static final int intCompressWidth = 300, intCompressHeight = 300, iQuality = 70;

@@ -2,6 +2,7 @@ package com.hdfc.libs;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 
 import com.hdfc.config.Config;
 import com.scottyab.aescrypt.AESCrypt;
@@ -557,6 +558,37 @@ public class AsyncApp42ServiceApi {
         }.start();
     }
 
+    public void updateDocPartByKeyValueService(final String dbName,
+                                               final String collectionName, final String key,
+                                               final JSONObject newJsonDoc, final App42CallBack callBack) {
+        //final String value,
+        final Handler callerThreadHandler = new Handler(Looper.getMainLooper());
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final Storage response = storageService.addOrUpdateKeys(dbName, collectionName,
+                            key, newJsonDoc);
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSuccess(response);
+                        }
+                    });
+                } catch (final App42Exception ex) {
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callBack != null) {
+                                callBack.onException(ex);
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
     /*
      * This function Uploads File On App42 Cloud.
 	 */
@@ -767,6 +799,35 @@ public class AsyncApp42ServiceApi {
     public void removeImageByUser(final String fileName, final String userName,
                                   final App42CallBack callBack) {
         final Handler callerThreadHandler = new Handler();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final App42Response response = uploadService.removeFileByUser(fileName, userName);
+
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSuccess(response);
+                        }
+                    });
+                } catch (final App42Exception ex) {
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callBack != null) {
+                                callBack.onException(ex);
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
+    public void removeImageByUserService(final String fileName, final String userName,
+                                         final App42CallBack callBack) {
+        final Handler callerThreadHandler = new Handler(Looper.getMainLooper());
         new Thread() {
             @Override
             public void run() {

@@ -1502,11 +1502,13 @@ public class Utils {
                             final Activity activity, final boolean isSingle) {
 
         try {
-            final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
+            final CharSequence[] items = {_ctxt.getString(R.string.take_photo),
+                    _ctxt.getString(R.string.choose_library),
+                    _ctxt.getString(R.string.cancel)};
 
             AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
 
-            builder.setTitle("Select a Image");
+            //builder.setTitle("Select a Image");
             builder.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int item) {

@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -44,6 +45,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
 
     public static boolean isLoaded;
+    public static boolean isRunning;
     private static RelativeLayout loadingPanel;
     //private Utils utils;
     private static AppCompatActivity appCompatActivity;
@@ -84,12 +86,13 @@ public class DashboardActivity extends AppCompatActivity implements
 
                     if (Config.intSelectedMenu != Config.intNotificationScreen)
                         showPushDialog(message);
-                }
+            }
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+        }
         }
     };
+    private BroadcastReceiver receiver;
     private SessionManager sessionManager;
 
     public static void gotoSimpleActivityMenu(boolean isLoader) {
@@ -285,19 +288,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 sync.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        if (Utils.isConnectingToInternet(DashboardActivity.this)) {
-                            Utils.toast(1, 1, getString(R.string.updating), DashboardActivity.this);
-
-                            //update service
-                            /*Intent serviceIntent = new Intent(DashboardActivity.this, SyncService.class);
-                            startService(serviceIntent);*/
-
-                            AppUtils.syncAll(DashboardActivity.this);
-                        } else {
-                            Utils.toast(2, 2, getString(R.string.warning_internet),
-                                    DashboardActivity.this);
-                        }
+                        callSync();
                     }
                 });
             }
@@ -306,18 +297,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 textViewSync.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (Utils.isConnectingToInternet(DashboardActivity.this)) {
-                            Utils.toast(1, 1, getString(R.string.updating), DashboardActivity.this);
-
-                            //update service
-                           /* Intent serviceIntent = new Intent(DashboardActivity.this, SyncService.class);
-                            startService(serviceIntent);*/
-
-                            AppUtils.syncAll(DashboardActivity.this);
-                        } else {
-                            Utils.toast(2, 2, getString(R.string.warning_internet),
-                                    DashboardActivity.this);
-                        }
+                        callSync();
                     }
                 });
             }
@@ -402,10 +382,36 @@ public class DashboardActivity extends AppCompatActivity implements
                 }
             }
 
+            receiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    // do something here.
+                    String mess = intent.getStringExtra(Config.SERVICE_MESSAGE);
+                    if (mess.equalsIgnoreCase(Config.SERVICE_RESULT_VALUE)) {
+                        Utils.toast(1, 1, getString(R.string.update), DashboardActivity.this);
+                    }
+                }
+            };
+
             Utils.log(" ONCREATE ", " DASHBOARD ");
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void callSync() {
+        if (Utils.isConnectingToInternet(DashboardActivity.this)) {
+            Utils.toast(1, 1, getString(R.string.updating), DashboardActivity.this);
+
+            //update service
+            /*Intent serviceIntent = new Intent(DashboardActivity.this, SyncService.class);
+            startService(serviceIntent);*/
+
+            AppUtils.syncAll(DashboardActivity.this);
+        } else {
+            Utils.toast(2, 2, getString(R.string.warning_internet),
+                    DashboardActivity.this);
         }
     }
 
@@ -499,7 +505,7 @@ public class DashboardActivity extends AppCompatActivity implements
         App42GCMController.storeRegistrationId(this, gcmRegId);
         if (!App42GCMController.isApp42Registerd(DashboardActivity.this)) {
             App42GCMController.registerOnApp42(App42API.getLoggedInUser(), gcmRegId, this);
-            Utils.log(gcmRegId, " GCM ");
+            // Utils.log(gcmRegId, " GCM ");
         }
     }
 
@@ -525,6 +531,10 @@ public class DashboardActivity extends AppCompatActivity implements
             unregisterReceiver(mBroadcastReceiver);
             if (networkStateReceiver != null)
                 unregisterReceiver(networkStateReceiver);
+
+            isRunning = false;
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -534,7 +544,8 @@ public class DashboardActivity extends AppCompatActivity implements
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         try {
-            Utils.log(String.valueOf(intent.getStringExtra(App42GCMService.ExtraMessage)), " PUSH ");
+            Utils.log(String.valueOf(intent.getStringExtra(App42GCMService.ExtraMessage)),
+                    " PUSH ");
             if (intent.getStringExtra(App42GCMService.ExtraMessage) != null) {
 
                 if (CareGiver.getDbCon() != null) {
@@ -567,6 +578,8 @@ public class DashboardActivity extends AppCompatActivity implements
         if (sessionManager.getProviderId() != null
                 && !sessionManager.getProviderId().equalsIgnoreCase("")) {
 
+            isRunning = true;
+
             //if (Config.providerModel == null || Config.providerModel.getStrName() == null)
 
             isLoaded = true;
@@ -579,6 +592,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
                 registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.
                         CONNECTIVITY_ACTION));
+
+                LocalBroadcastManager.getInstance(this).registerReceiver((receiver),
+                        new IntentFilter(Config.SERVICE_RESULT)
+                );
 
             } catch (Exception e) {
                 e.printStackTrace();

@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
@@ -34,6 +33,7 @@ import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
+import com.hdfc.models.FeedBackModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.views.TouchImageView;
@@ -81,6 +81,7 @@ public class FeatureActivity extends AppCompatActivity {
     private Button done;
     private PermissionHelper permissionHelper;
     private boolean isAllowed = false;
+    private FeedBackModel feedBackModel;
     private ProgressBar progressBar1, progressBar2;
 
     @Override
@@ -264,18 +265,52 @@ public class FeatureActivity extends AppCompatActivity {
                         TextView textName = (TextView) dialogView.findViewById(R.id.textPopupName);
                         ImageView imageDialog = (ImageView) dialogView.findViewById(R.id.popupImage);
 
+                       /* for(FeedBackModel feedBackModel: act.getFeedBackModels()){
+
+                            if(feedBackModel.getStrFeedBackBy().equalsIgnoreCase(""))
+                        }*/
+
+                        LinearLayout linearRating = (LinearLayout) dialogView.findViewById(R.id.
+                                linearRating);
+
+                        //todo check for dependent feedback
+                        if (act.getFeedBackModels().size() > 0) {
+
+                            linearRating.setVisibility(View.VISIBLE);
+
+                            TextView ratingTime = (TextView) dialogView.findViewById(R.id.
+                                    ratingTime);
+                            ImageView ratingImage = (ImageView) dialogView.findViewById(
+                                    R.id.ratinegImage);
+
+                            ratingTime.setText(act.getFeedBackModels().get(0).getStrFeedBackTime());
+
+                            if (act.getFeedBackModels().get(0).getIntFeedBackRating() == 1) {
+                                ratingImage.setImageDrawable(getResources().getDrawable(R.drawable.
+                                        smiley_1));
+                            } else if (act.getFeedBackModels().get(0).getIntFeedBackRating() == 2) {
+                                ratingImage.setImageDrawable(getResources().getDrawable(R.drawable.
+                                        smiley_2));
+                            } else if (act.getFeedBackModels().get(0).getIntFeedBackRating() == 3) {
+                                ratingImage.setImageDrawable(getResources().getDrawable(R.drawable.
+                                        smiley_3));
+                            } else if (act.getFeedBackModels().get(0).getIntFeedBackRating() == 4) {
+                                ratingImage.setImageDrawable(getResources().getDrawable(R.drawable.
+                                        smiley_4));
+                            } else {
+                                ratingImage.setImageDrawable(getResources().getDrawable(R.drawable.
+                                        smiley_5));
+                            }
+                        } else {
+                            linearRating.setVisibility(View.GONE);
+                        }
+
                         try {
 
-                            textName.setText(strCustomerName);
+                            if (strCustomerName.length() > 20)
+                                strCustomerName = strCustomerName.substring(0, 18) + "..";
 
-                            /*Glide.with(FeatureActivity.this)
-                                    .load(strCustomerUrl)
-                                    .centerCrop()
-                                    .bitmapTransform(new CropCircleTransformation(
-                                            FeatureActivity.this))
-                                    .placeholder(R.drawable.person_icon)
-                                    .crossFade()
-                                    .into(imageDialog);*/
+                            textName.setText(strCustomerName);
 
                             Utils.loadGlide(FeatureActivity.this, strCustomerUrl, imageDialog,
                                     progressBar2);

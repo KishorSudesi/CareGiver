@@ -3,6 +3,7 @@ package com.hdfc.caregiver;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
@@ -261,8 +263,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     try {
                         if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
-                                || fieldModel.getStrFieldType().equalsIgnoreCase("date")
-                                || fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+                                || fieldModel.getStrFieldType().equalsIgnoreCase("date")) {
 
                             editText.setCompoundDrawablesWithIntrinsicBounds(getResources().
                                             getDrawable(R.drawable.calendar_date_picker),
@@ -283,8 +284,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                             equalsIgnoreCase("datetime"))
                                         strDate = Utils.writeFormat.format(date);
 
-                                    if (fieldModel.getStrFieldType().equalsIgnoreCase("time"))
-                                        strDate = Utils.writeFormatTime.format(date);
+                                  /*  if (fieldModel.getStrFieldType().equalsIgnoreCase("time"))
+                                        strDate = Utils.writeFormatTime.format(date);*/
 
                                     if (fieldModel.getStrFieldType().equalsIgnoreCase("date"))
                                         strDate = Utils.writeFormatDate.format(date);
@@ -299,7 +300,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
                             };
 
-                            if (act.getMilestoneModels().size() == milestoneModelObject.getiMilestoneId()) {
+                            if (act.getMilestoneModels().size() == milestoneModelObject.
+                                    getiMilestoneId()) {
 
                                 Calendar cal = Calendar.getInstance(); // creates calendar
                                 cal.setTime(new Date()); // sets calendar time/date
@@ -338,7 +340,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                                     && !fieldModel.getStrFieldData().
                                                     equalsIgnoreCase("")) {
                                                 try {
-                                                    setDate = Utils.writeFormat.parse(fieldModel.getStrFieldData());
+                                                    setDate = Utils.writeFormat.parse(fieldModel.
+                                                            getStrFieldData());
                                                 } catch (ParseException e) {
                                                     e.printStackTrace();
                                                 }
@@ -350,14 +353,15 @@ public class MilestoneActivity extends AppCompatActivity {
                                                     && !fieldModel.getStrFieldData().
                                                     equalsIgnoreCase("")) {
                                                 try {
-                                                    setDate = Utils.writeFormatDate.parse(fieldModel.getStrFieldData());
+                                                    setDate = Utils.writeFormatDate.parse(
+                                                            fieldModel.getStrFieldData());
                                                 } catch (ParseException e) {
                                                     e.printStackTrace();
                                                 }
                                             }
                                         }
 
-                                        if (fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+                                       /* if (fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
                                             if (fieldModel.getStrFieldData() != null
                                                     && !fieldModel.getStrFieldData().
                                                     equalsIgnoreCase("")) {
@@ -367,7 +371,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                                     e.printStackTrace();
                                                 }
                                             }
-                                        }
+                                        }*/
 
                                         new SlideDateTimePicker.Builder(getSupportFragmentManager())
                                                 .setListener(listener)
@@ -377,6 +381,65 @@ public class MilestoneActivity extends AppCompatActivity {
                                     }
                                 });
                             }
+                        }
+
+                        //for time
+                        if (fieldModel.getStrFieldType().equalsIgnoreCase("time")) {
+
+                            editText.setCompoundDrawablesWithIntrinsicBounds(getResources().
+                                            getDrawable(R.drawable.calendar_date_picker),
+                                    null, null, null);
+
+                            editText.setFocusableInTouchMode(false);
+
+                            editText.setEnabled(true);
+
+                            editText.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    Calendar mcurrentTime = Calendar.getInstance();
+                                    int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                                    int minute = mcurrentTime.get(Calendar.MINUTE);
+
+                                    if (fieldModel.getStrFieldData() != null
+                                            && !fieldModel.getStrFieldData().
+                                            equalsIgnoreCase("")) {
+                                        try {
+                                            String[] setDate = fieldModel.getStrFieldData().split(":");
+
+                                            if (setDate.length > 0) {
+                                                hour = Integer.parseInt(setDate[0]);
+                                                minute = Integer.parseInt(setDate[1]);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    TimePickerDialog mTimePicker;
+                                    mTimePicker = new TimePickerDialog(MilestoneActivity.this,
+                                            new TimePickerDialog.OnTimeSetListener() {
+                                                @Override
+                                                public void onTimeSet(TimePicker timePicker,
+                                                                      int selectedHour, int selectedMinute) {
+                                                    try {
+                                                        editText.setText(selectedHour + ":"
+                                                                + selectedMinute);
+                                                        //todo check logic
+                                                        editText.setTag(R.id.two, Utils.writeFormatTime.
+                                                                format(selectedHour + ":" + selectedMinute));
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }, hour, minute, true);//Yes 24 hour time
+                                    mTimePicker.setTitle(getString(R.string.select_time));
+                                    mTimePicker.show();
+
+                                    //
+                                }
+                            });
                         }
 
                         editText.setEnabled(bEnabled);
@@ -1376,13 +1439,13 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                 String values1[] = {act.getStrActivityID(),
                                         jsonObject.toString(),
-                                        Config.collectionActivity, "1", "1"};
+                                        Config.collectionActivity, "1"};
 
                                 // WHERE clause arguments
                                 CareGiver.getDbCon().updateInsert(
                                         DbHelper.strTableNameCollection,
                                         selection, values1, new String[]{"object_id", "document",
-                                                "collection_name", "new_updated", "updated"},
+                                                "collection_name", "new_updated"},
                                         selectionArgs);
 
                                 AppUtils.insertActivityDate(act.getStrActivityID(), jsonObject.toString());
@@ -1407,7 +1470,7 @@ public class MilestoneActivity extends AppCompatActivity {
                         // WHERE clause arguments
                         CareGiver.getDbCon().updateInsert(
                                 DbHelper.strTableNameCollection,
-                                selection1, values1, new String[]{"updated"},
+                                selection1, values1, new String[]{"new_updated"},
                                 selectionArgs1);
                         //
                         insertNotification();

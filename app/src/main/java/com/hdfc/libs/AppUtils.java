@@ -1327,7 +1327,8 @@ public class AppUtils {
                                     jsonObjectFeedback.optString("feedback_message"),
                                     jsonObjectFeedback.optString("feedback_by"),
                                     jsonObjectFeedback.getInt("feedback_rating"),
-                                    jsonObjectFeedback.optString("feedback_time"),
+                                    Utils.writeFormat.format(Utils.convertStringToDate(
+                                            jsonObjectFeedback.optString("feedback_time"))),
                                     jsonObjectFeedback.optString("feedback_by_type"));
 
                             try {
@@ -1908,12 +1909,13 @@ public class AppUtils {
 
             Utils.log(" 1 ", " Check Image ");
 
-            uploadService.removeImage(Config.strCustomerImageName, sessionManager.getEmail(),
+            uploadService.removeImageByUserService(Config.strCustomerImageName,
+                    sessionManager.getEmail(),
                     new App42CallBack() {
                         public void onSuccess(Object response) {
                             Utils.log(" 1- ", " Check Image ");
                             if (response != null)
-                                Utils.log(response.toString(), " Check Image ");
+                                // Utils.log(response.toString(), " Check Image ");
                             uploadImage(context, sessionManager);
                         }
 
@@ -1960,8 +1962,10 @@ public class AppUtils {
 
                             public void onSuccess(Object response) {
 
+                                Utils.log(" 2- ", " Upload Image ");
+
                                 if (response != null) {
-                                    Utils.log(response.toString(), " Upload Image ");
+                                    //Utils.log(response.toString(), " Upload Image ");
 
                                     Upload upload = (Upload) response;
                                     ArrayList<Upload.File> fileList = upload.getFileList();
@@ -1976,6 +1980,7 @@ public class AppUtils {
 
                             @Override
                             public void onException(Exception e) {
+                                Utils.log(" -2 ", " Upload Image ");
                                 if (e != null)
                                     Utils.log(e.getMessage(), " Upload Image ");
                             }
@@ -1997,8 +2002,9 @@ public class AppUtils {
                     DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT,
                             DbHelper.COLUMN_COLLECTION_NAME, DbHelper.COLUMN_OBJECT_ID},
                     "(" + DbHelper.COLUMN_PROVIDER_ID + "=? OR " + DbHelper.COLUMN_OBJECT_ID
-                            + "=?) AND " + DbHelper.COLUMN_NEW_UPDATED + "=?",
-                    new String[]{sessionManager.getProviderId(), sessionManager.getProviderId(), "3"},
+                            + "=?)", // AND " + DbHelper.COLUMN_NEW_UPDATED + "=?
+                    new String[]{sessionManager.getProviderId(), sessionManager.getProviderId()},
+                    //, "3"
                     null, null, true, null, null
             );
 
@@ -2029,7 +2035,8 @@ public class AppUtils {
 
                             StorageService storageService = new StorageService(context);
 
-                            storageService.updateDocs(jsonObject, strObjectId, strCollectionName,
+                            storageService.updateDocsService(jsonObject, strObjectId,
+                                    strCollectionName,
                                     new App42CallBack() {
                                         @Override
                                         public void onSuccess(Object o) {
@@ -2060,7 +2067,7 @@ public class AppUtils {
 
                                             CareGiver.getDbCon().update(
                                                     DbHelper.strTableNameCollection,
-                                                    selection, new String[]{"0"},
+                                                    selection, new String[]{"5"},
                                                     new String[]{DbHelper.COLUMN_NEW_UPDATED},
                                                     selectionArgs);
                                         }
@@ -2463,8 +2470,16 @@ public class AppUtils {
                                             jsonObjectFeedback.optString("feedback_message"),
                                             jsonObjectFeedback.optString("feedback_by"),
                                             jsonObjectFeedback.getInt("feedback_rating"),
-                                            jsonObjectFeedback.optString("feedback_time"),
+                                            Utils.writeFormat.format(Utils.convertStringToDate(
+                                                    jsonObjectFeedback.optString("feedback_time"))),
                                             jsonObjectFeedback.optString("feedback_by_type"));
+
+                                    feedBackModel.setStrActivityName(
+                                            jsonObject.optString("activity_name"));
+                                    feedBackModel.setStrActivityDate(
+                                            Utils.formatDate(jsonObject.optString("activity_date")));
+                                    feedBackModel.setStrDependentId(
+                                            jsonObject.optString("dependent_id"));
 
                                     try {
                                         feedBackModel.setbFeedBackReport(jsonObjectFeedback.

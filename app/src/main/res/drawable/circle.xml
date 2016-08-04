@@ -10,5 +10,5 @@ android:shape="oval">
 
 <stroke
     android:width="@dimen/polygonViewStrokeWidth"
-    android:color="@color/blue"></stroke>
+    android:color="@color/colorWhite"></stroke>
 </shape>

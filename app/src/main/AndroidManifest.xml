@@ -122,7 +122,7 @@
             android:name="com.hdfc.services.SyncService"
             android:enabled="true"
             android:exported="false"
-            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <!--   <receiver android:name="com.hdfc.receiver.BootReceiver">
                <intent-filter>
