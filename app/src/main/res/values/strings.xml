@@ -153,6 +153,7 @@
     <string name="dpndnt_details_saved">Dependent Details Saved</string>
     <string name="delete_info">All your Information will be Deleted, OK to Proceed?</string>
     <string name="account_updated">Account updated successfully</string>
+    <string name="no_changes">No Changes</string>
     <string name="confirm_logout">Are you sure want to Logout !?</string>
     <string name="not_found">NOT FOUND</string>
     <string name="upcoming_activity">Upcoming Activity</string>

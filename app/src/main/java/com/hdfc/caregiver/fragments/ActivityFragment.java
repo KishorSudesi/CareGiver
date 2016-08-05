@@ -320,7 +320,7 @@ public class ActivityFragment extends Fragment
                     args.putSerializable("ACTIVITY", activityModels.get(position));
                     //args.putInt("ACTIVITY_POSITION", position);
                     Intent intent = new Intent(getActivity(), FeatureActivity.class);
-                    args.putBoolean("WHICH_SCREEN", false);
+                    args.putInt("WHICH_SCREEN", 3);
                     intent.putExtras(args);
                     startActivity(intent);
                     getActivity().finish();
@@ -405,10 +405,11 @@ public class ActivityFragment extends Fragment
                         if (activityModels.size() > 0) {
                             Bundle args = new Bundle();
                             args.putSerializable("ACTIVITY", activityModels.get(itemPosition));
-                            args.putInt("ACTIVITY_POSITION", itemPosition);
                             Intent intent = new Intent(getActivity(), FeatureActivity.class);
+                            args.putInt("WHICH_SCREEN", 3);
                             intent.putExtras(args);
                             startActivity(intent);
+                            getActivity().finish();
                         }
                         return Menu.ITEM_SCROLL_BACK;
                 }

@@ -86,7 +86,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private static StorageService storageService;
     private static Handler backgroundThreadHandler, backgroundThreadHandlerLoad;
     private static boolean bEnabled, mImageChanged;
-    private static boolean bWhichScreen;//isAllowed
+    private static int bWhichScreen;//isAllowed
     private final Context context = this;
     private int iValidFlag = 0;
     private RelativeLayout loadingPanel;
@@ -109,7 +109,7 @@ public class MilestoneActivity extends AppCompatActivity {
         permissionHelper = PermissionHelper.getInstance(this);
 
         act = (ActivityModel) b.getSerializable("Act");
-        bWhichScreen = b.getBoolean("WHICH_SCREEN", false);
+        bWhichScreen = b.getInt("WHICH_SCREEN", 3);
         strCustomerEmail = b.getString("CUSTOMER_EMAIL", "");
         strDependentName = b.getString("DEPENDENT_NAME", "");
 
@@ -431,7 +431,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                                         if (selectedHour <= 9)
                                                             strHour = "0" + strHour;
 
-                                                        if (selectedHour <= 9)
+                                                        if (selectedMinute <= 9)
                                                             strMinute = "0" + strMinute;
 
 
@@ -931,7 +931,7 @@ public class MilestoneActivity extends AppCompatActivity {
         Bundle args = new Bundle();
         Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
         args.putSerializable("ACTIVITY", act);
-        args.putBoolean("WHICH_SCREEN", bWhichScreen);
+        args.putInt("WHICH_SCREEN", bWhichScreen);
         intent.putExtras(args);
         startActivity(intent);
         finish();
@@ -1919,7 +1919,7 @@ public class MilestoneActivity extends AppCompatActivity {
         Bundle args = new Bundle();
         Intent intent = new Intent(MilestoneActivity.this, FeatureActivity.class);
         args.putSerializable("ACTIVITY", act);
-        args.putBoolean("WHICH_SCREEN", bWhichScreen);
+        args.putInt("WHICH_SCREEN", bWhichScreen);
         intent.putExtras(args);
         startActivity(intent);
         finish();

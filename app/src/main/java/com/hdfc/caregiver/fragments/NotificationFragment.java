@@ -294,7 +294,7 @@ public class NotificationFragment extends Fragment {
                     //
                     Intent intent = new Intent(getActivity(), FeatureActivity.class);
                     args.putSerializable("ACTIVITY", activityModel);
-                    args.putBoolean("WHICH_SCREEN", true);
+                    args.putInt("WHICH_SCREEN", 1);
                     intent.putExtras(args);
                     startActivity(intent);
                     getActivity().finish();

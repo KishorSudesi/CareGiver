@@ -65,10 +65,10 @@ public class MyProfileActivity extends AppCompatActivity {
     private EditText place;
     private EditText name;
     //TextView textViewName;
-    private Button buttonContinue;
+    private Button buttonContinue, buttonCancel;
     private int Flag = 0;
     private ProgressDialog progressDialog;
-    private AppUtils appUtils;
+    //private AppUtils appUtils;
     private PermissionHelper permissionHelper;
     private SessionManager sessionManager;
 
@@ -90,6 +90,7 @@ public class MyProfileActivity extends AppCompatActivity {
         Button signOut = (Button) findViewById(R.id.buttonLogOut);
         buttonContinue = (Button) findViewById(R.id.buttonContinue);
         Button buttonBack = (Button) findViewById(R.id.buttonBack);
+        buttonCancel = (Button) findViewById(R.id.buttonCancel);
 
         sessionManager = new SessionManager(MyProfileActivity.this);
 
@@ -106,7 +107,7 @@ public class MyProfileActivity extends AppCompatActivity {
         }
 
         utils = new Utils(MyProfileActivity.this);
-        appUtils = new AppUtils(MyProfileActivity.this);
+        //appUtils = new AppUtils(MyProfileActivity.this);
         progressDialog = new ProgressDialog(MyProfileActivity.this);
         mProgress = new ProgressDialog(MyProfileActivity.this);
 
@@ -194,105 +195,38 @@ public class MyProfileActivity extends AppCompatActivity {
             email.clearFocus();
         }
 
-        buttonContinue.setOnClickListener(new View.OnClickListener() {
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                buttonContinue.setText(R.string.edit_settings);
+                buttonCancel.setVisibility(View.GONE);
                 name.setError(null);
                 phone.setError(null);
+                place.setError(null);
 
-                boolean cancel = false;
-                View focusView = null;
+                Flag = 0;
 
-                if (Flag == 0) {
-                    buttonContinue.setText(R.string.save_settings);
-                    // edit.setImageResource(R.mipmap.done);
+                name.setEnabled(false);
+                name.setFocusableInTouchMode(false);
+                name.clearFocus();
 
-                    name.setEnabled(true);
-                    name.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-                    name.setFocusableInTouchMode(true);
-                    name.requestFocus();
+                phone.setEnabled(false);
+                phone.setFocusableInTouchMode(false);
+                phone.clearFocus();
 
-                    phone.setEnabled(true);
-                    phone.setInputType(InputType.TYPE_CLASS_PHONE);
-                    phone.setFocusableInTouchMode(true);
+                place.setEnabled(false);
+                place.setFocusableInTouchMode(false);
+                place.clearFocus();
 
-                    place.setEnabled(true);
-                    place.setInputType(InputType.TYPE_CLASS_TEXT);
-                    place.setFocusableInTouchMode(true);
-                    place.requestFocus();
-                    Flag = 1;
 
-                } else if (Flag == 1) {
+            }
+        });
 
-                    buttonContinue.setText(R.string.edit_settings);
-                    name.setError(null);
-                    phone.setError(null);
-                    place.setError(null);
-
-                    String strName = name.getText().toString().trim();
-                    String strPhone= phone.getText().toString().trim();
-                    String strPlace= place.getText().toString().trim();
-                    //Toast.makeText(MyProfileActivity.this,"Data updated Successfully",Toast.LENGTH_LONG).show();
-
-                    if (TextUtils.isEmpty(strName)) {
-                        name.setError(getString(R.string.error_field_required));
-                        focusView = name;
-                        cancel = true;
-                    }
-
-                    if (TextUtils.isEmpty(strPhone)) {
-                       phone.setError(getString(R.string.error_field_required));
-                       focusView = phone;
-                       cancel = true;
-                    } else if (!utils.validCellPhone(strPhone)) {
-                        phone.setError(getString(R.string.error_invalid_contact_no));
-                        focusView = phone;
-                        cancel = true;
-                    }
-
-                    if (TextUtils.isEmpty(strPlace)) {
-                        place.setError(getString(R.string.error_field_required));
-                        focusView = place;
-                        cancel = true;
-                    }
-
-                    if(cancel){
-                        focusView.requestFocus();
-                    }else {
-
-                        Config.providerModel.setStrContacts(phone.getText().toString());
-                        Config.providerModel.setStrAddress(place.getText().toString());
-                        Config.providerModel.setStrName(name.getText().toString());
-
-                        Flag = 0;
-
-                        name.setEnabled(false);
-                        name.setFocusableInTouchMode(false);
-                        name.clearFocus();
-
-                        phone.setEnabled(false);
-                        phone.setFocusableInTouchMode(false);
-                        phone.clearFocus();
-
-                        place.setEnabled(false);
-                        place.setFocusableInTouchMode(false);
-                        place.clearFocus();
-
-                        AppUtils.updateProviderJson(Config.providerModel.getStrProviderId(), true);
-                       /* CareGiver.getDbCon().updateProvider(
-                                new String[]{"3"},
-                                new String[]{"updated"},
-                                new String[]{Config.providerModel.getStrProviderId(),
-                                        Config.collectionProvider});*/
-
-                        if (utils.isConnectingToInternet()) {
-                            updateProviderDoc(false);
-                        } else {
-                            utils.toast(1, 1, getString(R.string.account_updated));
-                        }
-                    }
-                }
+        buttonContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validateProfile();
             }
         });
 
@@ -325,16 +259,113 @@ public class MyProfileActivity extends AppCompatActivity {
                 strImage = Config.providerModel.getStrImgUrl();
             }
 
-            /*Glide.with(MyProfileActivity.this)
-                    .load(strImage)
-                    .centerCrop()
-                    .bitmapTransform(new CropCircleTransformation(MyProfileActivity.this))
-                    .placeholder(R.drawable.person_icon)
-                    .crossFade()
-                    .into(profileImage);*/
-
             Utils.loadGlide(MyProfileActivity.this, strImage, profileImage, progressBar);
         }
+    }
+
+    private void validateProfile() {
+
+        name.setError(null);
+        phone.setError(null);
+
+        boolean cancel = false;
+        View focusView = null;
+
+        if (Flag == 0) {
+            buttonContinue.setText(R.string.save_settings);
+            // edit.setImageResource(R.mipmap.done);
+
+            buttonCancel.setVisibility(View.VISIBLE);
+
+            name.setEnabled(true);
+            name.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+            name.setFocusableInTouchMode(true);
+            name.requestFocus();
+
+            phone.setEnabled(true);
+            phone.setInputType(InputType.TYPE_CLASS_PHONE);
+            phone.setFocusableInTouchMode(true);
+
+            place.setEnabled(true);
+            place.setInputType(InputType.TYPE_CLASS_TEXT);
+            place.setFocusableInTouchMode(true);
+            place.requestFocus();
+            Flag = 1;
+
+        } else if (Flag == 1) {
+
+            buttonContinue.setText(R.string.edit_settings);
+            buttonCancel.setVisibility(View.GONE);
+            name.setError(null);
+            phone.setError(null);
+            place.setError(null);
+
+            String strName = name.getText().toString().trim();
+            String strPhone = phone.getText().toString().trim();
+            String strPlace = place.getText().toString().trim();
+            //Toast.makeText(MyProfileActivity.this,"Data updated Successfully",Toast.LENGTH_LONG).show();
+
+            if (TextUtils.isEmpty(strName)) {
+                name.setError(getString(R.string.error_field_required));
+                focusView = name;
+                cancel = true;
+            }
+
+            if (TextUtils.isEmpty(strPhone)) {
+                phone.setError(getString(R.string.error_field_required));
+                focusView = phone;
+                cancel = true;
+            } else if (!utils.validCellPhone(strPhone)) {
+                phone.setError(getString(R.string.error_invalid_contact_no));
+                focusView = phone;
+                cancel = true;
+            }
+
+            if (TextUtils.isEmpty(strPlace)) {
+                place.setError(getString(R.string.error_field_required));
+                focusView = place;
+                cancel = true;
+            }
+
+            if (cancel) {
+                focusView.requestFocus();
+            } else {
+
+                Flag = 0;
+
+                name.setEnabled(false);
+                name.setFocusableInTouchMode(false);
+                name.clearFocus();
+
+                phone.setEnabled(false);
+                phone.setFocusableInTouchMode(false);
+                phone.clearFocus();
+
+                place.setEnabled(false);
+                place.setFocusableInTouchMode(false);
+                place.clearFocus();
+
+                if (!Config.providerModel.getStrContacts().equalsIgnoreCase(strPhone)
+                        || !Config.providerModel.getStrAddress().equalsIgnoreCase(strPlace)
+                        || !Config.providerModel.getStrName().equalsIgnoreCase(strName)) {
+
+                    Config.providerModel.setStrContacts(strPhone);
+                    Config.providerModel.setStrAddress(strPlace);
+                    Config.providerModel.setStrName(strName);
+
+                    AppUtils.updateProviderJson(Config.providerModel.getStrProviderId(), true);
+
+                    if (utils.isConnectingToInternet()) {
+                        updateProviderDoc(false);
+                    } else {
+                        utils.toast(1, 1, getString(R.string.account_updated));
+                    }
+                } else {
+                    utils.toast(1, 1, getString(R.string.no_changes));
+                }
+            }
+        }
+
     }
 
     /*@Override

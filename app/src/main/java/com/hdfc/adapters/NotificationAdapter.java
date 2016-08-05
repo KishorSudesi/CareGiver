@@ -223,14 +223,6 @@ public class NotificationAdapter extends BaseAdapter {
 
             if (strUrl != null && !strUrl.equalsIgnoreCase("")) {
 
-               /* Glide.with(_context)
-                        .load(strUrl)
-                        .centerCrop()
-                        .bitmapTransform(new CropCircleTransformation(_context))
-                        .placeholder(R.drawable.person_icon)
-                        .crossFade()
-                        .into(viewHolder.roundedImageView);*/
-
                 Utils.loadGlide(_context, strUrl, viewHolder.roundedImageView,
                         viewHolder.progressBar);
 

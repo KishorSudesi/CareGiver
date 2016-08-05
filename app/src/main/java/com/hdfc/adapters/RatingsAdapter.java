@@ -1,20 +1,26 @@
 package com.hdfc.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hdfc.caregiver.FeatureActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
+import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.Utils;
+import com.hdfc.models.ActivityModel;
 import com.hdfc.models.FeedBackModel;
 
 import org.json.JSONException;
@@ -32,13 +38,11 @@ public class RatingsAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
     private Context _context;
     private List<FeedBackModel> data1 = new ArrayList<>();
-    private Utils utils;
-    //private MultiBitmapLoader multiBitmapLoader;
+    private AppUtils appUtils;
 
     public RatingsAdapter(Context context, List<FeedBackModel> rating_models) {
         _context = context;
-        utils = new Utils(context);
-        //multiBitmapLoader = new MultiBitmapLoader(_context);
+        appUtils = new AppUtils(context);
         data1 = rating_models;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -57,7 +61,7 @@ public class RatingsAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         ViewHolder viewHolder;
 
@@ -69,14 +73,13 @@ public class RatingsAdapter extends BaseAdapter {
             viewHolder.image = (ImageView) convertView.findViewById(R.id.imageViewRatingsItem);
             viewHolder.smiley = (ImageView) convertView.findViewById(R.id.imageViewRatingsSmily);
             viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
+            viewHolder.ratings_item = (RelativeLayout) convertView.findViewById(R.id.ratings_item);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
         if(data1.size()>0) {
-
-            //FeedBackModel feedBackModel = data1.get(position);
 
             try {
 
@@ -88,30 +91,69 @@ public class RatingsAdapter extends BaseAdapter {
 
 
                 if (data1.get(position).getIntFeedBackRating() == 1) {
-                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_1));
+                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(
+                            R.drawable.smiley_1));
                 } else if (data1.get(position).getIntFeedBackRating() == 2) {
-                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_2));
+                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(
+                            R.drawable.smiley_2));
                 } else if (data1.get(position).getIntFeedBackRating() == 3) {
-                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_3));
+                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(
+                            R.drawable.smiley_3));
                 } else if (data1.get(position).getIntFeedBackRating() == 4) {
-                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_4));
+                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(
+                            R.drawable.smiley_4));
                 } else {
-                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(R.drawable.smiley_5));
+                    viewHolder.smiley.setImageDrawable(_context.getResources().getDrawable(
+                            R.drawable.smiley_5));
                 }
 
-                //
-           /* File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(feedBackModel.getStrFeedBackBy()));
+                //navigate to activities
+                viewHolder.ratings_item.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            if (data1.get(position).getStrActivityId() != null
+                                    && !data1.get(position).getStrActivityId().
+                                    equalsIgnoreCase("")) {
+                                Cursor cursor = CareGiver.getDbCon().fetch(
+                                        DbHelper.strTableNameCollection,
+                                        new String[]{DbHelper.COLUMN_DOCUMENT},
+                                        DbHelper.COLUMN_COLLECTION_NAME + "=? and "
+                                                + DbHelper.COLUMN_OBJECT_ID + "=? ",
+                                        new String[]{Config.collectionActivity,
+                                                data1.get(position).getStrActivityId()},
+                                        DbHelper.COLUMN_UPDATE_DATE + " desc",
+                                        null, true, null, null);
 
-            if(fileImage.exists()) {
-                String strFilePath = fileImage.getAbsolutePath();
-                multiBitmapLoader.loadBitmap(strFilePath, viewHolder.image);
-            }else{
-                viewHolder.image.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
-            }*/
+                                if (cursor.getCount() > 0) {
+
+                                    cursor.moveToFirst();
+                                    JSONObject jsonObject = new JSONObject(cursor.getString(0));
+                                    ActivityModel activityModel = appUtils.
+                                            createActivityModelNotification(
+                                                    jsonObject,
+                                                    data1.get(position).getStrActivityId());
+
+
+                                    if (activityModel != null) {
+                                        Bundle args = new Bundle();
+                                        //
+                                        Intent intent = new Intent(_context, FeatureActivity.class);
+                                        args.putSerializable("ACTIVITY", activityModel);
+                                        args.putInt("WHICH_SCREEN", 2);
+                                        intent.putExtras(args);
+                                        _context.startActivity(intent);
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
 
                 //todo add for dependent
-
-                //String strId;
 
                 if (!data1.get(position).getStrFeedBackBy().equalsIgnoreCase("")) {
 
@@ -121,8 +163,9 @@ public class RatingsAdapter extends BaseAdapter {
 
                     Cursor cursor1 = CareGiver.getDbCon().fetch(
                             DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                            DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
-                            new String[]{strColumnName, strId}, null, "0,1", true, null, null
+                            DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID
+                                    + "=?", new String[]{strColumnName, strId}, null, "0,1",
+                            true, null, null
                     );
 
                     JSONObject jsonObject = null;
@@ -147,14 +190,6 @@ public class RatingsAdapter extends BaseAdapter {
                                 && !jsonObject.getString("customer_profile_url").
                                 equalsIgnoreCase("")) {
 
-                            /*Glide.with(_context)
-                                    .load(jsonObject.getString("customer_profile_url"))
-                                    .centerCrop()
-                                    .bitmapTransform(new CropCircleTransformation(_context))
-                                    .placeholder(R.drawable.person_icon)
-                                    .crossFade()
-                                    .into(viewHolder.image);*/
-
                             Utils.loadGlide(_context, jsonObject.getString("customer_profile_url")
                                     , viewHolder.image, viewHolder.progressBar);
                         }
@@ -173,5 +208,6 @@ public class RatingsAdapter extends BaseAdapter {
         TextView feedback, time;
         ImageView image, smiley;
         ProgressBar progressBar;
+        RelativeLayout ratings_item;
     }
 }

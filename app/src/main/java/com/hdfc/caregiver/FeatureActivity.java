@@ -3,6 +3,7 @@ package com.hdfc.caregiver;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -33,7 +34,6 @@ import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
-import com.hdfc.models.FeedBackModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.views.TouchImageView;
@@ -65,7 +65,7 @@ public class FeatureActivity extends AppCompatActivity {
     private static String strName, strCustomerName, strCustomerUrl, strDependentName;
     private static ArrayList<String> imagePaths = new ArrayList<>();
     private static ArrayList<Bitmap> bitmaps = new ArrayList<>();
-    private static boolean bLoad, isCompleted = false;
+    private static boolean bLoad, isCompleted;
     private static boolean bViewLoaded, mImageChanged;
     private static ArrayList<ImageModel> imageModels;
     private boolean isAccessible;
@@ -73,16 +73,17 @@ public class FeatureActivity extends AppCompatActivity {
     private LinearLayout layout;
     private RelativeLayout loadingPanel;
     private Utils utils;
-    private boolean bWhichScreen = false;
+    private int bWhichScreen = 3;
     private boolean success;
     private TextView textViewTime;
     private LinearLayout linearLayoutAttach;
     private String strCustomerEmail;
     private Button done;
     private PermissionHelper permissionHelper;
-    private boolean isAllowed = false;
-    private FeedBackModel feedBackModel;
-    private ProgressBar progressBar1, progressBar2;
+    //private boolean isAllowed;
+    //private FeedBackModel feedBackModel;
+    private ProgressBar progressBar2;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,13 +94,15 @@ public class FeatureActivity extends AppCompatActivity {
         ImageView imageViewFeedback = (ImageView) findViewById(R.id.imageViewFeedback);
         done = (Button) findViewById(R.id.buttonVegetibleDone);
         linearLayoutAttach = (LinearLayout) findViewById(R.id.linearLayout1);
-        progressBar1 = (ProgressBar) findViewById(R.id.progressBar1);
+        ProgressBar progressBar1 = (ProgressBar) findViewById(R.id.progressBar1);
         progressBar2 = (ProgressBar) findViewById(R.id.progressBar2);
+        progressDialog = new ProgressDialog(FeatureActivity.this);
         Button cancel = (Button) findViewById(R.id.buttonBack);
         TextView textViewActivityName = (TextView) findViewById(R.id.txtActivityName);
         textViewTime = (TextView) findViewById(R.id.txtActivityTime);
 
         isAccessible = true;
+        isCompleted = false;
 
         permissionHelper = PermissionHelper.getInstance(this);
 
@@ -123,7 +126,7 @@ public class FeatureActivity extends AppCompatActivity {
         try {
             Bundle b = getIntent().getExtras();
 
-            bWhichScreen = b.getBoolean("WHICH_SCREEN", false);
+            bWhichScreen = b.getInt("WHICH_SCREEN", 3);
 
             if (cancel != null) {
                 cancel.setVisibility(View.VISIBLE);
@@ -177,14 +180,6 @@ public class FeatureActivity extends AppCompatActivity {
                             && jsonObject.getString("dependent_profile_url") != null
                             && !jsonObject.getString("dependent_profile_url").
                             equalsIgnoreCase("")) {
-
-                        /*Glide.with(FeatureActivity.this)
-                                .load(jsonObject.getString("dependent_profile_url"))
-                                .centerCrop()
-                                .bitmapTransform(new CropCircleTransformation(FeatureActivity.this))
-                                .placeholder(R.drawable.person_icon)
-                                .crossFade()
-                                .into(imgLogoHeaderTaskDetail);*/
 
                         Utils.loadGlide(FeatureActivity.this,
                                 jsonObject.getString("dependent_profile_url"),
@@ -410,8 +405,10 @@ public class FeatureActivity extends AppCompatActivity {
         //imageModels.clear();
         //IMAGE_COUNT = 0;
 
-        if (bWhichScreen)
+        if (bWhichScreen == 1)
             Config.intSelectedMenu = Config.intNotificationScreen;
+        else if (bWhichScreen == 2)
+            Config.intSelectedMenu = Config.intRatingsScreen;
         else
             Config.intSelectedMenu = Config.intDashboardScreen;
 
@@ -465,7 +462,10 @@ public class FeatureActivity extends AppCompatActivity {
 
             final JSONArray jsonArray = jsonArrayImagesAdded;
 
-            loadingPanel.setVisibility(View.VISIBLE);
+            //dloadingPanel.setVisibility(View.VISIBLE);
+            progressDialog.setMessage(getString(R.string.loading));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
 
             storageService.updateDocs(jsonToUpdate,
                     act.getStrActivityID(),
@@ -525,7 +525,8 @@ public class FeatureActivity extends AppCompatActivity {
 
                         @Override
                         public void onException(Exception e) {
-                            loadingPanel.setVisibility(View.GONE);
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                             utils.toast(2, 2, getString(R.string.warning_internet));
                         }
                     });
@@ -627,7 +628,9 @@ public class FeatureActivity extends AppCompatActivity {
                                             }
                                         }
                                     } else {
-                                        loadingPanel.setVisibility(View.GONE);
+                                        //loadingPanel.setVisibility(View.GONE);
+                                        if (progressDialog.isShowing())
+                                            progressDialog.dismiss();
                                         utils.toast(2, 2, getString(R.string.warning_internet));
                                     }
                                 }
@@ -635,7 +638,8 @@ public class FeatureActivity extends AppCompatActivity {
                                 @Override
                                 public void onException(Exception e) {
 
-                                    loadingPanel.setVisibility(View.GONE);
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
 
                                     if (e != null) {
                                         Utils.log(e.getMessage(), " Failure ");
@@ -830,7 +834,8 @@ public class FeatureActivity extends AppCompatActivity {
 
     private void goToActivityList(String strAlert) {
 
-        loadingPanel.setVisibility(View.GONE);
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
 
         mImageCount = 0;
         mImageChanged = false;
@@ -869,7 +874,10 @@ public class FeatureActivity extends AppCompatActivity {
                         if (utils.isConnectingToInternet()) {
 
                             if (mImageCount > 0) {
-                                loadingPanel.setVisibility(View.VISIBLE);
+                                //loadingPanel.setVisibility(View.VISIBLE);
+                                progressDialog.setMessage(getString(R.string.loading));
+                                progressDialog.setCancelable(false);
+                                progressDialog.show();
                                 uploadImage();
 
                             } else {
@@ -920,10 +928,6 @@ public class FeatureActivity extends AppCompatActivity {
                             );
                     }
                 });
-            }
-
-            if (Config.intSelectedMenu == 3) {
-                bWhichScreen = true;
             }
 
             if (!bViewLoaded) {
@@ -1087,7 +1091,7 @@ public class FeatureActivity extends AppCompatActivity {
                                 Intent intent = new Intent(FeatureActivity.this, MilestoneActivity.class);
                                 args.putSerializable("Act", activityModel);
                                 args.putSerializable("Milestone", milestoneModelObject);
-                                args.putBoolean("WHICH_SCREEN", bWhichScreen);
+                                args.putInt("WHICH_SCREEN", bWhichScreen);
                                 args.putString("CUSTOMER_EMAIL", strCustomerEmail);
                                 args.putString("DEPENDENT_NAME", strDependentName);
                                 intent.putExtras(args);

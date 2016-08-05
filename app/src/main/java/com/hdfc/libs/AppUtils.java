@@ -1363,7 +1363,7 @@ public class AppUtils {
 
                             feedBackModels.add(feedBackModel);
 
-                            if (jsonObjectFeedback.getString("feedback_by_type").
+                          /*  if (jsonObjectFeedback.getString("feedback_by_type").
                                     equalsIgnoreCase("customer")) {
                                 if (!Config.customerIds.contains(jsonObjectFeedback.
                                         optString("feedback_by")))
@@ -1377,7 +1377,7 @@ public class AppUtils {
                                         optString("feedback_by")))
                                     Config.dependentIds.add(jsonObjectFeedback.
                                             optString("feedback_by"));
-                            }
+                            }*/
                         }
                     }
                     activityModel.setFeedBackModels(feedBackModels);
@@ -2453,7 +2453,7 @@ public class AppUtils {
 
             Cursor cursor = CareGiver.getDbCon().fetch(
                     DbHelper.strTableNameCollection,
-                    new String[]{DbHelper.COLUMN_DOCUMENT},
+                    new String[]{DbHelper.COLUMN_DOCUMENT, DbHelper.COLUMN_OBJECT_ID},
                     DbHelper.COLUMN_COLLECTION_NAME + "=?",
                     new String[]{Config.collectionActivity},
                     DbHelper.COLUMN_UPDATE_DATE + " desc",
@@ -2493,6 +2493,8 @@ public class AppUtils {
                                             Utils.formatDate(jsonObject.optString("activity_date")));
                                     feedBackModel.setStrDependentId(
                                             jsonObject.optString("dependent_id"));
+
+                                    feedBackModel.setStrActivityId(cursor.getString(1));
 
                                     try {
                                         feedBackModel.setbFeedBackReport(jsonObjectFeedback.
@@ -2674,7 +2676,7 @@ public class AppUtils {
 
                             feedBackModels.add(feedBackModel);
 
-                            if (jsonObjectFeedback.getString("feedback_by_type").
+                            /*if (jsonObjectFeedback.getString("feedback_by_type").
                                     equalsIgnoreCase("customer")) {
                                 if (!Config.customerIds.contains(jsonObjectFeedback.
                                         optString("feedback_by")))
@@ -2689,7 +2691,7 @@ public class AppUtils {
                                     Config.dependentIds.add(jsonObjectFeedback.
                                             optString("feedback_by"));
                             }
-
+*/
                            /* Config.iRatings += jsonObjectFeedback.getInt("feedback_rating");
 
                             Config.iRatingCount += 1;
