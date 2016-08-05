@@ -424,8 +424,18 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 public void onTimeSet(TimePicker timePicker,
                                                                       int selectedHour, int selectedMinute) {
                                                     try {
-                                                        editText.setText(selectedHour + ":"
-                                                                + selectedMinute);
+
+                                                        String strHour = String.valueOf(selectedHour);
+                                                        String strMinute = String.valueOf(selectedMinute);
+
+                                                        if (selectedHour <= 9)
+                                                            strHour = "0" + strHour;
+
+                                                        if (selectedHour <= 9)
+                                                            strMinute = "0" + strMinute;
+
+
+                                                        editText.setText(strHour + ":" + strMinute);
                                                         //todo check logic
                                                         /*editText.setTag(R.id.two, Utils.writeFormatTime.
                                                                 format(selectedHour + ":" + selectedMinute));*/

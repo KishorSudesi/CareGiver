@@ -5,6 +5,18 @@
     android:orientation="vertical"
     android:padding="10dp">
 
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/colorWhite"
+        android:gravity="center"
+        android:padding="@dimen/padding_general"
+        android:text="@string/check_in_care"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/blue"
+        android:textStyle="bold" />
+
     <ListView
         android:id="@+id/dialoglist"
         android:layout_width="match_parent"

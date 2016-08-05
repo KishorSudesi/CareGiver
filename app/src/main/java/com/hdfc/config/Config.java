@@ -66,30 +66,26 @@ public class Config {
     public static final boolean isDebuggable = true;
     public static final String string = Utils.getStringJni();
     public static final boolean release = false;
-    public static final boolean DEVELOPMENT = false;
-    //Login specific //User Specific clear at logout or whenever needed
+    public static final boolean DEVELOPMENT = true;
+
     public final static String strCustomerImageName = "provider_image";
     public static int intClientScreen = 2;
     public static int intRatingsScreen = 4;
     public static int intNotificationScreen = 3;
     public static int intDashboardScreen = 1;
-    //public static int intMileStoneScreen = 4;
     public static int intScreenWidth = 0;
     public static int intScreenHeight = 0;
-    //public static int intCreateTaskScreen = 5;
+
+    //Login specific //User Specific clear at logout or whenever needed
+
     //public static ArrayList<FileModel> fileModels = new ArrayList<>();
 
     public static ArrayList<ActivityModel> activityModels = new ArrayList<>();
-    //public static ArrayList<ActivityModel> activityModelsNotifications = new ArrayList<>();
-
-    // static ArrayList<MilestoneViewModel> milestoneModels = new ArrayList<>();
     public static ArrayList<String> dependentIds = new ArrayList<>();
-    //public static ArrayList<String> strProviderIds = new ArrayList<>();
     public static ArrayList<String> customerIds = new ArrayList<>();
     public static ArrayList<String> customerIdsCopy = new ArrayList<>();
 
     public static ArrayList<String> strActivityIds = new ArrayList<>();
-    //public static ArrayList<String> strActivityIdsNotifications = new ArrayList<>();
 
     public static ArrayList<String> dependentIdsAdded = new ArrayList<>();
     public static ArrayList<String> customerIdsAdded = new ArrayList<>();
@@ -105,15 +101,12 @@ public class Config {
     public static ArrayList<ClientModel> clientModels = new ArrayList<>();
 
     public static ArrayList<NotificationModel> notificationModels = new ArrayList<>();
-    //public static ArrayList<String> strNotificationIds = new ArrayList<>();
 
     public static ArrayList<CheckInCareModel> checkInCareModels = new ArrayList<>();
-    //public static ArrayList<CheckInCareModel> checkInCareActivityNames = new ArrayList<>();
     public static ArrayList<PictureModel> roomtypeName = new ArrayList<>();
 
     public static ArrayList<ClientNameModel> clientNameModels = new ArrayList<>();
     public static Map<String, List<String>> serviceNameModels = new HashMap<>();
-    //public static boolean boolIsLoggedIn = false;
     public static double iRatings = 0;
     public static int iRatingCount = 0;
     public static List<FeedBackModel> feedBackModels = new ArrayList<>();

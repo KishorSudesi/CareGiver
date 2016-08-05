@@ -30,7 +30,6 @@ import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AppUtils;
-import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.CustomerModel;
 import com.hdfc.models.DependentModel;
@@ -42,14 +41,13 @@ import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
-    static final int CUSTOM_DIALOG_ID = 0;
-    private static ArrayList<String> strings;
+    /*static final int CUSTOM_DIALOG_ID = 0;
+    private static ArrayList<String> strings;*/
     private final LayoutInflater inf;
-    ListView dialog_ListView;
+    //ListView dialog_ListView;
     private Context _context;
-    private Utils utils;
+    //Utils utils;
     private AppUtils appUtils;
-    private SessionManager sessionManager = null;
     private List<CustomerModel> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<CustomerModel, List<DependentModel>> _listDataChild;
@@ -69,8 +67,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         bool = new boolean[listDataHeader.size()];
         inf = LayoutInflater.from(_context);
         appUtils = new AppUtils(_context);
-        utils = new Utils(_context);
-        sessionManager = new SessionManager(_context);
+        //utils = new Utils(_context);
+        //SessionManager sessionManager = new SessionManager(_context);
 
     }
 
@@ -93,8 +91,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ViewHolder viewHolder;
 
         if (convertView == null) {
-           /* LayoutInflater infalInflater = (LayoutInflater) this._context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);*/
             convertView = inf.inflate(R.layout.list_item_dependents, null);
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
@@ -106,7 +102,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             //viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
             viewHolder.customer = (ImageView) convertView.findViewById(R.id.imageClients);
-            viewHolder.linearTextChild = (LinearLayout) convertView.findViewById(R.id.linearTextChild);
+            viewHolder.linearTextChild = (LinearLayout) convertView.findViewById(R.id.
+                    linearTextChild);
 
 
             convertView.setTag(viewHolder);
@@ -117,29 +114,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.linearTextChild.setTag(dependentModel);
 
         viewHolder.name.setText(dependentModel.getStrName());
-        //viewHolder.age.setText(dependentModel.getIntAge());
-        //System.out.println("LOL : "+dependentModel.getIntAge());
         viewHolder.age.setText(String.valueOf(dependentModel.getIntAge()));
-
-        // viewHolder.problem.setText(dependentModel.getStrIllness().length()>8 ? dependentModel.getStrIllness().substring(0,5)+"..":dependentModel.getStrIllness());
-        //viewHolder.premium.setText(dependentModel.getStrNotes().length()>8 ? dependentModel.getStrNotes().substring(0,5)+"..":dependentModel.getStrNotes());
-
-        /*File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(dependentModel.getStrDependentID()));
-
-        if(fileImage.exists()) {
-            String filename = fileImage.getAbsolutePath();
-            multiBitmapLoader.loadBitmap(filename, viewHolder.customer);
-        }else{
-            viewHolder.customer.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
-        }*/
-
-       /* Glide.with(_context)
-                .load(dependentModel.getStrImageUrl())
-                .centerCrop()
-                .bitmapTransform(new CropCircleTransformation(_context))
-                .placeholder(R.drawable.person_icon)
-                .crossFade()
-                .into(viewHolder.customer);*/
 
         Utils.loadGlide(_context, dependentModel.getStrImageUrl(), viewHolder.customer,
                 viewHolder.progressBar2);
@@ -149,7 +124,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.linearTextChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
                 Config.dependentModel = (DependentModel) v.getTag();
                 Config.customerModel = null;
 
@@ -193,9 +167,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ViewHolder viewHolder;
 
         if (convertView == null) {
-/*
-            LayoutInflater infalInflater = (LayoutInflater) this._context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-*/
+
             convertView = inf.inflate(R.layout.list_group_customers, null);
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
@@ -219,23 +191,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         viewHolder.linearTextHeader.setTag(customerModel);
         viewHolder.insert.setTag(customerModel);
-
-        /*File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(customerModel.getStrCustomerID()));
-
-        if(fileImage.exists()) {
-            String filename = fileImage.getAbsolutePath();
-            multiBitmapLoader.loadBitmap(filename, viewHolder.client);
-        }else{
-            viewHolder.client.setImageDrawable(_context.getResources().getDrawable(R.drawable.person_icon));
-        }*/
-
-        /*Glide.with(_context)
-                .load(customerModel.getStrImgUrl())
-                .centerCrop()
-                .bitmapTransform(new CropCircleTransformation(_context))
-                .placeholder(R.drawable.person_icon)
-                .crossFade()
-                .into(viewHolder.client);*/
 
         Utils.loadGlide(_context, customerModel.getStrImgUrl(), viewHolder.client,
                 viewHolder.progressBar1);
@@ -278,11 +233,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 int imonth = c.get(Calendar.MONTH) + 1;
 
                 try {
-
-                    //fetchCheckInCareName(imonth, iyear, Config.customerModel.getStrCustomerID(), Config.providerModel.getStrProviderId());
-
                     fetchAllCheckInCares(imonth, iyear, dependentModels);
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -291,7 +242,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         });
 
         return convertView;
-
     }
 
     private void fetchAllCheckInCares(int iMonth, int iYear, final ArrayList<DependentModel>
@@ -308,8 +258,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         String strStartDate = String.valueOf(iYear) + "-" + strMonth + "-01" + " 00:00:00.000";
 
-        //Utils.log(strStartDate, " SDATE ");
-
         String strQuery = "SELECT a." + DbHelper.COLUMN_DOCUMENT + " AS C1 , b."
                 + DbHelper.COLUMN_MILESTONE_ID + " AS C2, b." + DbHelper.COLUMN_OBJECT_ID
                 + " AS C3 FROM " + DbHelper.strTableNameCollection + " AS a INNER JOIN "
@@ -323,10 +271,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 + "='" + Config.collectionCheckInCare + "'"
                 + " ORDER BY b." + DbHelper.COLUMN_MILESTONE_DATE + " DESC";
 
-        //LIMIT 0, 30000
-
-        Utils.log(strQuery, " QUERY ");
-
         Cursor newCursor = CareGiver.getDbCon().rawQuery(strQuery);
 
         if (newCursor.getCount() > 0) {
@@ -336,11 +280,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             try {
 
                 while (!newCursor.isAfterLast()) {
-
-                    //JSONObject jsonObject = new JSONObject(newCursor.getString(0));
                     appUtils.createCheckInCareModel(newCursor.getString(2), newCursor.getString(0));
-                    //createActivityModel(jsonObject, newCursor.getString(2), isActivity);
-
                     newCursor.moveToNext();
                 }
             } catch (Exception e) {
@@ -355,7 +295,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             final AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context);
             View convertView = inf.inflate(R.layout.custom_dialog, null);
 
-            alertDialog.setTitle(_context.getString(R.string.check_in_care));
+            //alertDialog.setTitle(_context.getString(R.string.check_in_care));
 
             ListView listview = (ListView) convertView.findViewById(R.id.dialoglist);
             Button create = (Button) convertView.findViewById(R.id.createnew);
@@ -388,7 +328,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             final AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context);
             View convertView = inf.inflate(R.layout.custom_dialog, null);
 
-            alertDialog.setTitle(_context.getString(R.string.check_in_care));
+            //alertDialog.setTitle(_context.getString(R.string.check_in_care));
 
             ListView listview = (ListView) convertView.findViewById(R.id.dialoglist);
             Button create = (Button) convertView.findViewById(R.id.createnew);

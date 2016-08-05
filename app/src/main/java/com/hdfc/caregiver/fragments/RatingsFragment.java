@@ -89,6 +89,7 @@ public class RatingsFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), MyProfileActivity.class);
                 //intent.putExtra("WHICH_SCREEN", intWhichScreen);
                 startActivity(intent);
+                getActivity().finish();
             }
         });
 

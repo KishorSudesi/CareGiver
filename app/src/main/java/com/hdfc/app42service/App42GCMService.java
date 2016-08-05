@@ -15,6 +15,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
+import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
 
 import org.json.JSONException;
@@ -66,7 +67,13 @@ public class App42GCMService extends IntentService {
                 //App42Log.debug("Received: " + extras.toString());
                 //App42Log.debug("Message: " + message);
                 //AppUtils.loadNotifications(this);
-                this.validatePushIfRequired(message, intent);
+
+                //if login
+                SessionManager sessionManager = new SessionManager(App42GCMService.this);
+                if (sessionManager.getProviderId() != null
+                        && !sessionManager.getProviderId().equalsIgnoreCase("")) {
+                    this.validatePushIfRequired(message, intent);
+                }
             }
         }
 
