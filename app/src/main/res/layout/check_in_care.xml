@@ -287,7 +287,7 @@
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -313,7 +313,7 @@
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="0.3"
                     android:background="@drawable/one_side_border"
                     android:orientation="horizontal"
@@ -330,8 +330,8 @@
                     <ImageView
                         android:id="@+id/pick_date"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/date_picker" />
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/calendar_date_picker" />
                 </LinearLayout>
 
                 <TextView
@@ -348,7 +348,7 @@
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -374,7 +374,7 @@
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="0.3"
                     android:background="@drawable/one_side_border"
                     android:orientation="horizontal"
@@ -391,8 +391,8 @@
                     <ImageView
                         android:id="@+id/pick_date2"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/date_picker" />
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/calendar_date_picker" />
                 </LinearLayout>
 
                 <TextView
@@ -409,7 +409,7 @@
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -435,7 +435,7 @@
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="0.3"
                     android:background="@drawable/one_side_border"
                     android:orientation="horizontal"
@@ -452,8 +452,8 @@
                     <ImageView
                         android:id="@+id/pick_date3"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/date_picker" />
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/calendar_date_picker" />
                 </LinearLayout>
 
                 <TextView
@@ -470,7 +470,7 @@
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -496,7 +496,7 @@
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="0.3"
                     android:background="@drawable/one_side_border"
                     android:orientation="horizontal"
@@ -513,8 +513,8 @@
                     <ImageView
                         android:id="@+id/pick_date4"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/date_picker" />
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/calendar_date_picker" />
                 </LinearLayout>
 
                 <TextView
@@ -1286,6 +1286,7 @@
                     android:background="@drawable/button_success"
                     android:gravity="center"
                     android:text="Update"
+                    android:visibility="invisible"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/colorWhite" />
 

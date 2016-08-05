@@ -80,10 +80,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static String strImageName = "", strClientName = "";
     //private static int IMAGE_COUNT = 0;
     private static Boolean editcheckincare = false;
-    private static Boolean isUploadHallImage = false;
-    private static Boolean isUploadKitchenImage = false;
-    private static Boolean isUploadWashImage = false;
-    private static Boolean isUploadBedImage = false;
+
     private static Utils utils;
     //private static ProgressDialog mProgress = null;
     private static Handler backgroundThreadHandler, backgroundThreadHandlerFetch;
@@ -108,7 +105,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private RelativeLayout loadingPanelhall, loadingPanelkitchen, loadingPanelwash, loadingPanelbed;
     private String strCustomerEmail;
     private int isClicked = 0;
-    private int isHallFlag = 0;
+    private int isFlag = 0;
+    private int isHallflag = 0;
+    private int isKitchenflag = 0;
+    private int isWashflag = 0;
+    private int isBedflag = 0;
     private boolean isClick = false;
     private Button buttonHallAdd,buttonKitchenAdd,buttonWashroomAdd,buttonBedroomAdd;
     private Button uploadhallbtn,uploadkitchenbtn,uploadwashroombtn,uploadbedroombtn ;
@@ -120,6 +121,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private TextView txtelectricity;
     private boolean isAllowed;
     private TextView txttelephone;
+    private ImageView client, pick_date,pick_date2,pick_date3,pick_date4;
     private TextView utilitystatus, waterstatus, gasstatus, electricitystatus, telephonestatus,
             equipmentstatus, grocerystatus, kitchenequipmentstatus, domestichelpstatus,
             uploadmediastatus, hallstatus, kitchenstatus, washroomstatus, bedroomstatus,
@@ -236,6 +238,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
         dependentspinner = (Spinner) findViewById(R.id.dependentspinner);
         dependentname = (EditText) findViewById(R.id.dependentname1);
+
         /////////////////////spinner for dependent
         ArrayList<String> strDependent = null;
         if(!editcheckincare) {
@@ -303,11 +306,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         layoutwashroom = (LinearLayout) findViewById(R.id.linear_washroom);
         layoutbedroom = (LinearLayout) findViewById(R.id.linear_bedroom);
 
-        /*layouthall.setOnClickListener(this);
-        layoutkitchen.setOnClickListener(this);
-        layoutwashroom.setOnClickListener(this);
-        layoutbedroom.setOnClickListener(this);*/
-        //MultiBitmapLoader multiBitmapLoader = new MultiBitmapLoader(CheckInCareActivity.this);
 
         utils = new Utils(CheckInCareActivity.this);
 
@@ -354,11 +352,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         domesticcheck = (CheckBox) findViewById(R.id.domesticcheck);
         drivercheck = (CheckBox) findViewById(R.id.drivercheck);
 
-        ImageView client = (ImageView) findViewById(R.id.clientimg);
-        ImageView pick_date = (ImageView) findViewById(R.id.pick_date);
-        ImageView pick_date2 = (ImageView) findViewById(R.id.pick_date2);
-        ImageView pick_date3 = (ImageView) findViewById(R.id.pick_date3);
-        ImageView pick_date4 = (ImageView) findViewById(R.id.pick_date4);
+         client = (ImageView) findViewById(R.id.clientimg);
+         pick_date = (ImageView) findViewById(R.id.pick_date);
+         pick_date2 = (ImageView) findViewById(R.id.pick_date2);
+         pick_date3 = (ImageView) findViewById(R.id.pick_date3);
+         pick_date4 = (ImageView) findViewById(R.id.pick_date4);
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
@@ -578,10 +576,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                     bViewLoaded =false;
                     editcheckincare=false;
-                    isUploadHallImage=false;
-                    isUploadKitchenImage=false;
-                    isUploadWashImage=false;
-                    isUploadBedImage=false;
+
                     goBack();
                 }
             });
@@ -622,15 +617,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
         try {
             bundle = getIntent().getExtras();
-            //CheckInCareModel checkInCareModel = null;
-            //int mPosition = -1;
+
             if (bundle != null) {
                 editcheckincare = bundle.getBoolean("editcheckincare");
-                //mPosition = bundle.getInt("itemposition");
             } else {
                 editcheckincare = false;
-                //mPosition = -1;
-                //checkInCareModel = null;
+
             }
             if (editcheckincare && Config.checkInCareModel != null) {
 
@@ -638,11 +630,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 uploadkitchenbtn.setVisibility(View.GONE);
                 uploadwashroombtn.setVisibility(View.GONE);
                 uploadbedroombtn.setVisibility(View.GONE);
-
-                isUploadHallImage = false;
-                isUploadKitchenImage=false;
-                isUploadWashImage=false;
-                isUploadBedImage=false;
 
                 layoutDate.setEnabled(false);
                 dependentspinner.setVisibility(View.GONE);
@@ -735,59 +722,54 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 String utilityName = subActivityModels.get(j).getStrUtilityName();
                                 checkboxstatus = subActivityModels.get(j).getStrCheckboxStatus();
 
-                               /* try {
-                                     myNum = Integer.parseInt(dueStatus);
-                                } catch(NumberFormatException nfe) {
-                                    nfe.printStackTrace();
-                                }*/
 
                                 if (subActivityName.equalsIgnoreCase("utility_bills")){
 
-                                if (utilityName.equalsIgnoreCase("water ")) {
-                                    if(dueStatus.equals("N")) {
-                                        spinner.setSelection(0);
-                                    }else{
-                                        spinner.setSelection(1);
-                                    }
-                                    txtwater.setText(dueDate);
-                                    waterstatus.setText(status);
-
-                                }
-                                if (utilityName.equalsIgnoreCase("gas")) {
-                                    if(dueStatus.equals("N")) {
-                                        spinner1.setSelection(0);
-                                    }else{
-                                        spinner1.setSelection(1);
-                                    }
-                                    txtgas.setText(dueDate);
-                                    gasstatus.setText(status);
-
-                                }
-                                if (utilityName.equalsIgnoreCase("electricity")) {
-                                    if(dueStatus.equals("N")) {
-                                        spinner2.setSelection(0);
-                                    }else{
-                                        spinner2.setSelection(1);
-                                    }
-                                    txtelectricity.setText(dueDate);
-                                    electricitystatus.setText(status);
-
-                                }
-                                if (utilityName.equalsIgnoreCase("telephone")) {
-                                    if(dueStatus.equals("N")) {
-                                        if (spinner3 != null) {
-                                            spinner3.setSelection(0);
+                                    if (utilityName.equalsIgnoreCase("water ")) {
+                                        if(dueStatus.equals("N")) {
+                                            spinner.setSelection(0);
+                                        }else{
+                                            spinner.setSelection(1);
                                         }
-                                    }else{
-                                        if (spinner3 != null) {
-                                            spinner3.setSelection(1);
-                                        }
-                                    }
-                                    txttelephone.setText(dueDate);
-                                    telephonestatus.setText(status);
+                                        txtwater.setText(dueDate);
+                                        waterstatus.setText(status);
 
+                                    }
+                                    if (utilityName.equalsIgnoreCase("gas")) {
+                                        if(dueStatus.equals("N")) {
+                                            spinner1.setSelection(0);
+                                        }else{
+                                            spinner1.setSelection(1);
+                                        }
+                                        txtgas.setText(dueDate);
+                                        gasstatus.setText(status);
+
+                                    }
+                                    if (utilityName.equalsIgnoreCase("electricity")) {
+                                        if(dueStatus.equals("N")) {
+                                            spinner2.setSelection(0);
+                                        }else{
+                                            spinner2.setSelection(1);
+                                        }
+                                        txtelectricity.setText(dueDate);
+                                        electricitystatus.setText(status);
+
+                                    }
+                                    if (utilityName.equalsIgnoreCase("telephone")) {
+                                        if(dueStatus.equals("N")) {
+                                            if (spinner3 != null) {
+                                                spinner3.setSelection(0);
+                                            }
+                                        }else{
+                                            if (spinner3 != null) {
+                                                spinner3.setSelection(1);
+                                            }
+                                        }
+                                        txttelephone.setText(dueDate);
+                                        telephonestatus.setText(status);
+
+                                    }
                                 }
-                            }
                                 if (subActivityName.equalsIgnoreCase("kitchen_equipments")){
                                     kitchen_equipments.setText(status);
 
@@ -841,25 +823,25 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         domesticcheck.setChecked(false);
                                     }
                                 }
-                                    if (subActivityName.equalsIgnoreCase("driver_status")){
-                                        driveredt.setText(status);
-                                        if(checkboxstatus.equals("true")){
-                                            drivercheck.setChecked(true);
-                                        }else {
-                                            drivercheck.setChecked(false);
-                                        }
+                                if (subActivityName.equalsIgnoreCase("driver_status")){
+                                    driveredt.setText(status);
+                                    if(checkboxstatus.equals("true")){
+                                        drivercheck.setChecked(true);
+                                    }else {
+                                        drivercheck.setChecked(false);
                                     }
+                                }
 
-                                    if (domesticcheck.isChecked()&& drivercheck.isChecked()) {
+                                if (domesticcheck.isChecked()&& drivercheck.isChecked()) {
 
-                                        domestichelpstatus.setVisibility(View.VISIBLE);
-                                        domestichelpstatus.setText(getString(R.string.done));
-                                        domestichelpstatus.setTextColor(Color.BLUE);
-                                    } else {
-                                        domestichelpstatus.setVisibility(View.VISIBLE);
-                                        domestichelpstatus.setText(getString(R.string.pending));
-                                        domestichelpstatus.setTextColor(Color.RED);
-                                    }
+                                    domestichelpstatus.setVisibility(View.VISIBLE);
+                                    domestichelpstatus.setText(getString(R.string.done));
+                                    domestichelpstatus.setTextColor(Color.BLUE);
+                                } else {
+                                    domestichelpstatus.setVisibility(View.VISIBLE);
+                                    domestichelpstatus.setText(getString(R.string.pending));
+                                    domestichelpstatus.setTextColor(Color.RED);
+                                }
 
                             }
                         } else if (activity.get(i).getStrActivityName().
@@ -918,34 +900,18 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("hall")) {
                             hallimageModels = picture.get(k).getImageModels();
-                           // setHallImages();
-                           /* if(hallimageModels.size()>0){
-                                isUploadHallImage = true;
-                            }*/
-
 
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("kitchen")) {
                             kitchenimageModels = picture.get(k).getImageModels();
-                           // addKitchenImages();
-                           /* if(kitchenimageModels.size()>0){
-                                isUploadKitchenImage = true;
-                            }*/
+
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("washroom")) {
                             washroomimageModels = picture.get(k).getImageModels();
-                          //  addWashroomImages();
-                           /* if(washroomimageModels.size()>0){
-                                isUploadWashImage = true;
-                            }
-*/
+
                         }
                         if (picture.get(k).getStrRoomName().equalsIgnoreCase("bedroom")) {
                             bedroomimageModels = picture.get(k).getImageModels();
-                          //  addBedroomImages();
-                           /* if(bedroomimageModels.size()>0){
-                                isUploadBedImage = true;
-                            }*/
 
                         }
 
@@ -973,9 +939,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     kitchenequipmentstatus.setError(null);
                     grocerystatus.setError(null);
                     domestichelpstatus.setError(null);
-                    uploadmediastatus.setError(null);
-
-                    mediacomment.setError(null);
+                    // uploadmediastatus.setError(null);
+                    //mediacomment.setError(null);
 
 
                     valdate = datetxt.getText().toString().trim();
@@ -983,9 +948,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     valequipment = equipmentstatus.getText().toString().trim();
                     valgrocery = grocerystatus.getText().toString().trim();
                     valdomestic = domestichelpstatus.getText().toString().trim();
-                    valphoto = uploadmediastatus.getText().toString().trim();
-
-                    valmediacomment = mediacomment.getText().toString().trim();
+                    // valphoto = uploadmediastatus.getText().toString().trim();
+                    //valmediacomment = mediacomment.getText().toString().trim();
 
 
 
@@ -995,65 +959,83 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         focusView = datetxt;
                         cancel = true;
                     }
-                    if (TextUtils.isEmpty(valmediacomment)) {
+                   /* if (TextUtils.isEmpty(valmediacomment)) {
                         mediacomment.setError(getString(R.string.error_field_required));
-                        utils.toast(2, 2, getString(R.string.error_field_required));
                         focusView = mediacomment;
                         cancel = true;
+                    }*/
+
+                    boolean editcheck=true;
+                    if (!kitchenequipcheck.isChecked()) {
+                        if (kitchen_equipments.getText().toString().equals("")) {
+                            editcheck = false;
+                            focusView = kitchen_equipments;
+                        }
                     }
-                   if(valkitchenequi.equals("Pending")){
-                       kitchenequipmentstatus.setError(getString(R.string.select_checkbox));
-                       utils.toast(2, 2, getString(R.string.select_checkbox));
-                       focusView = kitchenequipmentstatus;
-                       cancel = true;
-                   }
-                    if(valgrocery.equals("Pending")){
-                        grocerystatus.setError(getString(R.string.select_checkbox));
-                        utils.toast(2, 2, getString(R.string.select_checkbox));
-                        focusView = grocerystatus;
-                        cancel = true;
+                    if (!grocerycheck.isChecked()) {
+                        if (grocery.getText().toString().equals("")) {
+                            editcheck = false;
+                            focusView = grocery;
+                        }
                     }
-                    if(valequipment.equals("Pending")){
-                        equipmentstatus.setError(getString(R.string.select_checkbox));
-                        utils.toast(2, 2, getString(R.string.select_checkbox));
-                        focusView = equipmentstatus;
-                        cancel = true;
+                    if (!electrocheck.isChecked()) {
+                        if (electronic.getText().toString().equals("")) {
+                            editcheck = false;
+                            focusView = electronic;
+                        }
                     }
-                    if(valdomestic.equals("Pending")){
-                        domestichelpstatus.setError(getString(R.string.select_checkbox));
-                        utils.toast(2, 2, getString(R.string.select_checkbox));
-                        focusView = domestichelpstatus;
-                        cancel = true;
+                    if (!homecheck.isChecked()) {
+                        if (homeapplience.getText().toString().equals("")) {
+                            editcheck = false;
+                            focusView = homeapplience;
+                        }
                     }
-                    if(valphoto.equals("Pending")){
-                        uploadmediastatus.setError(getString(R.string.upload_all));
-                        utils.toast(2, 2, getString(R.string.upload_all));
-                        focusView = uploadmediastatus;
+                    if (!autocheck.isChecked()) {
+                        if (automobile.getText().toString().equals("")) {
+                            editcheck = false;
+                            focusView = automobile;
+                        }
+                    }
+                    if (!domesticcheck.isChecked()) {
+                        if (maidservices.getText().toString().equals("")) {
+                            editcheck = false;
+                            focusView = maidservices;
+                        }
+                    }
+                    if (!drivercheck.isChecked()) {
+                        if (driveredt.getText().toString().equals("")) {
+                            editcheck = false;
+                            focusView = driveredt;
+                        }
+                    }
+                    if(!editcheck) {
+                        utils.toast(2, 2, getString(R.string.check_edit));
                         cancel = true;
                     }
 
-                    if (!isUploadHallImage && hallimageModels.size() > 0 ) {
+
+                    if (isHallflag==1 && hallimageModels.size() > 0 ) {
                         hallstatus.setError(getString(R.string.upload_hall));
                         utils.toast(2, 2, getString(R.string.upload_hall));
                         focusView = hallstatus;
                         cancel = true;
 
                     }
-                    if (!isUploadKitchenImage && kitchenimageModels.size() > 0) {
+                    if (isKitchenflag==1 && kitchenimageModels.size() > 0) {
                         kitchenstatus.setError(getString(R.string.upload_kitchen));
                         utils.toast(2, 2, getString(R.string.upload_kitchen));
                         focusView = kitchenstatus;
                         cancel = true;
 
                     }
-                    if (!isUploadWashImage && washroomimageModels.size() > 0 ) {
+                    if (isWashflag==1 && washroomimageModels.size() > 0 ) {
                         washroomstatus.setError(getString(R.string.upload_wash));
                         utils.toast(2, 2, getString(R.string.upload_wash));
                         focusView = washroomstatus;
                         cancel = true;
 
                     }
-                    if (!isUploadBedImage && bedroomimageModels.size() > 0 ) {
+                    if (isBedflag==1 && bedroomimageModels.size() > 0 ) {
                         bedroomstatus.setError(getString(R.string.upload_bed));
                         utils.toast(2, 2, getString(R.string.upload_bed));
                         focusView = bedroomstatus;
@@ -1123,7 +1105,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             }
         });
         Button update = (Button) findViewById(R.id.btn_submit);
-        update.setOnClickListener(new View.OnClickListener() {
+       /* update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -1136,12 +1118,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                     valdate = datetxt.getText().toString().trim();
 
-                        if (TextUtils.isEmpty(valdate)) {
-                            datetxt.setError(getString(R.string.select_date));
-                            utils.toast(2, 2, getString(R.string.select_date));
-                            focusView = datetxt;
-                            cancel = true;
-                        }
+                    if (TextUtils.isEmpty(valdate)) {
+                        datetxt.setError(getString(R.string.select_date));
+                        utils.toast(2, 2, getString(R.string.select_date));
+                        focusView = datetxt;
+                        cancel = true;
+                    }
 
 
 
@@ -1178,7 +1160,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                 }
             }
-        });
+        });*/
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -1235,7 +1217,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }
                 break;
             case R.id.buttonHallAdd:
-                if(isUploadHallImage){
+                if(isHallflag==2){
                     utils.toast(2, 2, getString(R.string.upload_hall_success));
 
                 }else {
@@ -1245,7 +1227,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                 break;
             case R.id.buttonKitchenAdd:
-                if(isUploadKitchenImage){
+                if(isKitchenflag==2){
                     utils.toast(2, 2, getString(R.string.upload_kitchen_success));
 
                 }else {
@@ -1255,7 +1237,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                 break;
             case R.id.buttonWashroomAdd:
-                if(isUploadWashImage){
+                if(isWashflag==2){
                     utils.toast(2, 2, getString(R.string.upload_wash_success));
 
                 }else {
@@ -1265,7 +1247,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                 break;
             case R.id.buttonBedroomAdd:
-                if(isUploadBedImage){
+                if(isBedflag==2){
                     utils.toast(2, 2, getString(R.string.upload_bed_success));
 
                 }else {
@@ -1277,7 +1259,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             case R.id.uploadhallbtn:
                 hallstatus.setError(null);
-                if(isUploadHallImage){
+
+                if(isHallflag==2){
                     utils.toast(2, 2, getString(R.string.upload_hall_success));
 
                 }else {
@@ -1287,7 +1270,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.uploadkitchenbtn:
                 kitchenstatus.setError(null);
-                if(isUploadKitchenImage){
+                if(isKitchenflag==2){
                     utils.toast(2, 2, getString(R.string.upload_kitchen_success));
 
                 }else {
@@ -1297,7 +1280,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.uploadwashroombtn:
                 washroomstatus.setError(null);
-                if(isUploadWashImage){
+                if(isWashflag==2){
                     utils.toast(2, 2, getString(R.string.upload_wash_success));
 
                 }else {
@@ -1307,7 +1290,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.uploadbedroombtn:
                 bedroomstatus.setError(null);
-                if(isUploadBedImage){
+                if(isBedflag==2){
                     utils.toast(2, 2, getString(R.string.upload_bed_success));
 
                 }else {
@@ -1431,10 +1414,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
         bViewLoaded =false;
         editcheckincare=false;
-        isUploadHallImage=false;
-        isUploadKitchenImage=false;
-        isUploadWashImage=false;
-        isUploadBedImage=false;
+
         goBack();
     }
 
@@ -1450,8 +1430,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         loadingPanelhall.setVisibility(View.VISIBLE);
 
         if (hallImageCount > 0) {
-
-            //onCreateDialog(DIALOG_DOWNLOAD_PROGRESS1);
 
             bLoad = false;
 
@@ -1489,33 +1467,19 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 hallImageUploadCount++;
                                                 if (hallImageUploadCount >= hallimageModels.size()) {
 
-                                                      //  uploadKitchenImage();
                                                     utils.toast(2, 2, getString(R.string.upload_images));
-                                                    isUploadHallImage = true;
-                                                    //uploadhallbtn.setEnabled(false);
+                                                    isHallflag = 2;
                                                     Drawable icon= getResources().getDrawable( R.drawable.ok);
                                                     uploadhallbtn.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+                                                    uploadhallbtn.setCompoundDrawablePadding(10);
                                                     uploadhallbtn.setText(getString(R.string.upload_images_sucees));
-                                                   // buttonHallAdd.setEnabled(false);
 
                                                     for ( int i = 0; i < layouthall.getChildCount();  i++ ){
                                                         View view = layouthall.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
                                                         view.setFocusable(false);
                                                     }
-                                                   /* for ( int i = 0; i < layoutkitchen.getChildCount();  i++ ){
-                                                        View view = layoutkitchen.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }
-                                                    for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
-                                                        View view = layoutwashroom.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }
-                                                    for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
-                                                        View view = layoutbedroom.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }
-*/
+
                                                 } else {
                                                     uploadHallImage();
                                                 }
@@ -1527,10 +1491,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         } else {
                                             hallImageUploadCount++;
                                             if (hallImageUploadCount >= hallimageModels.size()) {
-                                               /* if (kitchenimageModels != null
-                                                        && kitchenimageModels.size() > 0) {
-                                                    uploadKitchenImage();
-                                                }*/
+
                                                 utils.toast(2, 2, getString(R.string.upload_images));
 
                                             } else {
@@ -1550,10 +1511,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         Utils.log(e.getMessage(), " Failure ");
 
                                         if (hallImageUploadCount >= hallimageModels.size()) {
-                                          /*  if (kitchenimageModels != null && kitchenimageModels.
-                                                    size() > 0) {
-                                                uploadKitchenImage();
-                                            }*/
+
                                             utils.toast(2, 2, getString(R.string.upload_images));
 
                                         } else {
@@ -1568,9 +1526,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     hallImageUploadCount++;
 
                     if (hallImageUploadCount >= hallimageModels.size()) {
-                      /*  if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
-                            uploadKitchenImage();
-                        }*/
+
                         utils.toast(2, 2, getString(R.string.upload_images));
 
                     } else {
@@ -1582,9 +1538,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 hallImageUploadCount++;
 
                 if (hallImageUploadCount >= hallimageModels.size()) {
-                 /*   if (kitchenimageModels != null && kitchenimageModels.size() > 0) {
-                        uploadKitchenImage();
-                    }*/
+
                     utils.toast(2, 2, getString(R.string.upload_images));
 
                 } else {
@@ -1593,7 +1547,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             }
 
         } else {
-            //  uploadKitchenImage();
             loadingPanelhall.setVisibility(View.GONE);
             utils.toast(2, 2, getString(R.string.select_image));
 
@@ -1644,12 +1597,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 kitchenImageUploadCount++;
                                                 if (kitchenImageUploadCount >= kitchenimageModels.
                                                         size()) {
-                                                    //  if (washroomimageModels != null && washroomimageModels.size() > 0) {
                                                     utils.toast(2, 2, getString(R.string.upload_images));
-                                                    isUploadKitchenImage = true;
-                                                   // uploadkitchenbtn.setEnabled(false);
+                                                    isKitchenflag=2;
                                                     Drawable icon= getResources().getDrawable( R.drawable.ok);
                                                     uploadkitchenbtn.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+                                                    uploadkitchenbtn.setCompoundDrawablePadding(10);
                                                     uploadkitchenbtn.setText(getString(R.string.upload_images_sucees));
                                                     //buttonKitchenAdd.setEnabled(false);
 
@@ -1658,20 +1610,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
                                                         view.setFocusable(false);
                                                     }
-                                                    /*for ( int i = 0; i < layouthall.getChildCount();  i++ ){
-                                                        View view = layouthall.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }
-                                                    for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
-                                                        View view = layoutwashroom.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }
-                                                    for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
-                                                        View view = layoutbedroom.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }*/
 
-                                                    //    }
                                                 } else {
                                                     uploadKitchenImage();
                                                 }
@@ -1684,10 +1623,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                             kitchenImageUploadCount++;
                                             if (kitchenImageUploadCount >= kitchenimageModels.
                                                     size()) {
-                                               /* if (washroomimageModels != null &&
-                                                        washroomimageModels.size() > 0) {
-                                                    uploadWashroomImage();
-                                                }*/
+
                                                 utils.toast(2, 2, getString(R.string.upload_images));
 
                                             } else {
@@ -1706,10 +1642,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         Utils.log(e.getMessage(), " Failure ");
                                         kitchenImageUploadCount++;
                                         if (kitchenImageUploadCount >= kitchenimageModels.size()) {
-                                          /*  if (washroomimageModels != null && washroomimageModels.
-                                                    size() > 0) {
-                                                uploadWashroomImage();
-                                            }*/
+
                                             utils.toast(2, 2, getString(R.string.upload_images));
 
                                         } else {
@@ -1724,9 +1657,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     kitchenImageUploadCount++;
 
                     if (kitchenImageUploadCount >= kitchenimageModels.size()) {
-                       /* if (washroomimageModels != null && washroomimageModels.size() > 0) {
-                            uploadWashroomImage();
-                        }*/
+
                         utils.toast(2, 2, getString(R.string.upload_images));
 
                     } else {
@@ -1737,9 +1668,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 kitchenImageUploadCount++;
 
                 if (kitchenImageUploadCount >= kitchenimageModels.size()) {
-                /*    if (washroomimageModels != null && washroomimageModels.size() > 0) {
-                        uploadWashroomImage();
-                    }*/
+
                     utils.toast(2, 2, getString(R.string.upload_images));
 
                 } else {
@@ -1797,33 +1726,21 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 washroomImageUploadCount++;
                                                 if (washroomImageUploadCount
                                                         >= washroomimageModels.size()) {
-                                                    //  if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
+
                                                     utils.toast(2, 2, getString(R.string.upload_images));
-                                                    isUploadWashImage = true;
-                                                   // uploadwashroombtn.setEnabled(false);
+                                                    isWashflag = 2;
+
                                                     Drawable icon= getResources().getDrawable( R.drawable.ok);
                                                     uploadwashroombtn.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+                                                    uploadwashroombtn.setCompoundDrawablePadding(10);
                                                     uploadwashroombtn.setText(getString(R.string.upload_images_sucees));
-                                                   // buttonWashroomAdd.setEnabled(false);
 
                                                     for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
                                                         View view = layoutwashroom.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
                                                         view.setFocusable(false);
                                                     }
-                                                    /*for ( int i = 0; i < layouthall.getChildCount();  i++ ){
-                                                        View view = layouthall.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }
-                                                    for ( int i = 0; i < layoutkitchen.getChildCount();  i++ ){
-                                                        View view = layoutkitchen.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }
-                                                    for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
-                                                        View view = layoutbedroom.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }*/
-                                                    //  }
+
                                                 } else {
                                                     uploadWashroomImage();
                                                 }
@@ -1836,10 +1753,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                             washroomImageUploadCount++;
                                             if (washroomImageUploadCount >= washroomimageModels.
                                                     size()) {
-                                             /*   if (bedroomimageModels != null
-                                                        && bedroomimageModels.size() > 0) {
-                                                    uploadBedroomImage();
-                                                }*/
+
                                                 utils.toast(2, 2, getString(R.string.upload_images));
                                             } else {
                                                 uploadWashroomImage();
@@ -1859,10 +1773,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         washroomImageUploadCount++;
                                         if (washroomImageUploadCount >= washroomimageModels.
                                                 size()) {
-                                          /*  if (bedroomimageModels != null && bedroomimageModels.
-                                                    size() > 0) {
-                                                uploadBedroomImage();
-                                            }*/
+
                                             utils.toast(2, 2, getString(R.string.upload_images));
                                         } else {
                                             uploadWashroomImage();
@@ -1876,9 +1787,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     washroomImageUploadCount++;
 
                     if (washroomImageUploadCount >= washroomimageModels.size()) {
-                      /*  if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
-                            uploadBedroomImage();
-                        }*/
+
                         utils.toast(2, 2, getString(R.string.upload_images));
                     } else {
                         uploadWashroomImage();
@@ -1888,9 +1797,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 washroomImageUploadCount++;
 
                 if (washroomImageUploadCount >= washroomimageModels.size()) {
-                  /*  if (bedroomimageModels != null && bedroomimageModels.size() > 0) {
-                        uploadBedroomImage();
-                    }*/
+
                     utils.toast(2, 2, getString(R.string.upload_images));
                 } else {
                     uploadWashroomImage();
@@ -1947,36 +1854,21 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 bedroomImageUploadCount++;
                                                 if (bedroomImageUploadCount >= bedroomimageModels.
                                                         size()) {
-                                                    /*if(editcheckincare) {
-                                                        editupdateJson();
-                                                    }else {
-                                                        updateJson();
-                                                    }*/
+
                                                     utils.toast(2, 2, getString(R.string.upload_images));
-                                                    isUploadBedImage = true;
-                                                   // uploadbedroombtn.setEnabled(false);
+                                                    isBedflag=2;
+
                                                     Drawable icon= getResources().getDrawable( R.drawable.ok);
                                                     uploadbedroombtn.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+                                                    uploadbedroombtn.setCompoundDrawablePadding(10);
                                                     uploadbedroombtn.setText(getString(R.string.upload_images_sucees));
-                                                   // buttonBedroomAdd.setEnabled(false);
+
 
                                                     for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
                                                         View view = layoutbedroom.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
                                                         view.setFocusable(false);
                                                     }
-                                                    /*for ( int i = 0; i < layouthall.getChildCount();  i++ ){
-                                                        View view = layouthall.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }
-                                                    for ( int i = 0; i < layoutkitchen.getChildCount();  i++ ){
-                                                        View view = layoutkitchen.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }
-                                                    for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
-                                                        View view = layoutwashroom.getChildAt(i);
-                                                        view.setEnabled(false); // Or whatever you want to do with the view.
-                                                    }*/
 
                                                 } else {
                                                     uploadBedroomImage();
@@ -1990,11 +1882,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                             bedroomImageUploadCount++;
                                             if (bedroomImageUploadCount
                                                     >= bedroomimageModels.size()) {
-                                             /*   if(editcheckincare){
-                                                    editupdateJson();
-                                                }else {
-                                                    updateJson();
-                                                }*/
+
                                                 utils.toast(2, 2, getString(R.string.upload_images));
                                             } else {
                                                 uploadBedroomImage();
@@ -2012,11 +1900,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         Utils.log(e.getMessage(), " Failure ");
                                         bedroomImageUploadCount++;
                                         if (bedroomImageUploadCount >= bedroomimageModels.size()) {
-                                           /* if(editcheckincare){
-                                                editupdateJson();
-                                            }else {
-                                                updateJson();
-                                            }*/
+
                                             utils.toast(2, 2, getString(R.string.upload_images));
                                         } else {
                                             uploadBedroomImage();
@@ -2030,33 +1914,17 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     bedroomImageUploadCount++;
 
                     if (bedroomImageUploadCount >= bedroomimageModels.size()) {
-                        /*if(editcheckincare){
-                            editupdateJson();
-                        } else {
-                            updateJson();
-                        }*/
+
                         utils.toast(2, 2, getString(R.string.upload_images));
                     } else {
                         uploadBedroomImage();
                     }
                 }
             } else {
-               /* if(editcheckincare){
-                    editupdateJson();
-                }else {
-                    updateJson();
-                }*/
+
                 uploadBedroomImage();
             }
         } else {
-           /* if (mProgressDialog != null)
-                mProgressDialog.dismiss();*/
-
-           /* if(editcheckincare){
-                editupdateJson();
-            }else {
-                updateJson();
-            }*/
             loadingPanelbed.setVisibility(View.GONE);
             utils.toast(2, 2, getString(R.string.select_image));
 
@@ -2104,12 +1972,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectHallPicture.put("status", "status");
                 jsonObjectHallPicture.put("room_name", "hall");
 
-                //  jsonArrayPicture.put(jsonObjectHallPicture);
-                //   jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
-
                 JSONArray jsonArrayHallPictureDetails = new JSONArray();
 
-                ArrayList<ImageModel> mTHallImageModels = new ArrayList<>();
 
                 if (hallimageModels.size() > 0) {
 
@@ -2122,7 +1986,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         jsonObjectHallImages.put("date_time", hallImageModel.getStrImageTime());
 
                         jsonArrayHallPictureDetails.put(jsonObjectHallImages);
-                        mTHallImageModels.add(hallImageModel);
                     }
                 } else {
 
@@ -2139,12 +2002,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectKitchenPicture.put("status", "status");
                 jsonObjectKitchenPicture.put("room_name", "kitchen");
 
-              /*  jsonArrayPicture.put(jsonObjectKitchenPicture);
-                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);*/
 
                 JSONArray jsonArrayKitchenPictureDetails = new JSONArray();
 
-                ArrayList<ImageModel> mTKitchenImageModels = new ArrayList<>();
 
                 if (kitchenimageModels.size() > 0) {
 
@@ -2160,7 +2020,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 getStrImageTime());
 
                         jsonArrayKitchenPictureDetails.put(jsonObjectKitchenImages);
-                        mTKitchenImageModels.add(kitchenImageModel);
                     }
                 } else {
 
@@ -2177,11 +2036,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectWashroomPicture.put("status", "status");
                 jsonObjectWashroomPicture.put("room_name", "washroom");
 
-               /* jsonArrayPicture.put(jsonObjectWashroomPicture);
-                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);*/
                 JSONArray jsonArrayWashroomPictureDetails = new JSONArray();
 
-                ArrayList<ImageModel> mTWashroomImageModels = new ArrayList<>();
 
                 if (washroomimageModels.size() > 0) {
 
@@ -2197,7 +2053,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 getStrImageTime());
 
                         jsonArrayWashroomPictureDetails.put(jsonObjectWashroomImages);
-                        mTWashroomImageModels.add(washroomImageModel);
                     }
                 } else {
 
@@ -2213,11 +2068,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectBedroomPicture.put("status", "status");
                 jsonObjectBedroomPicture.put("room_name", "bedroom");
 
-                //  jsonArrayPicture.put(jsonObjectBedroomPicture);
-                // jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
                 JSONArray jsonArrayBedroomPictureDetails = new JSONArray();
 
-                ArrayList<ImageModel> mTBedroomImageModels = new ArrayList<>();
 
                 if (bedroomimageModels.size() > 0) {
 
@@ -2233,7 +2085,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 getStrImageTime());
 
                         jsonArrayBedroomPictureDetails.put(jsonObjectBedroomImages);
-                        mTBedroomImageModels.add(bedroomImageModel);
                     }
                 } else {
 
@@ -2388,36 +2239,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectCheckinCare.put("activities", jsonArrayActivities);
 
 
-               /* Config.checkInCareModels.get(mImageUploadCount).clearImageModel();
-                Config.checkInCareModels.get(mImageUploadCount).setImageModels(mTHallImageModels);*/
-
-                hallimageModels = mTHallImageModels;
-
             } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            //notification
-            //todo UI for common notifications
-            String strPushMessage = getString(R.string.notification_checkincare);
-
-            final JSONObject jsonObject = new JSONObject();
-
-            try {
-
-                String strDateNow;
-                Calendar calendar = Calendar.getInstance();
-                Date dateNow = calendar.getTime();
-                strDateNow = Utils.convertDateToString(dateNow);
-
-                jsonObject.put("created_by", Config.providerModel.getStrProviderId());
-                jsonObject.put("time", strDateNow);
-                jsonObject.put("user_type", "dependent");
-                jsonObject.put("user_id", dependentId);
-                jsonObject.put("created_by_type", "provider");
-                jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
-            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
@@ -2460,9 +2282,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                         //////////////
 
-                                      /*  String strActivityDate = Utils.convertDateToStringQueryLocal(Utils.
-                                                convertStringToDateQuery(jsonObject.getString("activity_date").substring(0,
-                                                        jsonObject.getString("activity_date").length() - 1)));*/
 
                                         //todo fetch from session if offline sync update enabled
                                         String values1[] = {jsonDocument.getDocId(),
@@ -2484,6 +2303,33 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 selection1, values1, DbHelper.CCARE_FIELDS,
                                                 selectionArgs1);
 
+                                        //notification
+                                        //todo UI for common notifications
+                                        String strPushMessage = getString(R.string.notification_checkincare);
+
+                                        final JSONObject jsonObject = new JSONObject();
+
+                                        try {
+
+                                            String strDateNow;
+                                            Calendar calendar = Calendar.getInstance();
+                                            Date dateNow = calendar.getTime();
+                                            strDateNow = Utils.convertDateToString(dateNow);
+
+                                            jsonObject.put("created_by", Config.providerModel.getStrProviderId());
+                                            jsonObject.put("time", strDateNow);
+                                            jsonObject.put("user_type", "dependent");
+                                            jsonObject.put("user_id", dependentId);
+                                            jsonObject.put("checkincare", true);
+                                            jsonObject.put("checkincare_id", jsonDocument.getDocId());
+
+                                            //todo add for customer
+                                            jsonObject.put("created_by_type", "provider");
+                                            jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
                                         sendPush(jsonObject);
                                         insertNotification(jsonObject);
 
@@ -2493,10 +2339,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                     //IMAGE_COUNT = 0;
                                     bViewLoaded =false;
-                                    /*isUploadHallImage=false;
-                                    isUploadKitchenImage=false;
-                                    isUploadWashImage=false;
-                                    isUploadBedImage=false;*/
+
                                     utils.toast(1, 1, getString(R.string.data_upload));
                                     Intent intent = new Intent(CheckInCareActivity.this,
                                             DashboardActivity.class);
@@ -2597,12 +2440,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectHallPicture.put("status", "status");
                 jsonObjectHallPicture.put("room_name", "hall");
 
-                //  jsonArrayPicture.put(jsonObjectHallPicture);
-                //   jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
-
                 JSONArray jsonArrayHallPictureDetails = new JSONArray();
 
-                ArrayList<ImageModel> mTHallImageModels = new ArrayList<>();
 
                 if (hallimageModels.size() > 0) {
 
@@ -2615,7 +2454,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         jsonObjectHallImages.put("date_time", hallImageModel.getStrImageTime());
 
                         jsonArrayHallPictureDetails.put(jsonObjectHallImages);
-                        mTHallImageModels.add(hallImageModel);
                     }
                 } else {
 
@@ -2632,12 +2470,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectKitchenPicture.put("status", "status");
                 jsonObjectKitchenPicture.put("room_name", "kitchen");
 
-              /*  jsonArrayPicture.put(jsonObjectKitchenPicture);
-                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);*/
-
                 JSONArray jsonArrayKitchenPictureDetails = new JSONArray();
-
-                ArrayList<ImageModel> mTKitchenImageModels = new ArrayList<>();
 
                 if (kitchenimageModels.size() > 0) {
 
@@ -2653,7 +2486,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 getStrImageTime());
 
                         jsonArrayKitchenPictureDetails.put(jsonObjectKitchenImages);
-                        mTKitchenImageModels.add(kitchenImageModel);
                     }
                 } else {
 
@@ -2670,11 +2502,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectWashroomPicture.put("status", "status");
                 jsonObjectWashroomPicture.put("room_name", "washroom");
 
-               /* jsonArrayPicture.put(jsonObjectWashroomPicture);
-                jsonObjectCheckinCare.put("pictures", jsonArrayPicture);*/
                 JSONArray jsonArrayWashroomPictureDetails = new JSONArray();
-
-                ArrayList<ImageModel> mTWashroomImageModels = new ArrayList<>();
 
                 if (washroomimageModels.size() > 0) {
 
@@ -2690,7 +2518,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 getStrImageTime());
 
                         jsonArrayWashroomPictureDetails.put(jsonObjectWashroomImages);
-                        mTWashroomImageModels.add(washroomImageModel);
                     }
                 } else {
 
@@ -2706,11 +2533,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectBedroomPicture.put("status", "status");
                 jsonObjectBedroomPicture.put("room_name", "bedroom");
 
-                //  jsonArrayPicture.put(jsonObjectBedroomPicture);
-                // jsonObjectCheckinCare.put("pictures", jsonArrayPicture);
                 JSONArray jsonArrayBedroomPictureDetails = new JSONArray();
 
-                ArrayList<ImageModel> mTBedroomImageModels = new ArrayList<>();
 
                 if (bedroomimageModels.size() > 0) {
 
@@ -2726,7 +2550,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 getStrImageTime());
 
                         jsonArrayBedroomPictureDetails.put(jsonObjectBedroomImages);
-                        mTBedroomImageModels.add(bedroomImageModel);
                     }
                 } else {
 
@@ -2881,37 +2704,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectCheckinCare.put("activities", jsonArrayActivities);
 
 
-               /* Config.checkInCareModels.get(mImageUploadCount).clearImageModel();
-                Config.checkInCareModels.get(mImageUploadCount).setImageModels(mTHallImageModels);*/
-
-                hallimageModels = mTHallImageModels;
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
         if (utils.isConnectingToInternet()) {
 
-            String strPushMessage = getString(R.string.notification_checkincare);
-
-            final JSONObject jsonObject1 = new JSONObject();
-
-            try {
-
-                String strDateNow;
-                Calendar calendar = Calendar.getInstance();
-                Date dateNow = calendar.getTime();
-                strDateNow = Utils.convertDateToString(dateNow);
-
-                jsonObject1.put("created_by", Config.providerModel.getStrProviderId());
-                jsonObject1.put("time", strDateNow);
-                jsonObject1.put("user_type", "dependent");
-                jsonObject1.put("user_id", dependentId);
-                jsonObject1.put("created_by_type", "provider");
-                jsonObject1.put(App42GCMService.ExtraMessage, strPushMessage);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
             final JSONObject jsonObject = jsonObjectCheckinCare;
 
@@ -2947,6 +2745,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                     selection, values, DbHelper.COLLECTION_FIELDS,
                                     selectionArgs);
 
+
+                            //todo fetch from session if offline sync update enabled
                             String values1[] = {Config.checkInCareModel.getStrDocumentID(),
                                     "-1",
                                     strSelectedDate,
@@ -2965,6 +2765,34 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                     DbHelper.strTableNameMilestone,
                                     selection1, values1, DbHelper.CCARE_FIELDS,
                                     selectionArgs1);
+
+                            //notification
+                            //todo UI for common notifications
+                            String strPushMessage = getString(R.string.notification_checkincare);
+
+                            final JSONObject jsonObject1 = new JSONObject();
+
+                            try {
+
+                                String strDateNow;
+                                Calendar calendar = Calendar.getInstance();
+                                Date dateNow = calendar.getTime();
+                                strDateNow = Utils.convertDateToString(dateNow);
+
+                                jsonObject1.put("created_by", Config.providerModel.getStrProviderId());
+                                jsonObject1.put("time", strDateNow);
+                                jsonObject1.put("user_type", "dependent");
+                                jsonObject1.put("user_id", dependentId);
+                                jsonObject1.put("checkincare", true);
+                                jsonObject1.put("checkincare_id", Config.checkInCareModel.getStrDocumentID());
+
+                                //todo add for customer
+                                jsonObject1.put("created_by_type", "provider");
+                                jsonObject1.put(App42GCMService.ExtraMessage, strPushMessage);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
 
                             sendPush(jsonObject1);
                             insertNotification(jsonObject1);
@@ -3008,21 +2836,21 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         if (resultCode == Activity.RESULT_OK) {
             try {
 
-                if(isHallFlag==1) {
+                if(isFlag==1) {
                     uploadhallbtn.setVisibility(View.VISIBLE);
-                    isUploadHallImage=false;
+                    isHallflag = 1;
                 }
-                if(isHallFlag==2) {
+                if(isFlag==2) {
                     uploadkitchenbtn.setVisibility(View.VISIBLE);
-                    isUploadKitchenImage=false;
+                    isKitchenflag=1;
                 }
-                if(isHallFlag==3) {
+                if(isFlag==3) {
                     uploadwashroombtn.setVisibility(View.VISIBLE);
-                    isUploadWashImage=false;
+                    isWashflag=1;
                 }
-                if(isHallFlag==4) {
+                if(isFlag==4) {
                     uploadbedroombtn.setVisibility(View.VISIBLE);
-                    isUploadBedImage=false;
+                    isBedflag=1;
                 }
 
                 /*   mProgress.setMessage(getString(R.string.loading));
@@ -3092,10 +2920,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
-                /*    Utils.log(String.valueOf(hallimageModels.get(i).getStrImageName() + " # " +
-                            hallimageModels.get(i).getStrImagePath()), " height 0 ");
-
-                    Utils.log(String.valueOf(hallbitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
                     //imageView.setImageBitmap(hallbitmaps.get(i));
@@ -3115,7 +2939,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onClick(View v) {
 
-                            if (!isUploadHallImage) {
+                            if (isHallflag==1) {
                                 final ImageModel mImageModel = (ImageModel) v.getTag();
 
                                 final int mPosition = (int) v.getTag(R.id.three);
@@ -3164,6 +2988,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                             if (fDelete.exists()) {
                                                                 success = fDelete.delete();
 
+                                                                if(hallimageModels.size()<=0){
+                                                                    isHallflag=0;
+                                                                }
                                                                 if (mImageModel.ismIsNew())
                                                                     hallImageCount--;
 
@@ -3308,10 +3135,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
-            /*        Utils.log(String.valueOf(kitchenimageModels.get(i).getStrImageName() + " # " +
-                            kitchenimageModels.get(i).getStrImagePath()), " height 0 ");
-
-                    Utils.log(String.valueOf(kitchenbitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
 
@@ -3329,7 +3152,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onClick(View v) {
 
-                            if (!isUploadKitchenImage) {
+                            if (isKitchenflag==1) {
                                 final ImageModel mImageModel = (ImageModel) v.getTag();
 
                                 final int mPosition = (int) v.getTag(R.id.three);
@@ -3377,6 +3200,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                             if (fDelete.exists()) {
                                                                 success = fDelete.delete();
+
+                                                                if(kitchenimageModels.size()<=0){
+                                                                    isKitchenflag=0;
+                                                                }
 
                                                                 if (mImageModel.ismIsNew())
                                                                     kitchenImageCount--;
@@ -3525,10 +3352,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
-                 /*   Utils.log(String.valueOf(washroomimageModels.get(i).getStrImageName() + " # " +
-                            washroomimageModels.get(i).getStrImagePath()), " height 0 ");
-
-                    Utils.log(String.valueOf(washroombitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
 
@@ -3545,7 +3368,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onClick(View v) {
 
-                            if (!isUploadWashImage) {
+                            if (isWashflag==1) {
                                 final ImageModel mImageModel = (ImageModel) v.getTag();
 
                                 final int mPosition = (int) v.getTag(R.id.three);
@@ -3593,6 +3416,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                             if (fDelete.exists()) {
                                                                 success = fDelete.delete();
+
+                                                                if(washroomimageModels.size()<=0){
+                                                                    isWashflag=0;
+                                                                }
 
                                                                 if (mImageModel.ismIsNew())
                                                                     washroomImageCount--;
@@ -3741,10 +3568,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             LinearLayout.LayoutParams.MATCH_PARENT);
                     layoutParams.setMargins(10, 10, 10, 10);
 
-            /*        Utils.log(String.valueOf(bedroomimageModels.get(i).getStrImageName() + " # " +
-                            bedroomimageModels.get(i).getStrImagePath()), " height 0 ");
-
-                    Utils.log(String.valueOf(bedroombitmaps.get(i).getHeight()), " height ");*/
 
                     imageView.setLayoutParams(layoutParams);
 
@@ -3762,7 +3585,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onClick(View v) {
 
-                            if (!isUploadBedImage) {
+                            if (isBedflag==1) {
                                 final ImageModel mImageModel = (ImageModel) v.getTag();
 
                                 final int mPosition = (int) v.getTag(R.id.three);
@@ -3944,6 +3767,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     //  utils.toast(2, 2, getString(R.string.select_date));
                     waterstatus.setText(getString(R.string.yes));
                     txtwater.setText("Due Date");
+                    pick_date.setImageResource(R.drawable.calender_date_picked);
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -3962,6 +3786,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     }
                 } else {
                     waterstatus.setText(getString(R.string.no));
+                    pick_date.setImageResource(R.mipmap.calendar_date_picker);
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -3989,10 +3814,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 items[1] = item;
 
                 if (item.equals("Y")) {
-                    //   utils.toast(2, 2, getString(R.string.select_date));
 
                     gasstatus.setText(getString(R.string.yes));
                     txtgas.setText("Due Date");
+                    pick_date2.setImageResource(R.drawable.calender_date_picked);
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -4011,6 +3836,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     }
                 } else {
                     gasstatus.setText(getString(R.string.no));
+                    pick_date2.setImageResource(R.mipmap.calendar_date_picker);
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -4037,10 +3863,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 items[2] = item;
 
                 if (item.equals("Y")) {
-                    //  utils.toast(2, 2, getString(R.string.select_date));
 
                     electricitystatus.setText(getString(R.string.yes));
                     txtelectricity.setText("Due Date");
+                    pick_date3.setImageResource(R.drawable.calender_date_picked);
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -4058,6 +3884,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     }
                 } else {
                     electricitystatus.setText(getString(R.string.no));
+                    pick_date3.setImageResource(R.mipmap.calendar_date_picker);
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -4085,10 +3912,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 items[3] = item;
 
                 if (item.equals("Y")) {
-                    //   utils.toast(2, 2, getString(R.string.select_date));
 
                     telephonestatus.setText(getString(R.string.yes));
                     txttelephone.setText("Due Date");
+                    pick_date4.setImageResource(R.drawable.calender_date_picked);
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -4106,6 +3933,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     }
                 } else {
                     telephonestatus.setText(getString(R.string.no));
+                    pick_date4.setImageResource(R.mipmap.calendar_date_picker);
                     if (grocerystatus.getText().toString().equals(getString(R.string.done))
                             && kitchenequipmentstatus.getText().toString().
                             equals(getString(R.string.done))
@@ -4129,7 +3957,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             case R.id.dependentspinner:
 
-                //items[4] = item;
                 dependentId = dependent.get(position).getStrDependentID();
 
                 break;
@@ -4196,9 +4023,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 buttonHallAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        isHallFlag = 1;
+                        isFlag = 1;
                         mainlinearlayout.requestFocus();
-                        if(isUploadHallImage){
+                        if(isHallflag ==2){
                             utils.toast(2, 2, getString(R.string.upload_hall_success));
 
                         }else {
@@ -4212,10 +4039,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 buttonKitchenAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        isHallFlag = 2;
-
+                        isFlag = 2;
                         mainlinearlayout.requestFocus();
-                        if(isUploadKitchenImage){
+                        if(isKitchenflag==2){
                             utils.toast(2, 2, getString(R.string.upload_kitchen_success));
 
                         }else {
@@ -4228,9 +4054,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 buttonWashroomAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        isHallFlag = 3;
+                        isFlag = 3;
                         mainlinearlayout.requestFocus();
-                        if(isUploadWashImage){
+                        if(isWashflag==2){
                             utils.toast(2, 2, getString(R.string.upload_wash_success));
 
                         }else {
@@ -4243,9 +4069,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 buttonBedroomAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        isHallFlag = 4;
+                        isFlag = 4;
                         mainlinearlayout.requestFocus();
-                        if(isUploadBedImage){
+                        if(isBedflag==2){
                             utils.toast(2, 2, getString(R.string.upload_bed_success));
 
                         }else {
@@ -4259,11 +4085,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             if (!bViewLoaded) {
 
                bViewLoaded =true;
-
-               /* mProgressDialog = new ProgressDialog(this);
-                mProgressDialog.setMessage(getString(R.string.loading));
-                mProgressDialog.setCancelable(false);
-                mProgressDialog.show();*/
 
                 loadingPanel.setVisibility(View.VISIBLE);
 
@@ -4386,35 +4207,33 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         @Override
         public void handleMessage(Message msg) {
 
-            if (isHallFlag == 1) {
+            if (isFlag == 1) {
                 addHallImages();
             }else{
                 addHallImages();
             }
 
-            if (isHallFlag == 2) {
+            if (isFlag == 2) {
                 addKitchenImages();
             }else{
                 addKitchenImages();
             }
 
-            if (isHallFlag == 3) {
+            if (isFlag == 3) {
                 addWashroomImages();
             }else{
                 addWashroomImages();
             }
 
 
-            if (isHallFlag == 4) {
+            if (isFlag == 4) {
                 addBedroomImages();
             }else{
                 addBedroomImages();
             }
 
             loadingPanel.setVisibility(View.GONE);
-           /* if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.dismiss();
-            }*/
+
         }
     }
 
@@ -4422,7 +4241,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         @Override
         public void run() {
 
-            if (isHallFlag == 1) {
+            if (isFlag == 1) {
                 try {
                     for (int i = 0; i < imagePaths.size(); i++) {
                         Calendar calendar = Calendar.getInstance();
@@ -4456,7 +4275,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
             }
-            if (isHallFlag == 2) {
+            if (isFlag == 2) {
                 try {
                     for (int i = 0; i < imagePaths.size(); i++) {
                         Calendar calendar = Calendar.getInstance();
@@ -4491,7 +4310,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
             }
-            if (isHallFlag == 3) {
+            if (isFlag == 3) {
                 try {
                     for (int i = 0; i < imagePaths.size(); i++) {
                         Calendar calendar = Calendar.getInstance();
@@ -4526,7 +4345,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
             }
-            if (isHallFlag == 4) {
+            if (isFlag == 4) {
                 try {
                     for (int i = 0; i < imagePaths.size(); i++) {
                         Calendar calendar = Calendar.getInstance();
@@ -4566,7 +4385,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private class BackgroundThreadCamera extends Thread {
         @Override
         public void run() {
-            if (isHallFlag == 1) {
+            if (isFlag == 1) {
                 try {
                     if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
 
@@ -4600,7 +4419,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
             }
-            if (isHallFlag == 2) {
+            if (isFlag == 2) {
                 try {
                     if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
                         Calendar calendar = Calendar.getInstance();
@@ -4633,7 +4452,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
             }
-            if (isHallFlag == 3) {
+            if (isFlag == 3) {
                 try {
                     if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
                         Calendar calendar = Calendar.getInstance();
@@ -4666,7 +4485,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
             }
-            if (isHallFlag == 4) {
+            if (isFlag == 4) {
                 try {
                     if (strImageName != null && !strImageName.equalsIgnoreCase("")) {
                         Calendar calendar = Calendar.getInstance();
