@@ -2415,7 +2415,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObject.put("time", strDateNow);
                 jsonObject.put("user_type", "dependent");
                 jsonObject.put("user_id", dependentId);
-                //todo add for customer
                 jsonObject.put("created_by_type", "provider");
                 jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
             } catch (JSONException e) {
@@ -2908,7 +2907,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObject1.put("time", strDateNow);
                 jsonObject1.put("user_type", "dependent");
                 jsonObject1.put("user_id", dependentId);
-                //todo add for customer
                 jsonObject1.put("created_by_type", "provider");
                 jsonObject1.put(App42GCMService.ExtraMessage, strPushMessage);
             } catch (JSONException e) {
@@ -2949,8 +2947,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                     selection, values, DbHelper.COLLECTION_FIELDS,
                                     selectionArgs);
 
-
-                            //todo fetch from session if offline sync update enabled
                             String values1[] = {Config.checkInCareModel.getStrDocumentID(),
                                     "-1",
                                     strSelectedDate,

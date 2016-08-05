@@ -923,7 +923,7 @@ public class AsyncApp42ServiceApi {
             @Override
             public void run() {
                 try {
-                    final App42Response response = pushNotificationService.unsubscribeDevice(
+                    final App42Response response = pushNotificationService.deleteDeviceToken(
                             userName, strToken);
 
                     callerThreadHandler.post(new Runnable() {

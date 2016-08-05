@@ -137,7 +137,8 @@ public class ActivityFragment extends Fragment
                 if (activityModels.get(position).getStrActivityStatus().
                         equalsIgnoreCase("completed")) {
                     //cvh.imageTiming.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.done));
-                    cvh.imageTiming.setBackgroundResource(R.mipmap.ok); //done_action
+                    //cvh.imageTiming.setBackgroundResource(R.mipmap.ok); //done_action
+                    cvh.imageTiming.setBackgroundResource(R.mipmap.done_action);
                     cvh.imageTiming.setTextColor(context.getResources().getColor(
                             R.color.colorWhite));
                     cvh.imageTiming.setText("");
@@ -157,9 +158,15 @@ public class ActivityFragment extends Fragment
 
                 if (activityModels.get(position).getStrActivityStatus().
                         equalsIgnoreCase("inprocess")) {
-                    cvh.imageTiming.setBackgroundResource(R.mipmap.cancel);
+                   /* cvh.imageTiming.setBackgroundResource(R.mipmap.cancel);
                     cvh.imageTiming.setText("");
                     //cvh.imageTiming.setTextAppearance(context, R.style.ActivityPending);
+                    cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(
+                            R.drawable.status_process));*/
+                    cvh.imageTiming.setBackgroundResource(R.drawable.circle);
+                    cvh.imageTiming.setText(activityModels.get(position).getStrDisplayTime());
+                    cvh.imageTiming.setTextColor(context.getResources().getColor(
+                            R.color.colorAccent));
                     cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(
                             R.drawable.status_process));
                 }
@@ -167,9 +174,16 @@ public class ActivityFragment extends Fragment
                 //pending status
                 if (activityModels.get(position).getStrActivityStatus().
                         equalsIgnoreCase("pending")) {
-                    cvh.imageTiming.setBackgroundResource(R.drawable.circle);
+                   /* cvh.imageTiming.setBackgroundResource(R.drawable.circle);
                     cvh.imageTiming.setText("");
                     //cvh.imageTiming.setTextAppearance(context, R.style.ActivityPending);
+                    cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(
+                            R.drawable.status_process));*/
+
+                    cvh.imageTiming.setBackgroundResource(R.drawable.circle);
+                    cvh.imageTiming.setText(activityModels.get(position).getStrDisplayTime());
+                    cvh.imageTiming.setTextColor(context.getResources().getColor(
+                            R.color.colorAccent));
                     cvh.linearLayout.setBackgroundDrawable(context.getResources().getDrawable(
                             R.drawable.status_process));
                 }
@@ -309,7 +323,6 @@ public class ActivityFragment extends Fragment
                     args.putBoolean("WHICH_SCREEN", false);
                     intent.putExtras(args);
                     startActivity(intent);
-                    //todo verify flow
                     getActivity().finish();
                 }
             }

@@ -26,6 +26,7 @@ public class SessionManager {
     private static final String KEY_CLIENT_DATE = "CLIENT_DATE";
     private static final String KEY_ACTIVITY_SYNC = "ACTIVITY_SYNC";
     private static final String KEY_SYNC_DATE = "SYNC_DATE";
+    private static final String KEY_DEVICE_TOKEN = "DEVICE_TOKEN";
     //private final String KEY_CHECKIN_CARE_STATUS = "checkin_care_status";
     // Shared Preferences
     private SharedPreferences pref;
@@ -151,6 +152,31 @@ public class SessionManager {
         editor.commit();
     }
 
+    public String getDeviceToken() {
+
+        String strDeviceToken;
+
+        try {
+            strDeviceToken = pref.getString(KEY_DEVICE_TOKEN, "");
+        } catch (Exception e) {
+            e.printStackTrace();
+            strDeviceToken = "";
+        }
+        return strDeviceToken;
+    }
+
+    public void setDeviceToken(String strToken) {
+        try {
+
+            editor.putString(KEY_DEVICE_TOKEN, strToken);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // commit changes
+        editor.commit();
+    }
+
     public String getProfileImage() {
 
         String strProfileImage = "";
@@ -179,8 +205,6 @@ public class SessionManager {
      * Get stored session data
      *//*
     public boolean getCheckInCareStatus() {
-
-
         // return customer id
         return pref.getBoolean(KEY_CHECKIN_CARE_STATUS, false);
     }*/

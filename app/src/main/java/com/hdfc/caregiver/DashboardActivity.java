@@ -388,7 +388,7 @@ public class DashboardActivity extends AppCompatActivity implements
                     // do something here.
                     String mess = intent.getStringExtra(Config.SERVICE_MESSAGE);
                     if (mess.equalsIgnoreCase(Config.SERVICE_RESULT_VALUE)) {
-                        Utils.toast(1, 1, getString(R.string.update), DashboardActivity.this);
+                        Utils.toast(1, 1, getString(R.string.updated), DashboardActivity.this);
                     }
                 }
             };
@@ -489,7 +489,7 @@ public class DashboardActivity extends AppCompatActivity implements
         //Config.intSelectedMenu = Config.intRatingsScreen;
         gotoFeedback();
 
-        //todo servcie
+        //todo service
 
         /*Intent in = new Intent(DashboardActivity.this, UpdateService.class);
         in.putExtra("updateAll", true);
@@ -498,6 +498,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void onError(String var1) {
+        Utils.log(var1, " GCM onApp42Response");
     }
 
     @Override
@@ -505,12 +506,14 @@ public class DashboardActivity extends AppCompatActivity implements
         App42GCMController.storeRegistrationId(this, gcmRegId);
         if (!App42GCMController.isApp42Registerd(DashboardActivity.this)) {
             App42GCMController.registerOnApp42(App42API.getLoggedInUser(), gcmRegId, this);
-            // Utils.log(gcmRegId, " GCM ");
+            //Utils.log(gcmRegId, " GCM ");
+            sessionManager.setDeviceToken(gcmRegId);
         }
     }
 
     @Override
     public void onApp42Response(String var1) {
+        Utils.log(var1, " GCM onApp42Response");
     }
 
     @Override

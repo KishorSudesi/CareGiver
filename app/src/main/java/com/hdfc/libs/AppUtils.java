@@ -6,6 +6,7 @@ import android.database.Cursor;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.app42service.App42GCMService;
+import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.caregiver.DashboardActivity;
@@ -33,7 +34,6 @@ import com.hdfc.models.PictureModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
 import com.hdfc.models.SubActivityModel;
-import com.hdfc.models.VideoModel;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
@@ -45,6 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -101,13 +102,28 @@ public class AppUtils {
             if (CareGiver.getDbCon() != null)
                 CareGiver.getDbCon().truncateDatabase();
 
-            SessionManager sessionManager = new SessionManager(_context);
-            sessionManager.logoutUser();
-/*
-            File fileImage = Utils.createFileInternal("images/");
-            Utils.deleteAllFiles(fileImage);*/
-
             unregisterGcm(_context);
+
+            SessionManager sessionManager = new SessionManager(_context);
+
+            PushNotificationService pushNotificationService = new PushNotificationService(
+                    _context);
+            pushNotificationService.removeUserDevice(sessionManager.getEmail(),
+                    sessionManager.getDeviceToken(), new App42CallBack() {
+
+                        @Override
+                        public void onSuccess(Object o) {
+                        }
+
+                        @Override
+                        public void onException(Exception ex) {
+                        }
+                    });
+
+            sessionManager.logoutUser();
+
+            File fileImage = Utils.createFileInternal("images/");
+            Utils.deleteAllFiles(fileImage);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,12 +138,11 @@ public class AppUtils {
                 try {
 
                     GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(_context);
-                    //App42GCMService.unRegisterGcm();
-                    //todo remove device per token from app42 and unregister in online mode
 
                     try {
                         if (gcm != null)
                             gcm.unregister();
+                        Utils.log(" removed ", " Device Token");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -266,7 +281,6 @@ public class AppUtils {
 
             if (strDate == null || strDate.equalsIgnoreCase(""))
                 strDate = DbHelper.DEFAULT_DB_DATE;
-            //// TODO: 7/21/2016
 
             CareGiver.getDbCon().closeCursor(cursor);
         }
@@ -339,7 +353,6 @@ public class AppUtils {
                                                 context.getString(R.string.new_activity),
                                                 context);
                                     } else {
-                                        //todo for refresh adapter
 
                                         if (Config.intSelectedMenu == Config.intDashboardScreen
                                                 && DashboardFragment._strDate != null) {
@@ -1262,10 +1275,10 @@ public class AppUtils {
                         optString("provider_message"));
 
                 ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
-                ArrayList<VideoModel> videoModels = new ArrayList<>();
+                //ArrayList<VideoModel> videoModels = new ArrayList<>();
                 ArrayList<ImageModel> imageModels = new ArrayList<>();
 
-                if (jsonObject.has("videos")) {
+               /* if (jsonObject.has("videos")) {
 
                     JSONArray jsonArrayVideos = jsonObject.
                             getJSONArray("videos");
@@ -1287,7 +1300,7 @@ public class AppUtils {
                         }
                     }
                     activityModel.setVideoModels(videoModels);
-                }
+                }*/
 
                 if (jsonObject.has("images")) {
 
@@ -2573,10 +2586,10 @@ public class AppUtils {
                         optString("provider_message"));
 
                 ArrayList<FeedBackModel> feedBackModels = new ArrayList<>();
-                ArrayList<VideoModel> videoModels = new ArrayList<>();
+                //ArrayList<VideoModel> videoModels = new ArrayList<>();
                 ArrayList<ImageModel> imageModels = new ArrayList<>();
 
-                if (jsonObject.has("videos")) {
+                /*if (jsonObject.has("videos")) {
 
                     JSONArray jsonArrayVideos = jsonObject.
                             getJSONArray("videos");
@@ -2598,7 +2611,7 @@ public class AppUtils {
                         }
                     }
                     activityModel.setVideoModels(videoModels);
-                }
+                }*/
 
                 if (jsonObject.has("images")) {
 
@@ -2638,7 +2651,8 @@ public class AppUtils {
                                     jsonObjectFeedback.optString("feedback_message"),
                                     jsonObjectFeedback.optString("feedback_by"),
                                     jsonObjectFeedback.getInt("feedback_rating"),
-                                    jsonObjectFeedback.optString("feedback_time"),
+                                    Utils.writeFormat.format(Utils.convertStringToDate(
+                                            jsonObjectFeedback.optString("feedback_time"))),
                                     jsonObjectFeedback.optString("feedback_by_type"));
 
                             try {

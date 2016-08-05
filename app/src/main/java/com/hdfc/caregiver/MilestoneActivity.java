@@ -1110,9 +1110,7 @@ public class MilestoneActivity extends AppCompatActivity {
                             if (b1 && !data.equalsIgnoreCase("")) {
                                 fieldModel.setStrFieldData(data);
 
-                                //todo check this logic
                                 if (iIndex == act.getMilestoneModels().size() && iFlag == 2) {
-
                                     if (fieldModel.getStrFieldLabel().equalsIgnoreCase("Reason")) {
                                         strCloseUser = data;
                                     }

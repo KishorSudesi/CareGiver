@@ -145,27 +145,35 @@ public class MyProfileActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MyProfileActivity.this);
-                    builder.setTitle(getString(R.string.confirm_logout));
-                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            AppUtils.logout(getApplicationContext());
-                            Intent dashboardIntent = new Intent(MyProfileActivity.this,
-                                    LoginActivity.class);
-                            startActivity(dashboardIntent);
-                            finish();
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.show();
+                    if (Utils.isConnectingToInternet(MyProfileActivity.this)) {
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(
+                                MyProfileActivity.this);
+                        builder.setTitle(getString(R.string.confirm_logout));
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                AppUtils.logout(getApplicationContext());
+                                Intent dashboardIntent = new Intent(MyProfileActivity.this,
+                                        LoginActivity.class);
+                                startActivity(dashboardIntent);
+                                finish();
+                            }
+                        });
+                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.show();
+                    } else {
+                        Utils.toast(2, 2, getString(R.string.warning_internet),
+                                MyProfileActivity.this);
+                    }
                 }
             });
+
         }
 
         name.setEnabled(false);

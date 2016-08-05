@@ -58,7 +58,6 @@ public class Config {
     public static final String SERVICE_RESULT_VALUE = "message";
 
     public static final int intWidth = 300, intHeight = 300;
-    //todo fix the dimension and quality
     public static final int intCompressWidth = 300, intCompressHeight = 300, iQuality = 70;
     /* public static final String[] weekNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};*/
     /* public static final String[] months = {"January", "February", "March", "April", "May", "June",
@@ -67,7 +66,7 @@ public class Config {
     public static final boolean isDebuggable = true;
     public static final String string = Utils.getStringJni();
     public static final boolean release = false;
-    public static final boolean DEVELOPMENT = true;
+    public static final boolean DEVELOPMENT = false;
     //Login specific //User Specific clear at logout or whenever needed
     public final static String strCustomerImageName = "provider_image";
     public static int intClientScreen = 2;

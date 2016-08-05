@@ -90,6 +90,7 @@ public class FeatureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_features);
 
         ImageView imgLogoHeaderTaskDetail = (ImageView) findViewById(R.id.imgLogoHeaderTaskDetail);
+        ImageView imageViewFeedback = (ImageView) findViewById(R.id.imageViewFeedback);
         done = (Button) findViewById(R.id.buttonVegetibleDone);
         linearLayoutAttach = (LinearLayout) findViewById(R.id.linearLayout1);
         progressBar1 = (ProgressBar) findViewById(R.id.progressBar1);
@@ -252,32 +253,24 @@ public class FeatureActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (linearName != null && jsonObject1 != null) {
-                linearName.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(
-                                FeatureActivity.this);
-                        LayoutInflater inflater = getLayoutInflater();
-                        View dialogView = inflater.inflate(R.layout.name_popup, null);
-                        builder.setView(dialogView);
+            if (imageViewFeedback != null) {
 
-                        TextView textName = (TextView) dialogView.findViewById(R.id.textPopupName);
-                        ImageView imageDialog = (ImageView) dialogView.findViewById(R.id.popupImage);
+                if (act.getFeedBackModels().size() > 0) {
 
-                       /* for(FeedBackModel feedBackModel: act.getFeedBackModels()){
+                    imageViewFeedback.setVisibility(View.VISIBLE);
 
-                            if(feedBackModel.getStrFeedBackBy().equalsIgnoreCase(""))
-                        }*/
+                    imageViewFeedback.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                        LinearLayout linearRating = (LinearLayout) dialogView.findViewById(R.id.
-                                linearRating);
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(
+                                    FeatureActivity.this);
 
-                        //todo check for dependent feedback
-                        if (act.getFeedBackModels().size() > 0) {
+                            LayoutInflater inflater = getLayoutInflater();
+                            View dialogView = inflater.inflate(R.layout.feedback_popup, null);
+                            builder.setView(dialogView);
 
-                            linearRating.setVisibility(View.VISIBLE);
-
+                            //todo add for dependent feedback
                             TextView ratingTime = (TextView) dialogView.findViewById(R.id.
                                     ratingTime);
                             ImageView ratingImage = (ImageView) dialogView.findViewById(
@@ -301,9 +294,35 @@ public class FeatureActivity extends AppCompatActivity {
                                 ratingImage.setImageDrawable(getResources().getDrawable(R.drawable.
                                         smiley_5));
                             }
-                        } else {
-                            linearRating.setVisibility(View.GONE);
+
+                            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog alertDialog = builder.create();
+                            //builder.show();
+                            alertDialog.show();
+
                         }
+                    });
+                }
+
+            }
+
+            if (linearName != null && jsonObject1 != null) {
+                linearName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(
+                                FeatureActivity.this);
+                        LayoutInflater inflater = getLayoutInflater();
+                        View dialogView = inflater.inflate(R.layout.name_popup, null);
+                        builder.setView(dialogView);
+
+                        TextView textName = (TextView) dialogView.findViewById(R.id.textPopupName);
+                        ImageView imageDialog = (ImageView) dialogView.findViewById(R.id.popupImage);
 
                         try {
 
@@ -429,7 +448,6 @@ public class FeatureActivity extends AppCompatActivity {
                     mTImageModels.add(mUpdateImageModel);
                 }
             } else {
-
                 jsonArrayImagesAdded.put("{\"0\":\"empty\"}");
             }
 
@@ -829,8 +847,6 @@ public class FeatureActivity extends AppCompatActivity {
 
         super.onResume();
 
-        //todo bad design redo
-
         imageModels = act.getImageModels();
 
         utils = new Utils(FeatureActivity.this);
@@ -840,18 +856,6 @@ public class FeatureActivity extends AppCompatActivity {
             if (textViewTime != null && act.getStrActivityDate() != null) {
                 textViewTime.setText(Utils.formatDate(act.getStrActivityDate()));
             }
-
-           /* File fileImage = Utils.createFileInternal("images/" + utils.replaceSpace(act.getStrDependentID()));
-
-            if (fileImage.exists()) {
-                String filename = fileImage.getAbsolutePath();
-                multiBitmapLoader.loadBitmap(filename, imgLogoHeaderTaskDetail);
-            } else {
-                if (imgLogoHeaderTaskDetail != null) {
-                    imgLogoHeaderTaskDetail.setImageDrawable(getResources().getDrawable(R.drawable.person_icon));
-                }
-            }*/
-
 
             if (done != null) {
 
@@ -903,27 +907,17 @@ public class FeatureActivity extends AppCompatActivity {
                                     new PermissionCallback() {
                                         @Override
                                         public void permissionGranted() {
-                                            //action to perform when permission granteed
-                                            isAllowed = true;
-                                            if (isAllowed)
-                                                utils.selectImage(strImageName, null,
-                                                        FeatureActivity.this, false);
+                                            //action to perform when permission granted
+                                            utils.selectImage(strImageName, null,
+                                                    FeatureActivity.this, false);
                                         }
 
                                         @Override
                                         public void permissionRefused() {
-                                            //action to perform when permission refused
-                                            isAllowed = false;
+                                            //todo action to perform when permission refused
                                         }
                                     }
                             );
-
-                            /*if (isAllowed)
-                                utils.selectFile(strImageName, null, FeatureActivity.this, false);*/
-                       /* } else {
-                            utils.toast(2, 2, "Maximum 20 Images only Allowed");
-                        }*/
-
                     }
                 });
             }

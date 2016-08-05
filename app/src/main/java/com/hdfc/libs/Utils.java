@@ -445,7 +445,7 @@ public class Utils {
         return pathExternals;
     }*/
 
-   /* public static boolean deleteAllFiles(File directory) {
+    public static boolean deleteAllFiles(File directory) {
 
         final File[] files = directory.listFiles();
 
@@ -470,7 +470,7 @@ public class Utils {
         }
 
         return true;
-    }*/
+    }
 
     public static String getDeviceID(Activity activity) {
         return Settings.Secure.getString(activity.getContentResolver(),
@@ -1106,9 +1106,14 @@ public class Utils {
     }
 
     public static void clearNotifications(Context context) {
-        NotificationManager notifManager = (NotificationManager) context.
-                getSystemService(Context.NOTIFICATION_SERVICE);
-        notifManager.cancelAll();
+        try {
+            NotificationManager notifManager = (NotificationManager) context.
+                    getSystemService(Context.NOTIFICATION_SERVICE);
+            notifManager.cancelAll();
+            log(" Cleared ", " Notifications ");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void loadGlide(Context context, String strImage, final ImageView view,

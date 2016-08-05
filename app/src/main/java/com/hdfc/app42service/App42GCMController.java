@@ -99,7 +99,8 @@ public class App42GCMController {
     }
 
     @SuppressLint({"NewApi"})
-    public static void getRegistrationId(Context context, String googleProjectNo, App42GCMController.App42GCMListener callBack) {
+    public static void getRegistrationId(Context context, String googleProjectNo,
+                                         App42GCMController.App42GCMListener callBack) {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
         String regid = getRegistrationId(context);
         if (regid.isEmpty()) {
@@ -110,7 +111,9 @@ public class App42GCMController {
 
     }
 
-    public static void registeronGCM(Context context, final String googleProjectNo, final GoogleCloudMessaging gcm, final App42GCMController.App42GCMListener callback) {
+    public static void registeronGCM(Context context, final String googleProjectNo,
+                                     final GoogleCloudMessaging gcm,
+                                     final App42GCMController.App42GCMListener callback) {
         final Handler callingThreadHandler = new Handler();
         (new Thread() {
             public void run() {
