@@ -77,6 +77,13 @@ public class App42GCMController {
         }
     }
 
+    public static void clearPref(Context context) {
+        SharedPreferences prefs = getGCMPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.commit();
+    }
+
     public static void storeRegistrationId(Context context, String regId) {
         SharedPreferences prefs = getGCMPreferences(context);
         int appVersion = getAppVersion(context);

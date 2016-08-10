@@ -190,6 +190,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                     if (Config.serviceNameModels.size() > 0) {
                         nameService.clear();
+
                         nameService.addAll(Config.serviceNameModels.get(Config.serviceCategorylist.
                                 get(position)));
                     }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.hdfc.app42service.App42GCMController;
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
@@ -121,7 +122,7 @@ public class AppUtils {
                     });
 
             sessionManager.logoutUser();
-
+            App42GCMController.clearPref(_context);
             File fileImage = Utils.createFileInternal("images/");
             Utils.deleteAllFiles(fileImage);
 
@@ -441,12 +442,12 @@ public class AppUtils {
 
                             if (jsonObjectFeedback.getString("feedback_by_type").
                                     equalsIgnoreCase("customer")) {
-                                    strCustomerId = jsonObjectFeedback.optString("feedback_by");
+                                strCustomerId = jsonObjectFeedback.optString("feedback_by");
                             }
 
                             if (jsonObjectFeedback.getString("feedback_by_type").
                                     equalsIgnoreCase("dependent")) {
-                                    strDependentId = jsonObjectFeedback.optString("feedback_by");
+                                strDependentId = jsonObjectFeedback.optString("feedback_by");
                             }
                             insertClientIds(strCustomerId, strDependentId,
                                     jsonObject.optString("provider_id"));
@@ -708,59 +709,59 @@ public class AppUtils {
 
                 storageService.findDocsByQuery(Config.collectionCustomer, q12, new App42CallBack() {
 
-                            @Override
-                            public void onSuccess(Object o) {
-                                try {
+                    @Override
+                    public void onSuccess(Object o) {
+                        try {
 
-                                    if (o != null) {
+                            if (o != null) {
 
-                                        Utils.log(o.toString(), " fetchCustomers ");
-                                        Storage storage = (Storage) o;
+                                Utils.log(o.toString(), " fetchCustomers ");
+                                Storage storage = (Storage) o;
 
-                                        if (storage.getJsonDocList().size() > 0) {
+                                if (storage.getJsonDocList().size() > 0) {
 
-                                            for (int i = 0; i < storage.getJsonDocList().size();
-                                                 i++) {
+                                    for (int i = 0; i < storage.getJsonDocList().size();
+                                         i++) {
 
-                                                Storage.JSONDocument jsonDocument = storage.
-                                                        getJsonDocList().get(i);
+                                        Storage.JSONDocument jsonDocument = storage.
+                                                getJsonDocList().get(i);
 
-                                                String values[] = {jsonDocument.getDocId(),
-                                                        jsonDocument.getUpdatedAt(),
-                                                        jsonDocument.getJsonDoc(),
-                                                        Config.collectionCustomer,
-                                                        sessionManager.getProviderId(),
-                                                        "1"
-                                                };
+                                        String values[] = {jsonDocument.getDocId(),
+                                                jsonDocument.getUpdatedAt(),
+                                                jsonDocument.getJsonDoc(),
+                                                Config.collectionCustomer,
+                                                sessionManager.getProviderId(),
+                                                "1"
+                                        };
 
-                                                String selection = DbHelper.COLUMN_OBJECT_ID
-                                                        + " = ? and "
-                                                        + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+                                        String selection = DbHelper.COLUMN_OBJECT_ID
+                                                + " = ? and "
+                                                + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
-                                                // WHERE clause arguments
-                                                String[] selectionArgs = {jsonDocument.getDocId(),
-                                                        Config.collectionCustomer};
-                                                CareGiver.getDbCon().updateInsert(
-                                                        DbHelper.strTableNameCollection,
-                                                        selection, values,
-                                                        DbHelper.COLLECTION_FIELDS_CD,
-                                                        selectionArgs);
-                                            }
-                                        }
-                                        fetchDependents(iFlag, context);
+                                        // WHERE clause arguments
+                                        String[] selectionArgs = {jsonDocument.getDocId(),
+                                                Config.collectionCustomer};
+                                        CareGiver.getDbCon().updateInsert(
+                                                DbHelper.strTableNameCollection,
+                                                selection, values,
+                                                DbHelper.COLLECTION_FIELDS_CD,
+                                                selectionArgs);
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
-                            }
-
-                            @Override
-                            public void onException(Exception e) {
-                                Utils.log(e.getMessage(), " MESS 0");
                                 fetchDependents(iFlag, context);
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-                        });
+                    @Override
+                    public void onException(Exception e) {
+                        Utils.log(e.getMessage(), " MESS 0");
+                        fetchDependents(iFlag, context);
+                    }
+
+                });
             } else {
                 fetchDependents(iFlag, context);
             }
@@ -1929,7 +1930,7 @@ public class AppUtils {
                             Utils.log(" 1- ", " Check Image ");
                             if (response != null)
                                 // Utils.log(response.toString(), " Check Image ");
-                            uploadImage(context, sessionManager);
+                                uploadImage(context, sessionManager);
                         }
 
                         @Override
@@ -3011,7 +3012,7 @@ public class AppUtils {
                                         jsonObjectsubactivity.optString("due_status"),
                                         jsonObjectsubactivity.optString("due_date"),
                                         jsonObjectsubactivity.optString("utility_name"),
-                                jsonObjectsubactivity.optString("checkbox_status"));
+                                        jsonObjectsubactivity.optString("checkbox_status"));
                                 subActivityModels.add(subActivityModel);
                             }
                             CheckInCareActivityModel checkInCareActivityModel =
@@ -3124,17 +3125,17 @@ public class AppUtils {
                                 if (jsonObjectField.has("child_value"))
                                     fieldModel.setStrChildValue(
                                             Utils.jsonToStringArray(jsonObjectField.
-                                            getJSONArray("child_value")));
+                                                    getJSONArray("child_value")));
 
                                 if (jsonObjectField.has("child_condition"))
                                     fieldModel.setStrChildCondition(Utils.
                                             jsonToStringArray(jsonObjectField.
-                                            getJSONArray("child_condition")));
+                                                    getJSONArray("child_condition")));
 
                                 if (jsonObjectField.has("child_field"))
                                     fieldModel.setiChildfieldID(Utils.
                                             jsonToIntArray(jsonObjectField.
-                                            getJSONArray("child_field")));
+                                                    getJSONArray("child_field")));
                             }
 
                             if (jsonObjectField.has("array_fields")) {
@@ -3173,32 +3174,39 @@ public class AppUtils {
 
             if (!Config.strServcieIds.contains(strDocumentId)) {
 
+
                 Config.serviceModels.add(serviceModel);
                 Config.strServcieIds.add(strDocumentId);
+                if (jsonObject.getString("category_name").equalsIgnoreCase("Check-In Care")) {
 
-                Config.servicelist.add(jsonObject.getString("service_name"));
-                categorySet.add(jsonObject.getString("category_name"));
-                List<String> serviceNameList = new ArrayList<>();
+                } else {
 
-                if (Config.serviceNameModels != null && Config.serviceNameModels.size() > 0) {
-                    if (Config.serviceNameModels.containsKey(jsonObject.
-                            getString("category_name"))) {
-                        serviceNameList.addAll(Config.serviceNameModels.get(jsonObject.
-                                getString("category_name")));
-                        serviceNameList.add(jsonObject.getString("service_name"));
+
+                    Config.servicelist.add(jsonObject.getString("service_name"));
+                    categorySet.add(jsonObject.getString("category_name"));
+                    List<String> serviceNameList = new ArrayList<>();
+
+                    if (Config.serviceNameModels != null && Config.serviceNameModels.size() > 0) {
+                        if (Config.serviceNameModels.containsKey(jsonObject.
+                                getString("category_name"))) {
+                            serviceNameList.addAll(Config.serviceNameModels.get(jsonObject.
+                                    getString("category_name")));
+                            serviceNameList.add(jsonObject.getString("service_name"));
+                        } else {
+                            serviceNameList.add(jsonObject.getString("service_name"));
+                        }
                     } else {
                         serviceNameList.add(jsonObject.getString("service_name"));
                     }
-                } else {
-                    serviceNameList.add(jsonObject.getString("service_name"));
+                    Config.serviceNameModels.put(jsonObject.getString("category_name"),
+                            serviceNameList);
                 }
-                Config.serviceNameModels.put(jsonObject.getString("category_name"),
-                        serviceNameList);
+
+                Config.serviceCategorylist.clear();
+                List<String> serviceNameList = new ArrayList<>(categorySet);
+                Config.serviceCategorylist.addAll(serviceNameList);
             }
 
-            Config.serviceCategorylist.clear();
-            List<String> serviceNameList = new ArrayList<>(categorySet);
-            Config.serviceCategorylist.addAll(serviceNameList);
 
         } catch (JSONException e) {
             e.printStackTrace();
