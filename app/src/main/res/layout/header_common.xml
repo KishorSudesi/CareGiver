@@ -21,7 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/final_logo_1_edited" />
+        android:layout_margin="10dp"
+        android:src="@drawable/logo2" />
 
 </RelativeLayout>
 

@@ -343,7 +343,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                                 uploadData(serviceModel, dependentModel);
                                             } else {
                                                 isClicked = false;
-                                                utils.toast(2, 2, getString(R.string.coming_soon));
+                                                utils.toast(2, 2, getString(
+                                                        R.string.checkin_care_service));
                                             }
 
                                         } else {

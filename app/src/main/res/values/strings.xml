@@ -149,12 +149,13 @@
     <string name="info_discard">All your Information will be Deleted, OK to Proceed?</string>
     <string name="add_new_activity">Add New Activity</string>
     <string name="coming_soon">Coming Soon</string>
+    <string name="checkin_care_service">Please Select other service</string>
     <string name="dpndnt_medical_info_saved">Dependent Medical Details Saved</string>
     <string name="dpndnt_details_saved">Dependent Details Saved</string>
     <string name="delete_info">All your Information will be Deleted, OK to Proceed?</string>
     <string name="account_updated">Account updated successfully</string>
-    <string name="no_changes">No Changes</string>
-    <string name="confirm_logout">Are you sure want to Logout !?</string>
+    <string name="no_changes">No Changes to Save</string>
+    <string name="confirm_logout">Are you sure want to Logout</string>
     <string name="not_found">NOT FOUND</string>
     <string name="upcoming_activity">Upcoming Activity</string>
     <string name="completed_activity">Completed Activity</string>

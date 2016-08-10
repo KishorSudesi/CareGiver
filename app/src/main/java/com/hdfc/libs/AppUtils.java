@@ -543,27 +543,23 @@ public class AppUtils {
             }
             CareGiver.getDbCon().closeCursor(cursor1);
 
-            Query mQuery1 = null;
+            Query finalQuery = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
+                    GREATER_THAN);
 
+            //todo uncomment for not showing all dependents
+
+            /*Query mQuery1 = null;
             if (strDependentIds.size() > 0) {
                 mQuery1 = QueryBuilder.build("_id", strDependentIds,
                         QueryBuilder.Operator.INLIST);
             }
 
-            Query finalQuery;
-
-            Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
-                    GREATER_THAN);
-
             if (mQuery1 != null) { //strDate != null && !strDate.equalsIgnoreCase("")
+                finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
+                        finalQuery);
+            } */
 
-                finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.OR,
-                        q12);
-            /*} else {
-                finalQuery = q12;
-            }*/
-
-                storageService.findDocsByQuery(Config.collectionDependent, q12,
+            storageService.findDocsByQuery(Config.collectionDependent, finalQuery,
                         new App42CallBack() {
 
                             @Override
@@ -627,14 +623,14 @@ public class AppUtils {
                                 }
                             }
                         });
-            } else {
+            /*} else {
                 if (DashboardActivity.isLoaded) {
                     if (iFlag == 2)
                         DashboardActivity.gotoSimpleActivityMenu(true);
                     else
                         DashboardActivity.gotoSimpleActivityMenu(false);
                 }
-            }
+            }*/
         }
     }
 
@@ -679,92 +675,85 @@ public class AppUtils {
             }
             CareGiver.getDbCon().closeCursor(cursor1);
 
+            Query finalQuery = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
+                    GREATER_THAN);
 
-            Query mQuery1 = null;
+
+            //todo uncomment for not showing all customers
+            /*Query mQuery1 = null;
             if (strCustomerIds.size() > 0) {
                 mQuery1 = QueryBuilder.build("_id", strCustomerIds,
                         QueryBuilder.Operator.INLIST);
-            }
+            }*/
 
-            Query finalQuery;
+           /* if (mQuery1 != null) {
+                Query q1 = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
+                        finalQuery);
 
-            //if (strDate != null && !strDate.equalsIgnoreCase("")) {
-            Query q12 = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
-                    GREATER_THAN);
-
-           /* Query q3 = QueryBuilder.build("customer_register", "true", QueryBuilder.Operator.
-                    EQUALS);*/
-
-            if (mQuery1 != null) {
-                finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.OR, q12);
+                Query q2 = QueryBuilder.build("customer_register", "true", QueryBuilder.Operator.
+                    EQUALS);
 
                 //fetch registered customers
-                //Query q4 = QueryBuilder.compoundOperator(finalQuery, QueryBuilder.Operator.AND, q3);
-           /* } else {
-                finalQuery = q12;
+                Query q3 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
+                finalQuery = QueryBuilder.compoundOperator(finalQuery, QueryBuilder.Operator.AND,
+                 q3);
             }*/
-            /* else {
-                finalQuery = mQuery1;
-            }*/
+            storageService.findDocsByQuery(Config.collectionCustomer, finalQuery,
+                    new App42CallBack() {
 
-                storageService.findDocsByQuery(Config.collectionCustomer, q12, new App42CallBack() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            try {
 
-                    @Override
-                    public void onSuccess(Object o) {
-                        try {
+                                if (o != null) {
 
-                            if (o != null) {
+                                    Utils.log(o.toString(), " fetchCustomers ");
+                                    Storage storage = (Storage) o;
 
-                                Utils.log(o.toString(), " fetchCustomers ");
-                                Storage storage = (Storage) o;
+                                    if (storage.getJsonDocList().size() > 0) {
 
-                                if (storage.getJsonDocList().size() > 0) {
+                                        for (int i = 0; i < storage.getJsonDocList().size();
+                                             i++) {
 
-                                    for (int i = 0; i < storage.getJsonDocList().size();
-                                         i++) {
+                                            Storage.JSONDocument jsonDocument = storage.
+                                                    getJsonDocList().get(i);
 
-                                        Storage.JSONDocument jsonDocument = storage.
-                                                getJsonDocList().get(i);
+                                            String values[] = {jsonDocument.getDocId(),
+                                                    jsonDocument.getUpdatedAt(),
+                                                    jsonDocument.getJsonDoc(),
+                                                    Config.collectionCustomer,
+                                                    sessionManager.getProviderId(),
+                                                    "1"
+                                            };
 
-                                        String values[] = {jsonDocument.getDocId(),
-                                                jsonDocument.getUpdatedAt(),
-                                                jsonDocument.getJsonDoc(),
-                                                Config.collectionCustomer,
-                                                sessionManager.getProviderId(),
-                                                "1"
-                                        };
+                                            String selection = DbHelper.COLUMN_OBJECT_ID
+                                                    + " = ? and "
+                                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
-                                        String selection = DbHelper.COLUMN_OBJECT_ID
-                                                + " = ? and "
-                                                + DbHelper.COLUMN_COLLECTION_NAME + "=?";
-
-                                        // WHERE clause arguments
-                                        String[] selectionArgs = {jsonDocument.getDocId(),
-                                                Config.collectionCustomer};
-                                        CareGiver.getDbCon().updateInsert(
-                                                DbHelper.strTableNameCollection,
-                                                selection, values,
-                                                DbHelper.COLLECTION_FIELDS_CD,
-                                                selectionArgs);
-                                    }
+                                            // WHERE clause arguments
+                                            String[] selectionArgs = {jsonDocument.getDocId(),
+                                                    Config.collectionCustomer};
+                                            CareGiver.getDbCon().updateInsert(
+                                                    DbHelper.strTableNameCollection,
+                                                    selection, values,
+                                                    DbHelper.COLLECTION_FIELDS_CD,
+                                                    selectionArgs);
                                 }
-                                fetchDependents(iFlag, context);
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                                    fetchDependents(iFlag, context);
                         }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                     }
+                        }
 
-                    @Override
-                    public void onException(Exception e) {
-                        Utils.log(e.getMessage(), " MESS 0");
-                        fetchDependents(iFlag, context);
-                    }
+                        @Override
+                        public void onException(Exception e) {
+                            Utils.log(e.getMessage(), " MESS 0");
+                            fetchDependents(iFlag, context);
+                        }
 
-                });
-            } else {
-                fetchDependents(iFlag, context);
-            }
+                    });
         }
     }
 
@@ -3174,13 +3163,10 @@ public class AppUtils {
 
             if (!Config.strServcieIds.contains(strDocumentId)) {
 
-
                 Config.serviceModels.add(serviceModel);
                 Config.strServcieIds.add(strDocumentId);
-                if (jsonObject.getString("category_name").equalsIgnoreCase("Check-In Care")) {
 
-                } else {
-
+                //if (!jsonObject.getString("category_name").equalsIgnoreCase("Check-In Care")) {
 
                     Config.servicelist.add(jsonObject.getString("service_name"));
                     categorySet.add(jsonObject.getString("category_name"));
@@ -3200,13 +3186,13 @@ public class AppUtils {
                     }
                     Config.serviceNameModels.put(jsonObject.getString("category_name"),
                             serviceNameList);
-                }
-
-                Config.serviceCategorylist.clear();
-                List<String> serviceNameList = new ArrayList<>(categorySet);
-                Config.serviceCategorylist.addAll(serviceNameList);
+                //}
             }
 
+            //todo
+            Config.serviceCategorylist.clear();
+            List<String> serviceNameList = new ArrayList<>(categorySet);
+            Config.serviceCategorylist.addAll(serviceNameList);
 
         } catch (JSONException e) {
             e.printStackTrace();

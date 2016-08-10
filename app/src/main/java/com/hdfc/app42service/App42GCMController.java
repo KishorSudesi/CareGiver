@@ -149,8 +149,10 @@ public class App42GCMController {
         }).start();
     }
 
-    public static void registerOnApp42(String userName, String deviceToen, final App42GCMController.App42GCMListener callBack) {
-        App42API.buildPushNotificationService().storeDeviceToken(userName, deviceToen, new App42CallBack() {
+    public static void registerOnApp42(String userName, String deviceToen,
+                                       final App42GCMController.App42GCMListener callBack) {
+        App42API.buildPushNotificationService().storeDeviceToken(userName, deviceToen,
+                new App42CallBack() {
             public void onSuccess(Object arg0) {
                 App42Response response = (App42Response) arg0;
                 callBack.onRegisterApp42(response.getStrResponse());

@@ -14,6 +14,7 @@ import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.caregiver.DashboardActivity;
 import com.hdfc.caregiver.R;
+import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
@@ -167,10 +168,13 @@ public class App42GCMService extends IntentService {
         notificationIntent.putExtra("message_delivered", true);
         notificationIntent.putExtra(ExtraMessage, msg);
         notificationIntent.putExtra("LOAD", false);
-        Config.intSelectedMenu = Config.intNotificationScreen;// to load on app kill
+
+        if (CareGiver.getDbCon() == null)
+            Config.intSelectedMenu = Config.intNotificationScreen;// to load on app kill
+
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        //notificationIntent.setFlags(603979776);//603979776 Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP
+        //notificationIntent.setFlags(603979776);
 
         //
         // The stack builder object will contain an artificial back stack for the
@@ -184,7 +188,8 @@ public class App42GCMService extends IntentService {
         stackBuilder.addNextIntent(notificationIntent);
         //
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 

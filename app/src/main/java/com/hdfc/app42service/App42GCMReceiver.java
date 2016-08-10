@@ -15,7 +15,8 @@ public class App42GCMReceiver extends WakefulBroadcastReceiver {
     }
 
     public void onReceive(Context context, Intent intent) {
-        ComponentName comp = new ComponentName(context.getPackageName(), App42GCMService.class.getName());
+        ComponentName comp = new ComponentName(context.getPackageName(),
+                App42GCMService.class.getName());
         startWakefulService(context, intent.setComponent(comp));
         this.setResultCode(Activity.RESULT_OK);
         //}

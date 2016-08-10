@@ -56,7 +56,7 @@ public class DashboardActivity extends AppCompatActivity implements
     private LinearLayout net_error_layout;
     private NetworkStateReceiver networkStateReceiver;
     private ImageView mytask;
-    private String strMess;
+    private String strMess = "";
     private ImageView clients;
     private ImageView feedback;
     private ImageView notification;
@@ -551,9 +551,9 @@ public class DashboardActivity extends AppCompatActivity implements
                     " PUSH ");
             if (intent.getStringExtra(App42GCMService.ExtraMessage) != null) {
 
+                strMess = intent.getStringExtra(App42GCMService.ExtraMessage);
+
                 if (CareGiver.getDbCon() != null) {
-                    iWhichLoad = 2;
-                    strMess = intent.getStringExtra(App42GCMService.ExtraMessage);
 
                     AppUtils.fetchActivitiesSync(DashboardActivity.this);
                     AppUtils.loadNotifications(DashboardActivity.this);
@@ -566,6 +566,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
                     showPushDialog(strMess);
                 } else {
+                    iWhichLoad = 2;
                     new LoadDataTask().execute();
                 }
             }
