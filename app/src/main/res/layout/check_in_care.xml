@@ -106,7 +106,7 @@
             </LinearLayout>
 
 
-            <TextView
+         <!--   <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@drawable/colorful_textview"/>
@@ -135,7 +135,7 @@
                     android:maxLength="80"
                     android:padding="10dp" />
 
-            </LinearLayout>
+            </LinearLayout>-->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

@@ -114,7 +114,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private Button buttonHallAdd,buttonKitchenAdd,buttonWashroomAdd,buttonBedroomAdd;
     private Button uploadhallbtn,uploadkitchenbtn,uploadwashroombtn,uploadbedroombtn ;
     private EditText electronic, homeapplience, automobile, maidservices, kitchen_equipments,
-            grocery, mediacomment, checkincarename,dependentname,driveredt;
+            grocery, mediacomment,dependentname,driveredt;
     private TextView datetxt;
     private TextView txtwater;
     private TextView txtgas;
@@ -126,7 +126,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             equipmentstatus, grocerystatus, kitchenequipmentstatus, domestichelpstatus,
             uploadmediastatus, hallstatus, kitchenstatus, washroomstatus, bedroomstatus,
             homeessentialstatus;
-    private String strDate,strDependentName;
+    private String strDate,strDependentName,strcheckincare;
     private int hallImageCount, kitchenImageCount, washroomImageCount,
             bedroomImageCount, hallImageUploadCount, kitchenImageUploadCount,
             washroomImageUploadCount, bedroomImageUploadCount;
@@ -157,12 +157,13 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             strDate = Utils.writeFormatDateMY.format(date);
             strSelectedDate = Utils.readFormatLocalDB.format(date);
 
-            String strwaterDate = Utils.writeFormat.format(date);
-            String strelectricityDate = Utils.writeFormat.format(date);
-            String strtelephoneDate = Utils.writeFormat.format(date);
-            String strgasDate = Utils.writeFormat.format(date);
+            String strwaterDate = Utils.writeFormatDateMY.format(date);
+            String strelectricityDate = Utils.writeFormatDateMY.format(date);
+            String strtelephoneDate = Utils.writeFormatDateMY.format(date);
+            String strgasDate = Utils.writeFormatDateMY.format(date);
+            strcheckincare = Utils.queryFormatday.format(date);
 
-            if(editcheckincare){
+         /*   if(editcheckincare){
                 checkincarename.setText(Config.checkInCareModel.getStrName());
             }else {
                 checkincarename.setText(Utils.queryFormatday.format(date));
@@ -172,7 +173,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 checkincarename.setEnabled(false);
             }else{
                 checkincarename.setEnabled(true);
-            }
+            }*/
          /*   String _strDate = Utils.readFormat.format(date);
             String _strwaterDate = Utils.readFormat.format(date);
             String _strelectricityDate = Utils.readFormat.format(date);
@@ -329,7 +330,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             });
         }
 
-        checkincarename = (EditText) findViewById(R.id.checkincarename);
+        /*checkincarename = (EditText) findViewById(R.id.checkincarename);
         checkincarename.requestFocus();
         checkincarename.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -342,7 +343,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         .build()
                         .show();
             }
-        });
+        });*/
 
         electrocheck = (CheckBox) findViewById(R.id.electrocheck);
         homecheck = (CheckBox) findViewById(R.id.homecheck);
@@ -638,18 +639,18 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 String topdate = Config.checkInCareModel.getStrCurrentDate();
                 String editcomment = Config.checkInCareModel.getStrMediaComment();
 
-                checkincarename.setText(Config.checkInCareModel.getStrName());
+                //checkincarename.setText(Config.checkInCareModel.getStrName());
                 datetxt.setText(topdate);
                 strSelectedDate = Config.checkInCareModel.getStrCreatedActualDate();
                 //Utils.log(topdate, " DATE ");
                 mediacomment.setText(editcomment);
 
 
-                if(!checkincarename.getText().toString().equals("")){
+                /*if(!checkincarename.getText().toString().equals("")){
                     checkincarename.setEnabled(false);
                 }else{
                     checkincarename.setEnabled(true);
-                }
+                }*/
 
                 dependentId = Config.checkInCareModel.getStrDependentID();
 
@@ -1961,8 +1962,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectCheckinCare.put("year", strYear);
                 jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
                 jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
-                jsonObjectCheckinCare.put("check_in_care_name", checkincarename.getText().
-                        toString());
+                jsonObjectCheckinCare.put("check_in_care_name",strcheckincare);
 
                 JSONArray jsonArrayPicture = new JSONArray();
 
@@ -2429,8 +2429,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectCheckinCare.put("year", strYear);
                 jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
                 jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
-                jsonObjectCheckinCare.put("check_in_care_name", checkincarename.getText().
-                        toString());
+                jsonObjectCheckinCare.put("check_in_care_name", strcheckincare);
 
                 JSONArray jsonArrayPicture = new JSONArray();
 
