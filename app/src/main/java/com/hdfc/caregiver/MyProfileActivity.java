@@ -638,7 +638,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 R.id.progressBar);
 
         buttonDelete.setVisibility(View.GONE);
-        textViewClose.setVisibility(View.GONE);
+        textViewClose.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
         textViewClose.setOnClickListener(new View.OnClickListener() {

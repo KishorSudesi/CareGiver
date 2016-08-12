@@ -142,6 +142,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private Spinner dependentspinner;
     private Bundle bundle;
     private PermissionHelper permissionHelper;
+    public static int Hall_IMAGE_COUNT = 0;
+    public static int Kitchen_IMAGE_COUNT = 0;
+    public static int Washroom_IMAGE_COUNT = 0;
+    public static int Bedroom_IMAGE_COUNT = 0;
 
     private ProgressBar progressBar;
 
@@ -154,14 +158,14 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             // Do something with the date. This Date object contains
             // the date and time that the user has selected.
 
-            strDate = Utils.writeFormatDateMY.format(date);
+            //strDate = Utils.writeFormatDateMY.format(date);
             strSelectedDate = Utils.readFormatLocalDB.format(date);
 
             String strwaterDate = Utils.writeFormatDateMY.format(date);
             String strelectricityDate = Utils.writeFormatDateMY.format(date);
             String strtelephoneDate = Utils.writeFormatDateMY.format(date);
             String strgasDate = Utils.writeFormatDateMY.format(date);
-            strcheckincare = Utils.queryFormatday.format(date);
+           // strcheckincare = Utils.queryFormatday.format(date);
 
          /*   if(editcheckincare){
                 checkincarename.setText(Config.checkInCareModel.getStrName());
@@ -192,6 +196,27 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             if (isClicked == 3) {
                 txttelephone.setText(strtelephoneDate);
             }
+          /*  if (isClicked == 4) {
+                datetxt.setText(strDate);
+            }*/
+        }
+
+        @Override
+        public void onDateTimeCancel() {
+            // Overriding onDateTimeCancel() is optional.
+        }
+
+    };
+
+    private SlideDateTimeListener listener1 = new SlideDateTimeListener() {
+
+        @Override
+        public void onDateTimeSet(Date date) {
+
+            strDate = Utils.writeFormatDateMY.format(date);
+
+            strcheckincare = Utils.queryFormatday.format(date);
+
             if (isClicked == 4) {
                 datetxt.setText(strDate);
             }
@@ -255,8 +280,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 strDependent = new ArrayList<>();
 
                 if (dependent != null && dependent.size() > 0) {
+                    String name;
                     for (DependentModel dependentModel : dependent) {
-                        strDependent.add(dependentModel.getStrName());
+                         name = dependentModel.getStrName();
+                        if (name.length() > 8)
+                            name = name.substring(0, 6) + "..";
+                        strDependent.add(name);
                     }
                 }
             } catch (Exception e) {
@@ -300,6 +329,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         washroomImageUploadCount = 0;
         bedroomImageUploadCount = 0;
 
+        Hall_IMAGE_COUNT = 0;
+        Kitchen_IMAGE_COUNT = 0;
+        Washroom_IMAGE_COUNT = 0;
+        Bedroom_IMAGE_COUNT = 0;
+
         storageService = new StorageService(CheckInCareActivity.this);
 
         layouthall = (LinearLayout) findViewById(R.id.linear_hall);
@@ -322,7 +356,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     isClicked = 4;
                     datetxt.setError(null);
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
-                            .setListener(listener)
+                            .setListener(listener1)
                             .setInitialDate(new Date())
                             .build()
                             .show();
@@ -484,7 +518,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         } else {
             hallstatus.setVisibility(View.VISIBLE);
             hallstatus.setText(getString(R.string.done));
-            hallstatus.setTextColor(Color.BLUE);
+            hallstatus.setTextColor(Color.WHITE);
         }
         if (layoutkitchen != null) {
             kitchenstatus.setVisibility(View.VISIBLE);
@@ -493,7 +527,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         } else {
             kitchenstatus.setVisibility(View.VISIBLE);
             kitchenstatus.setText(getString(R.string.done));
-            kitchenstatus.setTextColor(Color.BLUE);
+            kitchenstatus.setTextColor(Color.WHITE);
         }
         if (layoutwashroom != null) {
             washroomstatus.setVisibility(View.VISIBLE);
@@ -502,7 +536,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         } else {
             washroomstatus.setVisibility(View.VISIBLE);
             washroomstatus.setText(getString(R.string.done));
-            washroomstatus.setTextColor(Color.BLUE);
+            washroomstatus.setTextColor(Color.WHITE);
         }
         if (layoutbedroom != null) {
             bedroomstatus.setVisibility(View.VISIBLE);
@@ -511,7 +545,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         } else {
             bedroomstatus.setVisibility(View.VISIBLE);
             bedroomstatus.setText(getString(R.string.done));
-            bedroomstatus.setTextColor(Color.BLUE);
+            bedroomstatus.setTextColor(Color.WHITE);
         }
 
         if (hallstatus.getText().equals(getString(R.string.done))
@@ -2429,7 +2463,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectCheckinCare.put("year", strYear);
                 jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
                 jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
-                jsonObjectCheckinCare.put("check_in_care_name", strcheckincare);
+                jsonObjectCheckinCare.put("check_in_care_name", Config.checkInCareModel.getStrName());
 
                 JSONArray jsonArrayPicture = new JSONArray();
 
@@ -2870,8 +2904,66 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         String[] all_path = intent.getStringArrayExtra("all_path");
 
+                        if(isFlag==1) {
+                            if (all_path.length + Hall_IMAGE_COUNT > 4) {
 
-                        Collections.addAll(imagePaths, all_path);
+                                for (int i = 0; i < (4 - Hall_IMAGE_COUNT); i++) {
+                                    imagePaths.add(all_path[i]);
+                                }
+
+                            } else {
+
+                                for (String string : all_path) {
+                                    imagePaths.add(string);
+                                }
+                            }
+                        }
+                        if(isFlag==2) {
+                            if (all_path.length + Kitchen_IMAGE_COUNT > 4) {
+
+                                for (int i = 0; i < (4 - Kitchen_IMAGE_COUNT); i++) {
+                                    imagePaths.add(all_path[i]);
+                                }
+
+                            } else {
+
+                                for (String string : all_path) {
+                                    imagePaths.add(string);
+                                }
+                            }
+                        }
+
+                        if(isFlag==3) {
+                            if (all_path.length + Washroom_IMAGE_COUNT > 4) {
+
+                                for (int i = 0; i < (4 - Washroom_IMAGE_COUNT); i++) {
+                                    imagePaths.add(all_path[i]);
+                                }
+
+                            } else {
+
+                                for (String string : all_path) {
+                                    imagePaths.add(string);
+                                }
+                            }
+                        }
+
+                        if(isFlag==4) {
+                            if (all_path.length + Bedroom_IMAGE_COUNT > 4) {
+
+                                for (int i = 0; i < (4 - Bedroom_IMAGE_COUNT); i++) {
+                                    imagePaths.add(all_path[i]);
+                                }
+
+                            } else {
+
+                                for (String string : all_path) {
+                                    imagePaths.add(string);
+                                }
+                            }
+                        }
+
+                        //Collections.addAll(imagePaths, all_path);
 
                         Thread backgroundThread = new BackgroundThread();
                         backgroundThread.start();
@@ -2895,7 +2987,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             hallstatus.setVisibility(View.VISIBLE);
             hallstatus.setText(getString(R.string.done));
-            hallstatus.setTextColor(Color.BLUE);
+            hallstatus.setTextColor(Color.WHITE);
             if (kitchenstatus.getText().toString().equals("Done")
                     && washroomstatus.getText().toString().equals("Done")
                     && bedroomstatus.getText().toString().equals("Done")) {
@@ -2992,6 +3084,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                                 }
                                                                 if (mImageModel.ismIsNew())
                                                                     hallImageCount--;
+                                                                    Hall_IMAGE_COUNT--;
 
                                                                 mImageChanged = true;
 
@@ -3110,7 +3203,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             kitchenstatus.setVisibility(View.VISIBLE);
             kitchenstatus.setText(getString(R.string.done));
-            kitchenstatus.setTextColor(Color.BLUE);
+            kitchenstatus.setTextColor(Color.WHITE);
 
             if (hallstatus.getText().toString().equals("Done")
                     && washroomstatus.getText().toString().equals("Done")
@@ -3206,6 +3299,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                                 if (mImageModel.ismIsNew())
                                                                     kitchenImageCount--;
+                                                                    Kitchen_IMAGE_COUNT--;
 
                                                                 mImageChanged = true;
 
@@ -3325,7 +3419,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             washroomstatus.setVisibility(View.VISIBLE);
             washroomstatus.setText(getString(R.string.done));
-            washroomstatus.setTextColor(Color.BLUE);
+            washroomstatus.setTextColor(Color.WHITE);
 
             if (hallstatus.getText().toString().equals(getString(R.string.done))
                     && kitchenstatus.getText().toString().equals(getString(R.string.done))
@@ -3422,6 +3516,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                                 if (mImageModel.ismIsNew())
                                                                     washroomImageCount--;
+                                                                    Washroom_IMAGE_COUNT--;
 
                                                                 mImageChanged = true;
 
@@ -3543,7 +3638,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             bedroomstatus.setVisibility(View.VISIBLE);
             bedroomstatus.setText(getString(R.string.done));
-            bedroomstatus.setTextColor(Color.BLUE);
+            bedroomstatus.setTextColor(Color.WHITE);
             if (hallstatus.getText().toString().equals("Done")
                     && kitchenstatus.getText().toString().equals("Done")
                     && washroomstatus.getText().toString().equals("Done")) {
@@ -3635,6 +3730,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                                 if (mImageModel.ismIsNew())
                                                                     bedroomImageCount--;
+                                                                    Bedroom_IMAGE_COUNT--;
 
                                                                 mImageChanged = true;
 
@@ -4018,6 +4114,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
         try {
 
+
             if (buttonHallAdd != null) {
                 buttonHallAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -4028,7 +4125,13 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             utils.toast(2, 2, getString(R.string.upload_hall_success));
 
                         }else {
-                            selectImage();
+
+                            if (Hall_IMAGE_COUNT < 4) {
+
+                                selectImage();
+                            } else {
+                                utils.toast(2, 2, "Maximum 4 Images only Allowed");
+                            }
                         }
                     }
                 });
@@ -4044,7 +4147,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             utils.toast(2, 2, getString(R.string.upload_kitchen_success));
 
                         }else {
-                            selectImage();
+                            if (Kitchen_IMAGE_COUNT < 4) {
+
+                                selectImage();
+                            } else {
+                                utils.toast(2, 2, "Maximum 4 Images only Allowed");
+                            }
                         }
                         }
                 });
@@ -4059,7 +4167,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             utils.toast(2, 2, getString(R.string.upload_wash_success));
 
                         }else {
-                            selectImage();
+                            if (Washroom_IMAGE_COUNT < 4) {
+
+                                selectImage();
+                            } else {
+                                utils.toast(2, 2, "Maximum 4 Images only Allowed");
+                            }
                         }
                         }
                 });
@@ -4074,7 +4187,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             utils.toast(2, 2, getString(R.string.upload_bed_success));
 
                         }else {
-                            selectImage();
+                            if (Bedroom_IMAGE_COUNT < 4) {
+
+                                selectImage();
+                            } else {
+                                utils.toast(2, 2, "Maximum 4 Images only Allowed");
+                            }
                         }
                     }
                 });
@@ -4265,7 +4383,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         hallbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                                 Config.intWidth, Config.intHeight));
 
-                        //IMAGE_COUNT++;
+                        Hall_IMAGE_COUNT++;
 
                         hallImageCount++;
                     }
@@ -4300,7 +4418,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         kitchenbitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                                 Config.intWidth, Config.intHeight));
 
-                        //IMAGE_COUNT++;
+                        Kitchen_IMAGE_COUNT++;
 
                         kitchenImageCount++;
                     }
@@ -4335,7 +4453,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         washroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                                 Config.intWidth, Config.intHeight));
 
-                        //IMAGE_COUNT++;
+                        Washroom_IMAGE_COUNT++;
 
                         washroomImageCount++;
                     }
@@ -4369,7 +4487,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         bedroombitmaps.add(utils.getBitmapFromFile(mCopyFile.getAbsolutePath(),
                                 Config.intWidth, Config.intHeight));
 
-                        //IMAGE_COUNT++;
+                        Bedroom_IMAGE_COUNT++;
 
                         bedroomImageCount++;
                     }
@@ -4411,7 +4529,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         hallImageCount++;
 
-                        //IMAGE_COUNT++;
+                        Hall_IMAGE_COUNT++;
                     }
 
                 } catch (Exception | OutOfMemoryError e) {
@@ -4444,7 +4562,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         kitchenImageCount++;
 
-                        //IMAGE_COUNT++;
+                        Kitchen_IMAGE_COUNT++;
                     }
 
                 } catch (Exception | OutOfMemoryError e) {
@@ -4477,7 +4595,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         washroomImageCount++;
 
-                        //IMAGE_COUNT++;
+                        Washroom_IMAGE_COUNT++;
                     }
 
                 } catch (Exception | OutOfMemoryError e) {
@@ -4510,7 +4628,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         bedroomImageCount++;
 
-                        //IMAGE_COUNT++;
+                        Bedroom_IMAGE_COUNT++;
                     }
 
                 } catch (Exception | OutOfMemoryError e) {
@@ -4537,7 +4655,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             imageModel.setmIsNew(false);
 
-                            //IMAGE_COUNT++;
+                            Hall_IMAGE_COUNT++;
                         }
                     }
                 } catch (Exception | OutOfMemoryError e) {
@@ -4556,7 +4674,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             imageModel.setmIsNew(false);
 
-                            //IMAGE_COUNT++;
+                            Kitchen_IMAGE_COUNT++;
                         }
                     }
                 } catch (Exception | OutOfMemoryError e) {
@@ -4575,7 +4693,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             imageModel.setmIsNew(false);
 
-                            //IMAGE_COUNT++;
+                            Washroom_IMAGE_COUNT++;
                         }
                     }
                 } catch (Exception | OutOfMemoryError e) {
@@ -4594,7 +4712,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             imageModel.setmIsNew(false);
 
-                            //IMAGE_COUNT++;
+                            Bedroom_IMAGE_COUNT++;
                         }
                     }
                 } catch (Exception | OutOfMemoryError e) {

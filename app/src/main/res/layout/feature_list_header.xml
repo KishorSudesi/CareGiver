@@ -75,7 +75,7 @@
             android:layout_height="40dp"
             android:gravity="center"
             android:src="@mipmap/feedback"
-            android:visibility="gone" />
+            android:visibility="invisible" />
 
     </LinearLayout>
 

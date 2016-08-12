@@ -11,6 +11,7 @@
         android:layout_marginTop="@dimen/edit_text_margin"
         android:gravity="center|center_horizontal"
         android:text="@string/attachments"
+        android:textColor="@color/colorWhite"
         />
 
     <HorizontalScrollView

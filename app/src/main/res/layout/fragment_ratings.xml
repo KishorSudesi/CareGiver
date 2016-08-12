@@ -118,7 +118,7 @@
                 android:layout_margin="10dp"
                 android:gravity="center"
                 android:text="@string/noFeedbacks"
-                android:visibility="visible" />
+                android:visibility="invisible" />
 
             <ListView
                 android:id="@+id/listViewRatings"
@@ -127,7 +127,8 @@
                 android:layout_below="@+id/linearLayoutUserRatings"
                 android:layout_margin="10dp"
                 android:divider="@color/blue"
-                android:dividerHeight="1dp">
+                android:dividerHeight="1dp"
+                android:visibility="invisible">
 
             </ListView>
 

@@ -91,7 +91,7 @@ public class FeatureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_features);
 
         ImageView imgLogoHeaderTaskDetail = (ImageView) findViewById(R.id.imgLogoHeaderTaskDetail);
-        ImageView imageViewFeedback = (ImageView) findViewById(R.id.imageViewFeedback);
+        //ImageView imageViewFeedback = (ImageView) findViewById(R.id.imageViewFeedback);
         done = (Button) findViewById(R.id.buttonVegetibleDone);
         linearLayoutAttach = (LinearLayout) findViewById(R.id.linearLayout1);
         ProgressBar progressBar1 = (ProgressBar) findViewById(R.id.progressBar1);
@@ -248,7 +248,7 @@ public class FeatureActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (imageViewFeedback != null) {
+            /*if (imageViewFeedback != null) {
 
                 if (act.getFeedBackModels().size() > 0) {
 
@@ -304,7 +304,7 @@ public class FeatureActivity extends AppCompatActivity {
                     });
                 }
 
-            }
+            }*/
 
             if (linearName != null && jsonObject1 != null) {
                 linearName.setOnClickListener(new View.OnClickListener() {

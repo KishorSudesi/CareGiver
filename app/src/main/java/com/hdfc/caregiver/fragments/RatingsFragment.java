@@ -57,9 +57,9 @@ public class RatingsFragment extends Fragment {
       /*  mytask = (ImageView) view.findViewById(R.id.buttonMyTasks);
         clients = (ImageView) view.findViewById(R.id.buttonClients);
         feedback = (ImageView) view.findViewById(R.id.buttonFeedback);*/
-        ListView listratings = (ListView) view.findViewById(R.id.listViewRatings);
+       // ListView listratings = (ListView) view.findViewById(R.id.listViewRatings);
         TextView textViewName = (TextView) view.findViewById(R.id.name);
-        TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
+        //TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
         Button logout = (Button) view.findViewById(R.id.buttonlogout);
         AppUtils appUtils = new AppUtils(getActivity());
 
@@ -171,9 +171,9 @@ public class RatingsFragment extends Fragment {
 
         Utils.loadGlide(getActivity(), strImage, imageProfilePic, null);
 
-        RatingsAdapter ratingsAdapter = new RatingsAdapter(getContext(), Config.feedBackModels);
+        /*RatingsAdapter ratingsAdapter = new RatingsAdapter(getContext(), Config.feedBackModels);
         listratings.setAdapter(ratingsAdapter);
-        listratings.setEmptyView(textViewEmpty);
+        listratings.setEmptyView(textViewEmpty);*/
 
         return view;
     }

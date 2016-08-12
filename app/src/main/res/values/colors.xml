@@ -35,6 +35,8 @@
     <color name="black">#000000</color>
     <color name="new_blue">#2196f3</color>
 
+    <color name="dark_slate_gray">#2F4F4F</color>
+
     <color name="font_blue">#3B9FF4</color>
 
     <!--for tooltip only-->
