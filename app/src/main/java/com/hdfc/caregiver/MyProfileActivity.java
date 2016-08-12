@@ -2,6 +2,7 @@ package com.hdfc.caregiver;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,10 +16,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
 import com.hdfc.app42service.StorageService;
@@ -29,6 +33,7 @@ import com.hdfc.dbconfig.DbHelper;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
+import com.hdfc.views.TouchImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
@@ -50,7 +55,7 @@ import pl.tajchert.nammu.PermissionCallback;
 public class MyProfileActivity extends AppCompatActivity {
 
     //private static int intWhichScreen;
-    private static String strCustomerImgName = "";
+    private static String strCustomerImgName = "", strImage;
     //public static Bitmap bitmap = null;
     private static Uri uri;
     private static Handler backgroundThreadHandler;
@@ -240,7 +245,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
             File file = null;
 
-            String strImage, strPath = "";
+            String strPath = "";
 
             try {
                 strPath = sessionManager.getProfileImage();
@@ -380,6 +385,8 @@ public class MyProfileActivity extends AppCompatActivity {
 
             utils.selectImage(String.valueOf(strFileName) + ".jpeg", null, MyProfileActivity.this,
                     true);
+        } else {
+            showProfileImage();
         }
     }
 
@@ -610,6 +617,44 @@ public class MyProfileActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         goBack();
+    }
+
+    private void showProfileImage() {
+
+        final Dialog dialog = new Dialog(MyProfileActivity.this);
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        dialog.setContentView(R.layout.image_dialog_layout);
+
+        TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                R.id.imgOriginal);
+        TextView textViewClose = (TextView) dialog.findViewById(
+                R.id.textViewClose);
+        Button buttonDelete = (Button) dialog.findViewById(
+                R.id.textViewTitle);
+
+        ProgressBar progressBar = (ProgressBar) dialog.findViewById(
+                R.id.progressBar);
+
+        buttonDelete.setVisibility(View.GONE);
+        textViewClose.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
+        textViewClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        Utils.loadGlide(MyProfileActivity.this, strImage, mOriginal, progressBar);
+
+        dialog.setCancelable(true);
+
+        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+        dialog.show();
     }
 
     private class BackgroundThreadHandler extends Handler {

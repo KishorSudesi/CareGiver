@@ -289,8 +289,8 @@
     <!--Notifications Strings-->
     <string name="notification_body_1">Notification from New Zeal Care Services.The task&#160;</string>
     <string name="notification_body_2">&#160;has been updated&#160;</string>
-    <string name="notification_body_3">&#160; On Activity&#160;</string>
-    <string name="notification_body_4">&#160; by&#160;</string>
+    <string name="notification_body_3">&#160;On Activity&#160;</string>
+    <string name="notification_body_4">&#160;by&#160;</string>
 
     <string name="notification_closure_body_1">Notification from New Zeal Care Services.</string>
     <string name="notification_closure_body_2">Thank you for using&#160;</string>

@@ -71,8 +71,15 @@ public class RatingsFragment extends Fragment {
         utils = new Utils(getActivity());*/
         //intWhichScreen = Config.intRatingsScreen;
 
-        if (Config.providerModel.getStrName() != null)
+        if (Config.providerModel != null && Config.providerModel.getStrName() != null)
             textViewName.setText(Config.providerModel.getStrName());
+        else {
+            SessionManager sessionManager = new SessionManager(getActivity());
+            AppUtils.createProviderModel(sessionManager.getProviderId());
+
+            if (Config.providerModel != null && Config.providerModel.getStrName() != null)
+                textViewName.setText(Config.providerModel.getStrName());
+        }
 
         appUtils.createFeedbackModel();
 
