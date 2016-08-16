@@ -25,18 +25,7 @@
         android:orientation="vertical"
         android:weightSum="2">
 
-        <RelativeLayout
-            android:id="@+id/loadingPanel"
-            style="@style/GenericProgressBackground"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:padding="5dp"
-            android:visibility="gone">
 
-            <ProgressBar style="@style/GenericProgressIndicator" />
-        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/pnd_net_error"
@@ -72,6 +61,19 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1.97" />
+
+        <RelativeLayout
+            android:id="@+id/loadingPanel"
+            style="@style/GenericProgressBackground"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:padding="5dp"
+            android:visibility="gone">
+
+            <ProgressBar style="@style/GenericProgressIndicator" />
+        </RelativeLayout>
 
         <include
             android:id="@+id/include_dashboard_footer"
