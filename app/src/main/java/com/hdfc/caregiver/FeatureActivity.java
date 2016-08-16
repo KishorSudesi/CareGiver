@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -975,12 +976,13 @@ public class FeatureActivity extends AppCompatActivity {
                 textViewName.setTextAppearance(this, R.style.MilestoneStyle);
                 textViewName.setText(milestoneModel.getStrMilestoneName());
                 textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
-                textViewName.setPadding(25, 45, 0, 0);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                textViewName.setPadding(25, 10, 0, 0);
+                textViewName.setGravity(Gravity.CENTER|Gravity.LEFT);
+               /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                }
+                }*/
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT, 1);
+                        ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT,1);
                 params.setMargins(5, 5, 5, 5);
                 textViewName.setTag(milestoneModel);
 

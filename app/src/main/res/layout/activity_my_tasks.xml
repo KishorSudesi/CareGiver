@@ -25,12 +25,6 @@
         android:orientation="vertical"
         android:weightSum="2">
 
-        <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.97" />
-
         <RelativeLayout
             android:id="@+id/loadingPanel"
             style="@style/GenericProgressBackground"
@@ -72,6 +66,12 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.97" />
 
         <include
             android:id="@+id/include_dashboard_footer"

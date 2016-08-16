@@ -948,10 +948,11 @@
 
                 <Button
                     android:id="@+id/buttonHallAdd"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentRight="true"
-                    android:layout_margin="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/add_icon"
                     android:gravity="center" />
 
@@ -1029,10 +1030,11 @@
 
                 <Button
                     android:id="@+id/buttonKitchenAdd"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentRight="true"
-                    android:layout_margin="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/add_icon"
                     android:gravity="center" />
 
@@ -1110,10 +1112,11 @@
 
                 <Button
                     android:id="@+id/buttonWashroomAdd"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentRight="true"
-                    android:layout_margin="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/add_icon"
                     android:gravity="center" />
 
@@ -1191,10 +1194,11 @@
 
                 <Button
                     android:id="@+id/buttonBedroomAdd"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentRight="true"
-                    android:layout_margin="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/add_icon"
                     android:gravity="center" />
 

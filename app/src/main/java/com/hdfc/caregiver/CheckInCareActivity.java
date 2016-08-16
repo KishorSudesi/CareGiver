@@ -733,8 +733,14 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }
 
                 if (dependentname != null) {
-                    dependentname.setText(strDependentName);
+                    String name=strDependentName;
+                    if (name.length() > 8)
+                        name = name.substring(0, 6) + "..";
+
+                    dependentname.setText(name);
                     dependentname.setEnabled(false);
+
+
                 }
                ///////////////////////////////////////////////////////////////////////////////
 
