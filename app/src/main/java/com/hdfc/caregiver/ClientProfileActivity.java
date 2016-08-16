@@ -23,6 +23,7 @@ import com.hdfc.services.GPSTracker;
 public class ClientProfileActivity extends AppCompatActivity  {
 
     public static Bitmap bitmap = null;
+    private static String strUrl = "";
     //private static Handler backgroundThreadHandler;
     //private static ProgressDialog mProgress = null;
     //ImageView backbutton, edit;
@@ -34,8 +35,6 @@ public class ClientProfileActivity extends AppCompatActivity  {
     private String strClientAddress;
     private String strMobileNo;
 
-    private ProgressBar progressBar;
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_profile);
@@ -46,7 +45,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
         TextView address = (TextView) findViewById(R.id.editTextAddress);
         TextView mobile = (TextView) findViewById(R.id.editTextMobileNumber);
         editLocation = (TextView) findViewById(R.id.editTextGetDirection);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         ImageView btnGetLocation = (ImageView) findViewById(R.id.imageLocation);
         LinearLayout dialNubmer = (LinearLayout) findViewById(R.id.dialNumber);
 
@@ -60,8 +59,6 @@ public class ClientProfileActivity extends AppCompatActivity  {
         ImageView clientProfile = (ImageView) findViewById(R.id.imageClientProfile);
         //location = (ImageView) findViewById(R.id.imageLocation);
         //mProgress = new ProgressDialog(this);
-
-        String strUrl = "";
 
         //String strImageName;
 
@@ -130,6 +127,13 @@ public class ClientProfileActivity extends AppCompatActivity  {
 
         if (clientProfile != null) {
             clientProfile.setImageResource(R.drawable.person_icon);
+
+            clientProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.showProfileImage(strUrl, ClientProfileActivity.this);
+                }
+            });
         }
         if (clientName != null) {
             clientName.setText(strClientName);

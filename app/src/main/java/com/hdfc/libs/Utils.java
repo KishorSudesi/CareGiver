@@ -1,6 +1,7 @@
 package com.hdfc.libs;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +22,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -28,7 +30,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,6 +48,7 @@ import com.hdfc.app42service.EmailService;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.models.Action;
+import com.hdfc.views.TouchImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.email.EmailMIME;
 
@@ -1153,6 +1158,76 @@ public class Utils {
         }
     }
 
+    public static void showProfileImage(String strImage, Context context) {
+
+        final Dialog dialog = new Dialog(context);
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        dialog.setContentView(R.layout.image_dialog_layout);
+
+        TouchImageView mOriginal = (TouchImageView) dialog.findViewById(
+                R.id.imgOriginal);
+        TextView textViewClose = (TextView) dialog.findViewById(
+                R.id.textViewClose);
+        Button buttonDelete = (Button) dialog.findViewById(
+                R.id.textViewTitle);
+
+        ProgressBar progressBar = (ProgressBar) dialog.findViewById(
+                R.id.progressBar);
+
+        buttonDelete.setVisibility(View.GONE);
+        textViewClose.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+
+        textViewClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.setCancelable(true);
+
+        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT); //Controlling width and height.
+        dialog.show();
+
+        Utils.loadGlide(context, strImage, mOriginal, progressBar);
+    }
+
+    public static void setEditTextMaxLength(EditText editText, int length) {
+        InputFilter[] FilterArray = new InputFilter[1];
+        FilterArray[0] = new InputFilter.LengthFilter(length);
+        editText.setFilters(FilterArray);
+    }
+
+ /*public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }*/
+
+    /*public void setDrawable(View v, Drawable drw) {
+        if (Build.VERSION.SDK_INT <= 16)
+            v.setBackgroundDrawable(drw);
+        else
+            v.setBackground(drw);
+    }
+
+    public void setStatusBarColor(String strColor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = ((Activity) _ctxt).getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.parseColor(strColor));
+        }
+    }*/
+
     //
     public boolean compressImageFromPath(String strPath, int reqWidth, int reqHeight, int iQuality) {
 
@@ -1215,88 +1290,6 @@ public class Utils {
         return b;
     }
 
-    public void toast(int type, int duration, String message) {
-
-        String strColor = "#fcc485";
-
-        if (type == 2)
-            strColor = "#FF0000";
-
-        try {
-            LayoutInflater inflater = ((Activity) _ctxt).getLayoutInflater();
-            View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) ((Activity) _ctxt).
-                    findViewById(R.id.toast_layout_root));
-
-            TextView text = (TextView) layout.findViewById(R.id.text);
-            text.setText(message);
-            text.setTextColor(Color.parseColor(strColor));
-
-            Toast toast = new Toast(_ctxt);
-            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-
-            //if (duration == 2)
-                toast.setDuration(Toast.LENGTH_LONG);
-           /* else
-                toast.setDuration(Toast.LENGTH_SHORT);*/
-
-            toast.setView(layout);
-            toast.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            log(" 1 ", " 1 ");
-            Toast.makeText(_ctxt, message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
- /*public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }*/
-
-    /*public void setDrawable(View v, Drawable drw) {
-        if (Build.VERSION.SDK_INT <= 16)
-            v.setBackgroundDrawable(drw);
-        else
-            v.setBackground(drw);
-    }
-
-    public void setStatusBarColor(String strColor) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = ((Activity) _ctxt).getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.parseColor(strColor));
-        }
-    }*/
-
-    public File getInternalFileImages(String strFileName) {
-
-        File file = null;
-        try {
-            File mFolder = new File(_ctxt.getFilesDir(), "images/");
-            file = new File(_ctxt.getFilesDir(), "images/" + strFileName);
-
-            //
-            if (!mFolder.exists()) {
-                mFolder.mkdir();
-            }
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            //
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
-
     /*public EditText traverseEditTexts(ViewGroup v, Drawable all, Drawable current,
                                       EditText editCurrent) {
         EditText invalid = null;
@@ -1352,36 +1345,36 @@ public class Utils {
             editText.setBackground(drw);
     }*/
 
-    /*
-    public void moveFile(File file, File newFile) throws IOException {
-        //File newFile = new File(dir, file.getName());
-        FileChannel outputChannel = null;
-        FileChannel inputChannel = null;
+    public void toast(int type, int duration, String message) {
+
+        String strColor = "#fcc485";
+
+        if (type == 2)
+            strColor = "#FF0000";
+
         try {
-            outputChannel = new FileOutputStream(newFile).getChannel();
-            inputChannel = new FileInputStream(file).getChannel();
-            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
-            inputChannel.close();
-            file.delete();
-        } finally {
-            if (inputChannel != null) inputChannel.close();
-            if (outputChannel != null) outputChannel.close();
-        }
-    }
-*/
-    public void copyFile(File file, File newFile) throws IOException {
-        //File newFile = new File(dir, file.getName());
-        FileChannel outputChannel = null;
-        FileChannel inputChannel = null;
-        try {
-            outputChannel = new FileOutputStream(newFile).getChannel();
-            inputChannel = new FileInputStream(file).getChannel();
-            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
-            inputChannel.close();
-            //file.delete();
-        } finally {
-            if (inputChannel != null) inputChannel.close();
-            if (outputChannel != null) outputChannel.close();
+            LayoutInflater inflater = ((Activity) _ctxt).getLayoutInflater();
+            View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) ((Activity) _ctxt).
+                    findViewById(R.id.toast_layout_root));
+
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            text.setText(message);
+            text.setTextColor(Color.parseColor(strColor));
+
+            Toast toast = new Toast(_ctxt);
+            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+
+            //if (duration == 2)
+                toast.setDuration(Toast.LENGTH_LONG);
+           /* else
+                toast.setDuration(Toast.LENGTH_SHORT);*/
+
+            toast.setView(layout);
+            toast.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            log(" 1 ", " 1 ");
+            Toast.makeText(_ctxt, message, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1416,6 +1409,79 @@ public class Utils {
 
 
     //Application Specig=fic End
+
+    public File getInternalFileImages(String strFileName) {
+
+        File file = null;
+        try {
+            File mFolder = new File(_ctxt.getFilesDir(), "images/");
+            file = new File(_ctxt.getFilesDir(), "images/" + strFileName);
+
+            //
+            if (!mFolder.exists()) {
+                mFolder.mkdir();
+            }
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            //
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+    /*
+    public void moveFile(File file, File newFile) throws IOException {
+        //File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+    }
+*/
+    public void copyFile(File file, File newFile) throws IOException {
+        //File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            //file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+    }
+
+    /*public ArrayList<View> getViewsByTag(ViewGroup root, String tag) {
+        ArrayList<View> views = new ArrayList<>();
+        final int childCount = root.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = root.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                views.addAll(getViewsByTag((ViewGroup) child, tag));
+            }
+
+            final Object tagObj = child.getTag();
+            if (tagObj != null && tagObj.equals(tag)) {
+                views.add(child);
+            }
+        }
+        return views;
+    }*/
 
     public boolean isConnectingToInternet() {
         ConnectivityManager connectivity = (ConnectivityManager)
@@ -1472,23 +1538,6 @@ public class Utils {
 
         return isValid;
     }
-
-    /*public ArrayList<View> getViewsByTag(ViewGroup root, String tag) {
-        ArrayList<View> views = new ArrayList<>();
-        final int childCount = root.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            final View child = root.getChildAt(i);
-            if (child instanceof ViewGroup) {
-                views.addAll(getViewsByTag((ViewGroup) child, tag));
-            }
-
-            final Object tagObj = child.getTag();
-            if (tagObj != null && tagObj.equals(tag)) {
-                views.add(child);
-            }
-        }
-        return views;
-    }*/
 
     public File createFileInternalImage(String strFileName) {
 

@@ -1,23 +1,24 @@
 package com.hdfc.caregiver.fragments;
 
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
-import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;
 import com.hdfc.libs.AppUtils;
 import com.hdfc.libs.Utils;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -31,9 +32,10 @@ public class DashboardFragment extends Fragment {
     public static String strStartDate, strEndDate;
     //private Button buttonActivity, buttonTask;
     private TextView textView;
-    private AppUtils appUtils;
+    //private AppUtils appUtils;
     private RelativeLayout loadingPanel;
-    private SlideDateTimeListener listener = new SlideDateTimeListener() {
+    private Calendar calendar;
+   /* private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
         public void onDateTimeSet(Date date) {
@@ -45,28 +47,9 @@ public class DashboardFragment extends Fragment {
             strDate = Utils.writeFormatDateDB.format(date);
             _strDate = Utils.writeFormatDateDB.format(date);
 
-           /* strEndDate = Utils.convertDateToStringQuery(Utils.convertStringToDateQuery(strDate +
-                    "T23:59:59.999"));
-            strStartDate = Utils.convertDateToStringQuery(Utils.convertStringToDateQuery(strDate +
-                    "T00:00:00.000"));*/
-
             textView.setText(Utils.writeFormatDate.format(date));
 
             loadingPanel.setVisibility(View.VISIBLE);
-
-          /*  Config.dependentIds.clear();
-            Config.customerIds.clear();
-
-            Config.dependentIdsAdded.clear();
-            Config.customerIdsAdded.clear();
-
-
-            Config.dependentModels.clear();
-            Config.customerModels.clear();
-
-            //Config.clientModels.clear();
-
-            Config.feedBackModels.clear();*/
 
             strDate = Utils.writeFormatDate.format(date);
 
@@ -75,7 +58,7 @@ public class DashboardFragment extends Fragment {
             String strStartDate = _strDate + " 00:00:00.000";
             String strEndDate = _strDate + " 24:00:00.000";
 
-            appUtils.createActivityModel(strStartDate, strEndDate);
+            AppUtils.createActivityModel(strStartDate, strEndDate);
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
 
@@ -89,7 +72,7 @@ public class DashboardFragment extends Fragment {
             // Overriding onDateTimeCancel() is optional.
         }
 
-    };
+    };*/
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -109,7 +92,9 @@ public class DashboardFragment extends Fragment {
 
         loadingPanel = (RelativeLayout) getActivity().findViewById(R.id.loadingPanel);
 
-        appUtils = new AppUtils(getActivity());
+        calendar = Calendar.getInstance();
+
+        //appUtils = new AppUtils(getActivity());
         //Utils utils = new Utils(getActivity());
 
         LinearLayout layoutDate = (LinearLayout)view.findViewById(R.id.linearDate);
@@ -120,11 +105,51 @@ public class DashboardFragment extends Fragment {
         layoutDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SlideDateTimePicker.Builder(getActivity().getSupportFragmentManager())
+               /* new SlideDateTimePicker.Builder(getActivity().getSupportFragmentManager())
                         .setListener(listener)
                         .setInitialDate(new Date())
                         .build()
-                        .show();
+                        .show();*/
+
+
+                ///////
+                DatePickerDialog datePicker = new DatePickerDialog(getActivity(),
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+
+                                calendar.set(year, monthOfYear, dayOfMonth);
+
+                                Date date = calendar.getTime();
+
+                                strDate = Utils.writeFormatDateDB.format(date);
+                                _strDate = Utils.writeFormatDateDB.format(date);
+
+                                textView.setText(Utils.writeFormatDate.format(date));
+
+                                loadingPanel.setVisibility(View.VISIBLE);
+
+                                strDate = Utils.writeFormatDate.format(date);
+
+                                Config.intSelectedMenu = Config.intDashboardScreen;
+
+                                String strStartDate = _strDate + " 00:00:00.000";
+                                String strEndDate = _strDate + " 24:00:00.000";
+
+                                AppUtils.createActivityModel(strStartDate, strEndDate);
+                                ActivityFragment.activityModels = Config.activityModels;
+                                ActivityFragment.mAdapter.notifyDataSetChanged();
+
+                                loadingPanel.setVisibility(View.GONE);
+
+                            }
+                        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DATE));//Yes 24 hour time
+                //datePicker.setTitle(getString(R.string.select_date_dialog));
+                datePicker.show();
+                //////////
             }
         });
 

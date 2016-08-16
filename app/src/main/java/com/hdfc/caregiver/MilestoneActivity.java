@@ -96,7 +96,6 @@ public class MilestoneActivity extends AppCompatActivity {
     private Utils utils;
     private PermissionHelper permissionHelper;
     private String strCloseUser, strCloseStatus, strDependentName;
-    private boolean isDateChanged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -258,8 +257,10 @@ public class MilestoneActivity extends AppCompatActivity {
                     if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
                         editText.setInputType(InputType.TYPE_CLASS_TEXT);
 
-                    if (fieldModel.getStrFieldType().equalsIgnoreCase("number"))
+                    if (fieldModel.getStrFieldType().equalsIgnoreCase("number")) {
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        Utils.setEditTextMaxLength(editText, 10);
+                    }
 
                     try {
                         if (fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
@@ -623,6 +624,7 @@ public class MilestoneActivity extends AppCompatActivity {
                             editMedicineQty.setHint(getString(R.string.qunatity));
                             editMedicineQty.setTag("medicine_qty");
                             editMedicineQty.setInputType(InputType.TYPE_CLASS_NUMBER);
+                            Utils.setEditTextMaxLength(editMedicineQty, 4);
                             editMedicineQty.setText(String.valueOf(jsonObjectMedicine.
                                     getInt("medicine_qty")));
                             editMedicineQty.setEnabled(bEnabled);
@@ -688,6 +690,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                     ViewGroup.LayoutParams.WRAP_CONTENT, 1));
                             editTextArray.setHint(getString(R.string.qunatity));
                             editTextArray.setTag("medicine_qty");
+                            Utils.setEditTextMaxLength(editTextArray, 4);
                             editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
                         }
 
@@ -739,6 +742,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                                     ViewGroup.LayoutParams.WRAP_CONTENT, 1));
                                             editTextArray.setHint(getString(R.string.qunatity));
                                             editTextArray.setTag("medicine_qty");
+                                            Utils.setEditTextMaxLength(editTextArray, 4);
                                             editTextArray.setInputType(InputType.TYPE_CLASS_NUMBER);
                                         }
 
@@ -956,9 +960,9 @@ public class MilestoneActivity extends AppCompatActivity {
 
             int iClose = 0;
 
-            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
+            boolean isDateChanged;
 
-                isDateChanged = true;
+            for (MilestoneModel milestoneModel : act.getMilestoneModels()) {
 
                 iIndex++;
 
