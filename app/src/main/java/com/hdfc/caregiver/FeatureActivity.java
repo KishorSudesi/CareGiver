@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -266,7 +265,6 @@ public class FeatureActivity extends AppCompatActivity {
                             View dialogView = inflater.inflate(R.layout.feedback_popup, null);
                             builder.setView(dialogView);
 
-                            //todo add for dependent feedback
                             TextView ratingTime = (TextView) dialogView.findViewById(R.id.
                                     ratingTime);
                             ImageView ratingImage = (ImageView) dialogView.findViewById(

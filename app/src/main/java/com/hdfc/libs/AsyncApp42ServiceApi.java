@@ -914,7 +914,6 @@ public class AsyncApp42ServiceApi {
         }.start();
     }
 
-    //todo get token and remove device in logout
     public void removeDevice(final String userName, final String strToken,
                              final App42CallBack callBack) {
 

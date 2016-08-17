@@ -63,7 +63,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 
 import pl.tajchert.nammu.PermissionCallback;
@@ -77,10 +76,13 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static final String[] option = {"N", "Y"};
     public static Uri uri;
     public static Bitmap bitmap = null;
+    public static int Hall_IMAGE_COUNT = 0;
+    public static int Kitchen_IMAGE_COUNT = 0;
+    public static int Washroom_IMAGE_COUNT = 0;
+    public static int Bedroom_IMAGE_COUNT = 0;
     private static String strImageName = "", strClientName = "";
     //private static int IMAGE_COUNT = 0;
     private static Boolean editcheckincare = false;
-
     private static Utils utils;
     //private static ProgressDialog mProgress = null;
     private static Handler backgroundThreadHandler, backgroundThreadHandlerFetch;
@@ -142,11 +144,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private Spinner dependentspinner;
     private Bundle bundle;
     private PermissionHelper permissionHelper;
-    public static int Hall_IMAGE_COUNT = 0;
-    public static int Kitchen_IMAGE_COUNT = 0;
-    public static int Washroom_IMAGE_COUNT = 0;
-    public static int Bedroom_IMAGE_COUNT = 0;
-
     private ProgressBar progressBar;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
@@ -2344,7 +2341,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 selectionArgs1);
 
                                         //notification
-                                        //todo UI for common notifications
                                         String strPushMessage = getString(R.string.notification_checkincare);
 
                                         final JSONObject jsonObject = new JSONObject();
@@ -2806,7 +2802,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                     selectionArgs1);
 
                             //notification
-                            //todo UI for common notifications
                             String strPushMessage = getString(R.string.notification_checkincare);
 
                             final JSONObject jsonObject1 = new JSONObject();

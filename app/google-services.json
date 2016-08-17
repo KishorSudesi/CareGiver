@@ -1,17 +1,28 @@
 {
   "project_info": {
     "project_number": "910502819263",
-    "project_id": "default-demo-app-d6547"
+    "firebase_url": "https://default-demo-app-d6547.firebaseio.com",
+    "project_id": "default-demo-app-d6547",
+    "storage_bucket": "default-demo-app-d6547.appspot.com"
   },
-  "client": [
+  "client": [   
     {
       "client_info": {
-        "mobilesdk_app_id": "1:910502819263:android:22c9153c8c8bc795",
+        "mobilesdk_app_id": "1:910502819263:android:c161175b0baf843b",
         "android_client_info": {
-          "package_name": "com.hdfc.caretaker"
+          "package_name": "com.hdfc.caregiver"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "910502819263-milomc2p551v8f1dtdpepksu8d00u8dr.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "910502819263-lgeppcvukli8sb3uc2fpg7pgsg6upbqk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBRflsVGFnd3zN7ginUJQOQmIaSs_RpQWQ"
@@ -26,7 +37,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

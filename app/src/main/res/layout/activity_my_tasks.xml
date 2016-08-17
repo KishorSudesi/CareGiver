@@ -25,7 +25,11 @@
         android:orientation="vertical"
         android:weightSum="2">
 
-
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.97" />
 
         <LinearLayout
             android:id="@+id/pnd_net_error"
@@ -56,11 +60,6 @@
 
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.97" />
 
         <RelativeLayout
             android:id="@+id/loadingPanel"

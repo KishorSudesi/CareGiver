@@ -31,9 +31,9 @@ public class Config {
     public static final String dbName = "newzeal";
 
     public static final String collectionService = "service";
-    public static final String collectionServiceHistory = "servicehistory";
-    public static final String collectionServiceCustomer = "servicecustomer";
-    public static final String collectionServices = "service";
+ /* public static final String collectionServiceHistory = "servicehistory";
+  public static final String collectionServiceCustomer = "servicecustomer";
+  public static final String collectionServices = "service";*/
     public static final String collectionProvider = "provider";
     public static final String collectionProviderDependent = "providerdependent";
     public static final String collectionCustomer = "customer";
@@ -66,7 +66,7 @@ public class Config {
     public static final boolean isDebuggable = true;
     public static final String string = Utils.getStringJni();
     public static final boolean release = false;
-    public static final boolean DEVELOPMENT = false;
+ public static final boolean DEVELOPMENT = true;
 
     public final static String strCustomerImageName = "provider_image";
     public static int intClientScreen = 2;

@@ -68,7 +68,6 @@
 #-keepattributes *Annotation*
 
 #google play services
-
 -keep class com.google.android.gms.** { *; }
 -keep interface com.google.android.gms.** { *; }
 -keepclassmembers class com.google.android.gms.** {

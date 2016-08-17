@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.hdfc.app42service.App42GCMController;
 import com.hdfc.app42service.App42GCMService;
 import com.hdfc.caregiver.fragments.ActivityFragment;
@@ -92,6 +94,7 @@ public class DashboardActivity extends AppCompatActivity implements
         }
         }
     };
+    private Tracker mTracker;
     private BroadcastReceiver receiver;
     private SessionManager sessionManager;
 
@@ -213,6 +216,10 @@ public class DashboardActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);*/
 
         try {
+
+            CareGiver careGiver = (CareGiver) getApplication();
+            mTracker = careGiver.getDefaultTracker();
+
             appUtils = new AppUtils(DashboardActivity.this);
             appCompatActivity = DashboardActivity.this;
             sessionManager = new SessionManager(DashboardActivity.this);
@@ -582,6 +589,10 @@ public class DashboardActivity extends AppCompatActivity implements
         if (sessionManager.getProviderId() != null
                 && !sessionManager.getProviderId().equalsIgnoreCase("")) {
 
+            mTracker.setScreenName("Image~ DashboardActivity "
+                    + String.valueOf(Config.intSelectedMenu));
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
             isRunning = true;
 
             //if (Config.providerModel == null || Config.providerModel.getStrName() == null)
@@ -636,6 +647,10 @@ public class DashboardActivity extends AppCompatActivity implements
         //CareGiver.getDbCon().getDb();
         //super.onBackPressed();
 
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("Exit")
+                .build());
 
         Intent homeIntent = new Intent(Intent.ACTION_MAIN);
         homeIntent.addCategory(Intent.CATEGORY_HOME);

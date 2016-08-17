@@ -236,8 +236,6 @@ public class AppUtils {
                                                         context.getString(R.string.new_notification),
                                                         context);
                                             } else {
-                                                //todo for refresh adapter
-
                                                 createNotificationModel();
                                                 if (NotificationFragment.notificationAdapter != null) {
                                                     NotificationFragment.notificationAdapter.
@@ -3189,7 +3187,6 @@ public class AppUtils {
                 //}
             }
 
-            //todo
             Config.serviceCategorylist.clear();
             List<String> serviceNameList = new ArrayList<>(categorySet);
             Config.serviceCategorylist.addAll(serviceNameList);

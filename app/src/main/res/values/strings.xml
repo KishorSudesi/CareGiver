@@ -286,7 +286,7 @@
     <string name="select_picture">Select a Picture</string>
 
     <!--Google Strings-->
-    <string name="google_app_id">910502819263</string>
+    <!-- <string name="google_app_id">910502819263</string>-->
 
     <!--Notifications Strings-->
     <string name="notification_body_1">Notification from New Zeal Care Services.The task&#160;</string>

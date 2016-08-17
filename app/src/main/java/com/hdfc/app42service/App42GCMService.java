@@ -72,7 +72,7 @@ public class App42GCMService extends IntentService {
                 //if login
                 SessionManager sessionManager = new SessionManager(App42GCMService.this);
                 if (sessionManager.getProviderId() != null
-                        && !sessionManager.getProviderId().equalsIgnoreCase("")) {
+                        && !sessionManager.getProviderId().equalsIgnoreCase("") && message != null) {
                     this.validatePushIfRequired(message, intent);
                 }
             }
@@ -128,7 +128,7 @@ public class App42GCMService extends IntentService {
                     /*AppUtils appUtils = new AppUtils(this);
 
                     appUtils.fetchActivitiesSync(this);
-*/
+                    */
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

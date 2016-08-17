@@ -1195,7 +1195,6 @@ public class MilestoneActivity extends AppCompatActivity {
                         String strPushMessage = "";
 
                         if (strActivityStatus.equalsIgnoreCase("completed")) {
-                            //todo complete
 
                             if (strCloseStatus.equalsIgnoreCase("SuccessFul")) {
                                 strPushMessage = getString(R.string.notification_closure_body_1)

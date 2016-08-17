@@ -3,6 +3,9 @@ package com.hdfc.config;
 import android.app.Application;
 import android.content.res.Configuration;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
+import com.hdfc.caregiver.R;
 import com.hdfc.dbconfig.DbCon;
 
 /**
@@ -11,6 +14,7 @@ import com.hdfc.dbconfig.DbCon;
 public class CareGiver extends Application {
 
     private static DbCon dbCon = null;
+    private Tracker mTracker;
 
     //private static CareGiver careGiver;
 
@@ -24,6 +28,20 @@ public class CareGiver extends Application {
 
     public static void setDbCon(DbCon _dbCon) {
         dbCon = _dbCon;
+    }
+
+    /**
+     * Gets the default {@link Tracker} for this {@link Application}.
+     *
+     * @return tracker
+     */
+    synchronized public Tracker getDefaultTracker() {
+        if (mTracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+            mTracker = analytics.newTracker(R.xml.global_tracker);
+        }
+        return mTracker;
     }
 
     public void onCreate() {
