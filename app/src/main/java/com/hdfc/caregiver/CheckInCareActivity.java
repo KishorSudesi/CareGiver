@@ -83,7 +83,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static String strImageName = "", strClientName = "";
     //private static int IMAGE_COUNT = 0;
     private static Boolean editcheckincare = false;
-    private static Utils utils;
     //private static ProgressDialog mProgress = null;
     private static Handler backgroundThreadHandler, backgroundThreadHandlerFetch;
     private static boolean isImageChanged = false;
@@ -102,7 +101,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static StorageService storageService;
     private static ArrayList<DependentModel> dependent = new ArrayList<>();
     public String item = "",dependentId = "";
-    private boolean isAccessible;
+    private Utils utils;
     private RelativeLayout loadingPanel;
     private RelativeLayout loadingPanelhall, loadingPanelkitchen, loadingPanelwash, loadingPanelbed;
     private String strCustomerEmail;
@@ -115,20 +114,30 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private boolean isClick = false;
     private Button buttonHallAdd,buttonKitchenAdd,buttonWashroomAdd,buttonBedroomAdd;
     private Button uploadhallbtn,uploadkitchenbtn,uploadwashroombtn,uploadbedroombtn ;
-    private EditText electronic, homeapplience, automobile, maidservices, kitchen_equipments,
-            grocery, mediacomment,dependentname,driveredt;
+    private EditText electronic;
+    private EditText homeapplience;
+    private EditText automobile;
+    private EditText maidservices;
+    private EditText kitchen_equipments;
+    private EditText grocery;
+    private EditText mediacomment;
+    private EditText driveredt;
     private TextView datetxt;
     private TextView txtwater;
     private TextView txtgas;
     private TextView txtelectricity;
     private boolean isAllowed;
     private TextView txttelephone;
-    private ImageView client, pick_date,pick_date2,pick_date3,pick_date4;
+    private ImageView pick_date;
+    private ImageView pick_date2;
+    private ImageView pick_date3;
+    private ImageView pick_date4;
     private TextView utilitystatus, waterstatus, gasstatus, electricitystatus, telephonestatus,
             equipmentstatus, grocerystatus, kitchenequipmentstatus, domestichelpstatus,
             uploadmediastatus, hallstatus, kitchenstatus, washroomstatus, bedroomstatus,
             homeessentialstatus;
-    private String strDate,strDependentName,strcheckincare;
+    private String strDependentName;
+    private String strcheckincare;
     private int hallImageCount, kitchenImageCount, washroomImageCount,
             bedroomImageCount, hallImageUploadCount, kitchenImageUploadCount,
             washroomImageUploadCount, bedroomImageUploadCount;
@@ -141,10 +150,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private View focusView = null;
     private ProgressDialog mProgressDialog;
     private String items[], strSelectedDate;
-    private Spinner dependentspinner;
-    private Bundle bundle;
     private PermissionHelper permissionHelper;
-    private ProgressBar progressBar;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -210,7 +216,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         @Override
         public void onDateTimeSet(Date date) {
 
-            strDate = Utils.writeFormatDateMY.format(date);
+            String strDate = Utils.writeFormatDateMY.format(date);
 
             strcheckincare = Utils.queryFormatday.format(date);
 
@@ -259,11 +265,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.check_in_care);
 
 
-        dependentspinner = (Spinner) findViewById(R.id.dependentspinner);
-        dependentname = (EditText) findViewById(R.id.dependentname1);
+        Spinner dependentspinner = (Spinner) findViewById(R.id.dependentspinner);
+        EditText dependentname = (EditText) findViewById(R.id.dependentname1);
 
         /////////////////////spinner for dependent
         ArrayList<String> strDependent = null;
+        Bundle bundle;
         if(!editcheckincare) {
             try {
                 dependentname.setVisibility(View.GONE);
@@ -305,7 +312,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         /////////////////////////////////end
 
         mainlinearlayout = (LinearLayout) findViewById(R.id.mainlinearlayout);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         permissionHelper = PermissionHelper.getInstance(this);
 
@@ -384,7 +391,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         domesticcheck = (CheckBox) findViewById(R.id.domesticcheck);
         drivercheck = (CheckBox) findViewById(R.id.drivercheck);
 
-         client = (ImageView) findViewById(R.id.clientimg);
+        ImageView client = (ImageView) findViewById(R.id.clientimg);
          pick_date = (ImageView) findViewById(R.id.pick_date);
          pick_date2 = (ImageView) findViewById(R.id.pick_date2);
          pick_date3 = (ImageView) findViewById(R.id.pick_date3);
@@ -723,7 +730,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         }
 
                     } else {
-                        isAccessible = false;
+                        boolean isAccessible = false;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -4739,7 +4746,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             if (!file.exists() || file.length() <= 0) {
                                 Utils.loadImageFromWeb(imageModel.getStrImageDesc(),
-                                        imageModel.getStrImageUrl());
+                                        imageModel.getStrImageUrl(), CheckInCareActivity.this);
                             }
                         }
                     }
@@ -4757,7 +4764,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             if (!file.exists() || file.length() <= 0) {
                                 Utils.loadImageFromWeb(imageModel.getStrImageDesc(),
-                                        imageModel.getStrImageUrl());
+                                        imageModel.getStrImageUrl(), CheckInCareActivity.this);
                             }
                         }
                     }
@@ -4775,7 +4782,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             if (!file.exists() || file.length() <= 0) {
                                 Utils.loadImageFromWeb(imageModel.getStrImageDesc(),
-                                        imageModel.getStrImageUrl());
+                                        imageModel.getStrImageUrl(), CheckInCareActivity.this);
                             }
                         }
                     }
@@ -4793,7 +4800,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             if (!file.exists() || file.length() <= 0) {
                                 Utils.loadImageFromWeb(imageModel.getStrImageDesc(),
-                                        imageModel.getStrImageUrl());
+                                        imageModel.getStrImageUrl(), CheckInCareActivity.this);
                             }
                         }
                     }

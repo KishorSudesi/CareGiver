@@ -45,7 +45,7 @@ public class ActivityFragment extends Fragment
     //private static final int PICK_CONTACT = 979;
     public static ArrayList<ActivityModel> activityModels = Config.activityModels;
     //private static MultiBitmapLoader multiBitmapLoader;
-    private static Utils utils;
+    //private static Utils utils;
     private static Context context;
 
     public static BaseAdapter mAdapter = new BaseAdapter() {
@@ -282,7 +282,7 @@ public class ActivityFragment extends Fragment
 
         initMenu();
 
-        utils = new Utils(getActivity());
+        //utils = new Utils(getActivity());
 
         context = getActivity();
 

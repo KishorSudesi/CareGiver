@@ -1,5 +1,6 @@
 package com.hdfc.libs;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -92,7 +93,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
  */
 public class Utils {
 
-    public static final Locale locale = Locale.ENGLISH;
+    private static final Locale locale = Locale.ENGLISH;
 
     public final static SimpleDateFormat readFormat =
             new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss.SSS'Z'", locale);
@@ -112,13 +113,12 @@ public class Utils {
             SimpleDateFormat("yyyy", locale);
     public final static SimpleDateFormat writeFormatDateMY = new
             SimpleDateFormat("dd MMM yyyy", locale);
-    public final static SimpleDateFormat writeFormatTime = new
-            SimpleDateFormat("kk:mm", locale); // aa
     public final static SimpleDateFormat queryFormat =
             new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss.SSS", locale);
     public final static SimpleDateFormat queryFormatday =
             new SimpleDateFormat("yyyyMMddkkmmss", locale);
-
+    private final static SimpleDateFormat writeFormatTime = new
+            SimpleDateFormat("kk:mm", locale); // aa
     private final static String SENDER_EMAIL = "adstringosoftware@gmail.com";
 
   /*  public final static SimpleDateFormat dateFormat =
@@ -128,14 +128,15 @@ public class Utils {
             new SimpleDateFormat("yyyy-MM-dd", Config.locale);
 */
     public static Uri customerImageUri;
-    private static Context _ctxt;
-
-   // public static String typeOfImage;
 
     static {
         System.loadLibrary("stringGen");
         //log("Loaded 0", "NDK");
     }
+
+    // public static String typeOfImage;
+
+    private Context _ctxt;
 
     public Utils(Context context) {
         _ctxt = context;
@@ -177,7 +178,7 @@ public class Utils {
     }*/
 
     //creating scaled bitmap with required width and height
-    public static Bitmap createScaledBitmap(Bitmap unscaledBitmap, int dstWidth, int dstHeight) {
+    private static Bitmap createScaledBitmap(Bitmap unscaledBitmap, int dstWidth, int dstHeight) {
 
         Rect srcRect = calculateSrcRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
                 dstWidth, dstHeight);
@@ -277,7 +278,7 @@ public class Utils {
     }//*/
 
     //
-    public static int calculateSampleSize(int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
+    private static int calculateSampleSize(int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
 
         //check this logic
 
@@ -323,7 +324,7 @@ public class Utils {
     //
 
     //source and destinatino rectangular regions to decode
-    public static Rect calculateSrcRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
+    private static Rect calculateSrcRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
         //for crop
             /*final float srcAspect = (float)srcWidth / (float)srcHeight;
             final float dstAspect = (float)dstWidth / (float)dstHeight;
@@ -341,7 +342,7 @@ public class Utils {
         return new Rect(0, 0, srcWidth, srcHeight);
     }
 
-    public static Rect calculateDstRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
+    private static Rect calculateDstRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
 
         final float srcAspect = (float) srcWidth / (float) srcHeight;
         final float dstAspect = (float) dstWidth / (float) dstHeight;
@@ -363,8 +364,8 @@ public class Utils {
 
     public static void log(String message, String tag) {
 
-        if ((tag == null || tag.equalsIgnoreCase("")) && _ctxt != null)
-            tag = _ctxt.getClass().getName();
+        if ((tag == null || tag.equalsIgnoreCase(""))) //&& _ctxt != null
+            tag = "NewZeal";
 
         if (Config.isDebuggable)
             Log.e(tag, message);
@@ -450,7 +451,7 @@ public class Utils {
         return pathExternals;
     }*/
 
-    public static boolean deleteAllFiles(File directory) {
+    static boolean deleteAllFiles(File directory) {
 
         final File[] files = directory.listFiles();
 
@@ -477,6 +478,7 @@ public class Utils {
         return true;
     }
 
+    @SuppressLint("HardwareIds")
     public static String getDeviceID(Activity activity) {
         return Settings.Secure.getString(activity.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
@@ -542,11 +544,11 @@ public class Utils {
             btn.setBackground(drw);
     }*/
 
-    public static File createFileInternal(String strFileName) {
+    static File createFileInternal(String strFileName, Context _context) {
 
         File file = null;
         try {
-            file = new File(_ctxt.getFilesDir(), strFileName);
+            file = new File(_context.getFilesDir(), strFileName);
             file.getParentFile().mkdirs();
         } catch (Exception e) {
             e.printStackTrace();
@@ -995,12 +997,12 @@ public class Utils {
     }
 
     //load image from url
-    public static void loadImageFromWeb(String strFileName, String strFileUrl) {
+    public static void loadImageFromWeb(String strFileName, String strFileUrl, Context _context) {
 
         strFileName = replaceSpace(strFileName.trim());
         strFileUrl = replaceSpace(strFileUrl.trim());
 
-        File fileImage = createFileInternal("images/" + strFileName);
+        File fileImage = createFileInternal("images/" + strFileName, _context);
 
         log(strFileName + " ~ " + strFileUrl, " PATHS ");
 

@@ -437,7 +437,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
 
                                                         editText.setText(strHour + ":" + strMinute);
-                                                        //todo check logic
                                                         /*editText.setTag(R.id.two, Utils.writeFormatTime.
                                                                 format(selectedHour + ":" + selectedMinute));*/
                                                     } catch (Exception e) {
@@ -2041,7 +2040,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         if (!file.exists() || file.length() <= 0) {
                             Utils.loadImageFromWeb(fileModel.getStrFileName(),
-                                    fileModel.getStrFileUrl());
+                                    fileModel.getStrFileUrl(), MilestoneActivity.this);
                         }
 
                     }

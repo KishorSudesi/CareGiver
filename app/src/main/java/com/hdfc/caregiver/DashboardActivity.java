@@ -48,10 +48,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
     public static boolean isLoaded;
     public static boolean isRunning;
-    private static RelativeLayout loadingPanel;
-    //private Utils utils;
-    private static AppCompatActivity appCompatActivity;
     private static AppUtils appUtils;
+    private RelativeLayout loadingPanel;
+    //private Utils utils;
+    private AppCompatActivity appCompatActivity;
     //todo remove static variables with ref. context
     //private static Handler threadHandler;
     private int iWhichLoad;
@@ -76,7 +76,7 @@ public class DashboardActivity extends AppCompatActivity implements
                         .getStringExtra(App42GCMService.ExtraMessage);
 
                 if (message != null && !message.equalsIgnoreCase("")) {
-                    AppUtils.fetchActivitiesSync(DashboardActivity.this);
+                    AppUtils.fetchActivitiesSync(DashboardActivity.this, loadingPanel);
                     AppUtils.loadNotifications(DashboardActivity.this);
 
                     //todo optional refersh
@@ -98,7 +98,8 @@ public class DashboardActivity extends AppCompatActivity implements
     private BroadcastReceiver receiver;
     private SessionManager sessionManager;
 
-    public static void gotoSimpleActivityMenu(boolean isLoader) {
+    public static void gotoSimpleActivityMenu(boolean isLoader, Context context, RelativeLayout
+            loadingPanel) {
 
         if (isLoader && loadingPanel.getVisibility() == View.VISIBLE)
             loadingPanel.setVisibility(View.GONE);
@@ -114,18 +115,18 @@ public class DashboardActivity extends AppCompatActivity implements
         }
 
         if (isLoader) {
-            AppUtils.fetchActivitiesSync(appCompatActivity);
+            AppUtils.fetchActivitiesSync(context, loadingPanel);
 
             //fetch check in cares,service,
-            AppUtils.fetchCheckInCareSync(appCompatActivity);
-            AppUtils.fetchServicesSync(appCompatActivity);
-            AppUtils.loadNotifications(appCompatActivity);
+            AppUtils.fetchCheckInCareSync(context);
+            AppUtils.fetchServicesSync(context);
+            AppUtils.loadNotifications(context);
         }
     }
 
-    public static void refreshClientsData() {
+    public static void refreshClientsData(Context context, RelativeLayout loadingPanel) {
 
-        if (Utils.isConnectingToInternet(appCompatActivity)) {
+        if (Utils.isConnectingToInternet(context)) {
 
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
             String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
@@ -134,16 +135,16 @@ public class DashboardActivity extends AppCompatActivity implements
             ActivityFragment.activityModels = Config.activityModels;
             ActivityFragment.mAdapter.notifyDataSetChanged();
 
-            AppUtils.fetchClients(2, appCompatActivity);
+            AppUtils.fetchClients(2, context, loadingPanel);
 
         } else {
-            Utils.toast(2, 2, appCompatActivity.getString(R.string.warning_internet),
-                    appCompatActivity);
+            Utils.toast(2, 2, context.getString(R.string.warning_internet),
+                    context);
             loadingPanel.setVisibility(View.GONE);
         }
     }
 
-    private static void reloadActivities() {
+    private static void reloadActivities(RelativeLayout loadingPanel) {
 
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
             loadingPanel.setVisibility(View.VISIBLE);
@@ -415,7 +416,7 @@ public class DashboardActivity extends AppCompatActivity implements
             /*Intent serviceIntent = new Intent(DashboardActivity.this, SyncService.class);
             startService(serviceIntent);*/
 
-            AppUtils.syncAll(DashboardActivity.this);
+            AppUtils.syncAll(DashboardActivity.this, loadingPanel);
         } else {
             Utils.toast(2, 2, getString(R.string.warning_internet),
                     DashboardActivity.this);
@@ -562,7 +563,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
                 if (CareGiver.getDbCon() != null) {
 
-                    AppUtils.fetchActivitiesSync(DashboardActivity.this);
+                    AppUtils.fetchActivitiesSync(DashboardActivity.this, loadingPanel);
                     AppUtils.loadNotifications(DashboardActivity.this);
                     //todo optional refersh
                     AppUtils.refreshProvider(DashboardActivity.this);
@@ -682,10 +683,11 @@ public class DashboardActivity extends AppCompatActivity implements
 
             if (sessionManager.getProviderId() != null
                     && !sessionManager.getProviderId().equalsIgnoreCase(""))
-                appUtils.fetchActivities(sessionManager.getProviderId());
+                appUtils.fetchActivities(sessionManager.getProviderId(), appCompatActivity,
+                        loadingPanel);
 
         } else {
-            reloadActivities();
+            reloadActivities(loadingPanel);
             //Utils.toast(2, 2, getString(R.string.warning_internet), DashboardActivity.this);
         }
     }
@@ -743,11 +745,11 @@ public class DashboardActivity extends AppCompatActivity implements
             long diff = dateNow.getTime() - dateSynced.getTime();
 
             if (diff >= 20 * 60 * 1000) {
-                AppUtils.syncAll(DashboardActivity.this);
+                AppUtils.syncAll(DashboardActivity.this, loadingPanel);
                 sessionManager.saveSyncDate(strDateSynced);
             }
         } else {
-            AppUtils.syncAll(DashboardActivity.this);
+            AppUtils.syncAll(DashboardActivity.this, loadingPanel);
             sessionManager.saveSyncDate(strDateSynced);
         }
     }
@@ -814,13 +816,13 @@ public class DashboardActivity extends AppCompatActivity implements
                     }
 
                     if (Config.intSelectedMenu == Config.intNotificationScreen) {
-                        AppUtils.fetchActivitiesSync(DashboardActivity.this);
+                        AppUtils.fetchActivitiesSync(DashboardActivity.this, loadingPanel);
                         menuNotification(true);
                     }
                 }
 
                 if (iWhichLoad == 2) {
-                    AppUtils.fetchActivitiesSync(DashboardActivity.this);
+                    AppUtils.fetchActivitiesSync(DashboardActivity.this, loadingPanel);
                     AppUtils.loadNotifications(DashboardActivity.this);
                     //todo optional refersh
                     AppUtils.refreshProvider(DashboardActivity.this);

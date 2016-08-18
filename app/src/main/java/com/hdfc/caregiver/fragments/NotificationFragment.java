@@ -42,7 +42,9 @@ import java.util.ArrayList;
 public class NotificationFragment extends Fragment {
 
     public static NotificationAdapter notificationAdapter;
-    public static ListView listViewActivities;
+    public ListView listViewActivities;
+    //private static ProgressDialog progressDialog;
+    private RelativeLayout loadingPanel;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -52,7 +54,7 @@ public class NotificationFragment extends Fragment {
             if (message != null && !message.equalsIgnoreCase("")) {
                 showPushDialog(message);
 
-                AppUtils.fetchActivitiesSync(getActivity());
+                AppUtils.fetchActivitiesSync(getActivity(), loadingPanel);
                 AppUtils.loadNotifications(getActivity());
                 //todo optional refersh
                 AppUtils.refreshProvider(getActivity());
@@ -63,8 +65,6 @@ public class NotificationFragment extends Fragment {
             }
         }
     };
-    //private static ProgressDialog progressDialog;
-    private RelativeLayout loadingPanel;
     private Utils utils;
     private AppUtils appUtils;
 

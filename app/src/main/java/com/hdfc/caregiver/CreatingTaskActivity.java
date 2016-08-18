@@ -57,8 +57,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private boolean isClicked = false;
     private View focusView = null;
     private AutoCompleteTextView inputSearch;
-    private String _strDate, strAlert, strPushMessage, strSelectedCustomer, strDate,
-            strSelectedDependent;
+    private String _strDate;
+    private String strAlert;
+    private String strPushMessage;
+    private String strSelectedCustomer;
+    private String strSelectedDependent;
 
     private Utils utils;
     private AppUtils appUtils;
@@ -76,7 +79,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             // Do something with the date. This Date object contains
             // the date and time that the user has selected.
 
-            strDate = Utils.writeFormat.format(date);
+            String strDate = Utils.writeFormat.format(date);
             _strDate = Utils.readFormat.format(date);
             dateAnd.setText(strDate);
         }

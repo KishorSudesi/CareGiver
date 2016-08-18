@@ -1236,7 +1236,7 @@ public class FeatureActivity extends AppCompatActivity {
 
                         if (!file.exists() || file.length() <= 0) {
                             Utils.loadImageFromWeb(imageModel.getStrImageName(),
-                                    imageModel.getStrImageUrl());
+                                    imageModel.getStrImageUrl(), FeatureActivity.this);
                         }
                     }
                 }

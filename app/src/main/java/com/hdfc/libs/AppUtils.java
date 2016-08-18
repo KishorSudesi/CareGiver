@@ -3,6 +3,7 @@ package com.hdfc.libs;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.app42service.App42GCMController;
@@ -123,7 +124,7 @@ public class AppUtils {
 
             sessionManager.logoutUser();
             App42GCMController.clearPref(_context);
-            File fileImage = Utils.createFileInternal("images/");
+            File fileImage = Utils.createFileInternal("images/", _context);
             Utils.deleteAllFiles(fileImage);
 
         } catch (Exception e) {
@@ -262,7 +263,8 @@ public class AppUtils {
         }
     }
 
-    public static void fetchActivitiesSync(final Context context) {
+    public static void fetchActivitiesSync(final Context context, final RelativeLayout
+            loadingPanel) {
 
         String strDate = "";
 
@@ -375,7 +377,7 @@ public class AppUtils {
                                 CareGiver.getDbCon().endDBTransaction();
                             }
                         }
-                        fetchClients(1, context);
+                        fetchClients(1, context, loadingPanel);
                         /*if (DashboardActivity.isLoaded)
                             DashboardActivity.gotoSimpleActivityMenu(false);*/
                     }
@@ -383,7 +385,7 @@ public class AppUtils {
                     @Override
                     public void onException(Exception ex) {
                         Utils.log(ex.getMessage(), " Sync Activity Failure ");
-                        fetchClients(1, context);
+                        fetchClients(1, context, loadingPanel);
                         /*if (DashboardActivity.isLoaded)
                             DashboardActivity.gotoSimpleActivityMenu(false);*/
                     }
@@ -502,7 +504,8 @@ public class AppUtils {
         }
     }
 
-    private static void fetchDependents(final int iFlag, final Context context) {
+    private static void fetchDependents(final int iFlag, final Context context,
+                                        final RelativeLayout loadingPanel) {
 
         if (Utils.isConnectingToInternet(context)) {
 
@@ -601,9 +604,11 @@ public class AppUtils {
                                     }
                                     if (DashboardActivity.isLoaded) {
                                         if (iFlag == 2)
-                                            DashboardActivity.gotoSimpleActivityMenu(true);
+                                            DashboardActivity.gotoSimpleActivityMenu(true, context,
+                                                    loadingPanel);
                                         else
-                                            DashboardActivity.gotoSimpleActivityMenu(false);
+                                            DashboardActivity.gotoSimpleActivityMenu(false, context,
+                                                    loadingPanel);
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -615,9 +620,11 @@ public class AppUtils {
                                 Utils.log(e.getMessage(), " Dependent Failure");
                                 if (DashboardActivity.isLoaded) {
                                     if (iFlag == 2)
-                                        DashboardActivity.gotoSimpleActivityMenu(true);
+                                        DashboardActivity.gotoSimpleActivityMenu(true, context,
+                                                loadingPanel);
                                     else
-                                        DashboardActivity.gotoSimpleActivityMenu(false);
+                                        DashboardActivity.gotoSimpleActivityMenu(false, context,
+                                                loadingPanel);
                                 }
                             }
                         });
@@ -632,7 +639,8 @@ public class AppUtils {
         }
     }
 
-    private static void fetchCustomers(final int iFlag, final Context context) {
+    private static void fetchCustomers(final int iFlag, final Context context,
+                                       final RelativeLayout loadingPanel) {
 
         if (Utils.isConnectingToInternet(context)) {
 
@@ -738,7 +746,7 @@ public class AppUtils {
                                                     selectionArgs);
                                 }
                             }
-                                    fetchDependents(iFlag, context);
+                                    fetchDependents(iFlag, context, loadingPanel);
                         }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -748,7 +756,7 @@ public class AppUtils {
                         @Override
                         public void onException(Exception e) {
                             Utils.log(e.getMessage(), " MESS 0");
-                            fetchDependents(iFlag, context);
+                            fetchDependents(iFlag, context, loadingPanel);
                         }
 
                     });
@@ -756,7 +764,8 @@ public class AppUtils {
     }
 
     //refresh Clients = Customer->Dependents
-    public static void fetchClients(final int iFlag, final Context context) {
+    public static void fetchClients(final int iFlag, final Context context,
+                                    final RelativeLayout loadingPanel) {
 
         if (Utils.isConnectingToInternet(context)) {
 
@@ -827,24 +836,17 @@ public class AppUtils {
                                             }
                                         }
                                         sessionManager.saveClientDate(strDateNow);
-                                        //
+
                                         if (!((Activity) context).isFinishing()) {
 
-                                            if (Config.intSelectedMenu !=
-                                                    Config.intClientScreen) {
-                                                Utils.toast(
-                                                        1, 1,
-                                                        context.getString(R.string.new_clients),
-                                                        context);
-                                            } else {
-                                                //todo for refresh adapter
-                                            }
+                                            Utils.toast(1, 1,
+                                                    context.getString(R.string.new_clients),
+                                                    context);
                                         }
-                                        //
                                     }
                                 }
 
-                                fetchCustomers(iFlag, context);
+                                fetchCustomers(iFlag, context, loadingPanel);
                             } catch (Exception e1) {
                                 e1.printStackTrace();
                                 //fetchCustomers(iFlag);
@@ -854,7 +856,7 @@ public class AppUtils {
                         @Override
                         public void onException(Exception e) {
                             Utils.log(e.getMessage(), " Clients Failure ");
-                            fetchCustomers(iFlag, context);
+                            fetchCustomers(iFlag, context, loadingPanel);
                         }
                     });
         }
@@ -1154,11 +1156,11 @@ public class AppUtils {
         }
     }
 
-    public static void syncAll(Context context) {
+    public static void syncAll(Context context, RelativeLayout loadingPanel) {
 
         //todo add to Intent Service
         Utils.log(" 1 ", " syncAll ");
-        fetchActivitiesSync(context);
+        fetchActivitiesSync(context, loadingPanel);
         Utils.log(" 2 ", " syncAll ");
         loadNotifications(context);
         Utils.log(" 3 ", " syncAll ");
@@ -2341,7 +2343,8 @@ public class AppUtils {
         CareGiver.getDbCon().closeCursor(newCursor);
     }
 
-    public void fetchActivities(final String strProviderId) {
+    public void fetchActivities(final String strProviderId, final Context context,
+                                final RelativeLayout loadingPanel) {
 
         Query q1 = QueryBuilder.build("provider_id", strProviderId,
                 QueryBuilder.Operator.EQUALS);
@@ -2418,7 +2421,7 @@ public class AppUtils {
                         }
                         //fetchCustomers(1);
                         //DashboardActivity.reloadActivities();
-                        DashboardActivity.refreshClientsData();
+                        DashboardActivity.refreshClientsData(context, loadingPanel);
                     }
 
                     @Override
@@ -2426,7 +2429,7 @@ public class AppUtils {
                         Utils.log(ex.getMessage(), " f1 ");
                         //fetchCustomers(1);
                         //DashboardActivity.reloadActivities();
-                        DashboardActivity.refreshClientsData();
+                        DashboardActivity.refreshClientsData(context, loadingPanel);
                     }
                 });
     }
