@@ -76,23 +76,6 @@
                     android:text="@string/yrs"
                     android:textSize="15sp" />
 
-                <!-- <TextView
-                    android:id="@+id/textViewClient_problem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/high_bp"
-                    android:textSize="15sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/separator"
-                    android:textSize="15sp" />
-                <TextView
-                    android:id="@+id/textViewPremium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/premium"
-                    android:textSize="15sp" />-->
             </LinearLayout>
 
             <TextView

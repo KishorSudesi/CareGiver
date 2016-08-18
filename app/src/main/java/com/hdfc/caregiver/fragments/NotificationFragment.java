@@ -152,6 +152,41 @@ public class NotificationFragment extends Fragment {
             loadNotifications();
         }
 
+      /*  listViewActivities.setOnTouchListener(new OnSwipeTouchListener(getActivity(),
+                listViewActivities));*/
+
+      /*  listViewActivities.setOnTouchListener(new OnSwipeTouchListener(getActivity(),
+                listViewActivities){
+            public void onSwipeRight(int pos) {
+                Utils.log(String.valueOf(pos), "onSwipeRight 1");
+            }
+            public void onSwipeLeft(int pos) {
+                Utils.log(String.valueOf(pos), "onSwipeLeft 1");
+            }
+         *//*   public void onSwipeTop(int pos) {
+                Utils.log(String.valueOf(pos), "onSwipeTop 1");
+            }
+            public void onSwipeBottom(int pos) {
+                Utils.log(String.valueOf(pos), "onSwipeBottom 1");
+            }*//*
+        });*/
+
+        /*listViewActivities.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
+            public void onSwipeTop() {
+                Utils.log(String.valueOf(pos), "onSwipeRight");
+            }
+            public void onSwipeRight() {
+                Utils.log(String.valueOf(pos), "onSwipeRight");
+            }
+            public void onSwipeLeft() {
+                Utils.log(String.valueOf(pos), "onSwipeRight");
+            }
+            public void onSwipeBottom() {
+                Utils.log(String.valueOf(pos), "onSwipeRight");
+            }
+
+        });*/
+
         return view;
     }
 
