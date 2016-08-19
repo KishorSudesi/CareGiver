@@ -101,12 +101,12 @@ public class LoginActivity extends AppCompatActivity {
         }
 */
 
-        editEmail.setOnClickListener(new View.OnClickListener() {
+        /*editEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //showPasswordfield();
             }
-        });
+        });*/
 
      /*   editPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

@@ -12,11 +12,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
+        android:contentDescription="@string/menu_notification"
         android:padding="@dimen/padding_general"
         android:src="@drawable/notification_active" />
 
     <TextView
         android:id="@+id/text"
+        style="@style/TextViewSmallStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_general"

@@ -13,6 +13,7 @@
 
         <Button
             android:id="@+id/textViewTitle"
+            style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -20,11 +21,11 @@
             android:background="@drawable/button_success"
             android:padding="@dimen/padding_general"
             android:text="@string/delete_image"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/colorWhite" />
 
         <TextView
             android:id="@+id/textViewClose"
+            style="@style/LabelStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -32,7 +33,6 @@
             android:gravity="center"
             android:padding="@dimen/padding_general"
             android:text="@string/close"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/blue" />
 
     </LinearLayout>

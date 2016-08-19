@@ -10,135 +10,129 @@
         android:layout_margin="15dp"
         android:background="@color/colorWhite">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/milestoneName"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@color/colorWhite"
-                android:gravity="center"
-                android:padding="@dimen/padding_general"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/blue"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/blue" />
-
-            <LinearLayout
-                android:id="@+id/linearLayoutDialog"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_general"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_general" />
-
-            <RelativeLayout
-                android:id="@+id/loadingPanel"
-                style="@style/GenericProgressBackground"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="@dimen/margin_general"
-                android:visibility="gone">
-
-                <ProgressBar style="@style/GenericProgressIndicator" />
-            </RelativeLayout>
-
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:padding="@dimen/padding_general">
+                android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/dialogButtonAttach"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/milestoneName"
+                    style="@style/HeaderStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/colorWhite"
+                    android:gravity="center"
+                    android:padding="@dimen/padding_general"
+                    android:textColor="@color/blue"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/blue" />
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutDialog"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-
                     android:layout_margin="@dimen/margin_general"
-                    android:layout_marginTop="15dp"
-                    android:layout_weight="1"
-                    android:background="@color/blue"
-                    android:text="@string/attach_file"
-                    android:textAllCaps="false"
-                    android:textColor="@color/colorWhite"
-                    android:visibility="visible" />
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_general" />
 
-                <Button
-                    android:id="@+id/dialogButtonOK"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:id="@+id/loadingPanel"
+                    style="@style/GenericProgressBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="@dimen/margin_general"
+                    android:visibility="gone">
+
+                    <ProgressBar style="@style/GenericProgressIndicator" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/margin_general"
-                    android:layout_marginTop="15dp"
-                    android:layout_weight="1"
-                    android:background="@color/blue"
-                    android:text="@string/submit"
-                    android:textAllCaps="false"
-                    android:textColor="@color/colorWhite"
-                    android:visibility="visible" />
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/padding_general">
 
-                <Button
-                    android:id="@+id/buttonDone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/margin_general"
-                    android:layout_marginTop="15dp"
-                    android:layout_weight="1"
-                    android:background="@color/blue"
-                    android:text="@string/complete"
-                    android:textAllCaps="false"
-                    android:textColor="@color/colorWhite"
-                    android:visibility="gone" />
+                    <Button
+                        android:id="@+id/dialogButtonAttach"
+                        style="@style/ButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="@dimen/margin_general"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="1"
+                        android:background="@color/blue"
+                        android:text="@string/attach_file"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorWhite"
+                        android:visibility="visible" />
 
-                <Button
-                    android:id="@+id/buttonCancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/margin_general"
-                    android:layout_marginTop="15dp"
-                    android:layout_weight="1"
-                    android:background="#000000"
-                    android:text="@string/back"
-                    android:textAllCaps="false"
-                    android:textColor="@color/colorWhite"
-                    android:visibility="visible" />
+                    <Button
+                        android:id="@+id/dialogButtonOK"
+                        style="@style/ButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="@dimen/margin_general"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="1"
+                        android:background="@color/blue"
+                        android:text="@string/submit"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorWhite"
+                        android:visibility="visible" />
+
+                    <Button
+                        android:id="@+id/buttonDone"
+                        style="@style/ButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="@dimen/margin_general"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="1"
+                        android:background="@color/blue"
+                        android:text="@string/complete"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorWhite"
+                        android:visibility="gone" />
+
+                    <Button
+                        android:id="@+id/buttonCancel"
+                        style="@style/ButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="@dimen/margin_general"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="1"
+                        android:background="#000000"
+                        android:text="@string/back"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorWhite"
+                        android:visibility="visible" />
+
+                </LinearLayout>
+
+                <include
+                    android:id="@+id/include_footer_task_dialog"
+                    layout="@layout/dialog_view_attach"
+                    android:layout_width="match_parent"
+                    android:layout_height="140dp"
+                    android:layout_marginTop="15dp" />
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:padding="@dimen/padding_general">
+        </ScrollView>
 
-            </LinearLayout>
-
-            <include
-                android:id="@+id/include_footer_task_dialog"
-                layout="@layout/dialog_view_attach"
-                android:layout_width="match_parent"
-                android:layout_height="140dp"
-                android:layout_marginTop="15dp" />
-
-        </LinearLayout>
-
-    </ScrollView>
-
-</RelativeLayout>
+    </RelativeLayout>
 
 </LinearLayout>

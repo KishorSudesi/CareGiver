@@ -5,6 +5,7 @@
 
   <TextView
       android:id="@android:id/empty"
+      style="@style/LabelStyle"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:gravity="center"
@@ -26,6 +27,7 @@
       android:layout_gravity="bottom|end"
       android:layout_margin="15dp"
       android:background="@null"
+      android:contentDescription="@string/add_new_activity"
       android:src="@mipmap/add_icon" />
 
 </FrameLayout>

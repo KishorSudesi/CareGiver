@@ -14,15 +14,17 @@
             android:id="@+id/popupImage"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="@dimen/margin_general" />
+            android:layout_margin="@dimen/margin_general"
+            android:contentDescription="@string/loading" />
 
         <TextView
             android:id="@+id/textPopupName"
+            style="@style/HeaderStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_marginStart="10dp" />
 
     </LinearLayout>
 

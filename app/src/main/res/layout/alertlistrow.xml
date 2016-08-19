@@ -5,14 +5,11 @@
 
     <TextView
         android:id="@+id/textView_titllename"
+        style="@style/LabelStyle"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:padding="5dp"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceMedium">
-
-    </TextView>
+        android:padding="5dp" />
 
 </LinearLayout>

@@ -233,6 +233,7 @@ public class MilestoneActivity extends AppCompatActivity {
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT, 3));
                 textView.setText(fieldModel.getStrFieldLabel());
+                textView.setTextAppearance(this, R.style.LabelStyle);
 
                 linearLayout1.addView(textView);
 
@@ -246,6 +247,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     editText.setId(fieldModel.getiFieldID());
                     editText.setTag(R.id.one, fieldModel.isFieldRequired());
+                    editText.setTextAppearance(this, R.style.EditTextStyle);
                     editText.setLayoutParams(new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT, 2));
@@ -423,11 +425,14 @@ public class MilestoneActivity extends AppCompatActivity {
                                             new TimePickerDialog.OnTimeSetListener() {
                                                 @Override
                                                 public void onTimeSet(TimePicker timePicker,
-                                                                      int selectedHour, int selectedMinute) {
+                                                                      int selectedHour,
+                                                                      int selectedMinute) {
                                                     try {
 
-                                                        String strHour = String.valueOf(selectedHour);
-                                                        String strMinute = String.valueOf(selectedMinute);
+                                                        String strHour = String.valueOf(
+                                                                selectedHour);
+                                                        String strMinute = String.valueOf(
+                                                                selectedMinute);
 
                                                         if (selectedHour <= 9)
                                                             strHour = "0" + strHour;
@@ -474,7 +479,8 @@ public class MilestoneActivity extends AppCompatActivity {
                             ViewGroup.LayoutParams.WRAP_CONTENT,2));
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(MilestoneActivity.this,
-                            android.R.layout.select_dialog_item, fieldModel.getStrFieldValues());
+                            android.R.layout.simple_dropdown_item_1line,
+                            fieldModel.getStrFieldValues());
 
                     spinner.setAdapter(adapter);
 
@@ -615,12 +621,14 @@ public class MilestoneActivity extends AppCompatActivity {
                             editMedicineName.setInputType(InputType.TYPE_CLASS_TEXT);
                             editMedicineName.setText(jsonObjectMedicine.getString("medicine_name"));
                             editMedicineName.setEnabled(bEnabled);
+                            editMedicineName.setTextAppearance(this, R.style.EditTextStyle);
                             linearLayoutArrayExist.addView(editMedicineName);
 
                             EditText editMedicineQty = new EditText(MilestoneActivity.this);
                             editMedicineQty.setLayoutParams(new LinearLayout.LayoutParams(0,
                                     ViewGroup.LayoutParams.WRAP_CONTENT, 1));
                             editMedicineQty.setHint(getString(R.string.qunatity));
+                            editMedicineQty.setTextAppearance(this, R.style.EditTextStyle);
                             editMedicineQty.setTag("medicine_qty");
                             editMedicineQty.setInputType(InputType.TYPE_CLASS_NUMBER);
                             Utils.setEditTextMaxLength(editMedicineQty, 4);
@@ -635,6 +643,7 @@ public class MilestoneActivity extends AppCompatActivity {
                             buttonDel.setTextColor(Color.BLACK);
                             buttonDel.setPadding(5, 5, 5, 5);
                             buttonDel.setEnabled(bEnabled);
+                            buttonDel.setTextAppearance(this, R.style.ButtonStyle);
                             buttonDel.setBackgroundDrawable(getResources().getDrawable(R.drawable.
                                     circle));
                             buttonDel.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
@@ -676,6 +685,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         EditText editTextArray = new EditText(MilestoneActivity.this);
 
+                        editTextArray.setTextAppearance(this, R.style.EditTextStyle);
+
                         if (j == 0) {
                             editTextArray.setLayoutParams(new LinearLayout.LayoutParams(0,
                                     ViewGroup.LayoutParams.WRAP_CONTENT, 2));
@@ -703,6 +714,7 @@ public class MilestoneActivity extends AppCompatActivity {
                     Button buttonAdd = new Button(MilestoneActivity.this);
                     buttonAdd.setBackgroundDrawable(getResources().getDrawable(R.drawable.add_icon));
                     buttonAdd.setLayoutParams(new LinearLayout.LayoutParams(64, 64, 0));
+                    buttonAdd.setTextAppearance(this, R.style.ButtonStyle);
                     buttonAdd.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -725,6 +737,9 @@ public class MilestoneActivity extends AppCompatActivity {
                                     for (int j = 0; j < fieldModel.getiArrayCount(); j++) {
 
                                         EditText editTextArray = new EditText(MilestoneActivity.this);
+
+                                        editTextArray.setTextAppearance(MilestoneActivity.this,
+                                                R.style.EditTextStyle);
 
                                         if (j == 0) {
                                             editTextArray.setLayoutParams(new LinearLayout.
@@ -753,6 +768,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                     buttonDel.setText("X");
                                     buttonDel.setTextColor(Color.BLACK);
                                     buttonDel.setEnabled(finalBEnabled);
+                                    buttonDel.setTextAppearance(MilestoneActivity.this,
+                                            R.style.ButtonStyle);
                                     buttonDel.setPadding(5, 5, 5, 5);
                                     buttonDel.setBackgroundDrawable(getResources().
                                             getDrawable(R.drawable.circle));
@@ -1013,7 +1030,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 enteredDate = Utils.writeFormat.parse(data);
                                             }
 
-                                            if (fieldModel.getStrFieldType().equalsIgnoreCase("date")) {
+                                            if (fieldModel.getStrFieldType().
+                                                    equalsIgnoreCase("date")) {
                                                 strdateCopy = Utils.writeFormatDate.format(calendar.
                                                         getTime());
                                                 dateNow = Utils.writeFormatDate.parse(strdateCopy);
@@ -1037,7 +1055,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                         if (iValidFlag == 1) {
 
-                                            isDateChanged = milestoneModel.getStrMilestoneScheduledDate()
+                                            isDateChanged = milestoneModel.
+                                                    getStrMilestoneScheduledDate()
                                                     != null && !milestoneModel.
                                                     getStrMilestoneScheduledDate().
                                                     equalsIgnoreCase(strDate);
@@ -1052,8 +1071,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                         if (iFlag == 2 && !bFuture) {
                                             if (dateNow.compareTo(enteredDate) < 0) {
                                                 bClose = false;
-                                                Utils.log(String.valueOf(dateNow + " ! " + enteredDate)
-                                                        , " NOW ");
+                                                Utils.log(String.valueOf(dateNow + " ! "
+                                                        + enteredDate), " NOW ");
                                             }
                                         }
 
@@ -1433,8 +1452,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                 , Config.collectionActivity};
 
                         Cursor cursor = CareGiver.getDbCon().fetch(DbHelper.strTableNameCollection,
-                                DbHelper.COLLECTION_FIELDS, selection, selectionArgs, null, "0, 1", true,
-                                null, null
+                                DbHelper.COLLECTION_FIELDS, selection, selectionArgs, null, "0, 1",
+                                true, null, null
                         );
 
                         if (cursor.getCount() > 0) {
@@ -1458,7 +1477,8 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 "collection_name", "new_updated"},
                                         selectionArgs);
 
-                                AppUtils.insertActivityDate(act.getStrActivityID(), jsonObject.toString());
+                                AppUtils.insertActivityDate(act.getStrActivityID(),
+                                        jsonObject.toString());
 
                             } catch (JSONException e) {
                                 e.printStackTrace();

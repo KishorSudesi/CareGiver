@@ -8,15 +8,14 @@
         android:id="@+id/includeHeaderCreatingTasks"
         layout="@layout/header_common" />
 
-
     <TextView
         android:id="@+id/textViewHeaderCreatingTask"
+        style="@style/HeaderStyle"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center_horizontal"
         android:paddingTop="10dp"
         android:text="@string/header_creating_task"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/new_blue" />
 
     <TextView
@@ -32,26 +31,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            >
+            android:paddingTop="@dimen/activity_horizontal_margin">
 
             <TextView
                 android:id="@+id/textViewClientName"
+                style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general"
                 android:text="@string/clientNameModel"
-                android:textColor="@android:color/secondary_text_dark"
-                android:textSize="@dimen/label_text"
-                />
+                android:textColor="@android:color/secondary_text_dark" />
 
             <AutoCompleteTextView
                 android:id="@+id/inputSearch"
+                style="@style/AutoCompleteTextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/client_name"
                 android:drawablePadding="@dimen/padding_general"
+                android:drawableStart="@drawable/client_name"
                 android:inputType="textVisiblePassword"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general" />
@@ -59,14 +59,14 @@
 
             <TextView
                 android:id="@+id/textViewDependentName"
+                style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general"
                 android:text="@string/dependentName"
-                android:textColor="@android:color/secondary_text_dark"
-                android:textSize="@dimen/label_text" />
+                android:textColor="@android:color/secondary_text_dark" />
 
             <Spinner
                 android:id="@+id/spindependentList"
@@ -81,15 +81,14 @@
 
             <TextView
                 android:id="@+id/textViewServices"
+                style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general"
                 android:text="@string/service_category"
-                android:textColor="@android:color/secondary_text_dark"
-                android:textSize="@dimen/label_text"
-                />
+                android:textColor="@android:color/secondary_text_dark" />
 
             <Spinner
                 android:id="@+id/inputSearchServices"
@@ -98,6 +97,7 @@
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:drawableLeft="@drawable/service_giver_agent_icon"
                 android:drawablePadding="@dimen/padding_general"
+                android:drawableStart="@drawable/service_giver_agent_icon"
                 android:inputType="text"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general" />
@@ -105,14 +105,14 @@
 
             <TextView
                 android:id="@+id/textViewServicesCategory"
+                style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general"
                 android:text="@string/services"
-                android:textColor="@android:color/secondary_text_dark"
-                android:textSize="@dimen/label_text" />
+                android:textColor="@android:color/secondary_text_dark" />
 
             <Spinner
                 android:id="@+id/spinServiceList"
@@ -121,40 +121,45 @@
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:drawableLeft="@drawable/service_giver_agent_icon"
                 android:drawablePadding="@dimen/padding_general"
+                android:drawableStart="@drawable/service_giver_agent_icon"
                 android:inputType="text"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general" />
 
             <TextView
                 android:id="@+id/textViewTitle"
+                style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general"
                 android:text="@string/title"
-                android:textColor="@android:color/secondary_text_dark"
-                android:textSize="@dimen/label_text"
-                />
+                android:textColor="@android:color/secondary_text_dark" />
 
             <EditText
                 android:id="@+id/editTextTitle"
+                style="@style/EditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/add_note"
                 android:drawablePadding="@dimen/padding_general"
+                android:drawableStart="@drawable/add_note"
+                android:inputType="text"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general" />
 
 
             <EditText
                 android:id="@+id/editDob"
+                style="@style/EditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="20dp"
                 android:drawableLeft="@drawable/calendar_date_picker"
                 android:drawablePadding="@dimen/padding_general"
+                android:drawableStart="@drawable/calendar_date_picker"
                 android:focusableInTouchMode="false"
                 android:hint="@string/dateAndTime"
                 android:inputType="textPersonName"
@@ -172,19 +177,16 @@
 
             <Button
                 android:id="@+id/textViewDoneHeaderCreatingTask"
+                style="@style/ButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginBottom="15dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="7dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:background="@drawable/button_success"
                 android:gravity="center"
                 android:text="@string/done"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/colorWhite" />
-
-
-
 
         </LinearLayout>
 

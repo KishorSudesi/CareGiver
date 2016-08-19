@@ -22,7 +22,6 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_gravity="center_horizontal">
 
                 <ImageView
@@ -30,6 +29,7 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_margin="@dimen/margin_general"
+                    android:contentDescription="@string/loading"
                     android:padding="@dimen/padding_general"
                     android:src="@drawable/person_icon" />
 
@@ -53,17 +53,23 @@
 
             <TextView
                 android:id="@+id/textViewText"
+                style="@style/TextViewSmallStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+                android:paddingEnd="13dp"
                 android:paddingLeft="13dp"
+                android:paddingStart="13dp"
                 android:textColor="#333333" />
 
             <TextView
                 android:id="@+id/textReadMore"
+                style="@style/TextViewSmallStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingEnd="13dp"
                 android:paddingLeft="13dp"
+                android:paddingStart="13dp"
                 android:text="@string/read_more"
                 android:textColor="@color/colorPrimaryDark"
                 android:textStyle="bold" />
@@ -76,17 +82,21 @@
 
                 <TextView
                     android:id="@+id/textViewName"
+                    style="@style/TextViewSmallStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="13dp"
+                    android:layout_marginStart="13dp"
                     android:textColor="@color/colorPrimaryDark"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/textViewTime"
+                    style="@style/TextViewSmallStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
                     android:textColor="@color/colorPrimaryDark"
                     android:textStyle="bold"
                     />
@@ -97,9 +107,4 @@
 
     </LinearLayout>
 
-    <!-- <RelativeLayout
-         android:layout_width="match_parent"
-         android:layout_height="0.75dp"
-         android:background="@color/blue">
-     </RelativeLayout>-->
 </LinearLayout>

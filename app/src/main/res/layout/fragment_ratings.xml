@@ -16,22 +16,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
             <TextView
                 android:id="@+id/textViewFeedback"
+                style="@style/HeaderStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:padding="10dp"
                 android:text="@string/feedback"
-                android:textColor="@color/colorPrimary"
-                android:textSize="24sp" />
+                android:textColor="@color/colorPrimary" />
 
             <Button
                 android:id="@+id/buttonlogout"
                 android:layout_width="30dp"
                 android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
+                android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/account_type"
@@ -59,6 +60,7 @@
                     android:layout_width="0dp"
                     android:layout_height="80dp"
                     android:layout_weight="0.5"
+                    android:contentDescription="@string/loading"
                     android:paddingTop="12dp" />
 
                 <ProgressBar
@@ -77,10 +79,13 @@
 
                     <TextView
                         android:id="@+id/userrating"
+                        style="@style/TextViewSmallStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="35dp"
-                        android:text="User Ratings" />
+                        android:paddingRight="35dp"
+                        android:paddingStart="35dp"
+                        android:text="@string/user_ratings" />
 
                     <RatingBar
                         android:id="@+id/ratingBar"
@@ -91,34 +96,27 @@
                         android:isIndicator="true"
                         android:numStars="5" />
 
-
-                    <!-- <LinearLayout
-                         android:id="@+id/linearLayoutRatings"
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:orientation="horizontal">
-
-                     </LinearLayout>-->
-
                     <TextView
                         android:id="@+id/name"
+                        style="@style/LabelStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingTop="7dp"
-                        android:text="Service Giver Name"
-                        android:textSize="24dp" />
+                        android:paddingTop="7dp" />
+
                 </LinearLayout>
+
             </LinearLayout>
 
             <TextView
                 android:id="@android:id/empty"
+                style="@style/LabelStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/linearLayoutUserRatings"
                 android:layout_margin="10dp"
                 android:gravity="center"
                 android:text="@string/noFeedbacks"
-                android:visibility="invisible" />
+                android:visibility="gone" />
 
             <ListView
                 android:id="@+id/listViewRatings"
@@ -128,11 +126,10 @@
                 android:layout_margin="10dp"
                 android:divider="@color/blue"
                 android:dividerHeight="1dp"
-                android:visibility="invisible">
-
-            </ListView>
+                android:visibility="invisible" />
 
         </RelativeLayout>
+
     </LinearLayout>
 
 </FrameLayout>

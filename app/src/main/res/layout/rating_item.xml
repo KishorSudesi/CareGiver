@@ -15,8 +15,8 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginTop="20dp"
-            android:src="@drawable/person_icon"
-            />
+            android:contentDescription="@string/loading"
+            android:src="@drawable/person_icon" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -28,6 +28,7 @@
 
         <TextView
             android:id="@+id/txtMessage"
+            style="@style/LabelStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
@@ -35,11 +36,11 @@
             android:layout_marginTop="20dp"
             android:layout_toEndOf="@+id/imageViewRatingsItem"
             android:layout_toRightOf="@+id/imageViewRatingsItem"
-            android:paddingBottom="15dp"
-            android:textSize="15sp" />
+            android:paddingBottom="15dp" />
 
         <TextView
             android:id="@+id/txtTime"
+            style="@style/LabelStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txtMessage"
@@ -49,17 +50,17 @@
             android:layout_toEndOf="@+id/imageViewRatingsItem"
             android:layout_toRightOf="@+id/imageViewRatingsItem"
             android:paddingBottom="15dp"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15sp" />
+            android:textColor="@color/colorPrimary" />
 
 
         <ImageView
             android:id="@+id/imageViewRatingsSmily"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/txtMessage"
-            />
+            android:layout_below="@+id/txtMessage" />
+
     </RelativeLayout>
 
 </LinearLayout>

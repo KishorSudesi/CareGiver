@@ -3,16 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin">
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin">
 
     <TextView
+        style="@style/LabelStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/edit_text_margin"
         android:gravity="center|center_horizontal"
         android:text="@string/attachments"
-        android:textColor="@color/colorWhite"
-        />
+        android:textColor="@color/black" />
 
     <HorizontalScrollView
         android:id="@+id/horizontal_scroll"

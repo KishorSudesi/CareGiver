@@ -7,19 +7,18 @@
 
     <include
         android:id="@+id/header"
-        layout="@layout/header_common">
-    </include>
+        layout="@layout/header_common" />
 
     <TextView
         android:id="@+id/textViewNotification"
+        style="@style/HeaderStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/header"
         android:layout_centerHorizontal="true"
         android:padding="10dp"
         android:text="@string/menu_notification"
-        android:textColor="@color/colorPrimary"
-        android:textSize="24sp" />
+        android:textColor="@color/colorPrimary" />
 
     <ImageView
         android:id="@+id/imageViewLine"
@@ -40,6 +39,7 @@
 
     <TextView
         android:id="@android:id/empty"
+        style="@style/LabelStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/header"

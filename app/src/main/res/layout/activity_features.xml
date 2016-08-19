@@ -7,15 +7,13 @@
 
     <include
         android:id="@+id/header"
-        layout="@layout/header_common"
-        />
+        layout="@layout/header_common" />
 
     <include
         android:id="@+id/include_header_my_tasks"
         layout="@layout/feature_list_header"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        />
+        android:layout_height="70dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -32,6 +30,7 @@
 
         <TextView
             android:id="@+id/txtActivityName"
+            style="@style/TextViewSmallStyle"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_margin="@dimen/margin_general"
@@ -43,6 +42,7 @@
 
         <TextView
             android:id="@+id/txtActivityTime"
+            style="@style/TextViewSmallStyle"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_margin="@dimen/margin_general"
@@ -118,6 +118,7 @@
             android:orientation="vertical">
 
             <TextView
+                style="@style/HeaderStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/edit_text_margin"

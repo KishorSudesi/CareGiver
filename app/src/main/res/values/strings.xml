@@ -3,6 +3,7 @@
     <string name="notification_name">New Zeal Specialist</string>
 
     <string name="back">Back</string>
+    <string name="calendar">Calendar</string>
     <string name="ok">OK</string>
     <string name="by">&#160;By&#160;</string>
     <string name="cancel">Cancel</string>
@@ -96,7 +97,7 @@
     <string name="yes">Yes</string>
     <string name="separator">  |  </string>
 
-    <string name="attachments">View Attachments</string>
+    <string name="attachments">Attachments</string>
     <string name="upload">Upload</string>
     <string name="noClients">No Clients</string>
 
@@ -109,7 +110,8 @@
 
     <string name="features">Features</string>
 
-    <string name="loading">Loading..</string>
+    <string name="loading">Loading…</string>
+    <string name="location">Location</string>
     <string name="uploading_image">Uploading image..</string>
     <string name="update_profile_image">Profile picture updated</string>
     <string name="error_load_images">Error Loading Data. Try Again!!!</string>
@@ -136,6 +138,8 @@
 
     <!--Info/App Specific Strings-->
     <string name="enter_captcha">Valid Captcha required</string>
+    <string name="enter_captcha_text">Enter Captcha</string>
+    <string name="captcha_cs">*Captcha is case sensitive</string>
     <string name="verify_identity_password">Verifying…</string>
     <string name="your_details_saved">Your Details Saved</string>
     <string name="dependents">Dependents</string>
