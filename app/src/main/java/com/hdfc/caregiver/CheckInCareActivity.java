@@ -770,7 +770,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                 if (subActivityName.equalsIgnoreCase("utility_bills")){
 
-                                    if (utilityName.equalsIgnoreCase("water ")) {
+                                    if (utilityName.equalsIgnoreCase("water")) {
                                         if(dueStatus.equals("N")) {
                                             spinner.setSelection(0);
                                         }else{
@@ -2169,7 +2169,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                 JSONObject jsonObjectSubActivitiesHome2 = new JSONObject();
                 jsonObjectSubActivitiesHome2.put("sub_activity_name", "utility_bills");
-                jsonObjectSubActivitiesHome2.put("utility_name", "water ");
+                jsonObjectSubActivitiesHome2.put("utility_name", "water");
                 jsonObjectSubActivitiesHome2.put("due_status", items[0]);
                 jsonObjectSubActivitiesHome2.put("due_date", txtwater.getText().toString());
                 jsonObjectSubActivitiesHome2.put("status", waterstatus.getText().toString());
@@ -2632,7 +2632,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                 JSONObject jsonObjectSubActivitiesHome2 = new JSONObject();
                 jsonObjectSubActivitiesHome2.put("sub_activity_name", "utility_bills");
-                jsonObjectSubActivitiesHome2.put("utility_name", "water ");
+                jsonObjectSubActivitiesHome2.put("utility_name", "water");
                 jsonObjectSubActivitiesHome2.put("due_status", items[0]);
                 jsonObjectSubActivitiesHome2.put("due_date", txtwater.getText().toString());
                 jsonObjectSubActivitiesHome2.put("status", waterstatus.getText().toString());

@@ -686,13 +686,13 @@ public class AppUtils {
 
 
             //todo uncomment for not showing all customers
-            /*Query mQuery1 = null;
+          /*  Query mQuery1 = null;
             if (strCustomerIds.size() > 0) {
                 mQuery1 = QueryBuilder.build("_id", strCustomerIds,
                         QueryBuilder.Operator.INLIST);
-            }*/
+            }
 
-           /* if (mQuery1 != null) {
+            if (mQuery1 != null) {
                 Query q1 = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
                         finalQuery);
 

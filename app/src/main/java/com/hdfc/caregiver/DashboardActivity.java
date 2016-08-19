@@ -645,7 +645,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        //CareGiver.getDbCon().getDb();
+        CareGiver.getDbCon().getDb();
         //super.onBackPressed();
 
         mTracker.send(new HitBuilders.EventBuilder()

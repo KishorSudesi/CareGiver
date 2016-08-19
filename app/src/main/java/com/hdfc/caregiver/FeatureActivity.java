@@ -974,7 +974,7 @@ public class FeatureActivity extends AppCompatActivity {
                 textViewName.setTextAppearance(this, R.style.MilestoneStyle);
                 textViewName.setText(milestoneModel.getStrMilestoneName());
                 textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
-                textViewName.setPadding(25, 10, 0, 0);
+                textViewName.setPadding(25, 20, 0, 20);
                 textViewName.setGravity(Gravity.CENTER|Gravity.LEFT);
                /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
