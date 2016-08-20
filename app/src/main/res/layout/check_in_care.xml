@@ -18,7 +18,7 @@
         android:layout_gravity="center_horizontal"
         android:paddingTop="10dp"
         android:text="@string/check_in_care"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        style="@style/HeaderStyle"
         android:textColor="@color/new_blue" />
 
     <TextView
@@ -77,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:textColor="@color/blue"
-                android:textSize="20dp" />
+                 />
 
             </RelativeLayout>
 
@@ -102,7 +102,7 @@
                     android:padding="10dp"
                     android:layout_weight="0.4"
                     android:text="Pick Date"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    style="@style/LabelStyle" />
 
 
                 <LinearLayout
@@ -127,7 +127,8 @@
                         android:layout_height="match_parent"
                         android:gravity="center|left"
                         android:layout_marginLeft="10dp"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:text="Select Date"
+                        style="@style/TextViewSmallStyle" />
 
             </LinearLayout>
             </LinearLayout>
@@ -181,7 +182,7 @@
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:text="CheckInCare Receipents"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    style="@style/LabelStyle" />
 
                 <Spinner
                     android:id="@+id/dependentspinner"
@@ -217,13 +218,15 @@
                 android:layout_margin="10dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="30dp"
                     android:layout_weight="0.8"
                     android:gravity="left"
                     android:text="Home Essentials"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    style="@style/TextViewLargeStyle"
+                    android:id="@+id/textView3" />
 
                 <TextView
                     android:id="@+id/homeessentialstatus"
@@ -231,7 +234,7 @@
                     android:layout_height="25dp"
                     android:layout_weight="0.2"
                     android:gravity="left"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    style="@style/TextViewSmallStyle"
                     android:textSize="15sp"
                     android:visibility="gone" />
 
@@ -250,7 +253,7 @@
                 android:layout_weight="0.8"
                 android:gravity="left"
                 android:text="Utility Bills"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                style="@style/LabelStyle" />
 
                 <TextView
                     android:id="@+id/utilitystatus"
@@ -258,7 +261,7 @@
                     android:layout_height="25dp"
                     android:layout_weight="0.2"
                     android:gravity="left"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    style="@style/TextViewSmallStyle"
                     android:textSize="15sp"
                     android:visibility="gone" />
 
@@ -281,7 +284,7 @@
                     android:padding="5dp"
                     android:textColor="@color/colorWhite"
                     android:text="Types of Bills"
-                    android:textSize="12sp" />
+                    style="@style/TextViewSmallStyle" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -292,7 +295,7 @@
                     android:padding="5dp"
                     android:text="Paid Y/N"
                     android:textColor="@color/colorWhite"
-                    android:textSize="12sp" />
+                    style="@style/TextViewSmallStyle" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -303,7 +306,7 @@
                     android:padding="5dp"
                     android:text="Due Date"
                     android:textColor="@color/colorWhite"
-                    android:textSize="12sp" />
+                    style="@style/TextViewSmallStyle" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -314,7 +317,7 @@
                     android:padding="5dp"
                     android:text="Status"
                     android:textColor="@color/colorWhite"
-                    android:textSize="12sp" />
+                    style="@style/TextViewSmallStyle" />
 
             </LinearLayout>
             <LinearLayout
@@ -333,7 +336,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Water/Property tax"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
 
                 <Spinner
                     android:id="@+id/spinner"
@@ -359,7 +362,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="Due Date"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                     <ImageView
                         android:id="@+id/pick_date"
@@ -377,7 +380,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Status"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
 
             </LinearLayout>
             <LinearLayout
@@ -396,7 +399,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Gas"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
 
                 <Spinner
                     android:id="@+id/spinner1"
@@ -422,7 +425,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="Due Date"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                     <ImageView
                         android:id="@+id/pick_date2"
@@ -440,7 +443,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Status"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
 
             </LinearLayout>
             <LinearLayout
@@ -459,7 +462,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Electricity"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
 
                 <Spinner
                     android:id="@+id/spinner2"
@@ -485,7 +488,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="Due Date"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                     <ImageView
                         android:id="@+id/pick_date3"
@@ -503,7 +506,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Status"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
 
             </LinearLayout>
             <LinearLayout
@@ -522,7 +525,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Telephone/Mobile"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
 
                 <Spinner
                     android:id="@+id/spinner3"
@@ -548,7 +551,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="Due Date"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                     <ImageView
                         android:id="@+id/pick_date4"
@@ -566,7 +569,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Status"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
 
             </LinearLayout>
 
@@ -582,9 +585,9 @@
                 android:layout_width="0dp"
                 android:layout_height="25dp"
                 android:layout_weight="0.8"
-            android:gravity="left"
+                android:gravity="left"
                 android:text="Kitchen Equipments"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                style="@style/LabelStyle" />
 
             <TextView
                 android:id="@+id/kitchenequipmentstatus"
@@ -592,15 +595,14 @@
                 android:layout_height="25dp"
                 android:layout_weight="0.2"
                 android:gravity="left"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="15sp"
+                style="@style/TextViewSmallStyle"
                 android:visibility="gone" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_marginTop="5dp"
                 android:orientation="horizontal"
                 android:weightSum="1">
@@ -612,13 +614,14 @@
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:text="Kitchen Equipments"
-                    android:textSize="12sp" />
+                    style="@style/TextViewSmallStyle" />
 
                 <CheckBox
                     android:id="@+id/kitchenequipcheck"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.1"/>
+                    android:layout_weight="0.1"
+                    style="@style/CheckBoxStyle"/>
 
                 <EditText
                     android:id="@+id/kitchen_equipments"
@@ -626,6 +629,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.6"
                     android:maxLength="80"
+                    style="@style/EditTextStyle"
                     android:padding="10dp" />
 
             </LinearLayout>
@@ -644,7 +648,7 @@
                     android:layout_weight="0.8"
                     android:gravity="left"
                     android:text="Grocery"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    style="@style/LabelStyle" />
 
                 <TextView
                     android:id="@+id/grocerystatus"
@@ -652,8 +656,7 @@
                     android:layout_height="25dp"
                     android:layout_weight="0.2"
                     android:gravity="left"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="15sp"
+                    style="@style/TextViewSmallStyle"
                     android:visibility="gone" />
 
             </LinearLayout>
@@ -673,13 +676,14 @@
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:text="Grocery"
-                    android:textSize="12sp" />
+                    style="@style/TextViewSmallStyle" />
 
                 <CheckBox
                     android:id="@+id/grocerycheck"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.1"/>
+                    android:layout_weight="0.1"
+                    style="@style/CheckBoxStyle"/>
 
                 <EditText
                     android:id="@+id/grocery"
@@ -687,6 +691,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.6"
                     android:maxLength="80"
+                    style="@style/EditTextStyle"
                     android:padding="10dp" />
 
             </LinearLayout>
@@ -709,7 +714,7 @@
                 android:layout_weight="0.8"
                 android:gravity="left"
                 android:text="Equipment/Automobile Status"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                style="@style/TextViewLargeStyle" />
 
                 <TextView
                     android:id="@+id/equipmentstatus"
@@ -717,8 +722,7 @@
                     android:layout_height="30dp"
                     android:layout_weight="0.2"
                     android:gravity="left"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="15sp"
+                    style="@style/TextViewSmallStyle"
                     android:visibility="gone" />
 
             </LinearLayout>
@@ -737,13 +741,14 @@
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:text="Electronics"
-                    android:textSize="15sp" />
+                    style="@style/TextViewSmallStyle" />
                 
                 <CheckBox
                     android:id="@+id/electrocheck"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.1"/>
+                    android:layout_weight="0.1"
+                    style="@style/CheckBoxStyle"/>
 
                 <EditText
                     android:id="@+id/electronics"
@@ -751,6 +756,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.6"
                     android:maxLength="80"
+                    style="@style/EditTextStyle"
                     android:padding="10dp" />
 
             </LinearLayout>
@@ -768,13 +774,14 @@
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:text="Home Appliances"
-                    android:textSize="15sp" />
+                    style="@style/TextViewSmallStyle" />
 
                 <CheckBox
                     android:id="@+id/homecheck"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.1"/>
+                    android:layout_weight="0.1"
+                    style="@style/CheckBoxStyle"/>
 
                 <EditText
                     android:id="@+id/homeapplience"
@@ -782,6 +789,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.6"
                     android:maxLength="80"
+                    style="@style/EditTextStyle"
                     android:padding="10dp" />
 
             </LinearLayout>
@@ -800,13 +808,14 @@
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:text="Automobile"
-                    android:textSize="15sp" />
+                    style="@style/TextViewSmallStyle" />
 
                 <CheckBox
                     android:id="@+id/autocheck"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.1"/>
+                    android:layout_weight="0.1"
+                    style="@style/CheckBoxStyle"/>
 
                 <EditText
                     android:id="@+id/automobile"
@@ -814,6 +823,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.6"
                     android:maxLength="80"
+                    style="@style/EditTextStyle"
                     android:padding="10dp" />
 
             </LinearLayout>
@@ -835,7 +845,7 @@
                     android:layout_weight="0.8"
                     android:gravity="left"
                     android:text="Domestic Help Status"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    style="@style/TextViewLargeStyle" />
 
                 <TextView
                     android:id="@+id/domestichelpstatus"
@@ -843,8 +853,7 @@
                     android:layout_height="30dp"
                     android:layout_weight="0.2"
                     android:gravity="left"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="15sp"
+                    style="@style/TextViewSmallStyle"
                     android:visibility="gone" />
 
             </LinearLayout>
@@ -864,13 +873,14 @@
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:text="Maid Services"
-                    android:textSize="15sp" />
+                    style="@style/TextViewSmallStyle" />
 
                 <CheckBox
                     android:id="@+id/domesticcheck"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.1"/>
+                    android:layout_weight="0.1"
+                    style="@style/CheckBoxStyle"/>
 
                 <EditText
                     android:id="@+id/maidservices"
@@ -878,6 +888,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.6"
                     android:maxLength="80"
+                    style="@style/EditTextStyle"
                     android:padding="10dp" />
 
             </LinearLayout>
@@ -897,12 +908,13 @@
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:text="Driver Status"
-                    android:textSize="15sp" />
+                    style="@style/TextViewSmallStyle" />
 
                 <CheckBox
                     android:id="@+id/drivercheck"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    style="@style/CheckBoxStyle"
                     android:layout_weight="0.1"/>
 
                 <EditText
@@ -911,6 +923,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.6"
                     android:maxLength="80"
+                    style="@style/EditTextStyle"
                     android:padding="10dp" />
 
             </LinearLayout>
@@ -932,7 +945,7 @@
                     android:layout_weight="0.8"
                     android:gravity="left"
                     android:text="Photo Upload"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    style="@style/TextViewLargeStyle" />
 
                 <TextView
                     android:id="@+id/uploadmediastatus"
@@ -940,7 +953,7 @@
                     android:layout_height="30dp"
                     android:layout_weight="0.2"
                     android:gravity="left"
-                    android:textSize="15sp"
+                    style="@style/TextViewSmallStyle"
                     android:visibility="gone" />
 
             </LinearLayout>
@@ -959,7 +972,7 @@
                     android:gravity="center"
                     android:text="Living Room"
                     android:textColor="@color/colorWhite"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    style="@style/LabelStyle" />
 
                 <TextView
                     android:id="@+id/hallstatus"
@@ -968,7 +981,7 @@
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@+id/buttonHallAdd"
                     android:gravity="center"
-                    android:textSize="15sp"
+                    style="@style/TextViewSmallStyle"
                     android:visibility="gone" />
 
 
@@ -1024,6 +1037,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="@string/upload"
+                    style="@style/ButtonStyle"
                     android:textColor="@color/colorWhite"
                     />
             </RelativeLayout>
@@ -1041,7 +1055,7 @@
                     android:gravity="center"
                     android:text="Kitchen"
                     android:textColor="@color/colorWhite"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    style="@style/LabelStyle" />
 
                 <TextView
                     android:id="@+id/kitchenstatus"
@@ -1050,7 +1064,7 @@
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@+id/buttonKitchenAdd"
                     android:gravity="center"
-                    android:textSize="15sp"
+                    style="@style/TextViewSmallStyle"
                     android:visibility="gone" />
 
 
@@ -1106,6 +1120,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="@string/upload"
+                    style="@style/ButtonStyle"
                     android:textColor="@color/colorWhite"
                     />
             </RelativeLayout>
@@ -1123,7 +1138,7 @@
                     android:gravity="center"
                     android:text="Washroom"
                     android:textColor="@color/colorWhite"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    style="@style/LabelStyle" />
 
                 <TextView
                     android:id="@+id/washroomstatus"
@@ -1132,7 +1147,7 @@
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@+id/buttonWashroomAdd"
                     android:gravity="center"
-                    android:textSize="15sp"
+                    style="@style/TextViewSmallStyle"
                     android:visibility="gone" />
 
 
@@ -1188,6 +1203,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="@string/upload"
+                    style="@style/ButtonStyle"
                     android:textColor="@color/colorWhite"
                     />
             </RelativeLayout>
@@ -1206,7 +1222,7 @@
                     android:gravity="center"
                     android:text="Bedroom"
                     android:textColor="@color/colorWhite"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    style="@style/LabelStyle" />
 
                 <TextView
                     android:id="@+id/bedroomstatus"
@@ -1215,7 +1231,7 @@
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@+id/buttonBedroomAdd"
                     android:gravity="center"
-                    android:textSize="15sp"
+                    style="@style/TextViewSmallStyle"
                     android:visibility="gone" />
 
                 <Button
@@ -1270,6 +1286,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="@string/upload"
+                    style="@style/ButtonStyle"
                     android:textColor="@color/colorWhite"
                     />
             </RelativeLayout>
@@ -1289,11 +1306,11 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.6"
                     android:gravity="left|center"
                     android:padding="10dp"
                     android:text="Comment For Photos"
-                    android:textSize="15sp" />
+                    style="@style/LabelStyle" />
 
 
 
@@ -1301,9 +1318,10 @@
                     android:id="@+id/mediacomment"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.4"
                     android:maxLength="80"
-                    android:padding="10dp" />
+                    android:padding="10dp"
+                    style="@style/EditTextStyle"/>
 
             </LinearLayout>
 
@@ -1330,7 +1348,7 @@
                     android:gravity="center"
                     android:text="Update"
                     android:visibility="invisible"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    style="@style/ButtonStyle"
                     android:textColor="@color/colorWhite" />
 
                 <Button
@@ -1342,7 +1360,7 @@
                     android:background="@drawable/button_success"
                     android:gravity="center"
                     android:text="Submit"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    style="@style/ButtonStyle"
                     android:textColor="@color/colorWhite" />
 
             </LinearLayout>

@@ -458,6 +458,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
         if (clientnametxt != null) {
             clientnametxt.setText(strClientName);
+            clientnametxt.setTextAppearance(this,R.style.LabelStyle);
         }
 
         if (client != null) {
