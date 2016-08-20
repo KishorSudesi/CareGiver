@@ -193,7 +193,7 @@ public class App42GCMService extends IntentService {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
-        mBuilder.setSmallIcon(R.drawable.icon_notification)
+        mBuilder.setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.notification_name))
                 .setContentText(msg).setWhen(when).setNumber(++msgCount)
                 .setDefaults(1).setDefaults(2)
