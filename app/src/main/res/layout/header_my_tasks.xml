@@ -14,7 +14,6 @@
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
         android:text="@string/my_tasks"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/blue" />
 
     <LinearLayout
