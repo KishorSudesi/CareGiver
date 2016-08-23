@@ -36,7 +36,7 @@
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
     <string name="forgot">Forgot?</string>
-    <string name="for_text">&#160;For&#160;</string>
+    <string name="for_text">&#160;for&#160;</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="submit">Submit</string>
     <string name="reschedule">Reschedule</string>
@@ -293,24 +293,26 @@
     <!-- <string name="google_app_id">910502819263</string>-->
 
     <!--Notifications Strings-->
-    <string name="notification_body_1">Notification from New Zeal Care Services.The task&#160;</string>
-    <string name="notification_body_2">&#160;has been updated&#160;</string>
+    <string name="notification_body_1">The task&#160;</string>
+    <string name="notification_body_2">&#160;has been Scheduled/Updated&#160;</string>
+    <string name="notification_body_2_1">&#160;has been Updated&#160;</string>
     <string name="notification_body_3">&#160;On Activity&#160;</string>
     <string name="notification_body_4">&#160;by&#160;</string>
+    <string name="notification_body_5">Details,&#160;</string>
 
-    <string name="notification_closure_body_1">Notification from New Zeal Care Services.</string>
-    <string name="notification_closure_body_2">Thank you for using&#160;</string>
-    <string name="notification_closure_body_3">&#160;from our Care Services.</string>
-    <string name="notification_closure_body_4">Please share your feedback on the overall experience with our service.</string>
+    <string name="notification_closure_body_1">Thank you for using&#160;</string>
+    <string name="notification_closure_body_2">&#160;facilitated by New Zeal. Kindly share your feedback in the New Zeal app.</string>
 
-    <string name="notification_closure_body_provider_2">The service request for &#160;</string>
-    <string name="notification_closure_body_provider_3">&#160; with New Zeal Care Services has been rescheduled. We deeply regret the inconvenience caused.</string>
+    <string name="notification_closure_body_3">The service request for&#160;</string>
 
-    <string name="notification_closure_body_dependnet_2">&#160;has been rescheduled. As per request by &#160;</string>
-    <string name="notification_checkincare">Notification from New Zeal Care Services. Check in Care summary has been updated.</string>
+    <string name="notification_closure_body_provider_1">&#160;facilitated by New Zeal has been rescheduled. We regret the inconvenience caused.</string>
+
+    <string name="notification_closure_body_dependnet_1">&#160;facilitated by New Zeal has been rescheduled based on request received from&#160;</string>
+
+    <string name="notification_checkincare">Check in Care summary has been updated. Log on to our app to view your account.</string>
 
 
-    <string name="notification_service_create">&#160;Service Request for&#160;</string>
+    <string name="notification_service_create">Service Request for&#160;</string>
     <string name="notification_service_create_2">&#160;has been received.</string>
 
     <string name="save_settings">Save Profile</string>

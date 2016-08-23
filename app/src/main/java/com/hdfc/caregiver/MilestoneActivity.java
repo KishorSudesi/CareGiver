@@ -966,6 +966,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
         boolean b = true, bClose = true;
 
+        String mStrTaskMess1 = "";
+
         try {
 
             Calendar calendar = Calendar.getInstance();
@@ -975,6 +977,8 @@ public class MilestoneActivity extends AppCompatActivity {
             int iIndex = 0;
 
             int iClose = 0;
+
+            int mFieldIndex = 0;
 
             boolean isDateChanged;
 
@@ -991,6 +995,8 @@ public class MilestoneActivity extends AppCompatActivity {
                     for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
 
                         //text
+                        mFieldIndex++;
+
                         if (fieldModel.getStrFieldType().equalsIgnoreCase("text")
                                 || fieldModel.getStrFieldType().equalsIgnoreCase("number")
                                 || fieldModel.getStrFieldType().equalsIgnoreCase("datetime")
@@ -1198,6 +1204,23 @@ public class MilestoneActivity extends AppCompatActivity {
                                 utils.toast(2, 2, getString(R.string.error_medicines));
                             }
                         }
+
+                        if (iIndex == 1) {
+
+                            if (fieldModel.getStrFieldLabel() != null
+                                    && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")) {
+
+                                if (fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")) {
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + fieldModel.getStrFieldData();
+
+                                    if (mFieldIndex < milestoneModel.getFieldModels().size()) {
+                                        mStrTaskMess1 += ", ";
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     if (b) {
@@ -1214,45 +1237,68 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         if (strActivityStatus.equalsIgnoreCase("completed")) {
 
-                            if (strCloseStatus.equalsIgnoreCase("SuccessFul")) {
+                            if (strCloseStatus.equalsIgnoreCase("successful")) {
                                 strPushMessage = getString(R.string.notification_closure_body_1)
-                                        + getString(R.string.notification_closure_body_2)
                                         + act.getStrActivityName()
-                                        + getString(R.string.notification_closure_body_3)
-                                        + getString(R.string.notification_closure_body_4);
+                                        + getString(R.string.notification_closure_body_2);
                             }
 
-                            if (strCloseStatus.equalsIgnoreCase("UnSuccessFul")) {
-                                if (strCloseUser.equalsIgnoreCase("Customer")) {
-                                    strPushMessage = getString(R.string.notification_closure_body_1)
-                                            + getString(R.string.notification_closure_body_provider_2)
+                            if (strCloseStatus.equalsIgnoreCase("unsuccessful")) {
+                                if (strCloseUser.equalsIgnoreCase("vendor")) {
+                                    strPushMessage = getString(
+                                            R.string.notification_closure_body_3)
                                             + act.getStrActivityName()
-                                            + getString(R.string.notification_closure_body_provider_3);
+                                            + getString(
+                                            R.string.notification_closure_body_provider_1);
                                 } else {
-                                    strPushMessage = getString(R.string.notification_closure_body_1)
-                                            + getString(R.string.notification_closure_body_provider_2)
+                                    strPushMessage = getString(R.string.notification_closure_body_3)
                                             + act.getStrActivityName()
-                                            + getString(R.string.notification_closure_body_dependnet_2)
-                                            + strDependentName;
+                                            + getString(
+                                            R.string.notification_closure_body_dependnet_1)
+                                            + strDependentName + ".";
                                 }
                             }
 
                         } else {
                             strPushMessage = "";
-                            strPushMessage += getString(R.string.notification_body_1)
-                                    + milestoneModel.getStrMilestoneName()
-                                    + getString(R.string.notification_body_2);
 
-                            if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
-                                strPushMessage += getString(R.string.scheduled_to)
-                                        + Utils.formatDate(strScheduledDate);
+                            if (iIndex != 1) {
+                                strPushMessage += getString(R.string.notification_body_1)
+                                        + milestoneModel.getStrMilestoneName()
+                                        + getString(R.string.notification_body_2_1);
+
+                                if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
+                                    strPushMessage += getString(R.string.scheduled_to)
+                                            + Utils.formatDate(strScheduledDate);
+                                }
+
+                                strPushMessage += getString(R.string.for_text) + strDependentName
+                                        + getString(R.string.notification_body_3)
+                                        + act.getStrActivityName()
+                                        + getString(R.string.notification_body_4)
+                                        + Config.providerModel.getStrName();
+                            } else {
+
+                                //for first tasks (appointment etc...)
+                                strPushMessage += getString(R.string.notification_body_1)
+                                        + milestoneModel.getStrMilestoneName()
+                                        + getString(R.string.notification_body_2);
+
+                               /* if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
+                                    strPushMessage += getString(R.string.scheduled_to)
+                                            + Utils.formatDate(strScheduledDate);
+                                }*/
+
+                                strPushMessage += getString(R.string.for_text) + strDependentName
+                                        + getString(R.string.notification_body_3)
+                                        + act.getStrActivityName()
+                                        + getString(R.string.notification_body_4)
+                                        + Config.providerModel.getStrName() + "."
+                                        + getString(R.string.notification_body_5)
+                                        + mStrTaskMess1;
+                                //
+
                             }
-
-                            strPushMessage += getString(R.string.for_text) + strDependentName
-                                    + getString(R.string.notification_body_3)
-                                    + act.getStrActivityName()
-                                    + getString(R.string.notification_body_4)
-                                    + Config.providerModel.getStrName();
                         }
 
                         //todo check date format

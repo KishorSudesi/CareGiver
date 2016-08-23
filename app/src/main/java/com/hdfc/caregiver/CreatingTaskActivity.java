@@ -706,12 +706,14 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                             response.getJsonDocList().get(0).getDocId(),
                                             response.getJsonDocList().get(0).getJsonDoc());
 
-                                    strPushMessage = getString(R.string.notification_closure_body_1)
-                                            + getString(R.string.notification_service_create)
+                                    strPushMessage = getString(R.string.notification_service_create)
                                             + serviceModel.getStrServiceName()
                                             + getString(R.string.by)
                                             + dependentModel.getStrName()
                                             + getString(R.string.notification_service_create_2);
+
+                                    /*getString(R.string.notification_closure_body_1)
+                                            + */
 
                                     jsonObject = new JSONObject();
 
