@@ -151,6 +151,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private ProgressDialog mProgressDialog;
     private String items[], strSelectedDate;
     private PermissionHelper permissionHelper;
+    private Date selectedDate0 = null;
+    private Date selectedDate1 = null;
+    private Date selectedDate2 = null;
+    private Date selectedDate3 = null;
+    private Date selectedDate4 = null;
+
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -162,6 +168,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             // the date and time that the user has selected.
 
             //strDate = Utils.writeFormatDateMY.format(date);
+
             strSelectedDate = Utils.readFormatLocalDB.format(date);
 
             String strwaterDate = Utils.writeFormatDateMY.format(date);
@@ -188,15 +195,19 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             String _strgasDate = Utils.readFormat.format(date);*/
 
             if (isClicked == 0) {
+                selectedDate0 = date;
                 txtwater.setText(strwaterDate);
             }
             if (isClicked == 1) {
+                selectedDate1 = date;
                 txtgas.setText(strgasDate);
             }
             if (isClicked == 2) {
+                selectedDate2 = date;
                 txtelectricity.setText(strelectricityDate);
             }
             if (isClicked == 3) {
+                selectedDate3 = date;
                 txttelephone.setText(strtelephoneDate);
             }
           /*  if (isClicked == 4) {
@@ -216,6 +227,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         @Override
         public void onDateTimeSet(Date date) {
 
+            selectedDate4 = date;
             String strDate = Utils.writeFormatDateMY.format(date);
 
             strcheckincare = Utils.queryFormatday.format(date);
@@ -361,7 +373,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     datetxt.setError(null);
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
                             .setListener(listener1)
-                            .setInitialDate(new Date())
+                            .setInitialDate(selectedDate4)
                             .build()
                             .show();
                 }
@@ -1223,7 +1235,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     isClicked = 0;
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
                             .setListener(listener)
-                            .setInitialDate(new Date())
+                            .setInitialDate(selectedDate0)
                             .build()
                             .show();
                 }
@@ -1234,7 +1246,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     isClicked = 1;
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
                             .setListener(listener)
-                            .setInitialDate(new Date())
+                            .setInitialDate(selectedDate1)
                             .build()
                             .show();
                 }
@@ -1245,7 +1257,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     isClicked = 2;
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
                             .setListener(listener)
-                            .setInitialDate(new Date())
+                            .setInitialDate(selectedDate2)
                             .build()
                             .show();
                 }
@@ -1257,7 +1269,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     isClicked = 3;
                     new SlideDateTimePicker.Builder(getSupportFragmentManager())
                             .setListener(listener)
-                            .setInitialDate(new Date())
+                            .setInitialDate(selectedDate3)
                             .build()
                             .show();
                 }

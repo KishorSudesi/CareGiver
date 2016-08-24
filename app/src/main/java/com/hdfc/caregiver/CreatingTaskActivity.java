@@ -69,6 +69,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private JSONObject jsonObject;
     private int mDependentPosition = -1;
     private ProgressDialog progressDialog;
+    private Date selectedDate = null;
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -78,7 +79,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             // date.getTime();
             // Do something with the date. This Date object contains
             // the date and time that the user has selected.
-
+            selectedDate = date;
             String strDate = Utils.writeFormat.format(date);
             _strDate = Utils.readFormat.format(date);
             dateAnd.setText(strDate);
@@ -149,7 +150,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
             public void onClick(View v) {
                 new SlideDateTimePicker.Builder(getSupportFragmentManager())
                         .setListener(listener)
-                        .setInitialDate(new Date())
+                        .setInitialDate(selectedDate)
                         .build()
                         .show();
             }

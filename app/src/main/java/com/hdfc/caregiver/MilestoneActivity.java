@@ -96,6 +96,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private Utils utils;
     private PermissionHelper permissionHelper;
     private String strCloseUser, strCloseStatus, strDependentName;
+    private Date selectedDate = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -280,6 +281,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                 public void onDateTimeSet(Date date) {
                                     // Do something with the date. This Date object contains
                                     // the date and time that the user has selected.
+                                    selectedDate = date;
 
                                     String strDate = "";
 
@@ -378,7 +380,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                         new SlideDateTimePicker.Builder(getSupportFragmentManager())
                                                 .setListener(listener)
-                                                .setInitialDate(setDate)
+                                                .setInitialDate(selectedDate)
                                                 .build()
                                                 .show();
                                     }
