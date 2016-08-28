@@ -1250,6 +1250,7 @@ public class AppUtils {
 
                 activityModel.setStrServcieID(jsonObject.optString("service_id"));
                 activityModel.setStrServiceName(jsonObject.optString("service_name"));
+                activityModel.setmServiceNo(jsonObject.optInt("service_no"));
 
                 if (jsonObject.has("activity_date")) {
                     activityModel.setStrActivityDate(jsonObject.getString("activity_date"));
@@ -2564,6 +2565,7 @@ public class AppUtils {
 
                 activityModel.setStrServcieID(jsonObject.optString("service_id"));
                 activityModel.setStrServiceName(jsonObject.optString("service_name"));
+                activityModel.setmServiceNo(jsonObject.optInt("service_no"));
 
                 if (jsonObject.has("activity_date")) {
                     activityModel.setStrActivityDate(jsonObject.getString("activity_date"));

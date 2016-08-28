@@ -968,7 +968,9 @@ public class MilestoneActivity extends AppCompatActivity {
 
         boolean b = true, bClose = true;
 
-        String mStrTaskMess1 = "";
+        //todo place variables from loop here
+
+        String mStrTaskMess1;
 
         try {
 
@@ -977,10 +979,10 @@ public class MilestoneActivity extends AppCompatActivity {
             String strScheduledDate;
 
             int iIndex = 0;
-
             int iClose = 0;
-
             int mFieldIndex = 0;
+
+            Date date = calendar.getTime();
 
             boolean isDateChanged;
 
@@ -990,9 +992,9 @@ public class MilestoneActivity extends AppCompatActivity {
 
                 if (milestoneModel.getiMilestoneId() == iMileStoneId) {
 
-                    Date date = calendar.getTime();
 
                     strScheduledDate = "";
+                    mStrTaskMess1 = "";
 
                     for (FieldModel fieldModel : milestoneModel.getFieldModels()) {
 
@@ -1207,18 +1209,260 @@ public class MilestoneActivity extends AppCompatActivity {
                             }
                         }
 
-                        if (iIndex == 1) {
+                        if (milestoneModel.getiMilestoneId() == 1) {
 
-                            if (fieldModel.getStrFieldLabel() != null
-                                    && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")) {
+                            //todo specific notifications
 
-                                if (fieldModel.getStrFieldData() != null
-                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")) {
+                            if (act.getmServiceNo() == 101) {
+                                //medical test
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 11
+                                        || fieldModel.getiFieldID() == 14)) {
+
+                                    if (fieldModel.getiFieldID() == 14) {
+                                        mStrTaskMess1 += getString(R.string.on);
+                                    }
+
                                     mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + fieldModel.getStrFieldData();
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
 
-                                    if (mFieldIndex < milestoneModel.getFieldModels().size()) {
-                                        mStrTaskMess1 += ", ";
+                            } else if (act.getmServiceNo() == 203) {
+                                //repairs and maintenance
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 12
+                                        || fieldModel.getiFieldID() == 11
+                                        || fieldModel.getiFieldID() == 13)) {
+
+                                    if (fieldModel.getiFieldID() == 11) {
+                                        mStrTaskMess1 += getString(R.string.for_text);
+                                    }
+
+                                    if (fieldModel.getiFieldID() == 13) {
+                                        mStrTaskMess1 += getString(R.string.on);
+                                    }
+
+                                    if (fieldModel.getiFieldID() == 12) {
+                                        mStrTaskMess1 += getString(R.string.with_text);
+                                    }
+
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
+
+                            } else if (act.getmServiceNo() == 103) {
+                                //medical purchase
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 12
+                                        || fieldModel.getiFieldID() == 13)) {
+
+                                    if (fieldModel.getiFieldID() == 12) {
+                                        mStrTaskMess1 += getString(R.string.with_text);
+                                    }
+
+                                    if (fieldModel.getiFieldID() == 13) {
+                                        mStrTaskMess1 += getString(R.string.on);
+                                    }
+
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
+
+                            } else if (act.getmServiceNo() == 301) {
+                                //Entertainment
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 11
+                                        || fieldModel.getiFieldID() == 12)) {
+
+                                    if (fieldModel.getiFieldID() == 12) {
+                                        mStrTaskMess1 += getString(R.string.with_text);
+                                    }
+
+                                    if (fieldModel.getiFieldID() == 11) {
+                                        mStrTaskMess1 += getString(R.string.on);
+                                    }
+
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
+
+                            } else if (act.getmServiceNo() == 301) {
+                                //Entertainment
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 11
+                                        || fieldModel.getiFieldID() == 12)) {
+
+                                    if (fieldModel.getiFieldID() == 12) {
+                                        mStrTaskMess1 += getString(R.string.with_text);
+                                    }
+
+                                    if (fieldModel.getiFieldID() == 11) {
+                                        mStrTaskMess1 += getString(R.string.on);
+                                    }
+
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
+
+                            } else if (act.getmServiceNo() == 401) {
+                                //social care
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 11
+                                        || fieldModel.getiFieldID() == 12)) {
+
+                                    if (fieldModel.getiFieldID() == 11) {
+                                        mStrTaskMess1 += getString(R.string.on);
+                                    }
+
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
+
+                            } else if (act.getmServiceNo() == 402) {
+                                //home visit
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 11
+                                        || fieldModel.getiFieldID() == 12)) {
+
+                                    if (fieldModel.getiFieldID() == 11) {
+                                        mStrTaskMess1 += getString(R.string.on);
+                                    }
+
+                                    if (fieldModel.getiFieldID() == 12) {
+                                        mStrTaskMess1 += "." + getString(R.string.space);
+                                    }
+
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
+
+                            } else if (act.getmServiceNo() == 102) {
+                                //doctor visit
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 11
+                                        || fieldModel.getiFieldID() == 12
+                                        || fieldModel.getiFieldID() == 13)) {
+
+                                    if (fieldModel.getiFieldID() == 13) {
+                                        mStrTaskMess1 += getString(R.string.on);
+                                    }
+
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
+
+                            } else if (act.getmServiceNo() == 201) {
+                                //maid service
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 11
+                                        || fieldModel.getiFieldID() == 12
+                                        || fieldModel.getiFieldID() == 14
+                                        || fieldModel.getiFieldID() == 15)) {
+
+                                    if (fieldModel.getiFieldID() == 12) {
+                                        mStrTaskMess1 += getString(R.string.with_text);
+                                    }
+
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
+
+                            } else if (act.getmServiceNo() == 202) {
+                                //grocery purchase
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 12
+                                        || fieldModel.getiFieldID() == 13)) {
+
+                                    if (fieldModel.getiFieldID() == 12) {
+                                        mStrTaskMess1 += getString(R.string.with_text);
+                                    }
+
+                                    if (fieldModel.getiFieldID() == 13) {
+                                        mStrTaskMess1 += getString(R.string.on);
+                                    }
+
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
+
+                            } else if (act.getmServiceNo() == 502) {
+                                //non-medical emergency care
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")
+                                        && fieldModel.getStrFieldData() != null
+                                        && !fieldModel.getStrFieldData().equalsIgnoreCase("")
+                                        && (fieldModel.getiFieldID() == 12)) {
+
+                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                            + getString(R.string.space)
+                                            + fieldModel.getStrFieldData()
+                                            + getString(R.string.space);
+                                }
+
+                            } else {
+
+                                if (fieldModel.getStrFieldLabel() != null
+                                        && !fieldModel.getStrFieldLabel().equalsIgnoreCase("")) {
+
+                                    if (fieldModel.getStrFieldData() != null
+                                            && !fieldModel.getStrFieldData().equalsIgnoreCase("")) {
+                                        mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
+                                                + getString(R.string.space)
+                                                + fieldModel.getStrFieldData();
+
+                                        if (mFieldIndex < milestoneModel.getFieldModels().size()) {
+                                            mStrTaskMess1 += "," + getString(R.string.space);
+                                        }
                                     }
                                 }
                             }
@@ -1234,74 +1478,8 @@ public class MilestoneActivity extends AppCompatActivity {
                             strActivityStatus = "completed";
                         }
 
-                        //todo change message
-                        String strPushMessage = "";
-
-                        if (strActivityStatus.equalsIgnoreCase("completed")) {
-
-                            if (strCloseStatus.equalsIgnoreCase("successful")) {
-                                strPushMessage = getString(R.string.notification_closure_body_1)
-                                        + act.getStrActivityName()
-                                        + getString(R.string.notification_closure_body_2);
-                            }
-
-                            if (strCloseStatus.equalsIgnoreCase("unsuccessful")) {
-                                if (strCloseUser.equalsIgnoreCase("vendor")) {
-                                    strPushMessage = getString(
-                                            R.string.notification_closure_body_3)
-                                            + act.getStrActivityName()
-                                            + getString(
-                                            R.string.notification_closure_body_provider_1);
-                                } else {
-                                    strPushMessage = getString(R.string.notification_closure_body_3)
-                                            + act.getStrActivityName()
-                                            + getString(
-                                            R.string.notification_closure_body_dependnet_1)
-                                            + strDependentName + ".";
-                                }
-                            }
-
-                        } else {
-                            strPushMessage = "";
-
-                            if (iIndex != 1) {
-                                strPushMessage += getString(R.string.notification_body_1)
-                                        + milestoneModel.getStrMilestoneName()
-                                        + getString(R.string.notification_body_2_1);
-
-                                if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
-                                    strPushMessage += getString(R.string.scheduled_to)
-                                            + Utils.formatDate(strScheduledDate);
-                                }
-
-                                strPushMessage += getString(R.string.for_text) + strDependentName
-                                        + getString(R.string.notification_body_3)
-                                        + act.getStrActivityName()
-                                        + getString(R.string.notification_body_4)
-                                        + Config.providerModel.getStrName();
-                            } else {
-
-                                //for first tasks (appointment etc...)
-                                strPushMessage += getString(R.string.notification_body_1)
-                                        + milestoneModel.getStrMilestoneName()
-                                        + getString(R.string.notification_body_2);
-
-                               /* if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
-                                    strPushMessage += getString(R.string.scheduled_to)
-                                            + Utils.formatDate(strScheduledDate);
-                                }*/
-
-                                strPushMessage += getString(R.string.for_text) + strDependentName
-                                        + getString(R.string.notification_body_3)
-                                        + act.getStrActivityName()
-                                        + getString(R.string.notification_body_4)
-                                        + Config.providerModel.getStrName() + "."
-                                        + getString(R.string.notification_body_5)
-                                        + mStrTaskMess1;
-                                //
-
-                            }
-                        }
+                        String strPushMessage = createPushNotification(milestoneModel,
+                                strScheduledDate, mStrTaskMess1);
 
                         //todo check date format
 
@@ -1356,6 +1534,189 @@ public class MilestoneActivity extends AppCompatActivity {
         if (b) {
             uploadImage(v, iMileStoneId, viewGroup, iFlag);
         }
+    }
+
+    private String createPushNotification(MilestoneModel milestoneModel, String strScheduledDate,
+                                          String mStrTaskMess1) {
+
+        String strPushMessage = "";
+
+        if (strActivityStatus.equalsIgnoreCase("completed")) {
+
+            if (strCloseStatus.equalsIgnoreCase("successful")) {
+                strPushMessage = getString(R.string.notification_closure_body_1)
+                        + act.getStrActivityName() + getString(R.string.notification_closure_body_2);
+            }
+
+            if (strCloseStatus.equalsIgnoreCase("unsuccessful")) {
+                if (strCloseUser.equalsIgnoreCase("vendor")) {
+                    strPushMessage = getString(R.string.notification_closure_body_3)
+                            + act.getStrActivityName()
+                            + getString(R.string.notification_closure_body_provider_1);
+                } else {
+                    strPushMessage = getString(R.string.notification_closure_body_3)
+                            + act.getStrActivityName() + getString(
+                            R.string.notification_closure_body_dependnet_1) + strDependentName + ".";
+                }
+            }
+
+        } else {
+
+            if (milestoneModel.getiMilestoneId() != 1) {
+                strPushMessage = getString(R.string.notification_body_1)
+                        + milestoneModel.getStrMilestoneName()
+                        + getString(R.string.notification_body_2_1);
+
+                if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
+                    strPushMessage += getString(R.string.scheduled_to)
+                            + Utils.formatDate(strScheduledDate);
+                }
+
+                strPushMessage += getString(R.string.for_text) + strDependentName
+                        + getString(R.string.notification_body_3) + act.getStrActivityName()
+                        + getString(R.string.notification_body_4)
+                        + Config.providerModel.getStrName();
+            } else {
+
+                //todo specific notifications
+
+                if (act.getmServiceNo() == 501) {
+                    //Emergency Care
+                    strPushMessage = getString(R.string.specific_notification_1)
+                            + strDependentName + getString(R.string.specific_notification_1_1);
+
+                } else if (act.getmServiceNo() == 101) {
+                    //medical test
+                    strPushMessage = getString(R.string.specific_notification_2)
+                            + strDependentName;
+
+                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                        strPushMessage += mStrTaskMess1;
+                    }
+
+                } else if (act.getmServiceNo() == 203) {
+                    //repairs and maintenance
+                    strPushMessage = getString(R.string.specific_notification_3)
+                            + strDependentName + getString(R.string.notification_placed);
+
+                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                        strPushMessage += mStrTaskMess1;
+                    }
+
+                } else if (act.getmServiceNo() == 103) {
+                    //medical purchase
+                    strPushMessage = getString(R.string.specific_notification_4)
+                            + strDependentName + getString(R.string.notification_placed);
+
+                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                        strPushMessage += mStrTaskMess1;
+                    }
+
+                } else if (act.getmServiceNo() == 401) {
+                    //medical purchase
+                    strPushMessage = getString(R.string.specific_notification_5)
+                            + strDependentName + getString(R.string.notification_scheduled);
+
+                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                        strPushMessage += mStrTaskMess1;
+                    }
+                } else if (act.getmServiceNo() == 302) {
+                    //shopping
+                    strPushMessage = getString(R.string.specific_notification_6)
+                            + strDependentName + getString(R.string.notification_placed);
+                } else if (act.getmServiceNo() == 301) {
+                    //entertainment
+                    strPushMessage = getString(R.string.specific_notification_7)
+                            + strDependentName + getString(R.string.notification_placed);
+
+                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                        strPushMessage += mStrTaskMess1;
+                    }
+
+                } else if (act.getmServiceNo() == 402) {
+                    //home visit
+                    strPushMessage = getString(R.string.specific_notification_8)
+                            + strDependentName + getString(R.string.notification_scheduled);
+
+                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                        strPushMessage += mStrTaskMess1;
+                    }
+
+                    strPushMessage += getString(R.string.specific_notification_8_1)
+                            + strDependentName + getString(R.string.notification_for_service);
+
+                } else if (act.getmServiceNo() == 102) {
+                    //doctor visit
+                    strPushMessage = getString(R.string.specific_notification_9)
+                            + strDependentName + getString(R.string.notification_scheduled)
+                            + getString(R.string.space);
+
+                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                        strPushMessage += mStrTaskMess1;
+                    }
+                } else if (act.getmServiceNo() == 201) {
+                    //maid service
+                    strPushMessage = getString(R.string.specific_notification_10)
+                            + strDependentName + getString(R.string.notification_placed);
+
+                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                        strPushMessage += mStrTaskMess1;
+                    }
+                } else if (act.getmServiceNo() == 202) {
+                    //grocery purchase
+                    strPushMessage = getString(R.string.specific_notification_11)
+                            + strDependentName + getString(R.string.notification_placed);
+
+                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                        strPushMessage += mStrTaskMess1;
+                    }
+                } else if (act.getmServiceNo() == 502) {
+                    //non-medical emergency care
+                    strPushMessage = getString(R.string.specific_notification_12)
+                            + strDependentName + getString(R.string.notification_placed);
+
+                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                        strPushMessage += mStrTaskMess1;
+                    }
+
+                    strPushMessage += getString(R.string.specific_notification_12_1);
+
+                } else {
+                    //general
+                    strPushMessage = getString(R.string.notification_body_1)
+                            + milestoneModel.getStrMilestoneName()
+                            + getString(R.string.notification_body_2);
+
+                    strPushMessage += getString(R.string.for_text)
+                            + strDependentName
+                            + getString(R.string.notification_body_3)
+                            + act.getStrActivityName()
+                            + getString(R.string.notification_body_4)
+                            + Config.providerModel.getStrName() + "."
+                            + getString(R.string.notification_body_5)
+                            + mStrTaskMess1;
+
+                    //
+                }
+
+                //for first tasks (appointment etc...)
+               /* strPushMessage += getString(R.string.notification_body_1)
+                        + milestoneModel.getStrMilestoneName()
+                        + getString(R.string.notification_body_2);*/
+
+               /* strPushMessage += getString(R.string.for_text) + strDependentName
+                        + getString(R.string.notification_body_3)
+                        + act.getStrActivityName()
+                        + getString(R.string.notification_body_4)
+                        + Config.providerModel.getStrName() + "."
+                        + getString(R.string.notification_body_5)
+                        + mStrTaskMess1;*/
+                //
+
+            }
+        }
+
+        return strPushMessage;
     }
 
 
