@@ -1211,8 +1211,6 @@ public class MilestoneActivity extends AppCompatActivity {
 
                         if (milestoneModel.getiMilestoneId() == 1) {
 
-                            //todo specific notifications
-
                             if (act.getmServiceNo() == 101) {
                                 //medical test
                                 if (fieldModel.getStrFieldLabel() != null
@@ -1471,11 +1469,16 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     if (b) {
 
-                        if (iFlag == 2 && bClose)
+                        if (iFlag == 2 && bClose) {
                             milestoneModel.setStrMilestoneStatus("completed");
+                        }
+
+                        //Utils.log("strActivityStatus", strActivityStatus);
 
                         if (iIndex == act.getMilestoneModels().size() && iFlag == 2 && bClose) {
                             strActivityStatus = "completed";
+                        } else {
+                            strActivityStatus = "inprocess";
                         }
 
                         String strPushMessage = createPushNotification(milestoneModel,
@@ -1545,7 +1548,8 @@ public class MilestoneActivity extends AppCompatActivity {
 
             if (strCloseStatus.equalsIgnoreCase("successful")) {
                 strPushMessage = getString(R.string.notification_closure_body_1)
-                        + act.getStrActivityName() + getString(R.string.notification_closure_body_2);
+                        + act.getStrActivityName()
+                        + getString(R.string.notification_closure_body_2);
             }
 
             if (strCloseStatus.equalsIgnoreCase("unsuccessful")) {
@@ -1555,8 +1559,9 @@ public class MilestoneActivity extends AppCompatActivity {
                             + getString(R.string.notification_closure_body_provider_1);
                 } else {
                     strPushMessage = getString(R.string.notification_closure_body_3)
-                            + act.getStrActivityName() + getString(
-                            R.string.notification_closure_body_dependnet_1) + strDependentName + ".";
+                            + act.getStrActivityName()
+                            + getString(R.string.notification_closure_body_dependnet_1)
+                            + strDependentName + ".";
                 }
             }
 
@@ -1577,8 +1582,6 @@ public class MilestoneActivity extends AppCompatActivity {
                         + getString(R.string.notification_body_4)
                         + Config.providerModel.getStrName();
             } else {
-
-                //todo specific notifications
 
                 if (act.getmServiceNo() == 501) {
                     //Emergency Care

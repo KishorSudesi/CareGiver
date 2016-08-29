@@ -1,7 +1,5 @@
 package com.hdfc.models;
 
-import java.util.ArrayList;
-
 /**
  * Created by Admin on 07-07-2016.
  */

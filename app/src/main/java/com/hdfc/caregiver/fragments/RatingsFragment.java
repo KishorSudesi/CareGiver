@@ -9,11 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.hdfc.adapters.RatingsAdapter;
 import com.hdfc.caregiver.MyProfileActivity;
 import com.hdfc.caregiver.R;
 import com.hdfc.config.Config;

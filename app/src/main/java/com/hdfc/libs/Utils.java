@@ -932,11 +932,11 @@ public class Utils {
         emailService.getEmailService().sendMail(sendTo, sendSubject, sendMsg, SENDER_EMAIL,
                 EmailMIME.HTML_TEXT_MIME_TYPE, new App42CallBack() {
                     public void onSuccess(Object response) {
-                        Utils.log("Sent MAil", "1");
+                        Utils.log("Sent Mail", "1");
                     }
 
                     public void onException(Exception ex) {
-                        Utils.log("Sent MAil" + ex.getMessage(), "0");
+                        Utils.log("Sent Mail" + ex.getMessage(), "0");
                     }
 
                 });
@@ -946,17 +946,22 @@ public class Utils {
         //encoding message
         String encoded_message = URLEncoder.encode(message);
 
+        //http://otp2.maccesssmspush.com/OTP_ACL_Web/OtpRequestListener?enterpriseid=hlifeotp
+        // &subEnterpriseid=hlifeotp&pusheid=hlifeotp&pushepwd=hlifeotp&msisdn=919789863136&sender=HDFCSL&msgtext=sample
+
         //Send SMS API
-        String mainUrl = "http://api.msg91.com/sendhttp.php?";
+        String mainUrl = "http://otp2.maccesssmspush.com/OTP_ACL_Web/OtpRequestListener?";
 
         //Prepare parameter string
-        StringBuilder sbPostData = new StringBuilder(mainUrl);
+        String sbPostData = mainUrl + "&enterpriseid=" + "hlifeotp" +
+                "&subEnterpriseid=" + "hlifeotp" +
+                "&pusheid=" + "hlifeotp" +
+                "&pushepwd=" + "hlifeotp" +
+                "&msisdn=" + reciever +
+                "&sender=" + "HDFCSL" +
+                "&msgtext=" + encoded_message;
         // sbPostData.append("authkey="+authkey);
-        sbPostData.append("&mobiles=" + reciever);
-        sbPostData.append("&message=" + encoded_message);
-        sbPostData.append("&route=" + "4");
-        sbPostData.append("&sender=" + "CustomSenderID");
-        return sbPostData.toString();
+        return sbPostData;
     }
 
     /**

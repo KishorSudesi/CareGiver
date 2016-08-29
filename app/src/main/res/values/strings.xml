@@ -81,7 +81,7 @@
     <string name="getDirection">Get Direction</string>
 
     <string name="clientNameModel">Customer</string>
-    <string name="dependentName">Care Receipent</string>
+    <string name="dependentName">Care Recipient</string>
     <string name="title">Activity Description</string>
     <string name="services">Service</string>
     <string name="dateAndTime">Date and Time</string>
@@ -89,7 +89,7 @@
     <string name="hintPwd">Password</string>
     <string name="name">Name of service giver</string>
     <string name="place">Place</string>
-    <string name="signOut">SIGN OUT</string>
+    <string name="signOut">Exit</string>
 
     <string name="done_button">Done</string>
     <string name="upload_button">Save Images</string>
@@ -103,7 +103,7 @@
     <string name="upload">Upload</string>
     <string name="noClients">No Clients</string>
 
-    <string name="noFeedbacks">No Feedbacks</string>
+    <string name="noFeedbacks">No Feedback</string>
 
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
@@ -146,8 +146,6 @@
     <string name="your_details_saved">Your Details Saved</string>
     <string name="dependents">Dependents</string>
     <string name="search_contacts">Search from Contacts</string>
-    <string name="dependent_name">Dependent Name</string>
-    <string name="dependent_details">Dependent Details</string>
     <string name="relation">Relationship</string>
     <string name="illness">Any Major Illness</string>
     <string name="notes">Notes for Caregivers</string>
@@ -207,7 +205,6 @@
     <string name="read_more">read more…</string>
 
     <!--Success Strings-->
-    <string name="account_success_header">Account Successfully Created</string>
     <string name="service_added">Services Added Successfully</string>
     <string name="register_success">Account Registered Successfully</string>
     <string name="activity_closed">Activity Closed Successfully</string>

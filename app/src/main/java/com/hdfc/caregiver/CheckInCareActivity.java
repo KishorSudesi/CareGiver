@@ -2778,7 +2778,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             ////////////////////////////////////////
                             /////////////////////////udpate to DB
-                            ///todo enable offline sync
+                            ///todo enable offline sync update
                             String values[] = {Config.checkInCareModel.getStrDocumentID(),
                                     "",
                                     jsonObject.toString(),

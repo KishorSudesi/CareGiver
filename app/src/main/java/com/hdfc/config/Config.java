@@ -58,7 +58,8 @@ public class Config {
     public static final String SERVICE_RESULT_VALUE = "message";
 
     public static final int intWidth = 300, intHeight = 300;
-    public static final int intCompressWidth = 300, intCompressHeight = 300, iQuality = 70;
+    //todo image compression parameters
+    public static final int intCompressWidth = 500, intCompressHeight = 500, iQuality = 60;
     /* public static final String[] weekNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};*/
     /* public static final String[] months = {"January", "February", "March", "April", "May", "June",
              "July", "August", "September", "October", "November", "December"};*/

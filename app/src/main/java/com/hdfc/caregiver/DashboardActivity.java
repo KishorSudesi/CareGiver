@@ -88,10 +88,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
                     if (Config.intSelectedMenu != Config.intNotificationScreen)
                         showPushDialog(message);
-            }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
-        }
+            }
         }
     };
     private Tracker mTracker;
@@ -209,7 +209,7 @@ public class DashboardActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onCreate( Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_tasks);
 
@@ -403,6 +403,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
             Utils.log(" ONCREATE ", " DASHBOARD ");
 
+            //Utils.sendSMS("919789863136", "sample");
+
+            //Utils.sendEmail(DashboardActivity.this, "balamscint@gmail.com", "sample", "tst msg");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -438,7 +442,7 @@ public class DashboardActivity extends AppCompatActivity implements
         Config.intSelectedMenu = Config.intNotificationScreen;
         NotificationFragment fragment = NotificationFragment.newInstance(b);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frameLayout,fragment);
+        transaction.replace(R.id.frameLayout, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -695,15 +699,15 @@ public class DashboardActivity extends AppCompatActivity implements
     private void gotoFeedback() {
 
         //if (Config.intSelectedMenu != Config.intRatingsScreen) {
-            Config.intSelectedMenu = Config.intRatingsScreen;
+        Config.intSelectedMenu = Config.intRatingsScreen;
 
-            RatingsFragment fragment = RatingsFragment.newInstance();
-            Bundle args = new Bundle();
-            fragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.frameLayout, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+        RatingsFragment fragment = RatingsFragment.newInstance();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frameLayout, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
         //}
     }
 
