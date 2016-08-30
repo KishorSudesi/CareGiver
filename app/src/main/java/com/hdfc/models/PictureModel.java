@@ -14,6 +14,7 @@ public class PictureModel {
     public PictureModel() {
 
     }
+
     public PictureModel(String strRoomName, String strStatus, ArrayList<ImageModel> imageModels) {
         this.strStatus = strStatus;
         this.strRoomName = strRoomName;
@@ -38,7 +39,6 @@ public class PictureModel {
     }
 
 
-
     public ArrayList<ImageModel> getImageModels() {
         return imageModels;
     }
@@ -46,6 +46,7 @@ public class PictureModel {
     public void setImageModels(ArrayList<ImageModel> imageModels) {
         this.imageModels = imageModels;
     }
+
     public void clearImageModel() {
         this.imageModels.clear();
     }

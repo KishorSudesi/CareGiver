@@ -289,7 +289,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         //NotificationManager mNotificationManager = (NotificationManager)
         //context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        int icon = R.mipmap.ic_launcher;
+        int icon = R.mipmap.notification;
         CharSequence tickerText = applicationName + " error";
         long when = System.currentTimeMillis();
         //Notification notification = new Notification(icon, tickerText, when);
@@ -300,6 +300,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
 
         Intent sendIntent = new Intent(Intent.ACTION_SEND);
 
+        //todo change email
         sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"balamurugan@adstringo.in"});
         sendIntent.putExtra(Intent.EXTRA_TEXT, body);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, subject);

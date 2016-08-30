@@ -208,7 +208,6 @@ public class SessionManager {
         // return customer id
         return pref.getBoolean(KEY_CHECKIN_CARE_STATUS, false);
     }*/
-
     public String getProviderId() {
 
         String strProviderId = "";

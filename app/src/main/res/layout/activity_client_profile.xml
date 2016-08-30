@@ -73,13 +73,13 @@
                 </RelativeLayout>
 
                 <TextView
-                android:id="@+id/textViewClientProfileName"
+                    android:id="@+id/textViewClientProfileName"
                     style="@style/LabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="@dimen/edit_text_margin"
-                android:layout_marginTop="@dimen/margin_general"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/edit_text_margin"
+                    android:layout_marginTop="@dimen/margin_general"
                     android:textColor="@android:color/black" />
 
             </LinearLayout>
@@ -204,30 +204,30 @@
                 </LinearLayout>
 
                 <TextView
-                android:id="@+id/txtMap"
+                    android:id="@+id/txtMap"
                     style="@style/LabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/edit_text_margin"
-                android:text="@string/map"
-                android:textColor="@android:color/secondary_text_dark" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/edit_text_margin"
+                    android:text="@string/map"
+                    android:textColor="@android:color/secondary_text_dark" />
 
-            <ImageView
-                android:id="@+id/imageLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/location"
-                android:drawablePadding="15dp"
-                android:paddingTop="@dimen/edit_text_margin"
-                android:src="@drawable/location" />
+                <ImageView
+                    android:id="@+id/imageLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/location"
+                    android:drawablePadding="15dp"
+                    android:paddingTop="@dimen/edit_text_margin"
+                    android:src="@drawable/location" />
 
-            <TextView
-                android:id="@+id/editTextGetDirection"
-                style="@style/LabelStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
-                android:hint="@string/getDirection" />
+                <TextView
+                    android:id="@+id/editTextGetDirection"
+                    style="@style/LabelStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:hint="@string/getDirection" />
 
             </LinearLayout>
 

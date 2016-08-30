@@ -97,7 +97,7 @@
 
     <string name="yrs"> Yrs</string>
     <string name="yes">Yes</string>
-    <string name="separator">  |  </string>
+    <string name="separator">|</string>
 
     <string name="attachments">Attachments</string>
     <string name="upload">Upload</string>
@@ -161,7 +161,7 @@
     <string name="account_updated">Account updated successfully</string>
     <string name="no_changes">No Changes to Save</string>
     <string name="confirm_logout">Are you sure want to Exit?</string>
-    <string name="not_found">NOT FOUND</string>
+    <string name="not_found">Not Found</string>
     <string name="upcoming_activity">Upcoming Activity</string>
     <string name="completed_activity">Completed Activity</string>
     <string name="completed_task">Complete Task</string>
@@ -195,6 +195,7 @@
     <string name="attach_file">Attach File</string>
     <string name="click_attach">Click to Attach</string>
     <string name="create_new">Create New</string>
+    <string name="create_on">Created On:&#160;</string>
 
     <string name="access_storage">Access to External Storage</string>
     <string name="access_storage_false">We need Access to External Storage to Proceed</string>
@@ -293,7 +294,7 @@
 
     <!--Notifications Strings-->
     <string name="notification_body_1">The task&#160;</string>
-    <string name="notification_body_2">&#160;has been Scheduled/Updated&#160;</string>
+    <string name="notification_body_2">&#160;has been Scheduled/Updated</string>
     <string name="notification_body_2_1">&#160;has been Updated&#160;</string>
     <string name="notification_body_3">&#160;On Activity&#160;</string>
     <string name="notification_body_4">&#160;by&#160;</string>

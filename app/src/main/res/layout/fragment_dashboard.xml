@@ -18,7 +18,7 @@
         android:id="@+id/imageViewLine"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@drawable/colorful_textview"/>
+        android:background="@drawable/colorful_textview" />
 
     <!-- <LinearLayout
          android:id="@+id/dashboardlinearLayout"

@@ -31,7 +31,7 @@ public class RatingsFragment extends Fragment {
     //private static ProgressDialog mProgress = null;
     //private Utils utils;
 
-    public RatingsFragment(){
+    public RatingsFragment() {
     }
 
     public static RatingsFragment newInstance() {
@@ -55,7 +55,7 @@ public class RatingsFragment extends Fragment {
       /*  mytask = (ImageView) view.findViewById(R.id.buttonMyTasks);
         clients = (ImageView) view.findViewById(R.id.buttonClients);
         feedback = (ImageView) view.findViewById(R.id.buttonFeedback);*/
-       // ListView listratings = (ListView) view.findViewById(R.id.listViewRatings);
+        // ListView listratings = (ListView) view.findViewById(R.id.listViewRatings);
         TextView textViewName = (TextView) view.findViewById(R.id.name);
         //TextView textViewEmpty = (TextView) view.findViewById(android.R.id.empty);
         Button logout = (Button) view.findViewById(R.id.buttonlogout);

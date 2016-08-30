@@ -21,7 +21,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@drawable/colorful_textview"/>
+        android:background="@drawable/colorful_textview" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -55,7 +55,8 @@
                 android:inputType="textVisiblePassword"
                 android:paddingLeft="@dimen/padding_general"
                 android:paddingRight="@dimen/padding_general" />
-            <requestFocus/>
+
+            <requestFocus />
 
             <TextView
                 android:id="@+id/textViewDependentName"

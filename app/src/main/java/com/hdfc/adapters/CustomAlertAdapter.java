@@ -28,8 +28,7 @@ public class CustomAlertAdapter extends BaseAdapter {
     private LayoutInflater mInflater = null;
 
 
-    public CustomAlertAdapter(Context context, ArrayList list)
-    {
+    public CustomAlertAdapter(Context context, ArrayList list) {
         this.ctx = context;
         mInflater = LayoutInflater.from(ctx);
         this.listarray = list;

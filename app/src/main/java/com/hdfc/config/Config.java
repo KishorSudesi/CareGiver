@@ -31,9 +31,9 @@ public class Config {
     public static final String dbName = "newzeal";
 
     public static final String collectionService = "service";
- /* public static final String collectionServiceHistory = "servicehistory";
-  public static final String collectionServiceCustomer = "servicecustomer";
-  public static final String collectionServices = "service";*/
+    /* public static final String collectionServiceHistory = "servicehistory";
+     public static final String collectionServiceCustomer = "servicecustomer";
+     public static final String collectionServices = "service";*/
     public static final String collectionProvider = "provider";
     public static final String collectionProviderDependent = "providerdependent";
     public static final String collectionCustomer = "customer";

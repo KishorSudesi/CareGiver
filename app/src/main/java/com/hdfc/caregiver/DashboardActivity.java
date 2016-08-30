@@ -106,8 +106,9 @@ public class DashboardActivity extends AppCompatActivity implements
 
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
+            //todo check time value
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
-            String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+            String strEndDate = DashboardFragment._strDate + " 24:59:59.999";
 
             AppUtils.createActivityModel(strStartDate, strEndDate);
             ActivityFragment.activityModels = Config.activityModels;
@@ -128,8 +129,9 @@ public class DashboardActivity extends AppCompatActivity implements
 
         if (Utils.isConnectingToInternet(context)) {
 
+            //todo check time value
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
-            String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+            String strEndDate = DashboardFragment._strDate + " 24:59:59.999";
             AppUtils.createActivityModel(strStartDate, strEndDate);
 
             ActivityFragment.activityModels = Config.activityModels;
@@ -149,8 +151,9 @@ public class DashboardActivity extends AppCompatActivity implements
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
             loadingPanel.setVisibility(View.VISIBLE);
 
+            //todo check time value
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
-            String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+            String strEndDate = DashboardFragment._strDate + " 24:59:59.999";
 
             AppUtils.createActivityModel(strStartDate, strEndDate);
 
@@ -475,8 +478,9 @@ public class DashboardActivity extends AppCompatActivity implements
         DashboardFragment.strDate = Utils.writeFormatDate.format(date);
         DashboardFragment._strDate = Utils.writeFormatDateDB.format(date);
 
+        //todo check time value
         String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
-        String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+        String strEndDate = DashboardFragment._strDate + " 24:59:59.999";
 
         AppUtils.createActivityModel(strStartDate, strEndDate);
         ActivityFragment.activityModels = Config.activityModels;

@@ -128,7 +128,7 @@ public class NotificationFragment extends Fragment {
 
         utils = new Utils(getActivity());
         appUtils = new AppUtils(getActivity());
-     //   loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
+        //   loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
 
         Bundle bundle = this.getArguments();
         boolean b = bundle.getBoolean("RELOAD", false);
@@ -274,7 +274,7 @@ public class NotificationFragment extends Fragment {
                                 }
                                 refreshNotifications();
                             } else {
-                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                utils.toast(2, 2, getString(R.string.warning_internet));
                             }
                             loadingPanel.setVisibility(View.GONE);
                         }

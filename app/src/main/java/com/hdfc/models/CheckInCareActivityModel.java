@@ -32,6 +32,7 @@ public class CheckInCareActivityModel {
     public void setSubActivityModels(ArrayList<SubActivityModel> subActivityModels) {
         this.subActivityModels = subActivityModels;
     }
+
     public void clearSubActivityModels() {
         this.subActivityModels.clear();
     }

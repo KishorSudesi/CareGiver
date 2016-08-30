@@ -93,7 +93,7 @@ public class NotificationAdapter extends BaseAdapter {
             String strId = adapterNotificationModels.get(position).getStrCreatedByID();
 
             String strName = "", strMess, strUrl = "";
-          //  String readMore = " READ MORE..";
+            //  String readMore = " READ MORE..";
             strMess = adapterNotificationModels.get(position).getStrMessage();
 
             String strMessage = strMess;
@@ -102,7 +102,7 @@ public class NotificationAdapter extends BaseAdapter {
                 strMess = strMess.substring(0, 72);
                 viewHolder.textReadMore.setVisibility(View.VISIBLE);
                 viewHolder.textReadMore.setTag(strMessage);
-            }else {
+            } else {
                 viewHolder.textReadMore.setVisibility(View.GONE);
                 viewHolder.textReadMore.setEnabled(false);
             }

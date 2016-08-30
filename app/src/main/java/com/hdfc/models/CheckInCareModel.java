@@ -32,8 +32,8 @@ public class CheckInCareModel {
     public CheckInCareModel() {
     }
 
-    public CheckInCareModel(String strDocumentID,String strName, String strStatus, String strMonth, String strYear,
-                             String strCreatedDate, String strUpdatedDate,
+    public CheckInCareModel(String strDocumentID, String strName, String strStatus, String strMonth, String strYear,
+                            String strCreatedDate, String strUpdatedDate,
                             String strCustomerID, String strDependentID, String strCurrentDate,
                             String strCheckInCareName, String strMediaComment, ArrayList<PictureModel> pictureModels,
                             ArrayList<CheckInCareActivityModel> checkInCareActivityModels) {
@@ -94,7 +94,6 @@ public class CheckInCareModel {
     public void setStrYear(String strYear) {
         this.strYear = strYear;
     }
-
 
 
     public String getStrCreatedDate() {
@@ -171,7 +170,6 @@ public class CheckInCareModel {
     }
 
 
-
     public ArrayList<PictureModel> getPictureModels() {
         return pictureModels;
     }
@@ -183,6 +181,7 @@ public class CheckInCareModel {
     public void setPictureModel(PictureModel pictureModel) {
         this.pictureModels.add(pictureModel);
     }
+
     public void clearPictureModels() {
         this.pictureModels.clear();
     }
@@ -194,6 +193,7 @@ public class CheckInCareModel {
     public void setImageModels(ArrayList<ImageModel> imageModels) {
         this.imageModels = imageModels;
     }
+
     public void clearImageModel() {
         this.imageModels.clear();
     }
@@ -206,10 +206,10 @@ public class CheckInCareModel {
     public void setCheckInCareActivityModels(ArrayList<CheckInCareActivityModel> checkInCareActivityModels) {
         this.checkInCareActivityModels = checkInCareActivityModels;
     }
+
     public void clearCheckInCareActivityModels() {
         this.checkInCareActivityModels.clear();
     }
-
 
 
 }

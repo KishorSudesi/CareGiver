@@ -133,7 +133,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        CrashLogger.getInstance().init(LoginActivity.this);
+        try {
+            CrashLogger.getInstance().init(LoginActivity.this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         editEmail.setVisibility(View.INVISIBLE);
         editPassword.setVisibility(View.INVISIBLE);
@@ -143,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
         loadingPanel.setVisibility(View.VISIBLE);
     }
 
-    private void showForgotPassword(){
+    private void showForgotPassword() {
 
         LayoutInflater layoutInflater = LayoutInflater.from(LoginActivity.this);
         View dialogView = layoutInflater.inflate(R.layout.forgot_password_custom_dialog, null);
@@ -199,7 +203,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void resetPassword(String userEmail){
+    private void resetPassword(String userEmail) {
 
         if (Utils.isConnectingToInternet(LoginActivity.this)) {
 
@@ -307,43 +311,43 @@ public class LoginActivity extends AppCompatActivity {
 
         //if (relLayout.getVisibility() == View.VISIBLE) {
 
-            editEmail.setError(null);
-            editPassword.setError(null);
+        editEmail.setError(null);
+        editPassword.setError(null);
 
-            String uName = editEmail.getText().toString();
-            userName = uName.toLowerCase();
-            String password = editPassword.getText().toString();
+        String uName = editEmail.getText().toString();
+        userName = uName.toLowerCase();
+        String password = editPassword.getText().toString();
 
-            boolean cancel = false;
-            View focusView = null;
+        boolean cancel = false;
+        View focusView = null;
 
-            if (TextUtils.isEmpty(password)) {
-                editPassword.setError(getString(R.string.error_field_required));
-                focusView = editPassword;
-                cancel = true;
-            }
+        if (TextUtils.isEmpty(password)) {
+            editPassword.setError(getString(R.string.error_field_required));
+            focusView = editPassword;
+            cancel = true;
+        }
 
-            if (TextUtils.isEmpty(userName)) {
-                editEmail.setError(getString(R.string.error_field_required));
-                focusView = editEmail;
-                cancel = true;
-            }
+        if (TextUtils.isEmpty(userName)) {
+            editEmail.setError(getString(R.string.error_field_required));
+            focusView = editEmail;
+            cancel = true;
+        }
 
-            if (cancel) {
-                focusView.requestFocus();
-            } else {
-                if (Utils.isConnectingToInternet(LoginActivity.this)) {
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            if (Utils.isConnectingToInternet(LoginActivity.this)) {
 
-                    if (progressDialog != null) {
-                        progressDialog.setMessage(getString(R.string.process_login));
-                        progressDialog.setCancelable(false);
-                        progressDialog.show();
-                    }
+                if (progressDialog != null) {
+                    progressDialog.setMessage(getString(R.string.process_login));
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                }
 
-                    verifyLogin(password);
+                verifyLogin(password);
 
-                } else Utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
-            }
+            } else Utils.toast(2, 2, getString(R.string.warning_internet), LoginActivity.this);
+        }
     }
 
     private void verifyLogin(String strPassword) {
@@ -432,7 +436,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Object o) {
                             try {
-                                    Storage storage = (Storage) o;
+                                Storage storage = (Storage) o;
 
                                 if (storage.isResponseSuccess() && storage.getJsonDocList().
                                         size() > 0) {

@@ -358,8 +358,12 @@ public class AppUtils {
                                         if (Config.intSelectedMenu == Config.intDashboardScreen
                                                 && DashboardFragment._strDate != null) {
 
-                                            String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
-                                            String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+                                            String strStartDate = DashboardFragment._strDate
+                                                    + " 00:00:00.000";
+
+                                            //todo check time value
+                                            String strEndDate = DashboardFragment._strDate
+                                                    + " 24:59:59.999"; //+ "  23:59:59.999";
 
                                             if (ActivityFragment.mAdapter != null) {
                                                 createActivityModel(strStartDate, strEndDate);
@@ -561,63 +565,47 @@ public class AppUtils {
             } */
 
             storageService.findDocsByQuery(Config.collectionDependent, finalQuery,
-                        new App42CallBack() {
+                    new App42CallBack() {
 
-                            @Override
-                            public void onSuccess(Object o) {
-                                try {
-                                    if (o != null) {
+                        @Override
+                        public void onSuccess(Object o) {
+                            try {
+                                if (o != null) {
 
-                                        Storage storage = (Storage) o;
+                                    Storage storage = (Storage) o;
 
-                                        Utils.log(o.toString(), " Dependent");
+                                    Utils.log(o.toString(), " Dependent");
 
-                                        if (storage.getJsonDocList().size() > 0) {
+                                    if (storage.getJsonDocList().size() > 0) {
 
-                                            for (int i = 0; i < storage.getJsonDocList().size(); i++) {
+                                        for (int i = 0; i < storage.getJsonDocList().size(); i++) {
 
-                                                Storage.JSONDocument jsonDocument = storage.
-                                                        getJsonDocList().get(i);
+                                            Storage.JSONDocument jsonDocument = storage.
+                                                    getJsonDocList().get(i);
 
-                                                String values[] = {jsonDocument.getDocId(),
-                                                        jsonDocument.getUpdatedAt(),
-                                                        jsonDocument.getJsonDoc(),
-                                                        Config.collectionDependent,
-                                                        sessionManager.getProviderId(),
-                                                        "1"
-                                                };
+                                            String values[] = {jsonDocument.getDocId(),
+                                                    jsonDocument.getUpdatedAt(),
+                                                    jsonDocument.getJsonDoc(),
+                                                    Config.collectionDependent,
+                                                    sessionManager.getProviderId(),
+                                                    "1"
+                                            };
 
-                                                String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                                        + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+                                            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                                    + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
-                                                // WHERE clause arguments
-                                                String[] selectionArgs = {jsonDocument.getDocId(),
-                                                        Config.collectionDependent};
-                                                CareGiver.getDbCon().updateInsert(
-                                                        DbHelper.strTableNameCollection,
-                                                        selection, values,
-                                                        DbHelper.COLLECTION_FIELDS_CD,
-                                                        selectionArgs);
+                                            // WHERE clause arguments
+                                            String[] selectionArgs = {jsonDocument.getDocId(),
+                                                    Config.collectionDependent};
+                                            CareGiver.getDbCon().updateInsert(
+                                                    DbHelper.strTableNameCollection,
+                                                    selection, values,
+                                                    DbHelper.COLLECTION_FIELDS_CD,
+                                                    selectionArgs);
 
-                                            }
                                         }
                                     }
-                                    if (DashboardActivity.isLoaded) {
-                                        if (iFlag == 2)
-                                            DashboardActivity.gotoSimpleActivityMenu(true, context,
-                                                    loadingPanel);
-                                        else
-                                            DashboardActivity.gotoSimpleActivityMenu(false, context,
-                                                    loadingPanel);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
-                            }
-
-                            @Override
-                            public void onException(Exception e) {
-                                Utils.log(e.getMessage(), " Dependent Failure");
                                 if (DashboardActivity.isLoaded) {
                                     if (iFlag == 2)
                                         DashboardActivity.gotoSimpleActivityMenu(true, context,
@@ -626,8 +614,24 @@ public class AppUtils {
                                         DashboardActivity.gotoSimpleActivityMenu(false, context,
                                                 loadingPanel);
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        });
+                        }
+
+                        @Override
+                        public void onException(Exception e) {
+                            Utils.log(e.getMessage(), " Dependent Failure");
+                            if (DashboardActivity.isLoaded) {
+                                if (iFlag == 2)
+                                    DashboardActivity.gotoSimpleActivityMenu(true, context,
+                                            loadingPanel);
+                                else
+                                    DashboardActivity.gotoSimpleActivityMenu(false, context,
+                                            loadingPanel);
+                            }
+                        }
+                    });
             /*} else {
                 if (DashboardActivity.isLoaded) {
                     if (iFlag == 2)
@@ -744,13 +748,13 @@ public class AppUtils {
                                                     selection, values,
                                                     DbHelper.COLLECTION_FIELDS_CD,
                                                     selectionArgs);
-                                }
-                            }
+                                        }
+                                    }
                                     fetchDependents(iFlag, context, loadingPanel);
-                        }
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
-                    }
+                            }
                         }
 
                         @Override
@@ -3171,24 +3175,24 @@ public class AppUtils {
 
                 //if (!jsonObject.getString("category_name").equalsIgnoreCase("Check-In Care")) {
 
-                    Config.servicelist.add(jsonObject.getString("service_name"));
-                    categorySet.add(jsonObject.getString("category_name"));
-                    List<String> serviceNameList = new ArrayList<>();
+                Config.servicelist.add(jsonObject.getString("service_name"));
+                categorySet.add(jsonObject.getString("category_name"));
+                List<String> serviceNameList = new ArrayList<>();
 
-                    if (Config.serviceNameModels != null && Config.serviceNameModels.size() > 0) {
-                        if (Config.serviceNameModels.containsKey(jsonObject.
-                                getString("category_name"))) {
-                            serviceNameList.addAll(Config.serviceNameModels.get(jsonObject.
-                                    getString("category_name")));
-                            serviceNameList.add(jsonObject.getString("service_name"));
-                        } else {
-                            serviceNameList.add(jsonObject.getString("service_name"));
-                        }
+                if (Config.serviceNameModels != null && Config.serviceNameModels.size() > 0) {
+                    if (Config.serviceNameModels.containsKey(jsonObject.
+                            getString("category_name"))) {
+                        serviceNameList.addAll(Config.serviceNameModels.get(jsonObject.
+                                getString("category_name")));
+                        serviceNameList.add(jsonObject.getString("service_name"));
                     } else {
                         serviceNameList.add(jsonObject.getString("service_name"));
                     }
-                    Config.serviceNameModels.put(jsonObject.getString("category_name"),
-                            serviceNameList);
+                } else {
+                    serviceNameList.add(jsonObject.getString("service_name"));
+                }
+                Config.serviceNameModels.put(jsonObject.getString("category_name"),
+                        serviceNameList);
                 //}
             }
 

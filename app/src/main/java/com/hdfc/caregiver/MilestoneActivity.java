@@ -478,7 +478,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                     spinner.setLayoutParams(new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT,2));
+                            ViewGroup.LayoutParams.WRAP_CONTENT, 2));
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(MilestoneActivity.this,
                             android.R.layout.simple_dropdown_item_1line,
@@ -1484,8 +1484,6 @@ public class MilestoneActivity extends AppCompatActivity {
                         String strPushMessage = createPushNotification(milestoneModel,
                                 strScheduledDate, mStrTaskMess1);
 
-                        //todo check date format
-
                         jsonObject = new JSONObject();
 
                         try {
@@ -1550,9 +1548,8 @@ public class MilestoneActivity extends AppCompatActivity {
                 strPushMessage = getString(R.string.notification_closure_body_1)
                         + act.getStrActivityName()
                         + getString(R.string.notification_closure_body_2);
-            }
 
-            if (strCloseStatus.equalsIgnoreCase("unsuccessful")) {
+            } else if (strCloseStatus.equalsIgnoreCase("unsuccessful")) {
                 if (strCloseUser.equalsIgnoreCase("vendor")) {
                     strPushMessage = getString(R.string.notification_closure_body_3)
                             + act.getStrActivityName()
@@ -1563,6 +1560,10 @@ public class MilestoneActivity extends AppCompatActivity {
                             + getString(R.string.notification_closure_body_dependnet_1)
                             + strDependentName + ".";
                 }
+            } else {
+                strPushMessage = getString(R.string.notification_closure_body_1)
+                        + act.getStrActivityName()
+                        + getString(R.string.notification_closure_body_2);
             }
 
         } else {
@@ -1591,7 +1592,7 @@ public class MilestoneActivity extends AppCompatActivity {
                 } else if (act.getmServiceNo() == 101) {
                     //medical test
                     strPushMessage = getString(R.string.specific_notification_2)
-                            + strDependentName;
+                            + strDependentName + getString(R.string.space);
 
                     if (!mStrTaskMess1.equalsIgnoreCase("")) {
                         strPushMessage += mStrTaskMess1;
@@ -1651,8 +1652,7 @@ public class MilestoneActivity extends AppCompatActivity {
                 } else if (act.getmServiceNo() == 102) {
                     //doctor visit
                     strPushMessage = getString(R.string.specific_notification_9)
-                            + strDependentName + getString(R.string.notification_scheduled)
-                            + getString(R.string.space);
+                            + strDependentName + getString(R.string.notification_scheduled);
 
                     if (!mStrTaskMess1.equalsIgnoreCase("")) {
                         strPushMessage += mStrTaskMess1;

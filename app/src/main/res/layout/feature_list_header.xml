@@ -24,13 +24,13 @@
             android:contentDescription="@string/click_attach"
             android:src="@mipmap/attachment" />
 
-       <TextView
+        <TextView
             android:id="@+id/textViewAttach"
-           style="@style/TextViewSmallStyle"
+            style="@style/TextViewSmallStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
-           android:text="@string/click_attach"
+            android:text="@string/click_attach"
             android:textColor="@color/blue" />
 
     </LinearLayout>

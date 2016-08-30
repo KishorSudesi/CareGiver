@@ -153,15 +153,15 @@ public class App42GCMController {
                                        final App42GCMController.App42GCMListener callBack) {
         App42API.buildPushNotificationService().storeDeviceToken(userName, deviceToen,
                 new App42CallBack() {
-            public void onSuccess(Object arg0) {
-                App42Response response = (App42Response) arg0;
-                callBack.onRegisterApp42(response.getStrResponse());
-            }
+                    public void onSuccess(Object arg0) {
+                        App42Response response = (App42Response) arg0;
+                        callBack.onRegisterApp42(response.getStrResponse());
+                    }
 
-            public void onException(Exception arg0) {
-                callBack.onApp42Response(arg0.getMessage());
-            }
-        });
+                    public void onException(Exception arg0) {
+                        callBack.onApp42Response(arg0.getMessage());
+                    }
+                });
     }
 
     public interface App42GCMListener {
