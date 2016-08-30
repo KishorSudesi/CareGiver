@@ -6,6 +6,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -199,11 +201,11 @@ public class App42GCMService extends IntentService {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
-      /*  Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
-                R.mipmap.notification);*/
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.icon_notification);
 
         mBuilder.setSmallIcon(R.mipmap.notification)
-                //.setLargeIcon(largeIcon)
+                .setLargeIcon(largeIcon)
                 .setContentTitle(getString(R.string.notification_name))
                 .setContentText(msg).setWhen(when).setNumber(++msgCount)
                 .setDefaults(1).setDefaults(2)
@@ -215,7 +217,7 @@ public class App42GCMService extends IntentService {
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
 
         if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            mBuilder.setColor(getResources().getColor(R.color.color_primary));
+            mBuilder.setColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
