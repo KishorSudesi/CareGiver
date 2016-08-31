@@ -123,7 +123,6 @@
                 </LinearLayout>
 
                 <include
-                    android:id="@+id/include_footer_task_dialog"
                     layout="@layout/dialog_view_attach"
                     android:layout_width="match_parent"
                     android:layout_height="140dp"

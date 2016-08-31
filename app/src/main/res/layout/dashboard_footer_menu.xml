@@ -12,7 +12,6 @@
         android:background="@drawable/colorful_textview" />
 
     <TableLayout
-        android:id="@+id/tableLayout"
         android:layout_width="match_parent"
         android:layout_height="85dp"
         android:layout_below="@+id/horizontal_bar">

@@ -9,7 +9,6 @@
         layout="@layout/header_common" />
 
     <include
-        android:id="@+id/include_header_my_tasks"
         layout="@layout/feature_list_header"
         android:layout_width="match_parent"
         android:layout_height="70dp" />
@@ -75,7 +74,6 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="10dp"
@@ -84,7 +82,6 @@
         android:weightSum="2">
 
         <LinearLayout
-            android:id="@+id/mLayout"
             android:layout_width="match_parent"
             android:layout_height="00dp"
             android:layout_marginLeft="10dp"
@@ -93,7 +90,6 @@
             android:orientation="vertical">
 
             <ScrollView
-                android:id="@+id/scroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -125,7 +121,6 @@
                 android:text="@string/attachments" />
 
             <HorizontalScrollView
-                android:id="@+id/horizontal_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp">

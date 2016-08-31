@@ -3,7 +3,6 @@
     <string name="notification_name">New Zeal Specialist</string>
 
     <string name="back">Back</string>
-    <string name="purpose">&#160;purpose&#160;</string>
     <string name="calendar">Calendar</string>
     <string name="ok">OK</string>
     <string name="by">&#160;By&#160;</string>
@@ -21,7 +20,6 @@
     <string name="header_creating_task">Creating Task</string>
     <string name="check_in_care">Check In Care</string>
     <string name="check_in_care_service">Check-In Care</string>
-    <string name="header_task_details">Task Details</string>
     <string name="user_ratings">Overall User Ratings</string>
     <string name="done">Done</string>
     <string name="pending">Pending</string>
@@ -30,13 +28,8 @@
     <string name="feedback">Feedback</string>
     <string name="clients">Clients</string>
     <string name="clientdetails">Client Details</string>
-    <string name="welcome">Welcome</string>
     <string name="email">Email</string>
     <string name="take_me_in">Take Me In</string>
-    <string name="log_in">Logging In…</string>
-    <string name="password">Password</string>
-    <string name="old_password">Old Password</string>
-    <string name="new_password">New Password</string>
     <string name="forgot">Forgot?</string>
     <string name="for_text">&#160;for&#160;</string>
     <string name="forgot_password">Forgot Password?</string>
@@ -51,19 +44,15 @@
     <string name="upload_images">Upload Images successfully</string>
     <string name="upload_images_sucees">Uploaded</string>
 
-    <string name="error_confirm_password">Invalid Confirm Password</string>
     <string name="error_invalid_email">Invalid Email</string>
     <string name="error_invalid_contact_no">Invalid Contact Number</string>
     <string name="error_field_required">This Field is Required</string>
     <string name="error">Something went wrong. Try Again!!!</string>
 
-    <string name="error_same_password">New and Old Password cannot be same</string>
     <string name="process_login">Authenticating…</string>
-    <string name="success_login">Login Success…</string>
     <string name="invalid_credentials">Invalid Credentials</string>
     <string name="invalid_date">Select a Future Date</string>
 
-    <string name="warning_profile_pic">Profile Picture Needed</string>
     <string name="warning_internet">Please check your internet connection and try again</string>
     <string name="warning_internet_alert">No internet connection …</string>
 
@@ -89,15 +78,11 @@
     <string name="hintPwd">Password</string>
     <string name="name">Name of service giver</string>
     <string name="place">Place</string>
-    <string name="signOut">Exit</string>
 
-    <string name="done_button">Done</string>
     <string name="upload_button">Save Images</string>
-    <string name="noFeatures">No Features</string>
 
     <string name="yrs"> Yrs</string>
     <string name="yes">Yes</string>
-    <string name="separator">|</string>
 
     <string name="attachments">Attachments</string>
     <string name="upload">Upload</string>
@@ -105,35 +90,19 @@
 
     <string name="noFeedbacks">No Feedback</string>
 
-    <string name="camera">Camera</string>
-    <string name="gallery">Gallery</string>
-
     <string name="noActivities">No Information Available for Selected Date</string>
-
-    <string name="features">Features</string>
 
     <string name="loading">Loading…</string>
     <string name="location">Location</string>
     <string name="uploading_image">Uploading image..</string>
-    <string name="update_profile_image">Profile picture updated</string>
-    <string name="error_load_images">Error Loading Data. Try Again!!!</string>
 
     <!--Common Strings-->
 
-    <string name="milestones">Services Involved in &#160;</string>
-    <string name="milestone">Milestone</string>
     <string name="task">Task</string>
-    <string name="edit">Edit</string>
-    <string name="string_continue">Continue</string>
-    <string name="create_password">Create a Password</string>
-    <string name="verify_password">Verify Password</string>
     <string name="contact_number">Contact Number</string>
 
     <string name="activity">Activity</string>
     <string name="my_account">My Account</string>
-    <string name="my_account_edit">Edit My Account</string>
-    <string name="activity_month">Monthly</string>
-    <string name="activity_list">List</string>
     <string name="logout">Logout</string>
     <string name="at">at</string>
     <string name="new_text">New</string>
@@ -143,47 +112,19 @@
     <string name="enter_captcha_text">Enter Captcha</string>
     <string name="captcha_cs">*Captcha is case sensitive</string>
     <string name="verify_identity_password">Verifying…</string>
-    <string name="your_details_saved">Your Details Saved</string>
-    <string name="dependents">Dependents</string>
-    <string name="search_contacts">Search from Contacts</string>
-    <string name="relation">Relationship</string>
-    <string name="illness">Any Major Illness</string>
-    <string name="notes">Notes for Caregivers</string>
-    <string name="confirm_details">Confirm Details</string>
-    <string name="view_dashboard">View Dashboard</string>
-    <string name="info_discard">All your Information will be Deleted, OK to Proceed?</string>
     <string name="add_new_activity">Add New Activity</string>
-    <string name="coming_soon">Coming Soon</string>
     <string name="checkin_care_service">Please Select other service</string>
-    <string name="dpndnt_medical_info_saved">Dependent Medical Details Saved</string>
-    <string name="dpndnt_details_saved">Dependent Details Saved</string>
-    <string name="delete_info">All your Information will be Deleted, OK to Proceed?</string>
     <string name="account_updated">Account updated successfully</string>
     <string name="no_changes">No Changes to Save</string>
     <string name="confirm_logout">Are you sure want to Exit?</string>
-    <string name="not_found">Not Found</string>
-    <string name="upcoming_activity">Upcoming Activity</string>
-    <string name="completed_activity">Completed Activity</string>
     <string name="completed_task">Complete Task</string>
-    <string name="buy_services">Buy Services</string>
-    <string name="buy_services_large_text">Pay as you go services that can be easily added to an existing package</string>
-    <string name="date_time">21-Dec-15 at 6:00pm</string>
-    <string name="paytm">Paytm</string>
     <string name="space">&#160;</string>
-    <string name="add_message">Add a Message</string>
     <string name="on">&#160;On&#160;</string>
-    <string name="has_created">&#160;has created&#160;</string>
-    <string name="has_updated">&#160;has Updated&#160;</string>
-    <string name="to">&#160;for&#160;</string>
-    <string name="activities">Activities</string>
-    <string name="tasks">Tasks</string>
-    <string name="hyphen">-</string>
     <string name="service_category">Service Category</string>
     <string name="scheduled_to">&#160;and Scheduled At&#160;</string>
     <string name="resetted_password">New password has been sent to your E-mail id</string>
     <string name="delete_image">Delete Image</string>
     <string name="delete_file">Delete File</string>
-    <string name="unsaved_images">Unsaved Changes</string>
     <string name="save_image">Please Save the images</string>
     <string name="confirm_delete_image">Do you want to delete this image?</string>
     <string name="sync_data">Please Sync to Update Clients</string>
@@ -206,30 +147,16 @@
     <string name="read_more">read more…</string>
 
     <!--Success Strings-->
-    <string name="service_added">Services Added Successfully</string>
-    <string name="register_success">Account Registered Successfully</string>
-    <string name="activity_closed">Activity Closed Successfully</string>
     <string name="activity_added">Activity Created Successfully</string>
     <string name="activity_updated">Activity Updated Successfully</string>
-    <string name="milestone_updated">Milestone Saved</string>
     <string name="image_upload">Images Saved</string>
     <string name="data_upload">Data Upload Successfully</string>
 
 
     <!--Process Strings-->
-    <string name="uploading">Uploading…</string>
-    <string name="verify_identity">Taking you In…</string>
-    <string name="uploading_profile_pic">Setting Profile Images…</string>
 
     <!--Error Strings-->
-    <string name="error_register">Error in uploading with server. Please try again Later!!!</string>
-    <string name="error_register_image">Error in Setting Profile picture. Please try again Later!!!</string>
     <string name="error_service">Select a Valid Service</string>
-    <string name="error_service_zero">Select a Valid Service</string>
-    <string name="dependent_data_lost">Something went wrong, Please create Dependent again</string>
-    <string name="no_memory_camera">No storage mounted to save camera image</string>
-    <string name="image_write_failed">Sorry!!! we may have lost your Profile Image</string>
-    <string name="invalid_login">Invalid Credentials</string>
     <string name="no_push_actiity_added">Activity Added. Not able to Notify the Customer</string>
     <string name="no_push_actiity_updated">Activity Updated. Not able to Notify the Customer</string>
     <string name="error_client">Select a Valid Client</string>
@@ -237,10 +164,8 @@
     <string name="close_error">Close other Tasks to close the activity</string>
     <string name="close_date_error">Future Date. Cannot close this task</string>
     <string name="select_dependent">Select a Care Receipent</string>
-    <string name="select_checkbox">Please Select Checkbox</string>
     <string name="select_date">Please Select Date</string>
     <string name="select_time">Select Time</string>
-    <string name="select_date_dialog">Select Date</string>
 
     <string name="check_edit">Please Check All Fields</string>
 
@@ -248,7 +173,6 @@
     <string name="upload_kitchen">Please Upload Kitchen Images</string>
     <string name="upload_wash">Please Upload Washroom Images</string>
     <string name="upload_bed">Please Upload Bedroom Images</string>
-    <string name="upload_all">Please Upload All Images</string>
 
     <string name="due_date">Please Select Due Date</string>
 
@@ -260,25 +184,14 @@
 
 
     <!--Dashboard Menu Strings-->
-    <string name="menu_activities">Activities</string>
-    <string name="menu_reports">Reports</string>
-    <string name="menu_seniors">Seniors</string>
     <string name="menu_notification">Notifications</string>
-    <string name="menu_account">My Account</string>
 
     <!--Warning Strings-->
     <string name="no_dependents">No Care Recipients</string>
 
     <!--Permission Strings-->
-    <string name="permission_contact_rationale">We need access to Contacts to Proceed Further</string>
-    <string name="permission_contact_denied">Contacts Access Denied</string>
-    <string name="permission_contact_neverask">Contacts Access Granted</string>
-    <string name="permission_storage_rationale">We need access to Storage to Proceed Further</string>
-    <string name="permission_storage_denied">Storage Access Denied</string>
-    <string name="permission_storage_neverask">Storage Access Granted</string>
 
     <!--List View Empty Strings-->
-    <string name="no_activities">No Activities</string>
     <string name="no_notifications">Notifications Not Available</string>
     <string name="no_new_notifications">No New Notifications Available</string>
     <string name="no_services">No Services</string>
@@ -286,7 +199,6 @@
     <!--File Picker Strings-->
     <string name="take_photo">Take Photo</string>
     <string name="choose_library">Choose From Library</string>
-    <string name="add_profile">Add a Profile picture</string>
     <string name="select_picture">Select a Picture</string>
 
     <!--Google Strings-->

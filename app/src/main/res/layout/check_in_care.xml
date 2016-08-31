@@ -7,12 +7,9 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/includeHeaderCreatingTasks"
-        layout="@layout/header_common" />
+    <include layout="@layout/header_common" />
 
     <TextView
-        android:id="@+id/textViewHeaderCreatingTask"
         style="@style/HeaderStyle"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
@@ -111,7 +108,6 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:id="@+id/calendar"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
@@ -216,7 +212,6 @@
                 android:weightSum="1">
 
                 <TextView
-                    android:id="@+id/textView3"
                     style="@style/TextViewLargeStyle"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
@@ -1011,7 +1006,6 @@
                 android:orientation="horizontal">
 
                 <include
-                    android:id="@+id/include_hall_task"
                     layout="@layout/attach_hall_task_detail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -1094,7 +1088,6 @@
                 android:orientation="horizontal">
 
                 <include
-                    android:id="@+id/include_hall_task"
                     layout="@layout/attach_kitchen_task_detail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -1177,7 +1170,6 @@
                 android:orientation="horizontal">
 
                 <include
-                    android:id="@+id/include_hall_task"
                     layout="@layout/attach_washroom_task_detail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -1260,7 +1252,6 @@
                 android:orientation="horizontal">
 
                 <include
-                    android:id="@+id/include_hall_task"
                     layout="@layout/attach_bedroom_task_detail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />

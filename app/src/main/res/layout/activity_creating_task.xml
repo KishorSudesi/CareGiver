@@ -4,12 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/includeHeaderCreatingTasks"
-        layout="@layout/header_common" />
+    <include layout="@layout/header_common" />
 
     <TextView
-        android:id="@+id/textViewHeaderCreatingTask"
         style="@style/HeaderStyle"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
@@ -34,7 +31,6 @@
             android:paddingTop="@dimen/activity_horizontal_margin">
 
             <TextView
-                android:id="@+id/textViewClientName"
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -59,7 +55,6 @@
             <requestFocus />
 
             <TextView
-                android:id="@+id/textViewDependentName"
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,7 +76,6 @@
             </Spinner>
 
             <TextView
-                android:id="@+id/textViewServices"
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -105,7 +99,6 @@
             <!--  <requestFocus/>-->
 
             <TextView
-                android:id="@+id/textViewServicesCategory"
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
