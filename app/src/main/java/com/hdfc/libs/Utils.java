@@ -12,8 +12,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -1633,7 +1631,7 @@ public class Utils {
         }
     }
 
-    public void selectFile(final String strFileName, final Fragment fragment,
+    /*public void selectFile(final String strFileName, final Fragment fragment,
                            final Activity activity, final boolean isSingle) {
         try {
             final CharSequence[] items = {"Take Photo", "Take Video", "Choose from Library", "Cancel"};
@@ -1653,7 +1651,7 @@ public class Utils {
 
                         if (isSingle) {
                             intent = new Intent();
-                            intent.setType("image/*");
+                            intent.setType("image*//*");
                             intent.setAction(Intent.ACTION_GET_CONTENT);
 
                             if (fragment != null)
@@ -1679,7 +1677,7 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     public void openCamera(String strFileName, Fragment fragment, final Activity activity) {
 
@@ -1717,7 +1715,7 @@ public class Utils {
         }
     }
 
-    public Bitmap roundedBitmap(Bitmap bmp) {
+   /* public Bitmap roundedBitmap(Bitmap bmp) {
         Bitmap output = null;
 
         try {
@@ -1741,7 +1739,7 @@ public class Utils {
             e.printStackTrace();
         }
         return output;
-    }
+    }*/
 
     public Bitmap getBitmapFromFile(String strPath, int intWidth, int intHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();

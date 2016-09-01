@@ -120,6 +120,7 @@ public class ActivityFragment extends Fragment
 
                 cvh.textTime.setText(activityModels.get(position).getStrDisplayDate());
 
+                //created by
                 if (activityModels.get(position).getStrCreatedBy() != null
                         && !activityModels.get(position).getStrCreatedBy().equalsIgnoreCase("")
                         && activityModels.get(position).getStrCreatedBy().
@@ -128,7 +129,11 @@ public class ActivityFragment extends Fragment
                     //cvh.linearParent.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_customer));
                     cvh.textViewWhat.setTextColor(context.getResources().getColor(
                             R.color.colorRed));
-                } else {
+                } else if (activityModels.get(position).getStrCreatedBy() != null
+                        && !activityModels.get(position).getStrCreatedBy().equalsIgnoreCase("")
+                        && activityModels.get(position).getStrCreatedBy().
+                        equalsIgnoreCase("provider")
+                        ) {
                     //cvh.linearParent.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_provider));
                     cvh.textViewWhat.setTextColor(context.getResources().getColor(
                             R.color.colorAccent));

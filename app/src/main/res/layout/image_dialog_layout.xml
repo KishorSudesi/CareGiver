@@ -41,7 +41,7 @@
         android:id="@+id/imgOriginal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:adjustViewBounds="true"></com.hdfc.views.TouchImageView>
+        android:adjustViewBounds="true" />
 
 
     <ProgressBar

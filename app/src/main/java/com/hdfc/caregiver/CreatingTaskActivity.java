@@ -549,6 +549,11 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
         JSONObject jsonObjectServices = null;
 
+        Calendar calendar = Calendar.getInstance();
+        Date dateNow = calendar.getTime();
+
+        final String strDateNow = Utils.convertDateToString(dateNow);
+
         try {
             jsonObjectServices = new JSONObject();
 
@@ -561,12 +566,15 @@ public class CreatingTaskActivity extends AppCompatActivity {
             jsonObjectServices.put("customer_id", dependentModel.getStrCustomerID());
             jsonObjectServices.put("dependent_id", dependentModel.getStrDependentID());
             jsonObjectServices.put("provider_id", Config.providerModel.getStrProviderId());
+            jsonObjectServices.put("created_by", "provider");
 
             jsonObjectServices.put("status", "new");
             jsonObjectServices.put("provider_status", "new");
             jsonObjectServices.put("provider_message", "");
 
             jsonObjectServices.put("activity_date", _strDate);
+
+            jsonObjectServices.put("date", strDateNow);
             jsonObjectServices.put("activity_done_date", "");
             jsonObjectServices.put("activity_name", serviceModel.getStrServiceName());
             jsonObjectServices.put("activity_desc", valTitle);
@@ -577,9 +585,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
             jsonArray.put("{\"0\":\"empty\"}");
 
             jsonObjectServices.put("feedbacks", jsonArray);
-
-            //todo remove unwanted
-            jsonObjectServices.put("videos", jsonArray);
 
             jsonObjectServices.put("images", jsonArray);//todo change it to files
 
@@ -676,13 +681,6 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             if (response != null) {
 
                                 if (response.getJsonDocList().size() > 0) {
-
-                                    String strDateNow;
-
-                                    Calendar calendar = Calendar.getInstance();
-                                    Date dateNow = calendar.getTime();
-
-                                    strDateNow = Utils.convertDateToString(dateNow);
 
                                     String values[] = {response.getJsonDocList().get(0).getDocId(),
                                             "",

@@ -598,7 +598,7 @@ public class DashboardActivity extends AppCompatActivity implements
         if (sessionManager.getProviderId() != null
                 && !sessionManager.getProviderId().equalsIgnoreCase("")) {
 
-            mTracker.setScreenName("Image~ DashboardActivity "
+            mTracker.setScreenName("CG - DashboardActivity "
                     + String.valueOf(Config.intSelectedMenu));
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
