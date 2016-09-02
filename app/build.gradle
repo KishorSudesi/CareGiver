@@ -9,7 +9,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 24
         versionCode 8
-        versionName "0.8 (beta)"
+        versionName "New Zeal Specialist 0.8 (beta)"
     }
 
     sourceSets.main {
