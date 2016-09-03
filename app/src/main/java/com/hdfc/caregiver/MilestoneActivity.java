@@ -1492,6 +1492,12 @@ public class MilestoneActivity extends AppCompatActivity {
                             Date dateNow = calendar.getTime();
                             strDateNow = Utils.convertDateToString(dateNow);
 
+                            //ios start
+                            JSONObject jsonObjectTemp = new JSONObject();
+                            jsonObjectTemp.put("alert", strPushMessage);
+                            jsonObject.put("aps", jsonObjectTemp);
+                            //ios end
+
                             jsonObject.put("created_by", Config.providerModel.getStrProviderId());
                             jsonObject.put("time", strDateNow);
                             jsonObject.put("user_type", "dependent");

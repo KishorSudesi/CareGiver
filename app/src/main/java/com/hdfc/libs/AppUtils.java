@@ -2143,19 +2143,19 @@ public class AppUtils {
                         if (jsonObject.has("customer_name")) {
 
                             CustomerModel customerModel = new CustomerModel(
-                                    jsonObject.getString("customer_name"),
-                                    jsonObject.getString("paytm_account"),
-                                    jsonObject.getString("customer_profile_url"), "",
-                                    jsonObject.getString("customer_address"),
-                                    jsonObject.getString("customer_city"),
-                                    jsonObject.getString("customer_state"),
-                                    jsonObject.getString("customer_contact_no"),
-                                    jsonObject.getString("customer_email"),
-                                    jsonObject.getString("customer_dob"),
-                                    jsonObject.getString("customer_country"),
-                                    jsonObject.getString("customer_country_code"),
-                                    jsonObject.getString("customer_area_code"),
-                                    jsonObject.getString("customer_contact_no"),
+                                    jsonObject.optString("customer_name"),
+                                    jsonObject.optString("paytm_account"),
+                                    jsonObject.optString("customer_profile_url"), "",
+                                    jsonObject.optString("customer_address"),
+                                    jsonObject.optString("customer_city"),
+                                    jsonObject.optString("customer_state"),
+                                    jsonObject.optString("customer_contact_no"),
+                                    jsonObject.optString("customer_email"),
+                                    jsonObject.optString("customer_dob"),
+                                    jsonObject.optString("customer_country"),
+                                    jsonObject.optString("customer_country_code"),
+                                    jsonObject.optString("customer_area_code"),
+                                    jsonObject.optString("customer_contact_no"),
                                     newCursor.getString(0));
 
 
@@ -2220,20 +2220,22 @@ public class AppUtils {
                     //todo change logic after including assign module in carla
                     iRemoved = 0;
 
-                    if (!newCursor.isNull(2))
-                        iRemoved = newCursor.getInt(2);
+                   /* if (!newCursor.isNull(2))
+                        iRemoved = newCursor.getInt(2);*/
+
+                    //Utils.log(" ID ", newCursor.getString(0));
 
                     if (newCursor.getString(1) != null && !newCursor.getString(1).equalsIgnoreCase("")) {
                         JSONObject jsonObjectDependent = new JSONObject(newCursor.getString(1));
 
                         DependentModel dependentModel = new DependentModel(
-                                jsonObjectDependent.getString("dependent_name"),
-                                jsonObjectDependent.getString("dependent_relation"),
-                                jsonObjectDependent.getString("dependent_notes"),
-                                jsonObjectDependent.getString("dependent_address"),
-                                jsonObjectDependent.getString("dependent_contact_no"),
-                                jsonObjectDependent.getString("dependent_email"),
-                                jsonObjectDependent.getString("dependent_illness"),
+                                jsonObjectDependent.optString("dependent_name"),
+                                jsonObjectDependent.optString("dependent_relation"),
+                                jsonObjectDependent.optString("dependent_notes"),
+                                jsonObjectDependent.optString("dependent_address"),
+                                jsonObjectDependent.optString("dependent_contact_no"),
+                                jsonObjectDependent.optString("dependent_email"),
+                                jsonObjectDependent.optString("dependent_illness"),
                                 "",
                                 "",
                                 newCursor.getString(0),
@@ -2241,9 +2243,9 @@ public class AppUtils {
 
                         if (jsonObjectDependent.has("dependent_profile_url"))
                             dependentModel.setStrImageUrl(jsonObjectDependent.
-                                    getString("dependent_profile_url"));
+                                    optString("dependent_profile_url"));
 
-                        dependentModel.setStrDob(jsonObjectDependent.getString("dependent_dob"));
+                        dependentModel.setStrDob(jsonObjectDependent.optString("dependent_dob"));
 
 
                         if (jsonObjectDependent.has("dependent_age")) {
@@ -2254,7 +2256,7 @@ public class AppUtils {
                             } catch (Exception e) {
                                 int iAge = 0;
                                 try {
-                                    String strAge = jsonObjectDependent.getString("dependent_age");
+                                    String strAge = jsonObjectDependent.optString("dependent_age");
 
                                     if (!strAge.equalsIgnoreCase(""))
                                         iAge = Integer.parseInt(strAge);
@@ -2274,7 +2276,7 @@ public class AppUtils {
                                         getInt("health_bp"));
                             } catch (Exception e) {
                                 try {
-                                    String strBp = jsonObjectDependent.getString("health_bp");
+                                    String strBp = jsonObjectDependent.optString("health_bp");
 
                                     int iBp = 0;
                                     if (!strBp.equalsIgnoreCase(""))
@@ -2296,7 +2298,7 @@ public class AppUtils {
                                 try {
 
                                     String strPulse = jsonObjectDependent.
-                                            getString("health_heart_rate");
+                                            optString("health_heart_rate");
 
                                     int iPulse = 0;
                                     if (!strPulse.equalsIgnoreCase(""))
@@ -2316,7 +2318,7 @@ public class AppUtils {
 
                         if (iRemoved == 0) {
                             Config.strDependentNames.add(jsonObjectDependent.
-                                    getString("dependent_name"));
+                                    optString("dependent_name"));
 
                             int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.
                                     optString("customer_id"));
@@ -2330,9 +2332,9 @@ public class AppUtils {
                             if (Config.clientNameModels.size() > 0) {
                                 if (iPosition > -1 && iPosition < Config.clientNameModels.size()) {
                                     Config.clientNameModels.get(iPosition).removeStrDependentName(
-                                            jsonObjectDependent.getString("dependent_name"));
+                                            jsonObjectDependent.optString("dependent_name"));
                                     Config.clientNameModels.get(iPosition).setStrDependentName(
-                                            jsonObjectDependent.getString("dependent_name"));
+                                            jsonObjectDependent.optString("dependent_name"));
                                 }
                             }
                         }
