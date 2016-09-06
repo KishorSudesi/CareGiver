@@ -2322,7 +2322,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         };
 
                                         String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                                + DbHelper.COLUMN_COLLECTION_NAME + "=? and"
+                                                + DbHelper.COLUMN_COLLECTION_NAME + "=? and "
                                                 + DbHelper.COLUMN_PROVIDER_ID + "=?";
 
                                         // WHERE clause arguments
