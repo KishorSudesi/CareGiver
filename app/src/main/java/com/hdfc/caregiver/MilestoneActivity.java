@@ -1506,6 +1506,7 @@ public class MilestoneActivity extends AppCompatActivity {
                             //todo add for customer
                             jsonObject.put("created_by_type", "provider");
                             jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
+                            jsonObject.put("alert", strPushMessage);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -116,7 +116,7 @@ public class App42GCMService extends IntentService {
                     strMessage = jsonObject.getString(App42GCMService.ExtraMessage);
 
                     strTime = getString(R.string.create_on)
-                            + Utils.writeFormat.format(Utils.readFormat.parse(
+                            + Utils.writeFormatLocal.format(Utils.readFormat.parse(
                             jsonObject.getString("time")));
 
                     //group by user

@@ -2371,6 +2371,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                             Date dateNow = calendar.getTime();
                                             strDateNow = Utils.convertDateToString(dateNow);
 
+                                            //ios start
+                                            JSONObject jsonObjectTemp = new JSONObject();
+                                            jsonObjectTemp.put("alert", strPushMessage);
+                                            jsonObject.put("aps", jsonObjectTemp);
+                                            //ios end
+
                                             jsonObject.put("created_by", Config.providerModel.getStrProviderId());
                                             jsonObject.put("time", strDateNow);
                                             jsonObject.put("user_type", "dependent");
@@ -2381,6 +2387,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                             //todo add for customer
                                             jsonObject.put("created_by_type", "provider");
                                             jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
+                                            jsonObject.put("alert", strPushMessage);
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
@@ -2832,6 +2839,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 Date dateNow = calendar.getTime();
                                 strDateNow = Utils.convertDateToString(dateNow);
 
+                                //ios start
+                                JSONObject jsonObjectTemp = new JSONObject();
+                                jsonObjectTemp.put("alert", strPushMessage);
+                                jsonObject1.put("aps", jsonObjectTemp);
+                                //ios end
+
                                 jsonObject1.put("created_by", Config.providerModel.getStrProviderId());
                                 jsonObject1.put("time", strDateNow);
                                 jsonObject1.put("user_type", "dependent");
@@ -2842,6 +2855,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 //todo add for customer
                                 jsonObject1.put("created_by_type", "provider");
                                 jsonObject1.put(App42GCMService.ExtraMessage, strPushMessage);
+                                jsonObject1.put("alert", strPushMessage);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

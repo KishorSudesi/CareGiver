@@ -45,11 +45,6 @@
 -keep interface com.shephertz.app42.** { *; }
 -dontwarn com.shephertz.app42.**
 
-#Permission Dispatcher
-#-dontwarn com.github.hotchemi.**
-#-keep class com.github.hotchemi.** { *; }
-#-keep interface com.github.hotchemi.** { *; }
-
 #AES
 -dontwarn com.scottyab.**
 -keep class com.scottyab.** { *; }

@@ -115,13 +115,14 @@ public class Utils {
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
     public final static SimpleDateFormat queryFormatday =
             new SimpleDateFormat("yyyyMMddHHmmss", locale);
+    public final static SimpleDateFormat writeFormatLocal = new
+            SimpleDateFormat("HH:mm dd MMM yyyy", locale);
     private final static SimpleDateFormat writeFormatTime = new
             SimpleDateFormat("HH:mm", locale); // aa
     private final static String SENDER_EMAIL = "adstringosoftware@gmail.com";
 
   /*  public final static SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd", Config.locale);*/
-
     /* public final static SimpleDateFormat readFormatDate =
              new SimpleDateFormat("yyyy-MM-dd", Config.locale);
  */
@@ -150,12 +151,14 @@ public class Utils {
         //readFormatLocal.setTimeZone(TimeZone.getDefault());
         queryFormat.setTimeZone(TimeZone.getDefault());
         readFormatLocalDB.setTimeZone(TimeZone.getDefault());
+        writeFormatLocal.setTimeZone(TimeZone.getDefault());
     }
 
     public Utils() {
         readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         //readFormatLocal.setTimeZone(TimeZone.getDefault());
         queryFormat.setTimeZone(TimeZone.getDefault());
+        writeFormatLocal.setTimeZone(TimeZone.getDefault());
         readFormatLocalDB.setTimeZone(TimeZone.getDefault());
     }
 

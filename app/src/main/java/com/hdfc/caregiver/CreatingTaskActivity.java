@@ -718,6 +718,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
 
                                     try {
 
+                                        //ios start
+                                        JSONObject jsonObjectTemp = new JSONObject();
+                                        jsonObjectTemp.put("alert", strPushMessage);
+                                        jsonObject.put("aps", jsonObjectTemp);
+                                        //ios end
+
                                         jsonObject.put("created_by", Config.providerModel.
                                                 getStrProviderId());
                                         jsonObject.put("time", strDateNow);
@@ -729,6 +735,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                         jsonObject.put("created_by_type", "provider");
                                         jsonObject.put(App42GCMService.ExtraMessage,
                                                 strPushMessage);
+                                        jsonObject.put("alert", strPushMessage);
 
                                     } catch (JSONException e) {
                                         e.printStackTrace();
