@@ -144,6 +144,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 }
             });
         }
+        selectedDate=new Date();
 
         dateAnd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -257,6 +258,12 @@ public class CreatingTaskActivity extends AppCompatActivity {
                             dateAnd.setError(getString(R.string.error_field_required));
                             focusView = dateAnd;
                             cancel = true;
+                        }
+                        if (new Date().after(selectedDate)) {
+                            dateAnd.setError(getString(R.string.error_wrong_date));
+                            focusView = dateAnd;
+                            cancel = true;
+                            return;
                         }
 
                         if (TextUtils.isEmpty(valTitle)) {

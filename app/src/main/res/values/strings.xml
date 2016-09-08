@@ -53,6 +53,7 @@
     <string name="error_invalid_email">Invalid Email</string>
     <string name="error_invalid_contact_no">Invalid Contact Number</string>
     <string name="error_field_required">This Field is Required</string>
+    <string name="error_wrong_date">Enter Current or Future Date and Time</string>
     <string name="error">Something went wrong. Try Again!!!</string>
 
     <string name="error_same_password">New and Old Password cannot be same</string>

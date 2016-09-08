@@ -365,6 +365,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         LinearLayout layoutDate = (LinearLayout) findViewById(R.id.linearDate);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
+        selectedDate4=new Date();
+
         if (layoutDate != null) {
             layoutDate.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1016,6 +1018,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         utils.toast(2, 2, getString(R.string.select_date));
                         focusView = datetxt;
                         cancel = true;
+                    }
+                    if (new Date().after(selectedDate4)) {
+                        datetxt.setError(getString(R.string.error_wrong_date));
+                        focusView = datetxt;
+                        cancel = true;
+                        return;
                     }
                    /* if (TextUtils.isEmpty(valmediacomment)) {
                         mediacomment.setError(getString(R.string.error_field_required));
