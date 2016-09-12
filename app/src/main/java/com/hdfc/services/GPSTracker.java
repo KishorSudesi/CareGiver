@@ -29,36 +29,26 @@ import java.util.Locale;
  */
 public class GPSTracker extends Service implements LocationListener {
 
+    // The minimum distance to change updates in meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
+    // The minimum time between updates in milliseconds
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
     // Get Class Name
     private static String TAG = GPSTracker.class.getName();
-
     private final Context mContext;
-
+    // Declaring a Location Manager
+    protected LocationManager locationManager;
     // flag for GPS Status
     boolean isGPSEnabled = false;
-
     // flag for network status
     boolean isNetworkEnabled = false;
-
     // flag for GPS Tracking is enabled
     boolean isGPSTrackingEnabled = false;
-
     Location location;
     double latitude;
     double longitude;
-
     // How many Geocoder should return our GPSTracker
     int geocoderMaxResults = 1;
-
-    // The minimum distance to change updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
-
-    // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
-
-    // Declaring a Location Manager
-    protected LocationManager locationManager;
-
     // Store LocationManager.GPS_PROVIDER or LocationManager.NETWORK_PROVIDER information
     private String provider_info;
 
@@ -147,6 +137,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * GPSTracker latitude getter and setter
+     *
      * @return latitude
      */
     public double getLatitude() {
@@ -159,6 +150,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * GPSTracker longitude getter and setter
+     *
      * @return
      */
     public double getLongitude() {
@@ -215,8 +207,7 @@ public class GPSTracker extends Service implements LocationListener {
         alertDialog.setPositiveButton(R.string.action_settings, new DialogInterface.OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 mContext.startActivity(intent);
             }
@@ -226,8 +217,7 @@ public class GPSTracker extends Service implements LocationListener {
         alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
@@ -237,6 +227,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * Get list of address by latitude and longitude
+     *
      * @return null or List<Address>
      */
     public List<Address> getGeocoderAddress(Context context) {
@@ -263,6 +254,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * Try to get AddressLine
+     *
      * @return null or addressLine
      */
     public String getAddressLine(Context context) {
@@ -280,6 +272,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * Try to get Locality
+     *
      * @return null or locality
      */
     public String getLocality(Context context) {
@@ -290,14 +283,14 @@ public class GPSTracker extends Service implements LocationListener {
             String locality = address.getLocality();
 
             return locality;
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     /**
      * Try to get Postal Code
+     *
      * @return null or postalCode
      */
     public String getPostalCode(Context context) {
@@ -315,6 +308,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * Try to get CountryName
+     *
      * @return null or postalCode
      */
     public String getCountryName(Context context) {

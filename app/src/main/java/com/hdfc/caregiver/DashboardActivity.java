@@ -88,10 +88,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
                     if (Config.intSelectedMenu != Config.intNotificationScreen)
                         showPushDialog(message);
-            }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
-        }
+            }
         }
     };
     private Tracker mTracker;
@@ -106,8 +106,9 @@ public class DashboardActivity extends AppCompatActivity implements
 
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
 
+            //todo check time value
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
-            String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+            String strEndDate = DashboardFragment._strDate + " 24:59:59.999";
 
             AppUtils.createActivityModel(strStartDate, strEndDate);
             ActivityFragment.activityModels = Config.activityModels;
@@ -128,8 +129,9 @@ public class DashboardActivity extends AppCompatActivity implements
 
         if (Utils.isConnectingToInternet(context)) {
 
+            //todo check time value
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
-            String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+            String strEndDate = DashboardFragment._strDate + " 24:59:59.999";
             AppUtils.createActivityModel(strStartDate, strEndDate);
 
             ActivityFragment.activityModels = Config.activityModels;
@@ -149,8 +151,9 @@ public class DashboardActivity extends AppCompatActivity implements
         if (Config.intSelectedMenu == Config.intDashboardScreen) {
             loadingPanel.setVisibility(View.VISIBLE);
 
+            //todo check time value
             String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
-            String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+            String strEndDate = DashboardFragment._strDate + " 24:59:59.999";
 
             AppUtils.createActivityModel(strStartDate, strEndDate);
 
@@ -209,7 +212,7 @@ public class DashboardActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onCreate( Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_tasks);
 
@@ -403,6 +406,10 @@ public class DashboardActivity extends AppCompatActivity implements
 
             Utils.log(" ONCREATE ", " DASHBOARD ");
 
+            //Utils.sendSMS("919789863136", "sample");
+
+            //Utils.sendEmail(DashboardActivity.this, "balamscint@gmail.com", "sample", "tst msg");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -438,7 +445,7 @@ public class DashboardActivity extends AppCompatActivity implements
         Config.intSelectedMenu = Config.intNotificationScreen;
         NotificationFragment fragment = NotificationFragment.newInstance(b);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frameLayout,fragment);
+        transaction.replace(R.id.frameLayout, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -471,8 +478,9 @@ public class DashboardActivity extends AppCompatActivity implements
         DashboardFragment.strDate = Utils.writeFormatDate.format(date);
         DashboardFragment._strDate = Utils.writeFormatDateDB.format(date);
 
+        //todo check time value
         String strStartDate = DashboardFragment._strDate + " 00:00:00.000";
-        String strEndDate = DashboardFragment._strDate + " 24:00:00.000";
+        String strEndDate = DashboardFragment._strDate + " 24:59:59.999";
 
         AppUtils.createActivityModel(strStartDate, strEndDate);
         ActivityFragment.activityModels = Config.activityModels;
@@ -590,7 +598,7 @@ public class DashboardActivity extends AppCompatActivity implements
         if (sessionManager.getProviderId() != null
                 && !sessionManager.getProviderId().equalsIgnoreCase("")) {
 
-            mTracker.setScreenName("Image~ DashboardActivity "
+            mTracker.setScreenName("CG - DashboardActivity "
                     + String.valueOf(Config.intSelectedMenu));
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
@@ -695,15 +703,15 @@ public class DashboardActivity extends AppCompatActivity implements
     private void gotoFeedback() {
 
         //if (Config.intSelectedMenu != Config.intRatingsScreen) {
-            Config.intSelectedMenu = Config.intRatingsScreen;
+        Config.intSelectedMenu = Config.intRatingsScreen;
 
-            RatingsFragment fragment = RatingsFragment.newInstance();
-            Bundle args = new Bundle();
-            fragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.frameLayout, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+        RatingsFragment fragment = RatingsFragment.newInstance();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frameLayout, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
         //}
     }
 

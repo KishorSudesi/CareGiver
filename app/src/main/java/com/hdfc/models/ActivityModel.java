@@ -24,7 +24,7 @@ public class ActivityModel implements Serializable {
     private String strActivityProviderMessage;
 
     private String strServiceName;
-    private String strServiceNo;
+    private int mServiceNo;
     private String strServiceType;
     private String strServiceCateogoryName;
 
@@ -74,6 +74,14 @@ public class ActivityModel implements Serializable {
         this.feedBackModels = feedBackModels;
     }
 
+    public int getmServiceNo() {
+        return mServiceNo;
+    }
+
+    public void setmServiceNo(int mServiceNo) {
+        this.mServiceNo = mServiceNo;
+    }
+
     public String getStrDisplayTime() {
         return strDisplayTime;
     }
@@ -116,14 +124,6 @@ public class ActivityModel implements Serializable {
 
     public void setStrActivityProviderMessage(String strActivityProviderMessage) {
         this.strActivityProviderMessage = strActivityProviderMessage;
-    }
-
-    public String getStrServiceNo() {
-        return strServiceNo;
-    }
-
-    public void setStrServiceNo(String strServiceNo) {
-        this.strServiceNo = strServiceNo;
     }
 
     public String getStrServiceType() {

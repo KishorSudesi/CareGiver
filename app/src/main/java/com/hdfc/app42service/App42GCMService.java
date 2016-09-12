@@ -6,10 +6,16 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.hdfc.caregiver.DashboardActivity;
@@ -22,6 +28,7 @@ import com.hdfc.libs.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Random;
 
 import static android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC;
@@ -80,7 +87,7 @@ public class App42GCMService extends IntentService {
 
     }
 
-    private void showNotification(String message, Intent intent, String strClientId) {
+    private void showNotification(String message, Intent intent, String strClientId, String strTime) {
        /* DatabaseHandler db = new DatabaseHandler(getApplicationContext());
         Date date = Calendar.getInstance().getTime();
         date.getTime();
@@ -89,7 +96,7 @@ public class App42GCMService extends IntentService {
         db.createNotification(title, message, dt);
         db.close();*/
         this.broadCastMessage(message);
-        this.sendNotification(message, strClientId);
+        this.sendNotification(message, strClientId, strTime);
         App42GCMReceiver.completeWakefulIntent(intent);
     }
 
@@ -104,11 +111,12 @@ public class App42GCMService extends IntentService {
 
                 String strMessage = null;
                 String strCustomerId = "";
+                String strTime = "";
                 try {
-                    strMessage = jsonObject.getString(App42GCMService.ExtraMessage)
-                            + "\n" +
-                            " Created On: "
-                            + Utils.writeFormat.format(Utils.readFormat.parse(
+                    strMessage = jsonObject.getString(App42GCMService.ExtraMessage);
+
+                    strTime = getString(R.string.create_on)
+                            + Utils.writeFormatLocal.format(Utils.readFormat.parse(
                             jsonObject.getString("time")));
 
                     //group by user
@@ -132,7 +140,7 @@ public class App42GCMService extends IntentService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                showNotification(strMessage, intent, strCustomerId);
+                showNotification(strMessage, intent, strCustomerId, strTime);
 
             } else {
 
@@ -145,16 +153,16 @@ public class App42GCMService extends IntentService {
                 final String alertMessage = jsonObject.optString(Alert, null);
 
                 if (alertMessage != null) {
-                    showNotification(jsonObject.getString("alert"), intent, "");
+                    showNotification(jsonObject.getString("alert"), intent, "", "");
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            showNotification(message, intent, "");
+            showNotification(message, intent, "", "");
         }
     }
 
-    private void sendNotification(String msg, String strClientId) {
+    private void sendNotification(String msg, String strClientId, String strTime) {
 
         long when = System.currentTimeMillis();
 
@@ -193,7 +201,11 @@ public class App42GCMService extends IntentService {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
-        mBuilder.setSmallIcon(R.mipmap.ic_launcher)
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.icon_notification);
+
+        mBuilder.setSmallIcon(R.mipmap.notification)
+                .setLargeIcon(largeIcon)
                 .setContentTitle(getString(R.string.notification_name))
                 .setContentText(msg).setWhen(when).setNumber(++msgCount)
                 .setDefaults(1).setDefaults(2)
@@ -204,17 +216,32 @@ public class App42GCMService extends IntentService {
                 .setVisibility(VISIBILITY_PUBLIC)
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
 
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            mBuilder.setColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
+
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
         //String[] events = msg.split(""); //new String[6]
         // Sets a title for the Inbox in expanded layout
-        inboxStyle.setBigContentTitle(getString(R.string.app_name));
+        inboxStyle.setBigContentTitle(getString(R.string.notification_name));
+
+        //split message
+        List<String> events = Utils.splitLongText(msg, 40);
+        //
 
         // Moves events into the expanded layout
-       /* for (String event : events) {
+        for (String event : events) {
             inboxStyle.addLine(event);
-        }*/
+        }
         // Moves the expanded layout object into the notification object.
-        inboxStyle.addLine(msg);
+        if (strTime != null && !strTime.equalsIgnoreCase("")) {
+
+            //bold text
+            Spannable sb = new SpannableString(strTime);
+            sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, strTime.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            inboxStyle.addLine(sb);
+        }
         mBuilder.setStyle(inboxStyle);
 
         mBuilder.setContentIntent(contentIntent);

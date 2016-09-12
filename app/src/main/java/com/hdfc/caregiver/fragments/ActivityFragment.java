@@ -120,6 +120,7 @@ public class ActivityFragment extends Fragment
 
                 cvh.textTime.setText(activityModels.get(position).getStrDisplayDate());
 
+                //created by
                 if (activityModels.get(position).getStrCreatedBy() != null
                         && !activityModels.get(position).getStrCreatedBy().equalsIgnoreCase("")
                         && activityModels.get(position).getStrCreatedBy().
@@ -128,7 +129,11 @@ public class ActivityFragment extends Fragment
                     //cvh.linearParent.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_customer));
                     cvh.textViewWhat.setTextColor(context.getResources().getColor(
                             R.color.colorRed));
-                } else {
+                } else if (activityModels.get(position).getStrCreatedBy() != null
+                        && !activityModels.get(position).getStrCreatedBy().equalsIgnoreCase("")
+                        && activityModels.get(position).getStrCreatedBy().
+                        equalsIgnoreCase("provider")
+                        ) {
                     //cvh.linearParent.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_provider));
                     cvh.textViewWhat.setTextColor(context.getResources().getColor(
                             R.color.colorAccent));
@@ -195,14 +200,14 @@ public class ActivityFragment extends Fragment
                 try {
 
                     cursor = CareGiver.getDbCon().fetch(
-                        DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
+                            DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
                             DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID
                                     + "=?" + " and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
-                        new String[]{Config.collectionDependent,
-                                activityModels.get(position).getStrDependentID(),
-                                activityModels.get(position).getStrProviderID()
-                        },
-                        null, "0,1", true, null, null
+                            new String[]{Config.collectionDependent,
+                                    activityModels.get(position).getStrDependentID(),
+                                    activityModels.get(position).getStrProviderID()
+                            },
+                            null, "0,1", true, null, null
                     );
 
                     if (cursor.getCount() > 0) {
@@ -294,7 +299,7 @@ public class ActivityFragment extends Fragment
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CreatingTaskActivity.class);
-                Config.intSelectedMenu=Config.intDashboardScreen;
+                Config.intSelectedMenu = Config.intDashboardScreen;
                 startActivity(intent);
             }
         });
@@ -332,7 +337,7 @@ public class ActivityFragment extends Fragment
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         //refreshData();
     }
@@ -364,7 +369,7 @@ public class ActivityFragment extends Fragment
                 .setIcon(getResources().getDrawable(R.mipmap.message_action))
                 .build());
 
-        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img)-30)
+        mMenu.addItem(new MenuItem.Builder().setWidth((int) getResources().getDimension(R.dimen.slv_item_bg_btn_width_img) - 30)
                 .setBackground(getActivity().getResources().getDrawable(R.color.blue))
                 .setDirection(MenuItem.DIRECTION_RIGHT)
                 .setIcon(getResources().getDrawable(R.mipmap.call_action))

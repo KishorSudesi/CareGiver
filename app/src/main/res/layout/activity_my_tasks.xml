@@ -70,7 +70,6 @@
     </RelativeLayout>
 
     <include
-        android:id="@+id/include_dashboard_footer"
         layout="@layout/dashboard_footer_menu"
         android:layout_width="match_parent"
         android:layout_height="90dp"

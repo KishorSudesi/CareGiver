@@ -97,7 +97,7 @@ public class DashboardFragment extends Fragment {
         //appUtils = new AppUtils(getActivity());
         //Utils utils = new Utils(getActivity());
 
-        LinearLayout layoutDate = (LinearLayout)view.findViewById(R.id.linearDate);
+        LinearLayout layoutDate = (LinearLayout) view.findViewById(R.id.linearDate);
 
         textView = (TextView) view.findViewById(R.id.textViewDate);
 
@@ -135,8 +135,9 @@ public class DashboardFragment extends Fragment {
 
                                 Config.intSelectedMenu = Config.intDashboardScreen;
 
+                                //todo check time value
                                 String strStartDate = _strDate + " 00:00:00.000";
-                                String strEndDate = _strDate + " 24:00:00.000";
+                                String strEndDate = _strDate + " 24:59:59.999";
 
                                 AppUtils.createActivityModel(strStartDate, strEndDate);
                                 ActivityFragment.activityModels = Config.activityModels;

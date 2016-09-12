@@ -17,20 +17,18 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/imgAttachHeaderTaskDetail"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center"
             android:contentDescription="@string/click_attach"
             android:src="@mipmap/attachment" />
 
-       <TextView
-            android:id="@+id/textViewAttach"
-           style="@style/TextViewSmallStyle"
+        <TextView
+            style="@style/TextViewSmallStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
-           android:text="@string/click_attach"
+            android:text="@string/click_attach"
             android:textColor="@color/blue" />
 
     </LinearLayout>
@@ -75,7 +73,6 @@
             android:textColor="@color/blue" />
 
         <ImageView
-            android:id="@+id/imageViewFeedback"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:contentDescription="@string/feedback"

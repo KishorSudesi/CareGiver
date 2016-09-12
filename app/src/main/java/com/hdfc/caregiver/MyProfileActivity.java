@@ -230,7 +230,7 @@ public class MyProfileActivity extends AppCompatActivity {
             }
         });
 
-        if(Config.providerModel!=null) {
+        if (Config.providerModel != null) {
             if (email != null) {
                 email.setText(Config.providerModel.getStrEmail());
             }
@@ -500,7 +500,7 @@ public class MyProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
     }
 
@@ -545,7 +545,7 @@ public class MyProfileActivity extends AppCompatActivity {
                         }
                     });
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -604,7 +604,7 @@ public class MyProfileActivity extends AppCompatActivity {
                         }
                     });
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -615,7 +615,6 @@ public class MyProfileActivity extends AppCompatActivity {
     }
 
 
-
     private class BackgroundThreadHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -623,8 +622,8 @@ public class MyProfileActivity extends AppCompatActivity {
             if (mProgress.isShowing())
                 mProgress.dismiss();
 
-                try {
-                    sessionManager.saveProfileImage(strCustomerImgName);
+            try {
+                sessionManager.saveProfileImage(strCustomerImgName);
 
                    /* Glide.with(MyProfileActivity.this)
                             .load(sessionManager.getProfileImage())
@@ -635,18 +634,18 @@ public class MyProfileActivity extends AppCompatActivity {
                             .into(profileImage);*/
 
 
-                    Utils.loadGlide(MyProfileActivity.this, sessionManager.getProfileImage(),
-                            profileImage, progressBar);
+                Utils.loadGlide(MyProfileActivity.this, sessionManager.getProfileImage(),
+                        profileImage, progressBar);
 
-                    if (utils.isConnectingToInternet())
-                        checkImage(false);
+                if (utils.isConnectingToInternet())
+                    checkImage(false);
                    /* else
                         Utils.toast(2, 2, getString(R.string.warning_internet),
                                 MyProfileActivity.this);*/
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

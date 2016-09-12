@@ -1,7 +1,5 @@
 package com.hdfc.models;
 
-import java.util.ArrayList;
-
 /**
  * Created by Admin on 07-07-2016.
  */
@@ -13,7 +11,7 @@ public class SubActivityModel {
     private String strUtilityName = "";
     private String strCheckboxStatus = "";
 
-    public SubActivityModel(String strSubActivityName, String strStatus, String strDueStatus,String strDueDate,String strUtilityName,String strCheckboxStatus) {
+    public SubActivityModel(String strSubActivityName, String strStatus, String strDueStatus, String strDueDate, String strUtilityName, String strCheckboxStatus) {
         this.strSubActivityName = strSubActivityName;
         this.strStatus = strStatus;
         this.strDueStatus = strDueStatus;
@@ -70,8 +68,6 @@ public class SubActivityModel {
     public void setStrCheckboxStatus(String strCheckboxStatus) {
         this.strUtilityName = strCheckboxStatus;
     }
-
-
 
 
 }

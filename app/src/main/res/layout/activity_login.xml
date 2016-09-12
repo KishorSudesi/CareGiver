@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layoutLogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue">
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/header_common" />
+    <include layout="@layout/header_common" />
 
     <EditText
         android:id="@+id/editPassword"
@@ -81,7 +78,6 @@
         android:textColorHint="@color/colorWhite" />
 
     <ImageView
-        android:id="@+id/imageBg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"

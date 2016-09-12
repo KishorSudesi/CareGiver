@@ -763,7 +763,7 @@ public class AsyncApp42ServiceApi {
     }
 
     /*
-	 * This function Uploads File On App42 Cloud.
+     * This function Uploads File On App42 Cloud.
 	 */
     public void uploadImageForUser(final String name, final String userName,
                                    final String filePath, final UploadFileType fileType, final String description, final App42CallBack callBack) {

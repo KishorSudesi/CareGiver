@@ -100,7 +100,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static boolean bViewLoaded, mImageChanged;
     private static StorageService storageService;
     private static ArrayList<DependentModel> dependent = new ArrayList<>();
-    public String item = "",dependentId = "";
+    public String item = "", dependentId = "";
     private Utils utils;
     private RelativeLayout loadingPanel;
     private RelativeLayout loadingPanelhall, loadingPanelkitchen, loadingPanelwash, loadingPanelbed;
@@ -112,8 +112,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private int isWashflag = 0;
     private int isBedflag = 0;
     private boolean isClick = false;
-    private Button buttonHallAdd,buttonKitchenAdd,buttonWashroomAdd,buttonBedroomAdd;
-    private Button uploadhallbtn,uploadkitchenbtn,uploadwashroombtn,uploadbedroombtn ;
+    private Button buttonHallAdd, buttonKitchenAdd, buttonWashroomAdd, buttonBedroomAdd;
+    private Button uploadhallbtn, uploadkitchenbtn, uploadwashroombtn, uploadbedroombtn;
     private EditText electronic;
     private EditText homeapplience;
     private EditText automobile;
@@ -144,8 +144,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private boolean success;
     private LinearLayout layouthall, layoutkitchen, layoutwashroom, layoutbedroom, mainlinearlayout;
     private CheckBox electrocheck, homecheck, autocheck, kitchenequipcheck, grocerycheck,
-            domesticcheck,drivercheck;
-    private String valdate,valkitchenequi,valkitchen, valgrocery, valequipment, valdomestic,valphoto, valautomobile,
+            domesticcheck, drivercheck;
+    private String valdate, valkitchenequi, valkitchen, valgrocery, valequipment, valdomestic, valphoto, valautomobile,
             valmaidservices, valmediacomment, valcheckincarename;
     private View focusView = null;
     private ProgressDialog mProgressDialog;
@@ -175,7 +175,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             String strelectricityDate = Utils.writeFormatDateMY.format(date);
             String strtelephoneDate = Utils.writeFormatDateMY.format(date);
             String strgasDate = Utils.writeFormatDateMY.format(date);
-           // strcheckincare = Utils.queryFormatday.format(date);
+            // strcheckincare = Utils.queryFormatday.format(date);
 
          /*   if(editcheckincare){
                 checkincarename.setText(Config.checkInCareModel.getStrName());
@@ -283,7 +283,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         /////////////////////spinner for dependent
         ArrayList<String> strDependent = null;
         Bundle bundle;
-        if(!editcheckincare) {
+        if (!editcheckincare) {
             try {
                 dependentname.setVisibility(View.GONE);
                 dependentspinner.setVisibility(View.VISIBLE);
@@ -298,7 +298,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 if (dependent != null && dependent.size() > 0) {
                     String name;
                     for (DependentModel dependentModel : dependent) {
-                         name = dependentModel.getStrName();
+                        name = dependentModel.getStrName();
                         if (name.length() > 8)
                             name = name.substring(0, 6) + "..";
                         strDependent.add(name);
@@ -406,10 +406,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         drivercheck = (CheckBox) findViewById(R.id.drivercheck);
 
         ImageView client = (ImageView) findViewById(R.id.clientimg);
-         pick_date = (ImageView) findViewById(R.id.pick_date);
-         pick_date2 = (ImageView) findViewById(R.id.pick_date2);
-         pick_date3 = (ImageView) findViewById(R.id.pick_date3);
-         pick_date4 = (ImageView) findViewById(R.id.pick_date4);
+        pick_date = (ImageView) findViewById(R.id.pick_date);
+        pick_date2 = (ImageView) findViewById(R.id.pick_date2);
+        pick_date3 = (ImageView) findViewById(R.id.pick_date3);
+        pick_date4 = (ImageView) findViewById(R.id.pick_date4);
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
@@ -426,10 +426,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         loadingPanelwash = (RelativeLayout) findViewById(R.id.loadingPanelwash);
         loadingPanelbed = (RelativeLayout) findViewById(R.id.loadingPanelbed);
 
-        uploadhallbtn =(Button)findViewById(R.id.uploadhallbtn);
-        uploadkitchenbtn =(Button)findViewById(R.id.uploadkitchenbtn);
-        uploadwashroombtn =(Button)findViewById(R.id.uploadwashroombtn);
-        uploadbedroombtn =(Button)findViewById(R.id.uploadbedroombtn);
+        uploadhallbtn = (Button) findViewById(R.id.uploadhallbtn);
+        uploadkitchenbtn = (Button) findViewById(R.id.uploadkitchenbtn);
+        uploadwashroombtn = (Button) findViewById(R.id.uploadwashroombtn);
+        uploadbedroombtn = (Button) findViewById(R.id.uploadbedroombtn);
 
         txtwater = (TextView) findViewById(R.id.water_propertytxt);
         txtgas = (TextView) findViewById(R.id.gastxt);
@@ -472,7 +472,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
         if (clientnametxt != null) {
             clientnametxt.setText(strClientName);
-            clientnametxt.setTextAppearance(this,R.style.LabelStyle);
+            clientnametxt.setTextAppearance(this, R.style.LabelStyle);
         }
 
         if (client != null) {
@@ -519,7 +519,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             grocerystatus.setTextColor(Color.RED);
         }
 
-        if (domesticcheck.isChecked()&& drivercheck.isChecked()) {
+        if (domesticcheck.isChecked() && drivercheck.isChecked()) {
 
             domestichelpstatus.setVisibility(View.VISIBLE);
             domestichelpstatus.setText(getString(R.string.done));
@@ -628,8 +628,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     washroombitmaps.clear();
                     bedroombitmaps.clear();
 
-                    bViewLoaded =false;
-                    editcheckincare=false;
+                    bViewLoaded = false;
+                    editcheckincare = false;
 
                     goBack();
                 }
@@ -752,7 +752,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }
 
                 if (dependentname != null) {
-                    String name=strDependentName;
+                    String name = strDependentName;
                     if (name.length() > 8)
                         name = name.substring(0, 6) + "..";
 
@@ -761,7 +761,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
 
                 }
-               ///////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////
 
                 ArrayList<CheckInCareActivityModel> activity = Config.checkInCareModel.getCheckInCareActivityModels();
 
@@ -783,12 +783,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 checkboxstatus = subActivityModels.get(j).getStrCheckboxStatus();
 
 
-                                if (subActivityName.equalsIgnoreCase("utility_bills")){
+                                if (subActivityName.equalsIgnoreCase("utility_bills")) {
 
                                     if (utilityName.equalsIgnoreCase("water")) {
-                                        if(dueStatus.equals("N")) {
+                                        if (dueStatus.equals("N")) {
                                             spinner.setSelection(0);
-                                        }else{
+                                        } else {
                                             spinner.setSelection(1);
                                         }
                                         txtwater.setText(dueDate);
@@ -796,9 +796,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                     }
                                     if (utilityName.equalsIgnoreCase("gas")) {
-                                        if(dueStatus.equals("N")) {
+                                        if (dueStatus.equals("N")) {
                                             spinner1.setSelection(0);
-                                        }else{
+                                        } else {
                                             spinner1.setSelection(1);
                                         }
                                         txtgas.setText(dueDate);
@@ -806,9 +806,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                     }
                                     if (utilityName.equalsIgnoreCase("electricity")) {
-                                        if(dueStatus.equals("N")) {
+                                        if (dueStatus.equals("N")) {
                                             spinner2.setSelection(0);
-                                        }else{
+                                        } else {
                                             spinner2.setSelection(1);
                                         }
                                         txtelectricity.setText(dueDate);
@@ -816,11 +816,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                     }
                                     if (utilityName.equalsIgnoreCase("telephone")) {
-                                        if(dueStatus.equals("N")) {
+                                        if (dueStatus.equals("N")) {
                                             if (spinner3 != null) {
                                                 spinner3.setSelection(0);
                                             }
-                                        }else{
+                                        } else {
                                             if (spinner3 != null) {
                                                 spinner3.setSelection(1);
                                             }
@@ -830,12 +830,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                     }
                                 }
-                                if (subActivityName.equalsIgnoreCase("kitchen_equipments")){
+                                if (subActivityName.equalsIgnoreCase("kitchen_equipments")) {
                                     kitchen_equipments.setText(status);
 
-                                    if(checkboxstatus.equals("true")){
+                                    if (checkboxstatus.equals("true")) {
                                         kitchenequipcheck.setChecked(true);
-                                    }else {
+                                    } else {
                                         kitchenequipcheck.setChecked(false);
                                     }
                                     if (kitchenequipcheck.isChecked()) {
@@ -848,11 +848,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         kitchenequipmentstatus.setTextColor(Color.RED);
                                     }
                                 }
-                                if (subActivityName.equalsIgnoreCase("grocery")){
+                                if (subActivityName.equalsIgnoreCase("grocery")) {
                                     grocery.setText(status);
-                                    if(checkboxstatus.equals("true")){
+                                    if (checkboxstatus.equals("true")) {
                                         grocerycheck.setChecked(true);
-                                    }else {
+                                    } else {
                                         grocerycheck.setChecked(false);
                                     }
                                     if (grocerycheck.isChecked()) {
@@ -883,16 +883,16 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         domesticcheck.setChecked(false);
                                     }
                                 }
-                                if (subActivityName.equalsIgnoreCase("driver_status")){
+                                if (subActivityName.equalsIgnoreCase("driver_status")) {
                                     driveredt.setText(status);
-                                    if(checkboxstatus.equals("true")){
+                                    if (checkboxstatus.equals("true")) {
                                         drivercheck.setChecked(true);
-                                    }else {
+                                    } else {
                                         drivercheck.setChecked(false);
                                     }
                                 }
 
-                                if (domesticcheck.isChecked()&& drivercheck.isChecked()) {
+                                if (domesticcheck.isChecked() && drivercheck.isChecked()) {
 
                                     domestichelpstatus.setVisibility(View.VISIBLE);
                                     domestichelpstatus.setText(getString(R.string.done));
@@ -912,27 +912,27 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 status = subActivityModels.get(j).getStrStatus();
                                 checkboxstatus = subActivityModels.get(j).getStrCheckboxStatus();
 
-                                if (subActivityName.equalsIgnoreCase("electronic")){
+                                if (subActivityName.equalsIgnoreCase("electronic")) {
                                     electronic.setText(status);
-                                    if(checkboxstatus.equals("true")){
+                                    if (checkboxstatus.equals("true")) {
                                         electrocheck.setChecked(true);
-                                    }else {
+                                    } else {
                                         electrocheck.setChecked(false);
                                     }
                                 }
-                                if (subActivityName.equalsIgnoreCase("home_appliances")){
+                                if (subActivityName.equalsIgnoreCase("home_appliances")) {
                                     homeapplience.setText(status);
-                                    if(checkboxstatus.equals("true")){
+                                    if (checkboxstatus.equals("true")) {
                                         homecheck.setChecked(true);
-                                    }else {
+                                    } else {
                                         homecheck.setChecked(false);
                                     }
                                 }
-                                if (subActivityName.equalsIgnoreCase("automobile")){
+                                if (subActivityName.equalsIgnoreCase("automobile")) {
                                     automobile.setText(status);
-                                    if(checkboxstatus.equals("true")){
+                                    if (checkboxstatus.equals("true")) {
                                         autocheck.setChecked(true);
-                                    }else {
+                                    } else {
                                         autocheck.setChecked(false);
                                     }
                                 }
@@ -1012,7 +1012,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     //valmediacomment = mediacomment.getText().toString().trim();
 
 
-
                     if (TextUtils.isEmpty(valdate)) {
                         datetxt.setError(getString(R.string.select_date));
                         utils.toast(2, 2, getString(R.string.select_date));
@@ -1031,7 +1030,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         cancel = true;
                     }*/
 
-                    boolean editcheck=true;
+                    boolean editcheck = true;
                     if (!kitchenequipcheck.isChecked()) {
                         if (kitchen_equipments.getText().toString().equals("")) {
                             editcheck = false;
@@ -1074,34 +1073,34 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             focusView = driveredt;
                         }
                     }
-                    if(!editcheck) {
+                    if (!editcheck) {
                         utils.toast(2, 2, getString(R.string.check_edit));
                         cancel = true;
                     }
 
 
-                    if (isHallflag==1 && hallimageModels.size() > 0 ) {
+                    if (isHallflag == 1 && hallimageModels.size() > 0) {
                         hallstatus.setError(getString(R.string.upload_hall));
                         utils.toast(2, 2, getString(R.string.upload_hall));
                         focusView = hallstatus;
                         cancel = true;
 
                     }
-                    if (isKitchenflag==1 && kitchenimageModels.size() > 0) {
+                    if (isKitchenflag == 1 && kitchenimageModels.size() > 0) {
                         kitchenstatus.setError(getString(R.string.upload_kitchen));
                         utils.toast(2, 2, getString(R.string.upload_kitchen));
                         focusView = kitchenstatus;
                         cancel = true;
 
                     }
-                    if (isWashflag==1 && washroomimageModels.size() > 0 ) {
+                    if (isWashflag == 1 && washroomimageModels.size() > 0) {
                         washroomstatus.setError(getString(R.string.upload_wash));
                         utils.toast(2, 2, getString(R.string.upload_wash));
                         focusView = washroomstatus;
                         cancel = true;
 
                     }
-                    if (isBedflag==1 && bedroomimageModels.size() > 0 ) {
+                    if (isBedflag == 1 && bedroomimageModels.size() > 0) {
                         bedroomstatus.setError(getString(R.string.upload_bed));
                         utils.toast(2, 2, getString(R.string.upload_bed));
                         focusView = bedroomstatus;
@@ -1109,29 +1108,29 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                     }
 
-                    boolean bDate=true;
+                    boolean bDate = true;
 
                     if (items[0].equals("N")) {
-                        if(txtwater.getText().toString().equals("Due Date")) {
-                            bDate=false;
+                        if (txtwater.getText().toString().equals("Due Date")) {
+                            bDate = false;
                         }
                     }
                     if (items[1].equals("N")) {
-                        if(txtgas.getText().toString().equals("Due Date")) {
-                            bDate=false;
+                        if (txtgas.getText().toString().equals("Due Date")) {
+                            bDate = false;
                         }
                     }
                     if (items[2].equals("N")) {
-                        if(txtelectricity.getText().toString().equals("Due Date")) {
-                            bDate=false;
+                        if (txtelectricity.getText().toString().equals("Due Date")) {
+                            bDate = false;
                         }
                     }
                     if (items[3].equals("N")) {
-                        if(txttelephone.getText().toString().equals("Due Date")) {
-                            bDate=false;
+                        if (txttelephone.getText().toString().equals("Due Date")) {
+                            bDate = false;
                         }
                     }
-                    if(!bDate) {
+                    if (!bDate) {
                         utils.toast(2, 2, getString(R.string.due_date));
                     }
 
@@ -1149,9 +1148,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             if (bFuture) {
 
-                                if(editcheckincare){
+                                if (editcheckincare) {
                                     editupdateJson();
-                                }else {
+                                } else {
                                     updateJson();
                                 }
 
@@ -1283,40 +1282,40 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }
                 break;
             case R.id.buttonHallAdd:
-                if(isHallflag==2){
+                if (isHallflag == 2) {
                     utils.toast(2, 2, getString(R.string.upload_hall_success));
 
-                }else {
+                } else {
                     utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                             + ".jpeg", null, CheckInCareActivity.this, false);
                 }
 
                 break;
             case R.id.buttonKitchenAdd:
-                if(isKitchenflag==2){
+                if (isKitchenflag == 2) {
                     utils.toast(2, 2, getString(R.string.upload_kitchen_success));
 
-                }else {
+                } else {
                     utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                             + ".jpeg", null, CheckInCareActivity.this, false);
                 }
 
                 break;
             case R.id.buttonWashroomAdd:
-                if(isWashflag==2){
+                if (isWashflag == 2) {
                     utils.toast(2, 2, getString(R.string.upload_wash_success));
 
-                }else {
+                } else {
                     utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                             + ".jpeg", null, CheckInCareActivity.this, false);
                 }
 
                 break;
             case R.id.buttonBedroomAdd:
-                if(isBedflag==2){
+                if (isBedflag == 2) {
                     utils.toast(2, 2, getString(R.string.upload_bed_success));
 
-                }else {
+                } else {
                     utils.selectImage(String.valueOf(new Date().getDate() + "" + new Date().getTime())
                             + ".jpeg", null, CheckInCareActivity.this, false);
                 }
@@ -1326,40 +1325,40 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             case R.id.uploadhallbtn:
                 hallstatus.setError(null);
 
-                if(isHallflag==2){
+                if (isHallflag == 2) {
                     utils.toast(2, 2, getString(R.string.upload_hall_success));
 
-                }else {
+                } else {
                     uploadHallImage();
                 }
 
                 break;
             case R.id.uploadkitchenbtn:
                 kitchenstatus.setError(null);
-                if(isKitchenflag==2){
+                if (isKitchenflag == 2) {
                     utils.toast(2, 2, getString(R.string.upload_kitchen_success));
 
-                }else {
+                } else {
                     uploadKitchenImage();
                 }
 
                 break;
             case R.id.uploadwashroombtn:
                 washroomstatus.setError(null);
-                if(isWashflag==2){
+                if (isWashflag == 2) {
                     utils.toast(2, 2, getString(R.string.upload_wash_success));
 
-                }else {
+                } else {
                     uploadWashroomImage();
                 }
 
                 break;
             case R.id.uploadbedroombtn:
                 bedroomstatus.setError(null);
-                if(isBedflag==2){
+                if (isBedflag == 2) {
                     utils.toast(2, 2, getString(R.string.upload_bed_success));
 
-                }else {
+                } else {
                     uploadBedroomImage();
                 }
 
@@ -1453,7 +1452,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 homeessentialstatus.setTextColor(Color.RED);
             }
         }
-        if (domesticcheck.isChecked()&& drivercheck.isChecked()) {
+        if (domesticcheck.isChecked() && drivercheck.isChecked()) {
             domestichelpstatus.setError(null);
             domestichelpstatus.setVisibility(View.VISIBLE);
             domestichelpstatus.setText(getString(R.string.done));
@@ -1478,8 +1477,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         washroombitmaps.clear();
         bedroombitmaps.clear();
 
-        bViewLoaded =false;
-        editcheckincare=false;
+        bViewLoaded = false;
+        editcheckincare = false;
 
         goBack();
     }
@@ -1535,12 +1534,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                     utils.toast(2, 2, getString(R.string.upload_images));
                                                     isHallflag = 2;
-                                                    Drawable icon= getResources().getDrawable( R.drawable.ok);
-                                                    uploadhallbtn.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+                                                    Drawable icon = getResources().getDrawable(R.drawable.ok);
+                                                    uploadhallbtn.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
                                                     uploadhallbtn.setCompoundDrawablePadding(10);
                                                     uploadhallbtn.setText(getString(R.string.upload_images_sucees));
 
-                                                    for ( int i = 0; i < layouthall.getChildCount();  i++ ){
+                                                    for (int i = 0; i < layouthall.getChildCount(); i++) {
                                                         View view = layouthall.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
                                                         view.setFocusable(false);
@@ -1664,14 +1663,14 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 if (kitchenImageUploadCount >= kitchenimageModels.
                                                         size()) {
                                                     utils.toast(2, 2, getString(R.string.upload_images));
-                                                    isKitchenflag=2;
-                                                    Drawable icon= getResources().getDrawable( R.drawable.ok);
-                                                    uploadkitchenbtn.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+                                                    isKitchenflag = 2;
+                                                    Drawable icon = getResources().getDrawable(R.drawable.ok);
+                                                    uploadkitchenbtn.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
                                                     uploadkitchenbtn.setCompoundDrawablePadding(10);
                                                     uploadkitchenbtn.setText(getString(R.string.upload_images_sucees));
                                                     //buttonKitchenAdd.setEnabled(false);
 
-                                                    for ( int i = 0; i < layoutkitchen.getChildCount();  i++ ){
+                                                    for (int i = 0; i < layoutkitchen.getChildCount(); i++) {
                                                         View view = layoutkitchen.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
                                                         view.setFocusable(false);
@@ -1796,12 +1795,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                     utils.toast(2, 2, getString(R.string.upload_images));
                                                     isWashflag = 2;
 
-                                                    Drawable icon= getResources().getDrawable( R.drawable.ok);
-                                                    uploadwashroombtn.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+                                                    Drawable icon = getResources().getDrawable(R.drawable.ok);
+                                                    uploadwashroombtn.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
                                                     uploadwashroombtn.setCompoundDrawablePadding(10);
                                                     uploadwashroombtn.setText(getString(R.string.upload_images_sucees));
 
-                                                    for ( int i = 0; i < layoutwashroom.getChildCount();  i++ ){
+                                                    for (int i = 0; i < layoutwashroom.getChildCount(); i++) {
                                                         View view = layoutwashroom.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
                                                         view.setFocusable(false);
@@ -1922,15 +1921,15 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                         size()) {
 
                                                     utils.toast(2, 2, getString(R.string.upload_images));
-                                                    isBedflag=2;
+                                                    isBedflag = 2;
 
-                                                    Drawable icon= getResources().getDrawable( R.drawable.ok);
-                                                    uploadbedroombtn.setCompoundDrawablesWithIntrinsicBounds( icon, null, null, null );
+                                                    Drawable icon = getResources().getDrawable(R.drawable.ok);
+                                                    uploadbedroombtn.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
                                                     uploadbedroombtn.setCompoundDrawablePadding(10);
                                                     uploadbedroombtn.setText(getString(R.string.upload_images_sucees));
 
 
-                                                    for ( int i = 0; i < layoutbedroom.getChildCount();  i++ ){
+                                                    for (int i = 0; i < layoutbedroom.getChildCount(); i++) {
                                                         View view = layoutbedroom.getChildAt(i);
                                                         view.setEnabled(false); // Or whatever you want to do with the view.
                                                         view.setFocusable(false);
@@ -2027,7 +2026,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectCheckinCare.put("year", strYear);
                 jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
                 jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
-                jsonObjectCheckinCare.put("check_in_care_name",strcheckincare);
+                jsonObjectCheckinCare.put("check_in_care_name", strcheckincare);
 
                 JSONArray jsonArrayPicture = new JSONArray();
 
@@ -2103,469 +2102,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                 JSONArray jsonArrayWashroomPictureDetails = new JSONArray();
 
-
-                if (washroomimageModels.size() > 0) {
-
-                    for (ImageModel washroomImageModel : washroomimageModels) {
-
-                        JSONObject jsonObjectWashroomImages = new JSONObject();
-
-                        jsonObjectWashroomImages.put("image_url", washroomImageModel.
-                                getStrImageUrl());
-                        jsonObjectWashroomImages.put("description", washroomImageModel.
-                                getStrImageDesc());
-                        jsonObjectWashroomImages.put("date_time", washroomImageModel.
-                                getStrImageTime());
-
-                        jsonArrayWashroomPictureDetails.put(jsonObjectWashroomImages);
-                    }
-                } else {
-
-                    jsonArrayWashroomPictureDetails.put("{\"0\":\"empty\"}");
-                }
-                jsonObjectWashroomPicture.put("pictures_details", jsonArrayWashroomPictureDetails);
-                jsonArrayPicture.put(jsonObjectWashroomPicture);
-                ////////////////////////washroomimage
-
-                //////////////////////bedroomimage
-                JSONObject jsonObjectBedroomPicture = new JSONObject();
-
-                jsonObjectBedroomPicture.put("status", "status");
-                jsonObjectBedroomPicture.put("room_name", "bedroom");
-
-                JSONArray jsonArrayBedroomPictureDetails = new JSONArray();
-
-
-                if (bedroomimageModels.size() > 0) {
-
-                    for (ImageModel bedroomImageModel : bedroomimageModels) {
-
-                        JSONObject jsonObjectBedroomImages = new JSONObject();
-
-                        jsonObjectBedroomImages.put("image_url", bedroomImageModel.
-                                getStrImageUrl());
-                        jsonObjectBedroomImages.put("description", bedroomImageModel.
-                                getStrImageDesc());
-                        jsonObjectBedroomImages.put("date_time", bedroomImageModel.
-                                getStrImageTime());
-
-                        jsonArrayBedroomPictureDetails.put(jsonObjectBedroomImages);
-                    }
-                } else {
-
-                    jsonArrayBedroomPictureDetails.put("{\"0\":\"empty\"}");
-                }
-                jsonObjectBedroomPicture.put("pictures_details", jsonArrayBedroomPictureDetails);
-                jsonArrayPicture.put(jsonObjectBedroomPicture);
-                ////////////////////////bedroomimage
-
-                jsonObjectCheckinCare.put("picture", jsonArrayPicture);
-
-                ////
-
-                JSONArray jsonArrayActivities = new JSONArray();
-
-
-                /////////activity1
-                JSONObject jsonObjectActivities = new JSONObject();
-
-                jsonObjectActivities.put("activity_name", "home_essentials");
-
-                JSONArray jsonArraySubActivitiesHome = new JSONArray();
-
-                JSONObject jsonObjectSubActivitiesHome = new JSONObject();
-                jsonObjectSubActivitiesHome.put("sub_activity_name", "kitchen_equipments");
-                jsonObjectSubActivitiesHome.put("status", kitchen_equipments.getText().toString());
-                jsonObjectSubActivitiesHome.put("checkbox_status", kitchenequipcheck.isChecked());
-
-                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome);
-
-                JSONObject jsonObjectSubActivitiesHome1 = new JSONObject();
-                jsonObjectSubActivitiesHome1.put("sub_activity_name", "grocery");
-                jsonObjectSubActivitiesHome1.put("status", grocery.getText().toString());
-                jsonObjectSubActivitiesHome1.put("checkbox_status",grocerycheck.isChecked());
-
-
-                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome1);
-
-                JSONObject jsonObjectSubActivitiesHome2 = new JSONObject();
-                jsonObjectSubActivitiesHome2.put("sub_activity_name", "utility_bills");
-                jsonObjectSubActivitiesHome2.put("utility_name", "water");
-                jsonObjectSubActivitiesHome2.put("due_status", items[0]);
-                jsonObjectSubActivitiesHome2.put("due_date", txtwater.getText().toString());
-                jsonObjectSubActivitiesHome2.put("status", waterstatus.getText().toString());
-
-
-                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome2);
-
-                JSONObject jsonObjectSubActivitiesHome3 = new JSONObject();
-                jsonObjectSubActivitiesHome3.put("sub_activity_name", "utility_bills");
-                jsonObjectSubActivitiesHome3.put("utility_name", "gas");
-                jsonObjectSubActivitiesHome3.put("due_status", items[1]);
-                jsonObjectSubActivitiesHome3.put("due_date", txtgas.getText().toString());
-                jsonObjectSubActivitiesHome3.put("status", gasstatus.getText().toString());
-
-
-                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome3);
-
-                JSONObject jsonObjectSubActivitiesHome4 = new JSONObject();
-                jsonObjectSubActivitiesHome4.put("sub_activity_name", "utility_bills");
-                jsonObjectSubActivitiesHome4.put("utility_name", "electricity");
-                jsonObjectSubActivitiesHome4.put("due_status", items[2]);
-                jsonObjectSubActivitiesHome4.put("due_date", txtelectricity.getText().toString());
-                jsonObjectSubActivitiesHome4.put("status", electricitystatus.getText().toString());
-
-
-                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome4);
-
-                JSONObject jsonObjectSubActivitiesHome5 = new JSONObject();
-                jsonObjectSubActivitiesHome5.put("sub_activity_name", "utility_bills");
-                jsonObjectSubActivitiesHome5.put("utility_name", "telephone");
-                jsonObjectSubActivitiesHome5.put("due_status", items[3]);
-                jsonObjectSubActivitiesHome5.put("due_date", txttelephone.getText().toString());
-                jsonObjectSubActivitiesHome5.put("status", telephonestatus.getText().toString());
-
-
-                jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome5);
-
-                jsonObjectActivities.put("sub_activities", jsonArraySubActivitiesHome);
-
-                ///
-
-                jsonArrayActivities.put(jsonObjectActivities);
-                ////////////////activity1
-
-
-                ///////////////////////activity 2
-                JSONObject jsonObjectActivitiesDomestic = new JSONObject();
-
-                jsonObjectActivitiesDomestic.put("activity_name", "domestic_help_status");
-
-                JSONArray jsonArraySubActivitiesDomestic = new JSONArray();
-
-                JSONObject jsonObjectSubActivitiesDomestic = new JSONObject();
-                jsonObjectSubActivitiesDomestic.put("sub_activity_name", "maid_services");
-                jsonObjectSubActivitiesDomestic.put("status", maidservices.getText().toString());
-                jsonObjectSubActivitiesDomestic.put("checkbox_status", domesticcheck.isChecked());
-
-                jsonArraySubActivitiesDomestic.put(jsonObjectSubActivitiesDomestic);
-
-                JSONObject jsonObjectSubActivitiesDomestic1 = new JSONObject();
-                jsonObjectSubActivitiesDomestic1.put("sub_activity_name", "driver_status");
-                jsonObjectSubActivitiesDomestic1.put("status", driveredt.getText().toString());
-                jsonObjectSubActivitiesDomestic1.put("checkbox_status", drivercheck.isChecked());
-
-                jsonArraySubActivitiesDomestic.put(jsonObjectSubActivitiesDomestic1);
-
-                jsonObjectActivitiesDomestic.put("sub_activities", jsonArraySubActivitiesDomestic);
-
-                jsonArrayActivities.put(jsonObjectActivitiesDomestic);
-                ///////////////////////activity 2
-
-
-                ///////////////////////activity 3
-                JSONObject jsonObjectActivitiesEquipment = new JSONObject();
-
-                jsonObjectActivitiesEquipment.put("activity_name", "equipment_working_status");
-
-                JSONArray jsonArraySubActivitiesEquipment = new JSONArray();
-
-                JSONObject jsonObjectSubActivitiesEquipment1 = new JSONObject();
-                jsonObjectSubActivitiesEquipment1.put("sub_activity_name", "electronic");
-                jsonObjectSubActivitiesEquipment1.put("status", electronic.getText().toString());
-                jsonObjectSubActivitiesEquipment1.put("checkbox_status", electrocheck.isChecked());
-
-                jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment1);
-
-
-                JSONObject jsonObjectSubActivitiesEquipment2 = new JSONObject();
-                jsonObjectSubActivitiesEquipment2.put("sub_activity_name", "home_appliances");
-                jsonObjectSubActivitiesEquipment2.put("status", homeapplience.getText().toString());
-                jsonObjectSubActivitiesEquipment2.put("checkbox_status", homecheck.isChecked());
-
-                jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment2);
-
-
-                JSONObject jsonObjectSubActivitiesEquipment3 = new JSONObject();
-                jsonObjectSubActivitiesEquipment3.put("sub_activity_name", "automobile");
-                jsonObjectSubActivitiesEquipment3.put("status", automobile.getText().toString());
-                jsonObjectSubActivitiesEquipment3.put("checkbox_status", autocheck.isChecked() );
-
-                jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment3);
-
-
-                jsonObjectActivitiesEquipment.put("sub_activities",
-                        jsonArraySubActivitiesEquipment);
-
-                jsonArrayActivities.put(jsonObjectActivitiesEquipment);
-                ///////////////////////activity 3
-
-
-                jsonObjectCheckinCare.put("activities", jsonArrayActivities);
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            storageService.insertDocs(Config.collectionCheckInCare, jsonObjectCheckinCare,
-                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
-
-                        @Override
-                        public void onDocumentInserted(Storage response) {
-                            try {
-                                if (mProgressDialog.isShowing())
-                                    mProgressDialog.dismiss();
-                                if (response.isResponseSuccess()) {
-
-                                    if (response.getJsonDocList().size() > 0) {
-
-                                        Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
-
-                                        ///
-                                        String values[] = {jsonDocument.getDocId(),
-                                                jsonDocument.getUpdatedAt(),
-                                                jsonDocument.getJsonDoc(),
-                                                Config.collectionCheckInCare, "", "1",
-                                                Config.providerModel.getStrProviderId()
-                                        };
-
-                                        String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                                + DbHelper.COLUMN_COLLECTION_NAME + "=? and"
-                                                + DbHelper.COLUMN_PROVIDER_ID + "=?";
-
-                                        // WHERE clause arguments
-                                        String[] selectionArgs = {jsonDocument.getDocId(),
-                                                Config.collectionCheckInCare,
-                                                Config.providerModel.getStrProviderId()
-                                        };
-                                        CareGiver.getDbCon().updateInsert(
-                                                DbHelper.strTableNameCollection,
-                                                selection, values, DbHelper.COLLECTION_FIELDS,
-                                                selectionArgs);
-
-
-                                        //////////////
-
-
-                                        //todo fetch from session if offline sync update enabled
-                                        String values1[] = {jsonDocument.getDocId(),
-                                                "-1",
-                                                strSelectedDate,
-                                                Config.customerModel.getStrCustomerID(),
-                                                Config.providerModel.getStrProviderId()
-                                        };
-
-                                        String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                                + DbHelper.COLUMN_MILESTONE_ID + "=? ";
-
-                                        String[] selectionArgs1 = {jsonDocument.getDocId(),
-                                                "-1"
-                                        };
-
-                                        CareGiver.getDbCon().updateInsert(
-                                                DbHelper.strTableNameMilestone,
-                                                selection1, values1, DbHelper.CCARE_FIELDS,
-                                                selectionArgs1);
-
-                                        //notification
-                                        String strPushMessage = getString(R.string.notification_checkincare);
-
-                                        final JSONObject jsonObject = new JSONObject();
-
-                                        try {
-
-                                            String strDateNow;
-                                            Calendar calendar = Calendar.getInstance();
-                                            Date dateNow = calendar.getTime();
-                                            strDateNow = Utils.convertDateToString(dateNow);
-
-                                            jsonObject.put("created_by", Config.providerModel.getStrProviderId());
-                                            jsonObject.put("time", strDateNow);
-                                            jsonObject.put("user_type", "dependent");
-                                            jsonObject.put("user_id", dependentId);
-                                            jsonObject.put("checkincare", true);
-                                            jsonObject.put("checkincare_id", jsonDocument.getDocId());
-
-                                            //todo add for customer
-                                            jsonObject.put("created_by_type", "provider");
-                                            jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-
-                                        sendPush(jsonObject);
-                                        insertNotification(jsonObject);
-
-                                    }
-                                    ///
-
-
-                                    //IMAGE_COUNT = 0;
-                                    bViewLoaded =false;
-
-                                    utils.toast(1, 1, getString(R.string.data_upload));
-                                    Intent intent = new Intent(CheckInCareActivity.this,
-                                            DashboardActivity.class);
-                                    Config.intSelectedMenu = Config.intClientScreen;
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    utils.toast(2, 2, getString(R.string.warning_internet));
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                utils.toast(2, 2, getString(R.string.warning_internet));
-                            }
-                        }
-
-                        @Override
-                        public void onUpdateDocSuccess(Storage response) {
-                        }
-
-                        @Override
-                        public void onFindDocSuccess(Storage response) {
-                        }
-
-                        @Override
-                        public void onInsertionFailed(App42Exception ex) {
-                            try {
-                                if (mProgressDialog.isShowing())
-                                    mProgressDialog.dismiss();
-                                if (ex != null) {
-                                    JSONObject jsonObject = new JSONObject(ex.getMessage());
-                                    JSONObject jsonObjectError = jsonObject.
-                                            getJSONObject("app42Fault");
-                                    String strMess = jsonObjectError.getString("details");
-                                    utils.toast(2, 2, strMess);
-                                } else {
-                                    utils.toast(2, 2, getString(R.string.warning_internet));
-                                }
-
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                                utils.toast(2, 2, getString(R.string.error));
-                            }
-                        }
-
-                        @Override
-                        public void onFindDocFailed(App42Exception ex) {
-                        }
-
-                        @Override
-                        public void onUpdateDocFailed(App42Exception ex) {
-                        }
-                    });
-
-        } else {
-            if (mProgressDialog.isShowing())
-                mProgressDialog.dismiss();
-            utils.toast(2, 2, getString(R.string.warning_internet));
-        }
-    }
-
-    private void editupdateJson(){
-
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage(getString(R.string.loading));
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.show();
-
-            JSONObject jsonObjectCheckinCare = null;
-
-            try {
-                jsonObjectCheckinCare = new JSONObject();
-
-                Date mydate = new Date();
-                String strCreateDate = Utils.readFormat.format(mydate);
-                String strMonth = Utils.writeFormatDateMonth.format(mydate);
-                String strYear = Utils.writeFormatDateYear.format(mydate);
-
-                jsonObjectCheckinCare.put("created_date", strCreateDate);
-                jsonObjectCheckinCare.put("dependent_id", dependentId);
-                jsonObjectCheckinCare.put("provider_id", Config.providerModel.getStrProviderId());
-                jsonObjectCheckinCare.put("updated_date", "");
-                jsonObjectCheckinCare.put("current_date", datetxt.getText().toString());
-                jsonObjectCheckinCare.put("created_date_actual", strSelectedDate);
-                jsonObjectCheckinCare.put("status", "New");
-                jsonObjectCheckinCare.put("month", strMonth);
-                jsonObjectCheckinCare.put("year", strYear);
-                jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
-                jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
-                jsonObjectCheckinCare.put("check_in_care_name", Config.checkInCareModel.getStrName());
-
-                JSONArray jsonArrayPicture = new JSONArray();
-
-                ///////////////////////Hallimage
-                JSONObject jsonObjectHallPicture = new JSONObject();
-
-                jsonObjectHallPicture.put("status", "status");
-                jsonObjectHallPicture.put("room_name", "hall");
-
-                JSONArray jsonArrayHallPictureDetails = new JSONArray();
-
-
-                if (hallimageModels.size() > 0) {
-
-                    for (ImageModel hallImageModel : hallimageModels) {
-
-                        JSONObject jsonObjectHallImages = new JSONObject();
-
-                        jsonObjectHallImages.put("image_url", hallImageModel.getStrImageUrl());
-                        jsonObjectHallImages.put("description", hallImageModel.getStrImageDesc());
-                        jsonObjectHallImages.put("date_time", hallImageModel.getStrImageTime());
-
-                        jsonArrayHallPictureDetails.put(jsonObjectHallImages);
-                    }
-                } else {
-
-                    jsonArrayHallPictureDetails.put("{\"0\":\"empty\"}");
-                }
-
-                jsonObjectHallPicture.put("pictures_details", jsonArrayHallPictureDetails);
-                jsonArrayPicture.put(jsonObjectHallPicture);
-                ////////////////////////Hallimage
-
-                //////////////////////kitchenimage
-                JSONObject jsonObjectKitchenPicture = new JSONObject();
-
-                jsonObjectKitchenPicture.put("status", "status");
-                jsonObjectKitchenPicture.put("room_name", "kitchen");
-
-                JSONArray jsonArrayKitchenPictureDetails = new JSONArray();
-
-                if (kitchenimageModels.size() > 0) {
-
-                    for (ImageModel kitchenImageModel : kitchenimageModels) {
-
-                        JSONObject jsonObjectKitchenImages = new JSONObject();
-
-                        jsonObjectKitchenImages.put("image_url", kitchenImageModel.
-                                getStrImageUrl());
-                        jsonObjectKitchenImages.put("description", kitchenImageModel.
-                                getStrImageDesc());
-                        jsonObjectKitchenImages.put("date_time", kitchenImageModel.
-                                getStrImageTime());
-
-                        jsonArrayKitchenPictureDetails.put(jsonObjectKitchenImages);
-                    }
-                } else {
-
-                    jsonArrayKitchenPictureDetails.put("{\"0\":\"empty\"}");
-                }
-                jsonObjectKitchenPicture.put("pictures_details", jsonArrayKitchenPictureDetails);
-                jsonArrayPicture.put(jsonObjectKitchenPicture);
-                ////////////////////////kitchenimage
-
-
-                //////////////////////washroomimage
-                JSONObject jsonObjectWashroomPicture = new JSONObject();
-
-                jsonObjectWashroomPicture.put("status", "status");
-                jsonObjectWashroomPicture.put("room_name", "washroom");
-
-                JSONArray jsonArrayWashroomPictureDetails = new JSONArray();
 
                 if (washroomimageModels.size() > 0) {
 
@@ -2699,7 +2235,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 ////////////////activity1
 
 
-                ///////////// //////////activity 2
+                ///////////////////////activity 2
                 JSONObject jsonObjectActivitiesDomestic = new JSONObject();
 
                 jsonObjectActivitiesDomestic.put("activity_name", "domestic_help_status");
@@ -2771,6 +2307,476 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 e.printStackTrace();
             }
 
+            storageService.insertDocs(Config.collectionCheckInCare, jsonObjectCheckinCare,
+                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+
+                        @Override
+                        public void onDocumentInserted(Storage response) {
+                            try {
+                                if (mProgressDialog.isShowing())
+                                    mProgressDialog.dismiss();
+                                if (response.isResponseSuccess()) {
+
+                                    if (response.getJsonDocList().size() > 0) {
+
+                                        Storage.JSONDocument jsonDocument = response.getJsonDocList().get(0);
+
+                                        ///
+                                        String values[] = {jsonDocument.getDocId(),
+                                                jsonDocument.getUpdatedAt(),
+                                                jsonDocument.getJsonDoc(),
+                                                Config.collectionCheckInCare, "", "1",
+                                                Config.providerModel.getStrProviderId()
+                                        };
+
+                                        String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                                + DbHelper.COLUMN_COLLECTION_NAME + "=? and "
+                                                + DbHelper.COLUMN_PROVIDER_ID + "=?";
+
+                                        // WHERE clause arguments
+                                        String[] selectionArgs = {jsonDocument.getDocId(),
+                                                Config.collectionCheckInCare,
+                                                Config.providerModel.getStrProviderId()
+                                        };
+                                        CareGiver.getDbCon().updateInsert(
+                                                DbHelper.strTableNameCollection,
+                                                selection, values, DbHelper.COLLECTION_FIELDS,
+                                                selectionArgs);
+
+
+                                        //////////////
+
+
+                                        //todo fetch from session if offline sync update enabled
+                                        String values1[] = {jsonDocument.getDocId(),
+                                                "-1",
+                                                strSelectedDate,
+                                                Config.customerModel.getStrCustomerID(),
+                                                Config.providerModel.getStrProviderId()
+                                        };
+
+                                        String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                                + DbHelper.COLUMN_MILESTONE_ID + "=? ";
+
+                                        String[] selectionArgs1 = {jsonDocument.getDocId(),
+                                                "-1"
+                                        };
+
+                                        CareGiver.getDbCon().updateInsert(
+                                                DbHelper.strTableNameMilestone,
+                                                selection1, values1, DbHelper.CCARE_FIELDS,
+                                                selectionArgs1);
+
+                                        //notification
+                                        String strPushMessage = getString(R.string.notification_checkincare);
+
+                                        final JSONObject jsonObject = new JSONObject();
+
+                                        try {
+
+                                            String strDateNow;
+                                            Calendar calendar = Calendar.getInstance();
+                                            Date dateNow = calendar.getTime();
+                                            strDateNow = Utils.convertDateToString(dateNow);
+
+                                            //ios start
+                                            JSONObject jsonObjectTemp = new JSONObject();
+                                            jsonObjectTemp.put("alert", strPushMessage);
+                                            jsonObject.put("aps", jsonObjectTemp);
+                                            //ios end
+
+                                            jsonObject.put("created_by", Config.providerModel.getStrProviderId());
+                                            jsonObject.put("time", strDateNow);
+                                            jsonObject.put("user_type", "dependent");
+                                            jsonObject.put("user_id", dependentId);
+                                            jsonObject.put("checkincare", true);
+                                            jsonObject.put("checkincare_id", jsonDocument.getDocId());
+
+                                            //todo add for customer
+                                            jsonObject.put("created_by_type", "provider");
+                                            jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
+                                            jsonObject.put("alert", strPushMessage);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        sendPush(jsonObject);
+                                        insertNotification(jsonObject);
+
+                                    }
+                                    ///
+
+
+                                    //IMAGE_COUNT = 0;
+                                    bViewLoaded = false;
+
+                                    utils.toast(1, 1, getString(R.string.data_upload));
+                                    Intent intent = new Intent(CheckInCareActivity.this,
+                                            DashboardActivity.class);
+                                    Config.intSelectedMenu = Config.intClientScreen;
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                utils.toast(2, 2, getString(R.string.warning_internet));
+                            }
+                        }
+
+                        @Override
+                        public void onUpdateDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onFindDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onInsertionFailed(App42Exception ex) {
+                            try {
+                                if (mProgressDialog.isShowing())
+                                    mProgressDialog.dismiss();
+                                if (ex != null) {
+                                    JSONObject jsonObject = new JSONObject(ex.getMessage());
+                                    JSONObject jsonObjectError = jsonObject.
+                                            getJSONObject("app42Fault");
+                                    String strMess = jsonObjectError.getString("details");
+                                    utils.toast(2, 2, strMess);
+                                } else {
+                                    utils.toast(2, 2, getString(R.string.warning_internet));
+                                }
+
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                                utils.toast(2, 2, getString(R.string.error));
+                            }
+                        }
+
+                        @Override
+                        public void onFindDocFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onUpdateDocFailed(App42Exception ex) {
+                        }
+                    });
+
+        } else {
+            if (mProgressDialog.isShowing())
+                mProgressDialog.dismiss();
+            utils.toast(2, 2, getString(R.string.warning_internet));
+        }
+    }
+
+    private void editupdateJson() {
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage(getString(R.string.loading));
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.show();
+
+        JSONObject jsonObjectCheckinCare = null;
+
+        try {
+            jsonObjectCheckinCare = new JSONObject();
+
+            Date mydate = new Date();
+            String strCreateDate = Utils.readFormat.format(mydate);
+            String strMonth = Utils.writeFormatDateMonth.format(mydate);
+            String strYear = Utils.writeFormatDateYear.format(mydate);
+
+            jsonObjectCheckinCare.put("created_date", strCreateDate);
+            jsonObjectCheckinCare.put("dependent_id", dependentId);
+            jsonObjectCheckinCare.put("provider_id", Config.providerModel.getStrProviderId());
+            jsonObjectCheckinCare.put("updated_date", "");
+            jsonObjectCheckinCare.put("current_date", datetxt.getText().toString());
+            jsonObjectCheckinCare.put("created_date_actual", strSelectedDate);
+            jsonObjectCheckinCare.put("status", "New");
+            jsonObjectCheckinCare.put("month", strMonth);
+            jsonObjectCheckinCare.put("year", strYear);
+            jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
+            jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
+            jsonObjectCheckinCare.put("check_in_care_name", Config.checkInCareModel.getStrName());
+
+            JSONArray jsonArrayPicture = new JSONArray();
+
+            ///////////////////////Hallimage
+            JSONObject jsonObjectHallPicture = new JSONObject();
+
+            jsonObjectHallPicture.put("status", "status");
+            jsonObjectHallPicture.put("room_name", "hall");
+
+            JSONArray jsonArrayHallPictureDetails = new JSONArray();
+
+
+            if (hallimageModels.size() > 0) {
+
+                for (ImageModel hallImageModel : hallimageModels) {
+
+                    JSONObject jsonObjectHallImages = new JSONObject();
+
+                    jsonObjectHallImages.put("image_url", hallImageModel.getStrImageUrl());
+                    jsonObjectHallImages.put("description", hallImageModel.getStrImageDesc());
+                    jsonObjectHallImages.put("date_time", hallImageModel.getStrImageTime());
+
+                    jsonArrayHallPictureDetails.put(jsonObjectHallImages);
+                }
+            } else {
+
+                jsonArrayHallPictureDetails.put("{\"0\":\"empty\"}");
+            }
+
+            jsonObjectHallPicture.put("pictures_details", jsonArrayHallPictureDetails);
+            jsonArrayPicture.put(jsonObjectHallPicture);
+            ////////////////////////Hallimage
+
+            //////////////////////kitchenimage
+            JSONObject jsonObjectKitchenPicture = new JSONObject();
+
+            jsonObjectKitchenPicture.put("status", "status");
+            jsonObjectKitchenPicture.put("room_name", "kitchen");
+
+            JSONArray jsonArrayKitchenPictureDetails = new JSONArray();
+
+            if (kitchenimageModels.size() > 0) {
+
+                for (ImageModel kitchenImageModel : kitchenimageModels) {
+
+                    JSONObject jsonObjectKitchenImages = new JSONObject();
+
+                    jsonObjectKitchenImages.put("image_url", kitchenImageModel.
+                            getStrImageUrl());
+                    jsonObjectKitchenImages.put("description", kitchenImageModel.
+                            getStrImageDesc());
+                    jsonObjectKitchenImages.put("date_time", kitchenImageModel.
+                            getStrImageTime());
+
+                    jsonArrayKitchenPictureDetails.put(jsonObjectKitchenImages);
+                }
+            } else {
+
+                jsonArrayKitchenPictureDetails.put("{\"0\":\"empty\"}");
+            }
+            jsonObjectKitchenPicture.put("pictures_details", jsonArrayKitchenPictureDetails);
+            jsonArrayPicture.put(jsonObjectKitchenPicture);
+            ////////////////////////kitchenimage
+
+
+            //////////////////////washroomimage
+            JSONObject jsonObjectWashroomPicture = new JSONObject();
+
+            jsonObjectWashroomPicture.put("status", "status");
+            jsonObjectWashroomPicture.put("room_name", "washroom");
+
+            JSONArray jsonArrayWashroomPictureDetails = new JSONArray();
+
+            if (washroomimageModels.size() > 0) {
+
+                for (ImageModel washroomImageModel : washroomimageModels) {
+
+                    JSONObject jsonObjectWashroomImages = new JSONObject();
+
+                    jsonObjectWashroomImages.put("image_url", washroomImageModel.
+                            getStrImageUrl());
+                    jsonObjectWashroomImages.put("description", washroomImageModel.
+                            getStrImageDesc());
+                    jsonObjectWashroomImages.put("date_time", washroomImageModel.
+                            getStrImageTime());
+
+                    jsonArrayWashroomPictureDetails.put(jsonObjectWashroomImages);
+                }
+            } else {
+
+                jsonArrayWashroomPictureDetails.put("{\"0\":\"empty\"}");
+            }
+            jsonObjectWashroomPicture.put("pictures_details", jsonArrayWashroomPictureDetails);
+            jsonArrayPicture.put(jsonObjectWashroomPicture);
+            ////////////////////////washroomimage
+
+            //////////////////////bedroomimage
+            JSONObject jsonObjectBedroomPicture = new JSONObject();
+
+            jsonObjectBedroomPicture.put("status", "status");
+            jsonObjectBedroomPicture.put("room_name", "bedroom");
+
+            JSONArray jsonArrayBedroomPictureDetails = new JSONArray();
+
+
+            if (bedroomimageModels.size() > 0) {
+
+                for (ImageModel bedroomImageModel : bedroomimageModels) {
+
+                    JSONObject jsonObjectBedroomImages = new JSONObject();
+
+                    jsonObjectBedroomImages.put("image_url", bedroomImageModel.
+                            getStrImageUrl());
+                    jsonObjectBedroomImages.put("description", bedroomImageModel.
+                            getStrImageDesc());
+                    jsonObjectBedroomImages.put("date_time", bedroomImageModel.
+                            getStrImageTime());
+
+                    jsonArrayBedroomPictureDetails.put(jsonObjectBedroomImages);
+                }
+            } else {
+
+                jsonArrayBedroomPictureDetails.put("{\"0\":\"empty\"}");
+            }
+            jsonObjectBedroomPicture.put("pictures_details", jsonArrayBedroomPictureDetails);
+            jsonArrayPicture.put(jsonObjectBedroomPicture);
+            ////////////////////////bedroomimage
+
+            jsonObjectCheckinCare.put("picture", jsonArrayPicture);
+
+            ////
+
+            JSONArray jsonArrayActivities = new JSONArray();
+
+
+            /////////activity1
+            JSONObject jsonObjectActivities = new JSONObject();
+
+            jsonObjectActivities.put("activity_name", "home_essentials");
+
+            JSONArray jsonArraySubActivitiesHome = new JSONArray();
+
+            JSONObject jsonObjectSubActivitiesHome = new JSONObject();
+            jsonObjectSubActivitiesHome.put("sub_activity_name", "kitchen_equipments");
+            jsonObjectSubActivitiesHome.put("status", kitchen_equipments.getText().toString());
+            jsonObjectSubActivitiesHome.put("checkbox_status", kitchenequipcheck.isChecked());
+
+            jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome);
+
+            JSONObject jsonObjectSubActivitiesHome1 = new JSONObject();
+            jsonObjectSubActivitiesHome1.put("sub_activity_name", "grocery");
+            jsonObjectSubActivitiesHome1.put("status", grocery.getText().toString());
+            jsonObjectSubActivitiesHome1.put("checkbox_status", grocerycheck.isChecked());
+
+
+            jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome1);
+
+            JSONObject jsonObjectSubActivitiesHome2 = new JSONObject();
+            jsonObjectSubActivitiesHome2.put("sub_activity_name", "utility_bills");
+            jsonObjectSubActivitiesHome2.put("utility_name", "water");
+            jsonObjectSubActivitiesHome2.put("due_status", items[0]);
+            jsonObjectSubActivitiesHome2.put("due_date", txtwater.getText().toString());
+            jsonObjectSubActivitiesHome2.put("status", waterstatus.getText().toString());
+
+
+            jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome2);
+
+            JSONObject jsonObjectSubActivitiesHome3 = new JSONObject();
+            jsonObjectSubActivitiesHome3.put("sub_activity_name", "utility_bills");
+            jsonObjectSubActivitiesHome3.put("utility_name", "gas");
+            jsonObjectSubActivitiesHome3.put("due_status", items[1]);
+            jsonObjectSubActivitiesHome3.put("due_date", txtgas.getText().toString());
+            jsonObjectSubActivitiesHome3.put("status", gasstatus.getText().toString());
+
+
+            jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome3);
+
+            JSONObject jsonObjectSubActivitiesHome4 = new JSONObject();
+            jsonObjectSubActivitiesHome4.put("sub_activity_name", "utility_bills");
+            jsonObjectSubActivitiesHome4.put("utility_name", "electricity");
+            jsonObjectSubActivitiesHome4.put("due_status", items[2]);
+            jsonObjectSubActivitiesHome4.put("due_date", txtelectricity.getText().toString());
+            jsonObjectSubActivitiesHome4.put("status", electricitystatus.getText().toString());
+
+
+            jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome4);
+
+            JSONObject jsonObjectSubActivitiesHome5 = new JSONObject();
+            jsonObjectSubActivitiesHome5.put("sub_activity_name", "utility_bills");
+            jsonObjectSubActivitiesHome5.put("utility_name", "telephone");
+            jsonObjectSubActivitiesHome5.put("due_status", items[3]);
+            jsonObjectSubActivitiesHome5.put("due_date", txttelephone.getText().toString());
+            jsonObjectSubActivitiesHome5.put("status", telephonestatus.getText().toString());
+
+
+            jsonArraySubActivitiesHome.put(jsonObjectSubActivitiesHome5);
+
+            jsonObjectActivities.put("sub_activities", jsonArraySubActivitiesHome);
+
+            ///
+
+            jsonArrayActivities.put(jsonObjectActivities);
+            ////////////////activity1
+
+
+            ///////////// //////////activity 2
+            JSONObject jsonObjectActivitiesDomestic = new JSONObject();
+
+            jsonObjectActivitiesDomestic.put("activity_name", "domestic_help_status");
+
+            JSONArray jsonArraySubActivitiesDomestic = new JSONArray();
+
+            JSONObject jsonObjectSubActivitiesDomestic = new JSONObject();
+            jsonObjectSubActivitiesDomestic.put("sub_activity_name", "maid_services");
+            jsonObjectSubActivitiesDomestic.put("status", maidservices.getText().toString());
+            jsonObjectSubActivitiesDomestic.put("checkbox_status", domesticcheck.isChecked());
+
+            jsonArraySubActivitiesDomestic.put(jsonObjectSubActivitiesDomestic);
+
+            JSONObject jsonObjectSubActivitiesDomestic1 = new JSONObject();
+            jsonObjectSubActivitiesDomestic1.put("sub_activity_name", "driver_status");
+            jsonObjectSubActivitiesDomestic1.put("status", driveredt.getText().toString());
+            jsonObjectSubActivitiesDomestic1.put("checkbox_status", drivercheck.isChecked());
+
+            jsonArraySubActivitiesDomestic.put(jsonObjectSubActivitiesDomestic1);
+
+            jsonObjectActivitiesDomestic.put("sub_activities", jsonArraySubActivitiesDomestic);
+
+            jsonArrayActivities.put(jsonObjectActivitiesDomestic);
+            ///////////////////////activity 2
+
+
+            ///////////////////////activity 3
+            JSONObject jsonObjectActivitiesEquipment = new JSONObject();
+
+            jsonObjectActivitiesEquipment.put("activity_name", "equipment_working_status");
+
+            JSONArray jsonArraySubActivitiesEquipment = new JSONArray();
+
+            JSONObject jsonObjectSubActivitiesEquipment1 = new JSONObject();
+            jsonObjectSubActivitiesEquipment1.put("sub_activity_name", "electronic");
+            jsonObjectSubActivitiesEquipment1.put("status", electronic.getText().toString());
+            jsonObjectSubActivitiesEquipment1.put("checkbox_status", electrocheck.isChecked());
+
+            jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment1);
+
+
+            JSONObject jsonObjectSubActivitiesEquipment2 = new JSONObject();
+            jsonObjectSubActivitiesEquipment2.put("sub_activity_name", "home_appliances");
+            jsonObjectSubActivitiesEquipment2.put("status", homeapplience.getText().toString());
+            jsonObjectSubActivitiesEquipment2.put("checkbox_status", homecheck.isChecked());
+
+            jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment2);
+
+
+            JSONObject jsonObjectSubActivitiesEquipment3 = new JSONObject();
+            jsonObjectSubActivitiesEquipment3.put("sub_activity_name", "automobile");
+            jsonObjectSubActivitiesEquipment3.put("status", automobile.getText().toString());
+            jsonObjectSubActivitiesEquipment3.put("checkbox_status", autocheck.isChecked());
+
+            jsonArraySubActivitiesEquipment.put(jsonObjectSubActivitiesEquipment3);
+
+
+            jsonObjectActivitiesEquipment.put("sub_activities",
+                    jsonArraySubActivitiesEquipment);
+
+            jsonArrayActivities.put(jsonObjectActivitiesEquipment);
+            ///////////////////////activity 3
+
+
+            jsonObjectCheckinCare.put("activities", jsonArrayActivities);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (utils.isConnectingToInternet()) {
 
 
@@ -2786,7 +2792,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             ////////////////////////////////////////
                             /////////////////////////udpate to DB
-                            ///todo enable offline sync
+                            ///todo enable offline sync update
                             String values[] = {Config.checkInCareModel.getStrDocumentID(),
                                     "",
                                     jsonObject.toString(),
@@ -2841,6 +2847,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 Date dateNow = calendar.getTime();
                                 strDateNow = Utils.convertDateToString(dateNow);
 
+                                //ios start
+                                JSONObject jsonObjectTemp = new JSONObject();
+                                jsonObjectTemp.put("alert", strPushMessage);
+                                jsonObject1.put("aps", jsonObjectTemp);
+                                //ios end
+
                                 jsonObject1.put("created_by", Config.providerModel.getStrProviderId());
                                 jsonObject1.put("time", strDateNow);
                                 jsonObject1.put("user_type", "dependent");
@@ -2851,6 +2863,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 //todo add for customer
                                 jsonObject1.put("created_by_type", "provider");
                                 jsonObject1.put(App42GCMService.ExtraMessage, strPushMessage);
+                                jsonObject1.put("alert", strPushMessage);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -2863,9 +2876,9 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                             //Utils.log(response.toString(), "Success");
                             //IMAGE_COUNT = 0;
-                            bViewLoaded =false;
+                            bViewLoaded = false;
                             utils.toast(1, 1, getString(R.string.data_upload));
-                            editcheckincare=false;
+                            editcheckincare = false;
                             Intent intent = new Intent(CheckInCareActivity.this,
                                     DashboardActivity.class);
                             Config.intSelectedMenu = Config.intClientScreen;
@@ -2898,21 +2911,21 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         if (resultCode == Activity.RESULT_OK) {
             try {
 
-                if(isFlag==1) {
+                if (isFlag == 1) {
                     uploadhallbtn.setVisibility(View.VISIBLE);
                     isHallflag = 1;
                 }
-                if(isFlag==2) {
+                if (isFlag == 2) {
                     uploadkitchenbtn.setVisibility(View.VISIBLE);
-                    isKitchenflag=1;
+                    isKitchenflag = 1;
                 }
-                if(isFlag==3) {
+                if (isFlag == 3) {
                     uploadwashroombtn.setVisibility(View.VISIBLE);
-                    isWashflag=1;
+                    isWashflag = 1;
                 }
-                if(isFlag==4) {
+                if (isFlag == 4) {
                     uploadbedroombtn.setVisibility(View.VISIBLE);
-                    isBedflag=1;
+                    isBedflag = 1;
                 }
 
                 /*   mProgress.setMessage(getString(R.string.loading));
@@ -2933,7 +2946,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                         String[] all_path = intent.getStringArrayExtra("all_path");
 
-                        if(isFlag==1) {
+                        if (isFlag == 1) {
                             if (all_path.length + Hall_IMAGE_COUNT > 4) {
 
                                 for (int i = 0; i < (4 - Hall_IMAGE_COUNT); i++) {
@@ -2947,7 +2960,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 }
                             }
                         }
-                        if(isFlag==2) {
+                        if (isFlag == 2) {
                             if (all_path.length + Kitchen_IMAGE_COUNT > 4) {
 
                                 for (int i = 0; i < (4 - Kitchen_IMAGE_COUNT); i++) {
@@ -2962,7 +2975,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             }
                         }
 
-                        if(isFlag==3) {
+                        if (isFlag == 3) {
                             if (all_path.length + Washroom_IMAGE_COUNT > 4) {
 
                                 for (int i = 0; i < (4 - Washroom_IMAGE_COUNT); i++) {
@@ -2977,7 +2990,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             }
                         }
 
-                        if(isFlag==4) {
+                        if (isFlag == 4) {
                             if (all_path.length + Bedroom_IMAGE_COUNT > 4) {
 
                                 for (int i = 0; i < (4 - Bedroom_IMAGE_COUNT); i++) {
@@ -3005,7 +3018,6 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             }
         }
     }
-
 
 
     private void addHallImages() {
@@ -3054,12 +3066,11 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
 
-
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
-                            if (isHallflag==1) {
+                            if (isHallflag == 1) {
                                 final ImageModel mImageModel = (ImageModel) v.getTag();
 
                                 final int mPosition = (int) v.getTag(R.id.three);
@@ -3108,12 +3119,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                             if (fDelete.exists()) {
                                                                 success = fDelete.delete();
 
-                                                                if(hallimageModels.size()<=0){
-                                                                    isHallflag=0;
+                                                                if (hallimageModels.size() <= 0) {
+                                                                    isHallflag = 0;
                                                                 }
                                                                 if (mImageModel.ismIsNew())
                                                                     hallImageCount--;
-                                                                    Hall_IMAGE_COUNT--;
+                                                                Hall_IMAGE_COUNT--;
 
                                                                 mImageChanged = true;
 
@@ -3273,7 +3284,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onClick(View v) {
 
-                            if (isKitchenflag==1) {
+                            if (isKitchenflag == 1) {
                                 final ImageModel mImageModel = (ImageModel) v.getTag();
 
                                 final int mPosition = (int) v.getTag(R.id.three);
@@ -3322,13 +3333,13 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                             if (fDelete.exists()) {
                                                                 success = fDelete.delete();
 
-                                                                if(kitchenimageModels.size()<=0){
-                                                                    isKitchenflag=0;
+                                                                if (kitchenimageModels.size() <= 0) {
+                                                                    isKitchenflag = 0;
                                                                 }
 
                                                                 if (mImageModel.ismIsNew())
                                                                     kitchenImageCount--;
-                                                                    Kitchen_IMAGE_COUNT--;
+                                                                Kitchen_IMAGE_COUNT--;
 
                                                                 mImageChanged = true;
 
@@ -3490,7 +3501,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onClick(View v) {
 
-                            if (isWashflag==1) {
+                            if (isWashflag == 1) {
                                 final ImageModel mImageModel = (ImageModel) v.getTag();
 
                                 final int mPosition = (int) v.getTag(R.id.three);
@@ -3539,13 +3550,13 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                             if (fDelete.exists()) {
                                                                 success = fDelete.delete();
 
-                                                                if(washroomimageModels.size()<=0){
-                                                                    isWashflag=0;
+                                                                if (washroomimageModels.size() <= 0) {
+                                                                    isWashflag = 0;
                                                                 }
 
                                                                 if (mImageModel.ismIsNew())
                                                                     washroomImageCount--;
-                                                                    Washroom_IMAGE_COUNT--;
+                                                                Washroom_IMAGE_COUNT--;
 
                                                                 mImageChanged = true;
 
@@ -3708,7 +3719,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onClick(View v) {
 
-                            if (isBedflag==1) {
+                            if (isBedflag == 1) {
                                 final ImageModel mImageModel = (ImageModel) v.getTag();
 
                                 final int mPosition = (int) v.getTag(R.id.three);
@@ -3759,7 +3770,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                                                                 if (mImageModel.ismIsNew())
                                                                     bedroomImageCount--;
-                                                                    Bedroom_IMAGE_COUNT--;
+                                                                Bedroom_IMAGE_COUNT--;
 
                                                                 mImageChanged = true;
 
@@ -4150,10 +4161,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     public void onClick(View v) {
                         isFlag = 1;
                         mainlinearlayout.requestFocus();
-                        if(isHallflag ==2){
+                        if (isHallflag == 2) {
                             utils.toast(2, 2, getString(R.string.upload_hall_success));
 
-                        }else {
+                        } else {
 
                             if (Hall_IMAGE_COUNT < 4) {
 
@@ -4172,10 +4183,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     public void onClick(View v) {
                         isFlag = 2;
                         mainlinearlayout.requestFocus();
-                        if(isKitchenflag==2){
+                        if (isKitchenflag == 2) {
                             utils.toast(2, 2, getString(R.string.upload_kitchen_success));
 
-                        }else {
+                        } else {
                             if (Kitchen_IMAGE_COUNT < 4) {
 
                                 selectImage();
@@ -4183,7 +4194,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 utils.toast(2, 2, "Maximum 4 Images only Allowed");
                             }
                         }
-                        }
+                    }
                 });
             }
             if (buttonWashroomAdd != null) {
@@ -4192,10 +4203,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     public void onClick(View v) {
                         isFlag = 3;
                         mainlinearlayout.requestFocus();
-                        if(isWashflag==2){
+                        if (isWashflag == 2) {
                             utils.toast(2, 2, getString(R.string.upload_wash_success));
 
-                        }else {
+                        } else {
                             if (Washroom_IMAGE_COUNT < 4) {
 
                                 selectImage();
@@ -4203,7 +4214,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 utils.toast(2, 2, "Maximum 4 Images only Allowed");
                             }
                         }
-                        }
+                    }
                 });
             }
             if (buttonBedroomAdd != null) {
@@ -4212,10 +4223,10 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     public void onClick(View v) {
                         isFlag = 4;
                         mainlinearlayout.requestFocus();
-                        if(isBedflag==2){
+                        if (isBedflag == 2) {
                             utils.toast(2, 2, getString(R.string.upload_bed_success));
 
-                        }else {
+                        } else {
                             if (Bedroom_IMAGE_COUNT < 4) {
 
                                 selectImage();
@@ -4230,7 +4241,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             if (!bViewLoaded) {
 
-               bViewLoaded =true;
+                bViewLoaded = true;
 
                 loadingPanel.setVisibility(View.VISIBLE);
 
@@ -4355,26 +4366,26 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             if (isFlag == 1) {
                 addHallImages();
-            }else{
+            } else {
                 addHallImages();
             }
 
             if (isFlag == 2) {
                 addKitchenImages();
-            }else{
+            } else {
                 addKitchenImages();
             }
 
             if (isFlag == 3) {
                 addWashroomImages();
-            }else{
+            } else {
                 addWashroomImages();
             }
 
 
             if (isFlag == 4) {
                 addBedroomImages();
-            }else{
+            } else {
                 addBedroomImages();
             }
 
@@ -4672,7 +4683,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         @Override
         public void run() {
 
-            if(editcheckincare) {
+            if (editcheckincare) {
 
                 try {
                     for (ImageModel imageModel : hallimageModels) {

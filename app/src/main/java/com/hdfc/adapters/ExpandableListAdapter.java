@@ -161,7 +161,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(final int groupPosition, boolean isExpanded,
                              View convertView, final ViewGroup parent) {
 
-        final CustomerModel customerModel = (CustomerModel)getGroup(groupPosition);
+        final CustomerModel customerModel = (CustomerModel) getGroup(groupPosition);
         final ArrayList<DependentModel> dependentModels = Config.clientModels.get(groupPosition).
                 getDependentModels();
         ViewHolder viewHolder;
@@ -172,16 +172,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
-            viewHolder.contact = (TextView)convertView.findViewById(R.id.textViewContact);
+            viewHolder.contact = (TextView) convertView.findViewById(R.id.textViewContact);
             viewHolder.client = (ImageView) convertView.findViewById(R.id.imageClients);
-            viewHolder.insert = (ImageButton)convertView.findViewById(R.id.insert);
+            viewHolder.insert = (ImageButton) convertView.findViewById(R.id.insert);
             viewHolder.progressBar1 = (ProgressBar) convertView.findViewById(R.id.progressBar1);
             viewHolder.linearTextHeader = (LinearLayout) convertView.findViewById(R.id.linearText);
 
             viewHolder.imageWrapper = (LinearLayout) convertView.findViewById(R.id.imageWrapper);
 
             convertView.setTag(viewHolder);
-        }else {
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 

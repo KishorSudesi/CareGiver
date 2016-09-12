@@ -20,7 +20,7 @@ import com.hdfc.services.GPSTracker;
 /**
  * Created by Admin on 28-01-2016.
  */
-public class ClientProfileActivity extends AppCompatActivity  {
+public class ClientProfileActivity extends AppCompatActivity {
 
     public static Bitmap bitmap = null;
     private static String strUrl = "";
@@ -210,7 +210,7 @@ public class ClientProfileActivity extends AppCompatActivity  {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
       /*  BackgroundThread backgroundThread = new BackgroundThread();

@@ -48,11 +48,13 @@ public class RatingsAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount() { return data1.size();
+    public int getCount() {
+        return data1.size();
     }
 
     @Override
-    public Object getItem(int position) { return data1.get(position);
+    public Object getItem(int position) {
+        return data1.get(position);
     }
 
     @Override
@@ -79,7 +81,7 @@ public class RatingsAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        if(data1.size()>0) {
+        if (data1.size() > 0) {
 
             try {
 

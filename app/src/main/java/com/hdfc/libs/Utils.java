@@ -12,8 +12,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -96,13 +94,13 @@ public class Utils {
     private static final Locale locale = Locale.ENGLISH;
 
     public final static SimpleDateFormat readFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss.SSS'Z'", locale);
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale);
     /* public final static SimpleDateFormat readFormatLocal =
              new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS", locale);*/
     public final static SimpleDateFormat readFormatLocalDB =
-            new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS", locale);
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", locale);
     public final static SimpleDateFormat writeFormat = new
-            SimpleDateFormat("kk:mm dd MMM yyyy", locale);
+            SimpleDateFormat("HH:mm dd MMM yyyy", locale);
     public final static SimpleDateFormat writeFormatDate = new
             SimpleDateFormat("dd-MMM-yyyy", locale);
     public final static SimpleDateFormat writeFormatDateDB = new
@@ -114,19 +112,20 @@ public class Utils {
     public final static SimpleDateFormat writeFormatDateMY = new
             SimpleDateFormat("dd MMM yyyy", locale);
     public final static SimpleDateFormat queryFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss.SSS", locale);
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
     public final static SimpleDateFormat queryFormatday =
-            new SimpleDateFormat("yyyyMMddkkmmss", locale);
+            new SimpleDateFormat("yyyyMMddHHmmss", locale);
+    public final static SimpleDateFormat writeFormatLocal = new
+            SimpleDateFormat("HH:mm dd MMM yyyy", locale);
     private final static SimpleDateFormat writeFormatTime = new
-            SimpleDateFormat("kk:mm", locale); // aa
+            SimpleDateFormat("HH:mm", locale); // aa
     private final static String SENDER_EMAIL = "adstringosoftware@gmail.com";
 
   /*  public final static SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd", Config.locale);*/
-
-   /* public final static SimpleDateFormat readFormatDate =
-            new SimpleDateFormat("yyyy-MM-dd", Config.locale);
-*/
+    /* public final static SimpleDateFormat readFormatDate =
+             new SimpleDateFormat("yyyy-MM-dd", Config.locale);
+ */
     public static Uri customerImageUri;
 
     static {
@@ -152,12 +151,14 @@ public class Utils {
         //readFormatLocal.setTimeZone(TimeZone.getDefault());
         queryFormat.setTimeZone(TimeZone.getDefault());
         readFormatLocalDB.setTimeZone(TimeZone.getDefault());
+        writeFormatLocal.setTimeZone(TimeZone.getDefault());
     }
 
     public Utils() {
         readFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         //readFormatLocal.setTimeZone(TimeZone.getDefault());
         queryFormat.setTimeZone(TimeZone.getDefault());
+        writeFormatLocal.setTimeZone(TimeZone.getDefault());
         readFormatLocalDB.setTimeZone(TimeZone.getDefault());
     }
 
@@ -639,7 +640,8 @@ public class Utils {
 
         Date lastDayOfMonth = calendar.getTime();
 
-        strLastDateMonth = writeFormatDateDB.format(lastDayOfMonth) + " 24:00:00.000";
+        //todo check time value
+        strLastDateMonth = writeFormatDateDB.format(lastDayOfMonth) + " 24:59:59.999";
         log(strLastDateMonth, "LAST DATE ");
 
         return strLastDateMonth;
@@ -901,6 +903,25 @@ public class Utils {
         }
     }*/
 
+    public static List<String> splitLongText(String string, int length) {
+
+        List<String> strings = new ArrayList<>();
+        // int index = 0;
+
+        //
+        Pattern p = Pattern.compile("\\G\\s*(.{1," + length + "})(?=\\s|$)", Pattern.DOTALL);
+        Matcher m = p.matcher(string);
+        while (m.find())
+            strings.add(m.group(1));
+        //
+
+      /*  while (index < string.length()) {
+            strings.add(string.substring(index, Math.min(index + length, string.length())));
+            index += length;
+        }*/
+        return strings;
+    }
+
     //todo send sms
     public static void sendSMS(String reciever, String message) {
         URLConnection myURLConnection = null;
@@ -932,11 +953,11 @@ public class Utils {
         emailService.getEmailService().sendMail(sendTo, sendSubject, sendMsg, SENDER_EMAIL,
                 EmailMIME.HTML_TEXT_MIME_TYPE, new App42CallBack() {
                     public void onSuccess(Object response) {
-                        Utils.log("Sent MAil", "1");
+                        Utils.log("Sent Mail", "1");
                     }
 
                     public void onException(Exception ex) {
-                        Utils.log("Sent MAil" + ex.getMessage(), "0");
+                        Utils.log("Sent Mail" + ex.getMessage(), "0");
                     }
 
                 });
@@ -946,17 +967,22 @@ public class Utils {
         //encoding message
         String encoded_message = URLEncoder.encode(message);
 
+        //http://otp2.maccesssmspush.com/OTP_ACL_Web/OtpRequestListener?enterpriseid=hlifeotp
+        // &subEnterpriseid=hlifeotp&pusheid=hlifeotp&pushepwd=hlifeotp&msisdn=919789863136&sender=HDFCSL&msgtext=sample
+
         //Send SMS API
-        String mainUrl = "http://api.msg91.com/sendhttp.php?";
+        String mainUrl = "http://otp2.maccesssmspush.com/OTP_ACL_Web/OtpRequestListener?";
 
         //Prepare parameter string
-        StringBuilder sbPostData = new StringBuilder(mainUrl);
+        String sbPostData = mainUrl + "&enterpriseid=" + "hlifeotp" +
+                "&subEnterpriseid=" + "hlifeotp" +
+                "&pusheid=" + "hlifeotp" +
+                "&pushepwd=" + "hlifeotp" +
+                "&msisdn=" + reciever +
+                "&sender=" + "HDFCSL" +
+                "&msgtext=" + encoded_message;
         // sbPostData.append("authkey="+authkey);
-        sbPostData.append("&mobiles=" + reciever);
-        sbPostData.append("&message=" + encoded_message);
-        sbPostData.append("&route=" + "4");
-        sbPostData.append("&sender=" + "CustomSenderID");
-        return sbPostData.toString();
+        return sbPostData;
     }
 
     /**
@@ -1367,7 +1393,7 @@ public class Utils {
             toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
 
             //if (duration == 2)
-                toast.setDuration(Toast.LENGTH_LONG);
+            toast.setDuration(Toast.LENGTH_LONG);
            /* else
                 toast.setDuration(Toast.LENGTH_SHORT);*/
 
@@ -1529,7 +1555,6 @@ public class Utils {
             mFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }*/
-
     public boolean validCellPhone(String number) {
         //return android.util.Patterns.PHONE.matcher(number).matches();
 
@@ -1609,9 +1634,9 @@ public class Utils {
         }
     }
 
-    public void selectFile(final String strFileName, final Fragment fragment,
-                           final Activity activity, final boolean isSingle){
-        try{
+    /*public void selectFile(final String strFileName, final Fragment fragment,
+                           final Activity activity, final boolean isSingle) {
+        try {
             final CharSequence[] items = {"Take Photo", "Take Video", "Choose from Library", "Cancel"};
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(_ctxt);
@@ -1619,17 +1644,17 @@ public class Utils {
             builder.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if(items[which].equals("Take Photo")){
-                        openCamera(strFileName,fragment,activity);
-                    } else if(items[which].equals("Take Video")){
+                    if (items[which].equals("Take Photo")) {
+                        openCamera(strFileName, fragment, activity);
+                    } else if (items[which].equals("Take Video")) {
                         Intent intent = new Intent("android.media.action.VIDEO_CAMERA");
-                        activity.startActivityForResult(intent,1);
-                    } else if(items[which].equals("Choose from Library")){
+                        activity.startActivityForResult(intent, 1);
+                    } else if (items[which].equals("Choose from Library")) {
                         Intent intent;
 
                         if (isSingle) {
                             intent = new Intent();
-                            intent.setType("image/*");
+                            intent.setType("image*//*");
                             intent.setAction(Intent.ACTION_GET_CONTENT);
 
                             if (fragment != null)
@@ -1652,10 +1677,10 @@ public class Utils {
                 }
             });
             builder.show();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     public void openCamera(String strFileName, Fragment fragment, final Activity activity) {
 
@@ -1693,7 +1718,7 @@ public class Utils {
         }
     }
 
-    public Bitmap roundedBitmap(Bitmap bmp){
+   /* public Bitmap roundedBitmap(Bitmap bmp) {
         Bitmap output = null;
 
         try {
@@ -1717,7 +1742,7 @@ public class Utils {
             e.printStackTrace();
         }
         return output;
-    }
+    }*/
 
     public Bitmap getBitmapFromFile(String strPath, int intWidth, int intHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();

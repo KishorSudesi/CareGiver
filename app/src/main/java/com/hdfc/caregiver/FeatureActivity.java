@@ -563,7 +563,7 @@ public class FeatureActivity extends AppCompatActivity {
                         Collections.addAll(imagePaths, all_path);
 
                         Thread backgroundThread = new BackgroundThread();
-                            backgroundThread.start();
+                        backgroundThread.start();
 
                         break;
                 }
@@ -796,7 +796,6 @@ public class FeatureActivity extends AppCompatActivity {
                             });
 
 
-
                             try {
                                 mOriginal.setImageBitmap(bitmaps.get(mPosition));
                                 //, Config.intWidth, Config.intHeight)
@@ -903,28 +902,30 @@ public class FeatureActivity extends AppCompatActivity {
                         //Open popup window
                         //if (p != null)
                         // if (IMAGE_COUNT < 20) {
-                            //showStatusPopup(FeatureActivity.this, p);
-                            Calendar calendar = Calendar.getInstance();
-                            strName = String.valueOf(calendar.getTimeInMillis());
-                            strImageName = strName + ".jpeg";
+                        //showStatusPopup(FeatureActivity.this, p);
+                        Calendar calendar = Calendar.getInstance();
+                        strName = String.valueOf(calendar.getTimeInMillis());
+                        strImageName = strName + ".jpeg";
 
-                            permissionHelper.verifyPermission(
-                                    new String[]{getString(R.string.access_storage)},
-                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                    new PermissionCallback() {
-                                        @Override
-                                        public void permissionGranted() {
-                                            //action to perform when permission granted
-                                            utils.selectImage(strImageName, null,
-                                                    FeatureActivity.this, false);
-                                        }
-
-                                        @Override
-                                        public void permissionRefused() {
-                                            //todo action to perform when permission refused
-                                        }
+                        permissionHelper.verifyPermission(
+                                new String[]{getString(R.string.access_storage)},
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                new PermissionCallback() {
+                                    @Override
+                                    public void permissionGranted() {
+                                        //action to perform when permission granted
+                                        utils.selectImage(strImageName, null,
+                                                FeatureActivity.this, false);
                                     }
-                            );
+
+                                    @Override
+                                    public void permissionRefused() {
+                                        Utils.toast(1, 1,
+                                                getString(R.string.access_storage_false),
+                                                FeatureActivity.this);
+                                    }
+                                }
+                        );
                     }
                 });
             }
@@ -975,12 +976,12 @@ public class FeatureActivity extends AppCompatActivity {
                 textViewName.setText(milestoneModel.getStrMilestoneName());
                 textViewName.setTextColor(getResources().getColor(R.color.colorWhite));
                 textViewName.setPadding(25, 20, 0, 20);
-                textViewName.setGravity(Gravity.CENTER|Gravity.LEFT);
+                textViewName.setGravity(Gravity.CENTER | Gravity.LEFT);
                /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     textViewName.setGravity(View.TEXT_ALIGNMENT_CENTER);
                 }*/
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT,1);
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1);
                 params.setMargins(5, 5, 5, 5);
                 textViewName.setTag(milestoneModel);
 
@@ -1059,7 +1060,7 @@ public class FeatureActivity extends AppCompatActivity {
                 }
 
                 if (drawable != null) {
-                    textViewName.setCompoundDrawablesWithIntrinsicBounds(drawable, null,null , null);
+                    textViewName.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
                     textViewName.setCompoundDrawablePadding(30);
                 }
 
@@ -1130,7 +1131,7 @@ public class FeatureActivity extends AppCompatActivity {
         public void run() {
 
             try {
-                for(int i=0;i<imagePaths.size();i++) {
+                for (int i = 0; i < imagePaths.size(); i++) {
                     Calendar calendar = Calendar.getInstance();
                     String strTime = String.valueOf(calendar.getTimeInMillis());
                     String strFileName = strTime + ".jpeg";
