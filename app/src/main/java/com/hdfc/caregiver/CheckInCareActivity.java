@@ -100,7 +100,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static boolean bViewLoaded, mImageChanged;
     private static StorageService storageService;
     private static ArrayList<DependentModel> dependent = new ArrayList<>();
-    public String item = "", dependentId = "";
+    public String item = "", dependentId = "", strDependentNo = "";
     private Utils utils;
     private RelativeLayout loadingPanel;
     private RelativeLayout loadingPanelhall, loadingPanelkitchen, loadingPanelwash, loadingPanelbed;
@@ -283,15 +283,17 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         /////////////////////spinner for dependent
         ArrayList<String> strDependent = null;
         Bundle bundle;
+
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            dependent = (ArrayList<DependentModel>) bundle.getSerializable("DEPENDENTS");
+
+        }
+
         if (!editcheckincare) {
             try {
                 dependentname.setVisibility(View.GONE);
                 dependentspinner.setVisibility(View.VISIBLE);
-                bundle = getIntent().getExtras();
-                if (bundle != null) {
-                    dependent = (ArrayList<DependentModel>) bundle.getSerializable("DEPENDENTS");
-
-                }
 
                 strDependent = new ArrayList<>();
 
@@ -706,6 +708,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 }*/
 
                 dependentId = Config.checkInCareModel.getStrDependentID();
+                strDependentNo = Config.checkInCareModel.getStrDependentID();
 
                 ///////////////////////////////////////////////////////fetch depedent
                 Cursor cursor1 = CareGiver.getDbCon().fetch(
@@ -2396,10 +2399,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                             jsonObject.put("created_by_type", "provider");
                                             jsonObject.put(App42GCMService.ExtraMessage, strPushMessage);
                                             jsonObject.put("alert", strPushMessage);
+
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
 
+                                        Utils.sendSMS(strDependentNo, strPushMessage);
                                         sendPush(jsonObject);
                                         insertNotification(jsonObject);
 
@@ -2494,7 +2499,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
             jsonObjectCheckinCare.put("updated_date", "");
             jsonObjectCheckinCare.put("current_date", datetxt.getText().toString());
             jsonObjectCheckinCare.put("created_date_actual", strSelectedDate);
-            jsonObjectCheckinCare.put("status", "New");
+            jsonObjectCheckinCare.put("status", "Updated");
             jsonObjectCheckinCare.put("month", strMonth);
             jsonObjectCheckinCare.put("year", strYear);
             jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
@@ -2868,7 +2873,51 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                 e.printStackTrace();
                             }
 
+                            //fetch dependent start
+                            Cursor cursor1 = CareGiver.getDbCon().fetch(
+                                    DbHelper.strTableNameCollection, new String[]{
+                                            DbHelper.COLUMN_DOCUMENT},
+                                    DbHelper.COLUMN_COLLECTION_NAME + "=? and "
+                                            + DbHelper.COLUMN_OBJECT_ID
+                                            + "=? and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
+                                    new String[]{Config.collectionDependent, dependentId,
+                                            Config.providerModel.getStrProviderId()},
+                                    null, "0,1", true, null, null
+                            );
 
+                            JSONObject jsonObjectDpndnt = null;
+
+                            if (cursor1.getCount() > 0) {
+                                cursor1.moveToFirst();
+                                try {
+                                    if (cursor1.getString(0) != null && !cursor1.getString(0).
+                                            equalsIgnoreCase("")) {
+                                        jsonObjectDpndnt = new JSONObject(cursor1.getString(0));
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            CareGiver.getDbCon().closeCursor(cursor1);
+
+                            try {
+                                if (jsonObjectDpndnt != null) {
+
+                                    if (jsonObjectDpndnt.getString("dependent_contact_no") != null
+                                            && !jsonObjectDpndnt.getString("dependent_contact_no").
+                                            equalsIgnoreCase("")) {
+
+                                        strDependentNo = jsonObjectDpndnt.optString("dependent_contact_no");
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            //fetch dependent end
+
+                            Utils.sendSMS(strDependentNo, strPushMessage);
                             sendPush(jsonObject1);
                             insertNotification(jsonObject1);
                             /////////////////////////udpate to DB
@@ -4087,13 +4136,12 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         homeessentialstatus.setTextColor(Color.RED);
                     }
                 }
-
                 break;
 
             case R.id.dependentspinner:
 
                 dependentId = dependent.get(position).getStrDependentID();
-
+                strDependentNo = dependent.get(position).getStrContacts();
                 break;
 
         }

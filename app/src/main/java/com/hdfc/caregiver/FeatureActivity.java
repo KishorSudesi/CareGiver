@@ -27,17 +27,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ayz4sci.androidfactory.permissionhelper.PermissionHelper;
+import com.hdfc.app42service.App42GCMService;
+import com.hdfc.app42service.PushNotificationService;
 import com.hdfc.app42service.StorageService;
 import com.hdfc.app42service.UploadService;
 import com.hdfc.config.CareGiver;
 import com.hdfc.config.Config;
 import com.hdfc.dbconfig.DbHelper;
+import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.Utils;
 import com.hdfc.models.ActivityModel;
 import com.hdfc.models.ImageModel;
 import com.hdfc.models.MilestoneModel;
 import com.hdfc.views.TouchImageView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
+import com.shephertz.app42.paas.sdk.android.App42Exception;
+import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
 
@@ -77,7 +82,7 @@ public class FeatureActivity extends AppCompatActivity {
     private boolean success;
     private TextView textViewTime;
     private LinearLayout linearLayoutAttach;
-    private String strCustomerEmail;
+    private String strCustomerEmail, strCustomerNo, strDependentNo;
     private Button done;
     private PermissionHelper permissionHelper;
     //private boolean isAllowed;
@@ -146,8 +151,10 @@ public class FeatureActivity extends AppCompatActivity {
 
             Cursor cursor1 = CareGiver.getDbCon().fetch(
                     DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT},
-                    DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID + "=?",
-                    new String[]{Config.collectionDependent, act.getStrDependentID()},
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? and " + DbHelper.COLUMN_OBJECT_ID
+                            + "=? and " + DbHelper.COLUMN_PROVIDER_ID + "=?",
+                    new String[]{Config.collectionDependent, act.getStrDependentID(),
+                            Config.providerModel.getStrProviderId()},
                     null, "0,1", true, null, null
             );
 
@@ -174,6 +181,11 @@ public class FeatureActivity extends AppCompatActivity {
                             && !jsonObject.getString("dependent_name").equalsIgnoreCase("")) {
                         name = jsonObject.optString("dependent_name");
                         strDependentName = jsonObject.optString("dependent_name");
+                    }
+
+                    if (jsonObject.getString("dependent_contact_no") != null
+                            && !jsonObject.getString("dependent_contact_no").equalsIgnoreCase("")) {
+                        strDependentNo = jsonObject.optString("dependent_contact_no");
                     }
 
                     if (imgLogoHeaderTaskDetail != null
@@ -204,9 +216,10 @@ public class FeatureActivity extends AppCompatActivity {
                     DbHelper.strTableNameCollection,
                     new String[]{DbHelper.COLUMN_DOCUMENT},
                     DbHelper.COLUMN_COLLECTION_NAME + "=? and "
-                            + DbHelper.COLUMN_OBJECT_ID + "=?",
-                    new String[]{Config.collectionCustomer, act.getStrCustomerID()},
-                    null, "0,1", true, null, null
+                            + DbHelper.COLUMN_OBJECT_ID + "=? and " + DbHelper.COLUMN_PROVIDER_ID
+                            + "=?",
+                    new String[]{Config.collectionCustomer, act.getStrCustomerID(),
+                            Config.providerModel.getStrProviderId()}, null, "0,1", true, null, null
             );
 
             JSONObject jsonObject1 = null;
@@ -234,6 +247,11 @@ public class FeatureActivity extends AppCompatActivity {
                     if (jsonObject1.getString("customer_email") != null
                             && !jsonObject1.getString("customer_email").equalsIgnoreCase("")) {
                         strCustomerEmail = jsonObject1.optString("customer_email");
+                    }
+
+                    if (jsonObject1.getString("customer_contact_no") != null
+                            && !jsonObject1.getString("customer_contact_no").equalsIgnoreCase("")) {
+                        strCustomerNo = jsonObject1.optString("customer_contact_no");
                     }
 
                     if (jsonObject1.getString("customer_profile_url") != null
@@ -516,6 +534,40 @@ public class FeatureActivity extends AppCompatActivity {
                             }
 
                             CareGiver.getDbCon().closeCursor(cursor);
+
+                            try {
+                                JSONObject jsonObjectPush = new JSONObject();
+                                String strDateNow;
+                                Calendar calendar = Calendar.getInstance();
+                                Date dateNow = calendar.getTime();
+                                strDateNow = Utils.convertDateToString(dateNow);
+
+                                String strPushMessage = getString(
+                                        R.string.notification_activity_image)
+                                        + act.getStrActivityName();
+
+                                //ios start
+                                JSONObject jsonObjectTemp = new JSONObject();
+                                jsonObjectTemp.put("alert", strPushMessage);
+                                jsonObjectPush.put("aps", jsonObjectTemp);
+                                //ios end
+
+                                jsonObjectPush.put("created_by", Config.providerModel.
+                                        getStrProviderId());
+                                jsonObjectPush.put("time", strDateNow);
+                                jsonObjectPush.put("user_type", "dependent");
+                                jsonObjectPush.put("user_id", act.getStrDependentID());
+
+                                //todo add for customer
+                                jsonObjectPush.put("created_by_type", "provider");
+                                jsonObjectPush.put(App42GCMService.ExtraMessage, strPushMessage);
+                                jsonObjectPush.put("alert", strPushMessage);
+
+                                sendPushToDependent(jsonObjectPush);
+                                insertNotification(jsonObjectPush);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
 
                             ///
@@ -1094,6 +1146,8 @@ public class FeatureActivity extends AppCompatActivity {
                                 args.putSerializable("Milestone", milestoneModelObject);
                                 args.putInt("WHICH_SCREEN", bWhichScreen);
                                 args.putString("CUSTOMER_EMAIL", strCustomerEmail);
+                                args.putString("CUSTOMER_NO", strCustomerNo);
+                                args.putString("DEPENDENT_NO", strDependentNo);
                                 args.putString("DEPENDENT_NAME", strDependentName);
                                 intent.putExtras(args);
                                 startActivity(intent);
@@ -1107,6 +1161,71 @@ public class FeatureActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void insertNotification(final JSONObject jsonObject) {
+
+        if (utils.isConnectingToInternet()) {
+
+            storageService.insertDocs(Config.collectionNotification, jsonObject,
+                    new AsyncApp42ServiceApi.App42StorageServiceListener() {
+
+                        @Override
+                        public void onDocumentInserted(Storage response) {
+                            try {
+                                if (response.isResponseSuccess()) {
+                                    //sendPush(jsonObject);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onUpdateDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onFindDocSuccess(Storage response) {
+                        }
+
+                        @Override
+                        public void onInsertionFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onFindDocFailed(App42Exception ex) {
+                        }
+
+                        @Override
+                        public void onUpdateDocFailed(App42Exception ex) {
+                        }
+                    });
+        }
+    }
+
+    private void sendPushToDependent(JSONObject jsonObject) {
+
+        if (utils.isConnectingToInternet()) {
+
+            PushNotificationService pushNotificationService = new PushNotificationService(
+                    FeatureActivity.this);
+
+            pushNotificationService.sendPushToUser(strCustomerEmail, jsonObject.toString(),
+                    new App42CallBack() {
+
+                        @Override
+                        public void onSuccess(Object o) {
+                        }
+
+                        @Override
+                        public void onException(Exception ex) {
+                            if (ex != null)
+                                Utils.log(ex.getMessage(), " PUSH ");
+                        }
+                    });
+
         }
     }
 
@@ -1248,4 +1367,5 @@ public class FeatureActivity extends AppCompatActivity {
             backgroundThreadHandlerLoad.sendEmptyMessage(0);
         }
     }
+
 }

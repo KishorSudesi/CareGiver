@@ -34,7 +34,7 @@ public class DbHelper extends SQLiteOpenHelper {
             "collection_name", "client_flag", "new_updated", "provider_id"};
 
     public static final String COLLECTION_FIELDS_CD[] = {"object_id", "updated_date", "document",
-            "collection_name", "provider_id", "new_updated"};
+            "collection_name", "provider_id", "new_updated", "user_name"};
 
     public static final String COLLECTION_FIELDS_CLIENTS[] = {"object_id",
             "collection_name", "provider_id"};
@@ -44,7 +44,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String CCARE_FIELDS[] = {"object_id", "milestone_id", "milestone_date",
             "customer_id", "provider_id"};
 
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 16;
     private static final String DATABASE_NAME = "caregiver";
     //private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
@@ -53,7 +53,8 @@ public class DbHelper extends SQLiteOpenHelper {
     private String strCollectionsQuery = "CREATE TABLE " + strTableNameCollection
             + " ( id integer primary key autoincrement, object_id VARCHAR(50), updated_date "
             + "datetime, document text, collection_name VARCHAR(50), "
-            + "client_flag integer, new_updated integer, provider_id VARCHAR(50))";
+            + "client_flag integer, new_updated integer, provider_id VARCHAR(50)," +
+            " user_name VARCHAR(100))";
     //doc_date datetime,
 
     private String strMilestoneQuery = "CREATE TABLE " + strTableNameMilestone + " ( id integer "

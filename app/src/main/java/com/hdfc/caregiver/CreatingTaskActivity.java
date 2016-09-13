@@ -63,6 +63,8 @@ public class CreatingTaskActivity extends AppCompatActivity {
     private String strSelectedCustomer;
     private String strSelectedDependent;
 
+    private String strSMS = "";
+
     private Utils utils;
     private AppUtils appUtils;
     private EditText editTextTitle, dateAnd;
@@ -744,11 +746,15 @@ public class CreatingTaskActivity extends AppCompatActivity {
                                                 strPushMessage);
                                         jsonObject.put("alert", strPushMessage);
 
+                                        strSMS = getString(R.string.activity_create_sms_d)
+                                                + serviceModel.getStrServiceName();
+
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
                                     //
 
+                                    Utils.sendSMS(dependentModel.getStrContacts(), strSMS);
                                     insertNotification();
                                 } else {
                                     loadingPanel.setVisibility(View.GONE);

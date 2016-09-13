@@ -928,20 +928,23 @@ public class Utils {
         URL myURL = null;
         BufferedReader reader = null;
         try {
-            //prepare connection
-            myURL = new URL(buildRequestString(reciever, message));
-            myURLConnection = myURL.openConnection();
-            myURLConnection.connect();
-            reader = new BufferedReader(new
-                    InputStreamReader(myURLConnection.getInputStream()));
+            if (reciever != null && !reciever.equalsIgnoreCase("") && message != null
+                    && !message.equalsIgnoreCase("")) {
+                //prepare connection
+                myURL = new URL(buildRequestString(reciever, message));
+                myURLConnection = myURL.openConnection();
+                myURLConnection.connect();
+                reader = new BufferedReader(new
+                        InputStreamReader(myURLConnection.getInputStream()));
 
-            //reading response
-            String response;
-            while ((response = reader.readLine()) != null)
-                //print response
-                log("RESPONSE", "" + response);
-            //finally close connection
-            reader.close();
+                //reading response
+                String response;
+                while ((response = reader.readLine()) != null)
+                    //print response
+                    log("RESPONSE", "" + response);
+                //finally close connection
+                reader.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -238,7 +238,8 @@ public class AppUtils {
                                                         context);
                                             } else {
                                                 createNotificationModel();
-                                                if (NotificationFragment.notificationAdapter != null) {
+                                                if (NotificationFragment.notificationAdapter !=
+                                                        null) {
                                                     NotificationFragment.notificationAdapter.
                                                             notifyDataSetChanged();
                                                 }
@@ -367,7 +368,8 @@ public class AppUtils {
 
                                             if (ActivityFragment.mAdapter != null) {
                                                 createActivityModel(strStartDate, strEndDate);
-                                                ActivityFragment.activityModels = Config.activityModels;
+                                                ActivityFragment.activityModels = Config.
+                                                        activityModels;
                                                 ActivityFragment.mAdapter.notifyDataSetChanged();
                                             }
                                         }
@@ -479,8 +481,8 @@ public class AppUtils {
                             if (!jsonObjectMilestone.getString("scheduled_date")
                                     .equalsIgnoreCase("")) {
                                 strMilestoneDate =
-                                        Utils.formatDateInsertActivity(jsonObjectMilestone.getString(
-                                                "scheduled_date"));
+                                        Utils.formatDateInsertActivity(jsonObjectMilestone.
+                                                getString("scheduled_date"));
                             }
 
                             String values[] = {strDocumentId, jsonObjectMilestone.getString("id"),
@@ -583,15 +585,27 @@ public class AppUtils {
                                             Storage.JSONDocument jsonDocument = storage.
                                                     getJsonDocList().get(i);
 
+                                            //fetch name
+                                            JSONObject jsonObject;
+                                            String strName = "";
+                                            try {
+                                                jsonObject = new JSONObject(jsonDocument.
+                                                        getJsonDoc());
+                                                strName = jsonObject.optString("dependent_name");
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
                                             String values[] = {jsonDocument.getDocId(),
                                                     jsonDocument.getUpdatedAt(),
                                                     jsonDocument.getJsonDoc(),
                                                     Config.collectionDependent,
                                                     sessionManager.getProviderId(),
-                                                    "1"
+                                                    "1", strName
                                             };
 
-                                            String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
+                                            String selection = DbHelper.COLUMN_OBJECT_ID
+                                                    + " = ? and "
                                                     + DbHelper.COLUMN_COLLECTION_NAME + "=?";
 
                                             // WHERE clause arguments
@@ -728,12 +742,22 @@ public class AppUtils {
                                             Storage.JSONDocument jsonDocument = storage.
                                                     getJsonDocList().get(i);
 
+                                            //fetch name
+                                            JSONObject jsonObject;
+                                            String strName = "";
+                                            try {
+                                                jsonObject = new JSONObject(jsonDocument.getJsonDoc());
+                                                strName = jsonObject.optString("customer_name");
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
                                             String values[] = {jsonDocument.getDocId(),
                                                     jsonDocument.getUpdatedAt(),
                                                     jsonDocument.getJsonDoc(),
                                                     Config.collectionCustomer,
                                                     sessionManager.getProviderId(),
-                                                    "1"
+                                                    "1", strName
                                             };
 
                                             String selection = DbHelper.COLUMN_OBJECT_ID
@@ -1663,7 +1687,8 @@ public class AppUtils {
                                             selectionArgs);
 
                                     try {
-                                        JSONObject jsonObject = new JSONObject(jsonDocument.getJsonDoc());
+                                        JSONObject jsonObject = new JSONObject(jsonDocument.
+                                                getJsonDoc());
 
                                         if (jsonObject.has("customer_id")
                                                 && jsonObject.has("created_date_actual")) {
@@ -2115,7 +2140,7 @@ public class AppUtils {
                 DbHelper.COLUMN_COLLECTION_NAME
                         + "=?",
                 new String[]{Config.collectionCustomer},
-                null, null, true,
+                "user_name ASC", null, true,
                 null, null
         );
 
@@ -2204,7 +2229,7 @@ public class AppUtils {
                         DbHelper.COLUMN_CLIENT_FLAG
                 },
                 DbHelper.COLUMN_COLLECTION_NAME + "=?", new String[]{Config.collectionDependent},
-                null, null, true, null, null
+                "user_name ASC", null, true, null, null
         );
 
         if (newCursor.getCount() > 0) {
@@ -2225,7 +2250,8 @@ public class AppUtils {
 
                     //Utils.log(" ID ", newCursor.getString(0));
 
-                    if (newCursor.getString(1) != null && !newCursor.getString(1).equalsIgnoreCase("")) {
+                    if (newCursor.getString(1) != null && !newCursor.getString(1).
+                            equalsIgnoreCase("")) {
                         JSONObject jsonObjectDependent = new JSONObject(newCursor.getString(1));
 
                         DependentModel dependentModel = new DependentModel(
@@ -2935,7 +2961,8 @@ public class AppUtils {
             checkInCareModel.setStrMonth(jsonObjectCheck.optString("month"));
             checkInCareModel.setStrYear(jsonObjectCheck.optString("year"));
             checkInCareModel.setStrCustomerID(jsonObjectCheck.optString("customer_id"));
-            checkInCareModel.setStrCreatedActualDate(jsonObjectCheck.optString("created_date_actual"));
+            checkInCareModel.setStrCreatedActualDate(jsonObjectCheck.
+                    optString("created_date_actual"));
 
             JSONArray subMainactivities = jsonObjectCheck.optJSONArray("activities");
             JSONArray picture = jsonObjectCheck.optJSONArray("picture");
@@ -2964,8 +2991,8 @@ public class AppUtils {
 
                                     ImageModel imageModel = new ImageModel(jsonObjectImage.
                                             optString("image_url"),
-                                            jsonObjectImage.optString("description"), jsonObjectImage.
-                                            optString("date_time"));
+                                            jsonObjectImage.optString("description"),
+                                            jsonObjectImage.optString("date_time"));
                                     imageModels.add(imageModel);
                                 }
                             }

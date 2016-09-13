@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '24'
+    buildToolsVersion '24.0.2'
 
     defaultConfig {
         applicationId "com.hdfc.caregiver"
@@ -23,6 +23,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets { main { res.srcDirs = ['src/main/res', 'src/main/res/layout_xlarge'] } }
 }
 
 dependencies {

@@ -81,7 +81,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private static JSONObject jsonObject;
     private static ActivityModel act;
     private static String strCustomerEmail;
-    private static String strName1;
+    private static String strName1, strPushMessage = "";
     private static String strImageName1 = "";
     private static StorageService storageService;
     private static Handler backgroundThreadHandler, backgroundThreadHandlerLoad;
@@ -98,6 +98,8 @@ public class MilestoneActivity extends AppCompatActivity {
     private String strCloseUser, strCloseStatus, strDependentName;
     private Date selectedDate = null;
 
+    private String strCloseSms = "", strCustomerNo = "", strDependentNo = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +114,9 @@ public class MilestoneActivity extends AppCompatActivity {
         bWhichScreen = b.getInt("WHICH_SCREEN", 3);
         strCustomerEmail = b.getString("CUSTOMER_EMAIL", "");
         strDependentName = b.getString("DEPENDENT_NAME", "");
+
+        strCustomerNo = b.getString("CUSTOMER_NO", "");
+        strDependentNo = b.getString("DEPENDENT_NO", "");
 
         strCloseStatus = "";
         strCloseUser = "";
@@ -1481,7 +1486,7 @@ public class MilestoneActivity extends AppCompatActivity {
                             strActivityStatus = "inprocess";
                         }
 
-                        String strPushMessage = createPushNotification(milestoneModel,
+                        strPushMessage = createPushNotification(milestoneModel,
                                 strScheduledDate, mStrTaskMess1);
 
                         jsonObject = new JSONObject();
@@ -1555,6 +1560,8 @@ public class MilestoneActivity extends AppCompatActivity {
                 strPushMessage = getString(R.string.notification_closure_body_1)
                         + act.getStrActivityName()
                         + getString(R.string.notification_closure_body_2);
+
+                strCloseSms = strPushMessage;
 
             } else if (strCloseStatus.equalsIgnoreCase("unsuccessful")) {
                 if (strCloseUser.equalsIgnoreCase("vendor")) {
@@ -1923,6 +1930,13 @@ public class MilestoneActivity extends AppCompatActivity {
                                 selectionArgs1);
                         //
                         insertNotification();
+
+
+                        if (strCloseSms != null && !strCloseSms.equalsIgnoreCase("")) {
+                            Utils.sendSMS(strCustomerNo, strCloseSms);
+                        } else {
+                            Utils.sendSMS(strDependentNo, strPushMessage);
+                        }
                     }
 
                     @Override

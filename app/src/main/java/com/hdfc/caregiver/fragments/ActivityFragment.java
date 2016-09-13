@@ -275,13 +275,7 @@ public class ActivityFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_simple_activity, container, false);
 
         ImageButton fab = (ImageButton) view.findViewById(R.id.fab);
-       /* fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+
 
         //
 

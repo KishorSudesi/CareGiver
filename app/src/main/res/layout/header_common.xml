@@ -16,6 +16,7 @@
         android:visibility="gone" />
 
     <ImageView
+        android:id="@+id/logoimageview"
         android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"

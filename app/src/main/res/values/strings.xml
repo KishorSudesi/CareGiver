@@ -265,4 +265,8 @@
     <string name="notification_scheduled">&#160;has been scheduled&#160;</string>
     <string name="notification_placed">&#160;has been placed&#160;</string>
 
+    <string name="notification_activity_image">Documents have been uploaded for the activity&#160;</string>
+
+    <string name="activity_create_sms_d">We acknowledge your request for &#160;</string>
+
 </resources>
