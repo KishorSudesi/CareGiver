@@ -27,6 +27,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_MILESTONE_ID = "milestone_id";
     public static final String COLUMN_UPDATE_DATE = "updated_date";
     public static final String COLUMN_DOCUMENT = "document";
+    public static final String COLUMN_MONTH = "month";
+    public static final String COLUMN_YEAR = "year";
     public static final String COLUMN_COLLECTION_NAME = "collection_name";
     public static final String COLUMN_CLIENT_FLAG = "client_flag";
     public static final String COLUMN_NEW_UPDATED = "new_updated";
@@ -41,10 +43,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public static final String MILESTONE_FIELDS[] = {"object_id", "milestone_id", "milestone_date",
             "provider_id", "status"};
-    public static final String CCARE_FIELDS[] = {"object_id", "milestone_id", "milestone_date",
-            "customer_id", "provider_id"};
 
-    private static final int DATABASE_VERSION = 16;
+    public static final String CCARE_FIELDS[] = {"object_id", "milestone_id", "milestone_date",
+            "customer_id", "provider_id", "month", "year"};
+
+    private static final int DATABASE_VERSION = 17;
     private static final String DATABASE_NAME = "caregiver";
     //private static String dbPass = ""; //"hdfc@12#$";//
     private static DbHelper dbInstance = null;
@@ -60,7 +63,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private String strMilestoneQuery = "CREATE TABLE " + strTableNameMilestone + " ( id integer "
             + "primary key autoincrement, object_id VARCHAR(50), milestone_id integer,"
             + " milestone_date datetime, customer_id VARCHAR(50), provider_id VARCHAR(50)," +
-            " status VARCHAR(50))";
+            " status VARCHAR(50), month VARCHAR(2), year VARCHAR(5))";
 
     /*private String strFilesQuery = "CREATE TABLE " + strTableNameFiles + " ( id integer primary key autoincrement," +
             " name VARCHAR(100), url VARCHAR(300), file_type VARCHAR(10),  file_hash VARCHAR(50))";

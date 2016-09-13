@@ -18,22 +18,6 @@
         android:text="@string/check_in_care"
         android:textColor="@color/new_blue" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@drawable/colorful_textview" />
-
-    <RelativeLayout
-        android:id="@+id/loadingPanel"
-        style="@style/GenericProgressBackground1"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/colorPrimary"
-        android:visibility="gone">
-
-        <ProgressBar style="@style/GenericProgressIndicator" />
-    </RelativeLayout>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -1364,5 +1348,21 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/colorful_textview" />
+
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        style="@style/GenericProgressBackground1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:visibility="gone">
+
+        <ProgressBar style="@style/GenericProgressIndicator" />
+    </RelativeLayout>
 
 </LinearLayout>

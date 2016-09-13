@@ -231,14 +231,11 @@ public class DashboardActivity extends AppCompatActivity implements
             iWhichLoad = -1;
 
             if (CareGiver.getDbCon() != null) {
-                Utils.log("1", " DB ");
                 AppUtils.createProviderModel(sessionManager.getProviderId());
             } else {
-                Utils.log("2", " DB ");
                 iWhichLoad = 1;
                 new LoadDataTask().execute();
             }
-            //utils = new Utils();
 
             mytask = (ImageView) findViewById(R.id.buttonMyTasks);
             clients = (ImageView) findViewById(R.id.buttonClients);

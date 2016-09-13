@@ -88,6 +88,7 @@ public class MilestoneActivity extends AppCompatActivity {
     private static boolean bEnabled, mImageChanged;
     private static int bWhichScreen;//isAllowed
     private final Context context = this;
+    private boolean isMSCompleted = false;
     private int iValidFlag = 0;
     private RelativeLayout loadingPanel;
     private int mImageCount, mImageUploadCount;
@@ -134,6 +135,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
         if (milestoneModelObject != null) {
             bEnabled = !milestoneModelObject.getStrMilestoneStatus().equalsIgnoreCase("completed");
+            //strMilestoneStatus = milestoneModelObject.getStrMilestoneStatus();
         }
 
         layout = (LinearLayout) findViewById(R.id.dialogLinear);
@@ -456,7 +458,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                                     }
                                                 }
                                             }, hour, minute, true);//Yes 24 hour time
-                                    mTimePicker.setTitle(getString(R.string.select_time));
+                                    //mTimePicker.setTitle(getString(R.string.select_time));
                                     mTimePicker.show();
 
                                     //
@@ -1478,7 +1480,11 @@ public class MilestoneActivity extends AppCompatActivity {
                             milestoneModel.setStrMilestoneStatus("completed");
                         }
 
-                        //Utils.log("strActivityStatus", strActivityStatus);
+                        milestoneModel.setStrMilestoneDate(Utils.convertDateToString(date));
+
+                        if (milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed")) {
+                            isMSCompleted = true;
+                        }
 
                         if (iIndex == act.getMilestoneModels().size() && iFlag == 2 && bClose) {
                             strActivityStatus = "completed";
@@ -1516,11 +1522,6 @@ public class MilestoneActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-
-                    if (b) {
-                        milestoneModel.setStrMilestoneDate(Utils.convertDateToString(date));
-                    }
-                    //break;
                 }
 
                 if (!milestoneModel.getStrMilestoneStatus().equalsIgnoreCase("completed")
@@ -1532,6 +1533,8 @@ public class MilestoneActivity extends AppCompatActivity {
                     b = false;
                     utils.toast(2, 2, getString(R.string.close_error));
                     strActivityStatus = "inprocess";
+
+                    //todo check this logic
                     milestoneModel.setStrMilestoneStatus("inactive");
                 }
             }
@@ -1582,141 +1585,151 @@ public class MilestoneActivity extends AppCompatActivity {
 
         } else {
 
-            if (milestoneModel.getiMilestoneId() != 1) {
-                strPushMessage = getString(R.string.notification_body_1)
+            if (isMSCompleted) {
+
+                strPushMessage = getString(R.string.milestone_completed_1)
                         + milestoneModel.getStrMilestoneName()
-                        + getString(R.string.notification_body_2_1);
+                        + getString(R.string.milestone_completed_2)
+                        + act.getStrActivityName()
+                        + getString(R.string.milestone_completed_3);
 
-                if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
-                    strPushMessage += getString(R.string.scheduled_to)
-                            + Utils.formatDate(strScheduledDate);
-                }
-
-                strPushMessage += getString(R.string.for_text) + strDependentName
-                        + getString(R.string.notification_body_3) + act.getStrActivityName()
-                        + getString(R.string.notification_body_4)
-                        + Config.providerModel.getStrName();
             } else {
 
-                if (act.getmServiceNo() == 501) {
-                    //Emergency Care
-                    strPushMessage = getString(R.string.specific_notification_1)
-                            + strDependentName + getString(R.string.specific_notification_1_1);
-
-                } else if (act.getmServiceNo() == 101) {
-                    //medical test
-                    strPushMessage = getString(R.string.specific_notification_2)
-                            + strDependentName + getString(R.string.space);
-
-                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
-                        strPushMessage += mStrTaskMess1;
-                    }
-
-                } else if (act.getmServiceNo() == 203) {
-                    //repairs and maintenance
-                    strPushMessage = getString(R.string.specific_notification_3)
-                            + strDependentName + getString(R.string.notification_placed);
-
-                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
-                        strPushMessage += mStrTaskMess1;
-                    }
-
-                } else if (act.getmServiceNo() == 103) {
-                    //medical purchase
-                    strPushMessage = getString(R.string.specific_notification_4)
-                            + strDependentName + getString(R.string.notification_placed);
-
-                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
-                        strPushMessage += mStrTaskMess1;
-                    }
-
-                } else if (act.getmServiceNo() == 401) {
-                    //medical purchase
-                    strPushMessage = getString(R.string.specific_notification_5)
-                            + strDependentName + getString(R.string.notification_scheduled);
-
-                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
-                        strPushMessage += mStrTaskMess1;
-                    }
-                } else if (act.getmServiceNo() == 302) {
-                    //shopping
-                    strPushMessage = getString(R.string.specific_notification_6)
-                            + strDependentName + getString(R.string.notification_placed);
-                } else if (act.getmServiceNo() == 301) {
-                    //entertainment
-                    strPushMessage = getString(R.string.specific_notification_7)
-                            + strDependentName + getString(R.string.notification_placed);
-
-                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
-                        strPushMessage += mStrTaskMess1;
-                    }
-
-                } else if (act.getmServiceNo() == 402) {
-                    //home visit
-                    strPushMessage = getString(R.string.specific_notification_8)
-                            + strDependentName + getString(R.string.notification_scheduled);
-
-                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
-                        strPushMessage += mStrTaskMess1;
-                    }
-
-                    strPushMessage += getString(R.string.specific_notification_8_1)
-                            + strDependentName + getString(R.string.notification_for_service);
-
-                } else if (act.getmServiceNo() == 102) {
-                    //doctor visit
-                    strPushMessage = getString(R.string.specific_notification_9)
-                            + strDependentName + getString(R.string.notification_scheduled);
-
-                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
-                        strPushMessage += mStrTaskMess1;
-                    }
-                } else if (act.getmServiceNo() == 201) {
-                    //maid service
-                    strPushMessage = getString(R.string.specific_notification_10)
-                            + strDependentName + getString(R.string.notification_placed);
-
-                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
-                        strPushMessage += mStrTaskMess1;
-                    }
-                } else if (act.getmServiceNo() == 202) {
-                    //grocery purchase
-                    strPushMessage = getString(R.string.specific_notification_11)
-                            + strDependentName + getString(R.string.notification_placed);
-
-                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
-                        strPushMessage += mStrTaskMess1;
-                    }
-                } else if (act.getmServiceNo() == 502) {
-                    //non-medical emergency care
-                    strPushMessage = getString(R.string.specific_notification_12)
-                            + strDependentName + getString(R.string.notification_placed);
-
-                    if (!mStrTaskMess1.equalsIgnoreCase("")) {
-                        strPushMessage += mStrTaskMess1;
-                    }
-
-                    strPushMessage += getString(R.string.specific_notification_12_1);
-
-                } else {
-                    //general
+                if (milestoneModel.getiMilestoneId() != 1) {
                     strPushMessage = getString(R.string.notification_body_1)
                             + milestoneModel.getStrMilestoneName()
-                            + getString(R.string.notification_body_2);
+                            + getString(R.string.notification_body_2_1);
 
-                    strPushMessage += getString(R.string.for_text)
-                            + strDependentName
-                            + getString(R.string.notification_body_3)
-                            + act.getStrActivityName()
+                    if (strScheduledDate != null && !strScheduledDate.equalsIgnoreCase("")) {
+                        strPushMessage += getString(R.string.scheduled_to)
+                                + Utils.formatDate(strScheduledDate);
+                    }
+
+                    strPushMessage += getString(R.string.for_text) + strDependentName
+                            + getString(R.string.notification_body_3) + act.getStrActivityName()
                             + getString(R.string.notification_body_4)
-                            + Config.providerModel.getStrName() + "."
-                            + getString(R.string.notification_body_5)
-                            + mStrTaskMess1;
+                            + Config.providerModel.getStrName();
+                } else {
 
-                    //
-                }
+                    if (act.getmServiceNo() == 501) {
+                        //Emergency Care
+                        strPushMessage = getString(R.string.specific_notification_1)
+                                + strDependentName + getString(R.string.specific_notification_1_1);
 
-                //for first tasks (appointment etc...)
+                    } else if (act.getmServiceNo() == 101) {
+                        //medical test
+                        strPushMessage = getString(R.string.specific_notification_2)
+                                + strDependentName + getString(R.string.space);
+
+                        if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                            strPushMessage += mStrTaskMess1;
+                        }
+
+                    } else if (act.getmServiceNo() == 203) {
+                        //repairs and maintenance
+                        strPushMessage = getString(R.string.specific_notification_3)
+                                + strDependentName + getString(R.string.notification_placed);
+
+                        if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                            strPushMessage += mStrTaskMess1;
+                        }
+
+                    } else if (act.getmServiceNo() == 103) {
+                        //medical purchase
+                        strPushMessage = getString(R.string.specific_notification_4)
+                                + strDependentName + getString(R.string.notification_placed);
+
+                        if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                            strPushMessage += mStrTaskMess1;
+                        }
+
+                    } else if (act.getmServiceNo() == 401) {
+                        //medical purchase
+                        strPushMessage = getString(R.string.specific_notification_5)
+                                + strDependentName + getString(R.string.notification_scheduled);
+
+                        if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                            strPushMessage += mStrTaskMess1;
+                        }
+                    } else if (act.getmServiceNo() == 302) {
+                        //shopping
+                        strPushMessage = getString(R.string.specific_notification_6)
+                                + strDependentName + getString(R.string.notification_placed);
+                    } else if (act.getmServiceNo() == 301) {
+                        //entertainment
+                        strPushMessage = getString(R.string.specific_notification_7)
+                                + strDependentName + getString(R.string.notification_placed);
+
+                        if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                            strPushMessage += mStrTaskMess1;
+                        }
+
+                    } else if (act.getmServiceNo() == 402) {
+                        //home visit
+                        strPushMessage = getString(R.string.specific_notification_8)
+                                + strDependentName + getString(R.string.notification_scheduled);
+
+                        if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                            strPushMessage += mStrTaskMess1;
+                        }
+
+                        strPushMessage += getString(R.string.specific_notification_8_1)
+                                + strDependentName + getString(R.string.notification_for_service);
+
+                    } else if (act.getmServiceNo() == 102) {
+                        //doctor visit
+                        strPushMessage = getString(R.string.specific_notification_9)
+                                + strDependentName + getString(R.string.notification_scheduled);
+
+                        if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                            strPushMessage += mStrTaskMess1;
+                        }
+                    } else if (act.getmServiceNo() == 201) {
+                        //maid service
+                        strPushMessage = getString(R.string.specific_notification_10)
+                                + strDependentName + getString(R.string.notification_placed);
+
+                        if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                            strPushMessage += mStrTaskMess1;
+                        }
+                    } else if (act.getmServiceNo() == 202) {
+                        //grocery purchase
+                        strPushMessage = getString(R.string.specific_notification_11)
+                                + strDependentName + getString(R.string.notification_placed);
+
+                        if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                            strPushMessage += mStrTaskMess1;
+                        }
+                    } else if (act.getmServiceNo() == 502) {
+                        //non-medical emergency care
+                        strPushMessage = getString(R.string.specific_notification_12)
+                                + strDependentName + getString(R.string.notification_placed);
+
+                        if (!mStrTaskMess1.equalsIgnoreCase("")) {
+                            strPushMessage += mStrTaskMess1;
+                        }
+
+                        strPushMessage += getString(R.string.specific_notification_12_1);
+
+                    } else {
+                        //general
+                        strPushMessage = getString(R.string.notification_body_1)
+                                + milestoneModel.getStrMilestoneName()
+                                + getString(R.string.notification_body_2);
+
+                        strPushMessage += getString(R.string.for_text)
+                                + strDependentName
+                                + getString(R.string.notification_body_3)
+                                + act.getStrActivityName()
+                                + getString(R.string.notification_body_4)
+                                + Config.providerModel.getStrName() + "."
+                                + getString(R.string.notification_body_5)
+                                + mStrTaskMess1;
+
+                        //
+                    }
+
+                    //for first tasks (appointment etc...)
                /* strPushMessage += getString(R.string.notification_body_1)
                         + milestoneModel.getStrMilestoneName()
                         + getString(R.string.notification_body_2);*/
@@ -1728,8 +1741,9 @@ public class MilestoneActivity extends AppCompatActivity {
                         + Config.providerModel.getStrName() + "."
                         + getString(R.string.notification_body_5)
                         + mStrTaskMess1;*/
-                //
+                    //
 
+                }
             }
         }
 

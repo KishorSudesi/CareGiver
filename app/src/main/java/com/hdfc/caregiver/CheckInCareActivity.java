@@ -101,6 +101,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
     private static StorageService storageService;
     private static ArrayList<DependentModel> dependent = new ArrayList<>();
     public String item = "", dependentId = "", strDependentNo = "";
+    private String strSelectedMonth, strSelectedYear;
     private Utils utils;
     private RelativeLayout loadingPanel;
     private RelativeLayout loadingPanelhall, loadingPanelkitchen, loadingPanelwash, loadingPanelbed;
@@ -1021,12 +1022,14 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                         focusView = datetxt;
                         cancel = true;
                     }
-                    if (new Date().after(selectedDate4)) {
+
+                    /*if (new Date().after(selectedDate4)) {
                         datetxt.setError(getString(R.string.error_wrong_date));
                         focusView = datetxt;
                         cancel = true;
                         return;
-                    }
+                    }*/
+
                    /* if (TextUtils.isEmpty(valmediacomment)) {
                         mediacomment.setError(getString(R.string.error_field_required));
                         focusView = mediacomment;
@@ -2015,8 +2018,18 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
                 Date mydate = new Date();
                 String strCreateDate = Utils.readFormat.format(mydate);
-                String strMonth = Utils.writeFormatDateMonth.format(mydate);
-                String strYear = Utils.writeFormatDateYear.format(mydate);
+
+                Calendar calendar = Calendar.getInstance();
+                Date selectedDate = Utils.writeFormatDateMY.parse(datetxt.getText().toString());
+                calendar.setTime(selectedDate);
+
+                strSelectedMonth = String.valueOf(calendar.get(Calendar.MONTH) + 1);//Utils.writeFormatDateMonth.format(mydate);
+                strSelectedYear = String.valueOf(calendar.get(Calendar.YEAR));//Utils.writeFormatDateYear.format(mydate);
+                String strDate = String.valueOf(calendar.get(Calendar.DATE));
+
+                jsonObjectCheckinCare.put("month", strSelectedMonth);
+                jsonObjectCheckinCare.put("year", strSelectedYear);
+                jsonObjectCheckinCare.put("date", strDate);
 
                 jsonObjectCheckinCare.put("created_date", strCreateDate);
                 jsonObjectCheckinCare.put("dependent_id", dependentId);
@@ -2024,9 +2037,8 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                 jsonObjectCheckinCare.put("updated_date", "");
                 jsonObjectCheckinCare.put("current_date", datetxt.getText().toString());
                 jsonObjectCheckinCare.put("status", "New");
-                jsonObjectCheckinCare.put("created_date_actual", strSelectedDate);
-                jsonObjectCheckinCare.put("month", strMonth);
-                jsonObjectCheckinCare.put("year", strYear);
+                //jsonObjectCheckinCare.put("created_date_actual", strSelectedDate);
+
                 jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
                 jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
                 jsonObjectCheckinCare.put("check_in_care_name", strcheckincare);
@@ -2353,16 +2365,18 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                         //todo fetch from session if offline sync update enabled
                                         String values1[] = {jsonDocument.getDocId(),
                                                 "-1",
-                                                strSelectedDate,
+                                                "",
                                                 Config.customerModel.getStrCustomerID(),
-                                                Config.providerModel.getStrProviderId()
+                                                Config.providerModel.getStrProviderId(),
+                                                strSelectedMonth, strSelectedYear
                                         };
 
                                         String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                                + DbHelper.COLUMN_MILESTONE_ID + "=? ";
+                                                + DbHelper.COLUMN_MILESTONE_ID + "=? and "
+                                                + DbHelper.COLUMN_PROVIDER_ID + "=?";
 
                                         String[] selectionArgs1 = {jsonDocument.getDocId(),
-                                                "-1"
+                                                "-1", Config.providerModel.getStrProviderId()
                                         };
 
                                         CareGiver.getDbCon().updateInsert(
@@ -2490,18 +2504,34 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
 
             Date mydate = new Date();
             String strCreateDate = Utils.readFormat.format(mydate);
+/*
             String strMonth = Utils.writeFormatDateMonth.format(mydate);
             String strYear = Utils.writeFormatDateYear.format(mydate);
+*/
 
-            jsonObjectCheckinCare.put("created_date", strCreateDate);
+            //jsonObjectCheckinCare.put("created_date", strCreateDate);
             jsonObjectCheckinCare.put("dependent_id", dependentId);
             jsonObjectCheckinCare.put("provider_id", Config.providerModel.getStrProviderId());
-            jsonObjectCheckinCare.put("updated_date", "");
+            jsonObjectCheckinCare.put("updated_date", strCreateDate);
             jsonObjectCheckinCare.put("current_date", datetxt.getText().toString());
-            jsonObjectCheckinCare.put("created_date_actual", strSelectedDate);
+            //jsonObjectCheckinCare.put("created_date_actual", strSelectedDate);
             jsonObjectCheckinCare.put("status", "Updated");
-            jsonObjectCheckinCare.put("month", strMonth);
-            jsonObjectCheckinCare.put("year", strYear);
+
+            Calendar calendar = Calendar.getInstance();
+            Date selectedDate = Utils.writeFormatDateMY.parse(datetxt.getText().toString());
+            calendar.setTime(selectedDate);
+
+            strSelectedMonth = String.valueOf(calendar.get(Calendar.MONTH) + 1);//Utils.writeFormatDateMonth.format(mydate);
+            strSelectedYear = String.valueOf(calendar.get(Calendar.YEAR));//Utils.writeFormatDateYear.format(mydate);
+            String strDate = String.valueOf(calendar.get(Calendar.DATE));
+
+            jsonObjectCheckinCare.put("month", strSelectedMonth);
+            jsonObjectCheckinCare.put("year", strSelectedYear);
+            jsonObjectCheckinCare.put("date", strDate);
+
+          /*  jsonObjectCheckinCare.put("month", strMonth);
+            jsonObjectCheckinCare.put("year", strYear);*/
+
             jsonObjectCheckinCare.put("customer_id", Config.customerModel.getStrCustomerID());
             jsonObjectCheckinCare.put("media_comment", mediacomment.getText().toString());
             jsonObjectCheckinCare.put("check_in_care_name", Config.checkInCareModel.getStrName());
@@ -2803,6 +2833,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                     jsonObject.toString(),
                                     Config.collectionCheckInCare, "", "1",
                                     Config.providerModel.getStrProviderId()
+
                             };
 
                             String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
@@ -2823,16 +2854,18 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                             //todo fetch from session if offline sync update enabled
                             String values1[] = {Config.checkInCareModel.getStrDocumentID(),
                                     "-1",
-                                    strSelectedDate,
+                                    "",
                                     Config.customerModel.getStrCustomerID(),
-                                    Config.providerModel.getStrProviderId()
+                                    Config.providerModel.getStrProviderId(),
+                                    strSelectedMonth, strSelectedYear
                             };
 
                             String selection1 = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                    + DbHelper.COLUMN_MILESTONE_ID + "=? ";
+                                    + DbHelper.COLUMN_MILESTONE_ID + "=? and "
+                                    + DbHelper.COLUMN_PROVIDER_ID + "=?";
 
                             String[] selectionArgs1 = {Config.checkInCareModel.getStrDocumentID(),
-                                    "-1"
+                                    "-1", Config.providerModel.getStrProviderId()
                             };
 
                             CareGiver.getDbCon().updateInsert(

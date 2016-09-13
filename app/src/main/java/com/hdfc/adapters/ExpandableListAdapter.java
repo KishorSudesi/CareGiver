@@ -249,21 +249,21 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         Config.checkInCareModels.clear();
 
-        String strEndDate = Utils.getCurrentMonthLastDate();
+       /* String strEndDate = Utils.getCurrentMonthLastDate();
 
         String strMonth = String.valueOf(iMonth);
 
         if (iMonth <= 9)
             strMonth = "0" + strMonth;
 
-        String strStartDate = String.valueOf(iYear) + "-" + strMonth + "-01" + " 00:00:00.000";
+        String strStartDate = String.valueOf(iYear) + "-" + strMonth + "-01" + " 00:00:00.000";*/
 
         String strQuery = "SELECT a." + DbHelper.COLUMN_DOCUMENT + " AS C1 , b."
                 + DbHelper.COLUMN_MILESTONE_ID + " AS C2, b." + DbHelper.COLUMN_OBJECT_ID
                 + " AS C3 FROM " + DbHelper.strTableNameCollection + " AS a INNER JOIN "
                 + DbHelper.strTableNameMilestone + " AS b ON a.object_id=b.object_id  WHERE b."
-                + DbHelper.COLUMN_MILESTONE_DATE + ">= Datetime('" + strStartDate + "') AND b."
-                + DbHelper.COLUMN_MILESTONE_DATE + "<= Datetime('" + strEndDate + "') AND b."
+                + DbHelper.COLUMN_MONTH + "='" + String.valueOf(iMonth) + "' AND b."
+                + DbHelper.COLUMN_YEAR + "='" + String.valueOf(iYear) + "' AND b."
                 + DbHelper.COLUMN_CUSTOMER_ID + "='" + Config.customerModel.getStrCustomerID()
                 + "' AND a." + DbHelper.COLUMN_PROVIDER_ID + "='"
                 + Config.providerModel.getStrProviderId() + "' AND b."

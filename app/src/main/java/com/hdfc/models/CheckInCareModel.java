@@ -12,6 +12,7 @@ public class CheckInCareModel {
     private String strStatus = "";
     private String strMonth = "";
     private String strYear = "";
+    private String strDate = "";
     private String strCreatedDate = "";
     private String strCurrentDate = "";
     private String strUpdatedDate = "";
@@ -53,6 +54,14 @@ public class CheckInCareModel {
         this.checkInCareActivityModels = checkInCareActivityModels;
 
 
+    }
+
+    public String getStrDate() {
+        return strDate;
+    }
+
+    public void setStrDate(String strDate) {
+        this.strDate = strDate;
     }
 
     public String getStrStatus() {

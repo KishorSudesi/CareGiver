@@ -97,8 +97,36 @@ public class AppUtils {
     public static void logout(Context _context) {
         try {
             Config.jsonObject = null;
-
+            Config.notificationModels.clear();
             Config.intSelectedMenu = 0;
+
+            Config.iRatings = 0;
+            Config.feedBackModels.clear();
+            Config.iRatingCount = 0;
+
+            Config.strCustomerNames.clear();
+            Config.customerIdsCopy.clear();
+            Config.clientModels.clear();
+            Config.clientNameModels.clear();
+            Config.customerModels.clear();
+            Config.customerIdsAdded.clear();
+
+            Config.dependentModels.clear();
+            Config.strDependentNames.clear();
+            Config.dependentIdsAdded.clear();
+
+            Config.activityModels.clear();
+
+            Config.checkInCareModels.clear();
+
+            //
+            Config.strServcieIds.clear();
+            Config.serviceModels.clear();
+            Config.servicelist.clear();
+            Config.serviceCategorylist.clear();
+            Config.serviceNameModels.clear();
+
+            //
 
             //Config.fileModels.clear();
             if (CareGiver.getDbCon() != null)
@@ -553,9 +581,7 @@ public class AppUtils {
             Query finalQuery = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
                     GREATER_THAN);
 
-            //todo uncomment for not showing all dependents
-
-            /*Query mQuery1 = null;
+            Query mQuery1 = null;
             if (strDependentIds.size() > 0) {
                 mQuery1 = QueryBuilder.build("_id", strDependentIds,
                         QueryBuilder.Operator.INLIST);
@@ -564,7 +590,7 @@ public class AppUtils {
             if (mQuery1 != null) { //strDate != null && !strDate.equalsIgnoreCase("")
                 finalQuery = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
                         finalQuery);
-            } */
+            }
 
             storageService.findDocsByQuery(Config.collectionDependent, finalQuery,
                     new App42CallBack() {
@@ -685,8 +711,6 @@ public class AppUtils {
                     null, null, true, null, null
             );
 
-            // and " + DbHelper.COLUMN_DOCUMENT + "=?
-
             ArrayList<String> strCustomerIds = new ArrayList<>();
 
             if (cursor1.getCount() > 0) {
@@ -702,9 +726,7 @@ public class AppUtils {
             Query finalQuery = QueryBuilder.build("_$updatedAt", strDate, QueryBuilder.Operator.
                     GREATER_THAN);
 
-
-            //todo uncomment for not showing all customers
-          /*  Query mQuery1 = null;
+            Query mQuery1 = null;
             if (strCustomerIds.size() > 0) {
                 mQuery1 = QueryBuilder.build("_id", strCustomerIds,
                         QueryBuilder.Operator.INLIST);
@@ -714,14 +736,15 @@ public class AppUtils {
                 Query q1 = QueryBuilder.compoundOperator(mQuery1, QueryBuilder.Operator.AND,
                         finalQuery);
 
-                Query q2 = QueryBuilder.build("customer_register", "true", QueryBuilder.Operator.
-                    EQUALS);
+                /*Query q2 = QueryBuilder.build("customer_register", "true", QueryBuilder.Operator.
+                    EQUALS);*/
 
                 //fetch registered customers
-                Query q3 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
+                //Query q3 = QueryBuilder.compoundOperator(q1, QueryBuilder.Operator.AND, q2);
                 finalQuery = QueryBuilder.compoundOperator(finalQuery, QueryBuilder.Operator.AND,
-                 q3);
-            }*/
+                        q1);
+            }
+
             storageService.findDocsByQuery(Config.collectionCustomer, finalQuery,
                     new App42CallBack() {
 
@@ -1676,11 +1699,14 @@ public class AppUtils {
                                     };
 
                                     String selection = DbHelper.COLUMN_OBJECT_ID + " = ? and "
-                                            + DbHelper.COLUMN_COLLECTION_NAME + "=?";
+                                            + DbHelper.COLUMN_COLLECTION_NAME + "=? and "
+                                            + DbHelper.COLUMN_PROVIDER_ID + "=?";
 
                                     // WHERE clause arguments
                                     String[] selectionArgs = {jsonDocument.getDocId(),
-                                            Config.collectionCheckInCare};
+                                            Config.collectionCheckInCare,
+                                            Config.providerModel.getStrProviderId()};
+
                                     CareGiver.getDbCon().updateInsert(
                                             DbHelper.strTableNameCollection,
                                             selection, values, DbHelper.COLLECTION_FIELDS,
@@ -1691,13 +1717,15 @@ public class AppUtils {
                                                 getJsonDoc());
 
                                         if (jsonObject.has("customer_id")
-                                                && jsonObject.has("created_date_actual")) {
+                                                && jsonObject.has("month")) {
 
                                             String values1[] = {jsonDocument.getDocId(),
                                                     "-1",
-                                                    jsonObject.optString("created_date_actual"),
+                                                    "",
                                                     jsonObject.optString("customer_id"),
-                                                    jsonObject.optString("provider_id")
+                                                    jsonObject.optString("provider_id"),
+                                                    jsonObject.optString("month"),
+                                                    jsonObject.optString("year")
                                             };
 
                                             String selection1 = DbHelper.COLUMN_OBJECT_ID
@@ -2154,14 +2182,15 @@ public class AppUtils {
 
                 while (!newCursor.isAfterLast()) {
 
-                    //todo change logic after including assign module in carla
-                    iRemoved = 0;
-
                     if (newCursor.getString(1) != null
                             && !newCursor.getString(1).equalsIgnoreCase("")) {
 
-                       /* if (!newCursor.isNull(2))
-                            iRemoved = newCursor.getInt(2);*/
+                        if (!newCursor.isNull(2))
+                            iRemoved = newCursor.getInt(2);
+                        else
+                            iRemoved = -1;
+
+                        //Utils.log(" Removed ", String.valueOf(iRemoved));
 
                         JSONObject jsonObject = new JSONObject(newCursor.getString(1));
 
@@ -2242,13 +2271,12 @@ public class AppUtils {
 
                 while (!newCursor.isAfterLast()) {
 
-                    //todo change logic after including assign module in carla
-                    iRemoved = 0;
+                    if (!newCursor.isNull(2))
+                        iRemoved = newCursor.getInt(2);
+                    else
+                        iRemoved = -1;
 
-                   /* if (!newCursor.isNull(2))
-                        iRemoved = newCursor.getInt(2);*/
-
-                    //Utils.log(" ID ", newCursor.getString(0));
+                    //Utils.log(" Removed 0 ", String.valueOf(iRemoved));
 
                     if (newCursor.getString(1) != null && !newCursor.getString(1).
                             equalsIgnoreCase("")) {
@@ -2290,7 +2318,7 @@ public class AppUtils {
                                     dependentModel.setIntAge(iAge);
                                 } catch (Exception e1) {
                                     e1.printStackTrace();
-                                    iAge = 0;
+                                    // iAge = 0;
                                 }
                             }
                         }
@@ -2337,30 +2365,33 @@ public class AppUtils {
                             }
                         }
 
-                        // if(iRemoved==0){
-
-                        Config.dependentModels.add(dependentModel);
-                        Config.dependentIdsAdded.add(newCursor.getString(0));
-
                         if (iRemoved == 0) {
-                            Config.strDependentNames.add(jsonObjectDependent.
-                                    optString("dependent_name"));
 
-                            int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.
-                                    optString("customer_id"));
+                            Config.dependentModels.add(dependentModel);
+                            Config.dependentIdsAdded.add(newCursor.getString(0));
 
-                            if (Config.clientModels.size() > 0) {
-                                if (iPosition > -1 && iPosition < Config.clientModels.size())
-                                    Config.clientModels.get(iPosition).setDependentModel(
-                                            dependentModel);
-                            }
+                            if (iRemoved == 0) {
+                                Config.strDependentNames.add(jsonObjectDependent.
+                                        optString("dependent_name"));
 
-                            if (Config.clientNameModels.size() > 0) {
-                                if (iPosition > -1 && iPosition < Config.clientNameModels.size()) {
-                                    Config.clientNameModels.get(iPosition).removeStrDependentName(
-                                            jsonObjectDependent.optString("dependent_name"));
-                                    Config.clientNameModels.get(iPosition).setStrDependentName(
-                                            jsonObjectDependent.optString("dependent_name"));
+                                int iPosition = Config.customerIdsCopy.indexOf(jsonObjectDependent.
+                                        optString("customer_id"));
+
+                                if (Config.clientModels.size() > 0) {
+                                    if (iPosition > -1 && iPosition < Config.clientModels.size())
+                                        Config.clientModels.get(iPosition).setDependentModel(
+                                                dependentModel);
+                                }
+
+                                if (Config.clientNameModels.size() > 0) {
+                                    if (iPosition > -1 && iPosition < Config.clientNameModels.
+                                            size()) {
+                                        Config.clientNameModels.get(iPosition).
+                                                removeStrDependentName(
+                                                        jsonObjectDependent.optString("dependent_name"));
+                                        Config.clientNameModels.get(iPosition).setStrDependentName(
+                                                jsonObjectDependent.optString("dependent_name"));
+                                    }
                                 }
                             }
                         }
@@ -2952,6 +2983,7 @@ public class AppUtils {
             CheckInCareModel checkInCareModel = new CheckInCareModel();
             //
             checkInCareModel.setStrName(jsonObjectCheck.optString("check_in_care_name"));
+            checkInCareModel.setStrDate(jsonObjectCheck.optString("date"));
             checkInCareModel.setStrDocumentID(strDocumentId);
             checkInCareModel.setStrCreatedDate(jsonObjectCheck.optString("created_date"));
             checkInCareModel.setStrMediaComment(jsonObjectCheck.optString("media_comment"));
@@ -2983,6 +3015,7 @@ public class AppUtils {
                             ArrayList<ImageModel> imageModels = new ArrayList<>();
 
                             JSONArray imageDetails = jsonObject.optJSONArray("pictures_details");
+
                             for (int k = 0; k < imageDetails.length(); k++) {
 
                                 JSONObject jsonObjectImage = imageDetails.getJSONObject(k);
