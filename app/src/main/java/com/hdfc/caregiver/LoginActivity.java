@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -55,14 +56,19 @@ public class LoginActivity extends AppCompatActivity {
     private String email;
     private AlertDialog alertdialog;
     private SessionManager sessionManager;
-    private RelativeLayout loadingPanel;
+    private RelativeLayout loadingPanel,relativelayout;
     private TextView textView;
+    ImageView logoimageview;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        relativelayout = (RelativeLayout) findViewById(R.id.relativelayout);
+        textView = (TextView) findViewById(R.id.id_forgot);
+        logoimageview = (ImageView)findViewById(R.id.logoimageview);
 
         //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
@@ -71,7 +77,6 @@ public class LoginActivity extends AppCompatActivity {
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
         editEmail = (EditText) findViewById(R.id.editEmail);
         editPassword = (EditText) findViewById(R.id.editPassword);
-        textView = (TextView) findViewById(R.id.id_forgot);
         button = (Button) findViewById(R.id.button);
         utils = new Utils();
         //AppUtils appUtils = new AppUtils(LoginActivity.this);
