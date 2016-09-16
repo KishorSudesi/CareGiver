@@ -1231,8 +1231,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         mStrTaskMess1 += getString(R.string.on);
                                     }
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
@@ -1259,8 +1258,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         mStrTaskMess1 += getString(R.string.with_text);
                                     }
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
@@ -1282,8 +1280,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         mStrTaskMess1 += getString(R.string.on);
                                     }
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
@@ -1305,8 +1302,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         mStrTaskMess1 += getString(R.string.on);
                                     }
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
@@ -1328,8 +1324,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         mStrTaskMess1 += getString(R.string.on);
                                     }
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
@@ -1347,8 +1342,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         mStrTaskMess1 += getString(R.string.on);
                                     }
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
@@ -1370,8 +1364,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         mStrTaskMess1 += "." + getString(R.string.space);
                                     }
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
@@ -1390,8 +1383,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         mStrTaskMess1 += getString(R.string.on);
                                     }
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
@@ -1411,8 +1403,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         mStrTaskMess1 += getString(R.string.with_text);
                                     }
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
@@ -1434,8 +1425,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         mStrTaskMess1 += getString(R.string.on);
                                     }
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
@@ -1448,8 +1438,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                         && !fieldModel.getStrFieldData().equalsIgnoreCase("")
                                         && (fieldModel.getiFieldID() == 12)) {
 
-                                    mStrTaskMess1 += fieldModel.getStrFieldLabel() + ":"
-                                            + getString(R.string.space)
+                                    mStrTaskMess1 += getString(R.string.space)
                                             + fieldModel.getStrFieldData()
                                             + getString(R.string.space);
                                 }
