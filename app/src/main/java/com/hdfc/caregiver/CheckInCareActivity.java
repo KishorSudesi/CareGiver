@@ -368,7 +368,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
         LinearLayout layoutDate = (LinearLayout) findViewById(R.id.linearDate);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
-        selectedDate4=new Date();
+        selectedDate4 = new Date();
 
         if (layoutDate != null) {
             layoutDate.setOnClickListener(new View.OnClickListener() {

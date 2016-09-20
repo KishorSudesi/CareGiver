@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static String userName;
     private static ProgressDialog progressDialog;
+    ImageView logoimageview;
     private Utils utils;
     //private RelativeLayout relLayout;
     private EditText editEmail, editPassword, editTextCaptcha, forgotPassUsername;
@@ -56,10 +57,8 @@ public class LoginActivity extends AppCompatActivity {
     private String email;
     private AlertDialog alertdialog;
     private SessionManager sessionManager;
-    private RelativeLayout loadingPanel,relativelayout;
+    private RelativeLayout loadingPanel, relativelayout;
     private TextView textView;
-    ImageView logoimageview;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
 
         relativelayout = (RelativeLayout) findViewById(R.id.relativelayout);
         textView = (TextView) findViewById(R.id.id_forgot);
-        logoimageview = (ImageView)findViewById(R.id.logoimageview);
+        logoimageview = (ImageView) findViewById(R.id.logoimageview);
 
         //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 

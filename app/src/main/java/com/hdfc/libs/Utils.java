@@ -120,8 +120,8 @@ public class Utils {
             SimpleDateFormat("HH:mm", locale); // aa
     private final static String SENDER_EMAIL = "adstringosoftware@gmail.com";
 
-  /*  public final static SimpleDateFormat dateFormat =
-            new SimpleDateFormat("yyyy-MM-dd", Config.locale);*/
+    /*  public final static SimpleDateFormat dateFormat =
+              new SimpleDateFormat("yyyy-MM-dd", Config.locale);*/
     /* public final static SimpleDateFormat readFormatDate =
              new SimpleDateFormat("yyyy-MM-dd", Config.locale);
  */

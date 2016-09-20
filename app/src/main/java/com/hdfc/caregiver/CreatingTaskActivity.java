@@ -146,7 +146,7 @@ public class CreatingTaskActivity extends AppCompatActivity {
                 }
             });
         }
-        selectedDate=new Date();
+        selectedDate = new Date();
 
         dateAnd.setOnClickListener(new View.OnClickListener() {
             @Override

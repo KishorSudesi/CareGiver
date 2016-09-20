@@ -48,8 +48,7 @@
         android:id="@+id/relativelayout"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:layout_alignParentBottom="true"
-        >
+        android:layout_alignParentBottom="true">
 
     </RelativeLayout>
 
@@ -60,9 +59,9 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_above="@+id/id_forgot"
+        android:layout_marginBottom="20dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="20dp"
         android:background="@drawable/button_white_blue_border"
         android:onClick="validateLogin"
         android:text="@string/take_me_in"

@@ -301,7 +301,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         Intent sendIntent = new Intent(Intent.ACTION_SEND);
 
         //todo change email
-        sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"balamurugan@adstringo.in"});
+        sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"murugan@adstringo.in"});
         sendIntent.putExtra(Intent.EXTRA_TEXT, body);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         sendIntent.setType("message/rfc822");

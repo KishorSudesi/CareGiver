@@ -47,7 +47,6 @@
     <string name="error_invalid_email">Invalid Email</string>
     <string name="error_invalid_contact_no">Invalid Contact Number</string>
     <string name="error_field_required">This Field is Required</string>
-    <string name="error_wrong_date">Enter Current or Future Date and Time</string>
     <string name="error">Something went wrong. Try Again!!!</string>
 
     <string name="process_login">Authenticating…</string>
@@ -166,7 +165,6 @@
     <string name="close_date_error">Future Date. Cannot close this task</string>
     <string name="select_dependent">Select a Care Receipent</string>
     <string name="select_date">Please Select Date</string>
-    <string name="select_time">Select Time</string>
 
     <string name="check_edit">Please Check All Fields</string>
 
