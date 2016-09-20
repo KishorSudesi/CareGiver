@@ -1938,6 +1938,7 @@ public class MilestoneActivity extends AppCompatActivity {
                         if (strCloseSms != null && !strCloseSms.equalsIgnoreCase("")) {
                             Utils.sendSMS(strCustomerNo, strCloseSms);
                         } else {
+                            //todo format message for milestone updates status != completed
                             Utils.sendSMS(strDependentNo, strPushMessage);
                         }
                     }

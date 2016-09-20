@@ -52,7 +52,7 @@
 
     <string name="process_login">Authenticating…</string>
     <string name="invalid_credentials">Invalid Credentials</string>
-    <string name="invalid_date">Select a Future Date</string>
+    <string name="invalid_date">Select a Future Date and Time</string>
 
     <string name="warning_internet">Please check your internet connection and try again</string>
     <string name="warning_internet_alert">No internet connection …</string>

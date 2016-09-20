@@ -922,6 +922,8 @@ public class Utils {
     }
 
     //todo send sms
+    //done for create activity, check-in care and milestone close update pending for
+    //milestone updates, need to change message content of push and use the same for SMS
     public static void sendSMS(String reciever, String message) {
         URLConnection myURLConnection = null;
         URL myURL = null;
