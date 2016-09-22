@@ -149,6 +149,12 @@ public class LoginActivity extends AppCompatActivity {
         button.setVisibility(View.INVISIBLE);
 
         loadingPanel.setVisibility(View.VISIBLE);
+
+      /*  try {
+            //Utils.log("1", AESCrypt.encrypt(Config.string, "gybi3gsBYxnuYlyOlEExwGiyLd0um74K2fVLphtFpt3GkTBoxvew3lPxrVtBpFVJhdJDhHg3wfXR3HmshlC5XBmMM50dEWXZ7/Z8TJ78wt4="));
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }*/
     }
 
     private void showForgotPassword() {

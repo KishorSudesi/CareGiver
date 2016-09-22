@@ -553,7 +553,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 if (spinnerChild != null) {
                                                     if (strValue.equalsIgnoreCase("UnSuccessFul")) {
                                                         spinnerChild.setVisibility(View.VISIBLE);
-                                                        spinnerChild.setSelection(0);
+                                                       // spinnerChild.setSelection(0);
                                                         strCloseStatus = "UnSuccessFul";
 
                                                     } else if (strValue.

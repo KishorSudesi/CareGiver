@@ -1119,25 +1119,30 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                     if (items[0].equals("N")) {
                         if (txtwater.getText().toString().equals("Due Date")) {
                             bDate = false;
+                            focusView = txtwater;
                         }
                     }
                     if (items[1].equals("N")) {
                         if (txtgas.getText().toString().equals("Due Date")) {
                             bDate = false;
+                            focusView = txtgas;
                         }
                     }
                     if (items[2].equals("N")) {
                         if (txtelectricity.getText().toString().equals("Due Date")) {
                             bDate = false;
+                            focusView = txtelectricity;
                         }
                     }
                     if (items[3].equals("N")) {
                         if (txttelephone.getText().toString().equals("Due Date")) {
                             bDate = false;
+                            focusView = txttelephone;
                         }
                     }
                     if (!bDate) {
                         utils.toast(2, 2, getString(R.string.due_date));
+                        cancel = true;
                     }
 
 
@@ -2384,7 +2389,7 @@ public class CheckInCareActivity extends AppCompatActivity implements View.OnCli
                                                 selection1, values1, DbHelper.CCARE_FIELDS,
                                                 selectionArgs1);
 
-                                        //notification
+                                        //notification *****************************************
                                         String strPushMessage = getString(R.string.notification_checkincare);
 
                                         final JSONObject jsonObject = new JSONObject();
