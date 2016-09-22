@@ -101,6 +101,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             //viewHolder.problem = (TextView) convertView.findViewById(R.id.textViewClient_problem);
             //viewHolder.premium = (TextView) convertView.findViewById(R.id.textViewPremium);
             viewHolder.address = (TextView) convertView.findViewById(R.id.textViewAddress);
+            viewHolder.mobno = (TextView) convertView.findViewById(R.id.textViewmobno);
             viewHolder.customer = (ImageView) convertView.findViewById(R.id.imageClients);
             viewHolder.linearTextChild = (LinearLayout) convertView.findViewById(R.id.
                     linearTextChild);
@@ -120,6 +121,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 viewHolder.progressBar2);
 
         viewHolder.address.setText(dependentModel.getStrAddress());
+        viewHolder.mobno.setText(dependentModel.getStrContacts());
 
         viewHolder.linearTextChild.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -374,7 +376,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     private class ViewHolder {
-        TextView name, age, address, contact;
+        TextView name, age, address, contact, mobno;
         ImageView client, customer;
         ImageButton insert;
         LinearLayout linearTextHeader, linearTextChild, imageWrapper;
