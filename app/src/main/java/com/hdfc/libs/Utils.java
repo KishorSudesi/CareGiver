@@ -1405,7 +1405,9 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
             log(" 1 ", " 1 ");
-            Toast.makeText(_ctxt, message, Toast.LENGTH_SHORT).show();
+            if (!((Activity) _ctxt).isFinishing()) {
+                Toast.makeText(_ctxt, message, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
