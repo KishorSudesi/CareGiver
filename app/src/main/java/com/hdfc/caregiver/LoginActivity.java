@@ -151,7 +151,8 @@ public class LoginActivity extends AppCompatActivity {
         loadingPanel.setVisibility(View.VISIBLE);
 
       /*  try {
-            //Utils.log("1", AESCrypt.encrypt(Config.string, "gybi3gsBYxnuYlyOlEExwGiyLd0um74K2fVLphtFpt3GkTBoxvew3lPxrVtBpFVJhdJDhHg3wfXR3HmshlC5XBmMM50dEWXZ7/Z8TJ78wt4="));
+            Utils.log("1 ", AESCrypt.encrypt(Config.string, "a02dc8aa733cae3b7adde8c0ee7291d88dded72b1a00ad66b606e02bb26135d6"));
+            Utils.log("2 ", AESCrypt.encrypt(Config.string, "db0c08979b92c3b5983b86afc79024c12afaa3be5a673344ad68dd3042c9e72f"));
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         }*/

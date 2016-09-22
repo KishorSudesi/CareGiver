@@ -533,14 +533,14 @@ public class MyProfileActivity extends AppCompatActivity {
                         @Override
                         public void onException(Exception e) {
                             if (!isBackground) {
-
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
-
-                                if (e == null)
+                                if (e == null) {
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
                                     utils.toast(2, 2, getString(R.string.warning_internet));
-                                else
-                                    utils.toast(1, 1, getString(R.string.error));
+                                } else {
+                                    //utils.toast(1, 1, getString(R.string.error));
+                                    uploadImage(isBackground);
+                                }
                             }
                         }
                     });
