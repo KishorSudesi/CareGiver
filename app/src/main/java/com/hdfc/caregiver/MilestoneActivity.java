@@ -1388,10 +1388,15 @@ public class MilestoneActivity extends AppCompatActivity {
                                     if (fieldModel.getiFieldID() == 13) {
                                         mStrTaskMess1 += getString(R.string.on);
                                     }
-
-                                    mStrTaskMess1 += getString(R.string.space)
-                                            + fieldModel.getStrFieldData()
-                                            + getString(R.string.space);
+                                    if (fieldModel.getStrFieldLabel().equalsIgnoreCase("Doctor Name")) {
+                                        mStrTaskMess1 += getString(R.string.space)
+                                                + fieldModel.getStrFieldData()
+                                                + getString(R.string.comma);
+                                    } else {
+                                        mStrTaskMess1 += getString(R.string.space)
+                                                + fieldModel.getStrFieldData()
+                                                + getString(R.string.space);
+                                    }
                                 }
 
                             } else if (act.getmServiceNo() == 201) {

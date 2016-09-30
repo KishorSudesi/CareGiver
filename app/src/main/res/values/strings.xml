@@ -120,6 +120,7 @@
     <string name="completed_task">Complete Task</string>
     <string name="space">&#160;</string>
     <string name="on">&#160;On&#160;</string>
+    <string name="comma">,&#160;</string>
     <string name="service_category">Service Category</string>
     <string name="scheduled_to">&#160;and Scheduled At&#160;</string>
     <string name="resetted_password">New password has been sent to your E-mail id</string>
