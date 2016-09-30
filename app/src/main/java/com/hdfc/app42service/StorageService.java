@@ -66,7 +66,7 @@ public class StorageService {
                 jsonToUpdate, app42CallBack);
     }
 
-   /* public void findAllDocs(String strCollectionName, App42CallBack app42CallBack) {
+    public void findAllDocs(String strCollectionName, App42CallBack app42CallBack) {
         asyncService.findAllDocuments(Config.dbName, strCollectionName, app42CallBack);
-    }*/
+    }
 }

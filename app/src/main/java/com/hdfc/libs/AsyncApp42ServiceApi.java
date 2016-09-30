@@ -50,6 +50,10 @@ public class AsyncApp42ServiceApi {
             } else {
                 apiKey = AESCrypt.decrypt(Config.string, "a3tEVMM63P40VdMvybYAHvhjdR91k6uRHnBoRIjQq7bEYH0jWh22DnT6eYLCPv+3X0UrhjF4nwresW4BA1bKBXvUIl2/Z2cqfdtY5la00U4=");
                 apiSecret = AESCrypt.decrypt(Config.string, "TizgBe+sjPzxHZKp7eQwwgd78xjELdu3+NLfNqFZvVNStxezaFr1xkkYHRr2FJDYDsd46xK1UxeC9tlHG5kf9xkUc8n9Ompf5sr1DQaxbmQ=");
+
+               /* apiKey = "20b954400ea5d360b8c954eb4d337655d69d59205089e383bad7c18bc97dab11";
+                apiSecret = "2f983d876b80b45876b6c5c9348bafdf0fa3554687c06efd1e664fa8627186a4";*/
+
             }
         } catch (GeneralSecurityException e) {
             e.printStackTrace();

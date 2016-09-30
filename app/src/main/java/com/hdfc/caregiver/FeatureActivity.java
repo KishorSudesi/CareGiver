@@ -80,7 +80,7 @@ public class FeatureActivity extends AppCompatActivity {
     private Utils utils;
     private int bWhichScreen = 3;
     private boolean success;
-    private TextView textViewTime;
+    private TextView textViewTime, txtdescription;
     private LinearLayout linearLayoutAttach;
     private String strCustomerEmail, strCustomerNo, strDependentNo;
     private Button done;
@@ -105,6 +105,7 @@ public class FeatureActivity extends AppCompatActivity {
         Button cancel = (Button) findViewById(R.id.buttonBack);
         TextView textViewActivityName = (TextView) findViewById(R.id.txtActivityName);
         textViewTime = (TextView) findViewById(R.id.txtActivityTime);
+        txtdescription = (TextView) findViewById(R.id.txtdescription);
 
         isAccessible = true;
         isCompleted = false;
@@ -370,6 +371,11 @@ public class FeatureActivity extends AppCompatActivity {
 
             if (textViewActivityName != null) {
                 textViewActivityName.setText(strActivityName);
+            }
+
+            String strDescription = act.getStrActivityDesc();
+            if (txtdescription != null) {
+                txtdescription.setText("Description: " + strDescription);
             }
 
             bViewLoaded = false;

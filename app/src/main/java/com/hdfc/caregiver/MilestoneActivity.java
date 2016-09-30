@@ -264,12 +264,15 @@ public class MilestoneActivity extends AppCompatActivity {
                     if (fieldModel.isFieldView())
                         editText.setEnabled(false);
 
-                    if (fieldModel.getStrFieldType().equalsIgnoreCase("text"))
-                        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                    if (fieldModel.getStrFieldType().equalsIgnoreCase("text")) {
+                        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                        editText.setTextSize(14);
+                    }
 
                     if (fieldModel.getStrFieldType().equalsIgnoreCase("number")) {
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         Utils.setEditTextMaxLength(editText, 10);
+                        editText.setTextSize(14);
                     }
 
                     try {
@@ -281,6 +284,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                     null, null, null);
 
                             editText.setFocusableInTouchMode(false);
+                            editText.setTextSize(14);
 
                             final SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -403,6 +407,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                     null, null, null);
 
                             editText.setFocusableInTouchMode(false);
+                            editText.setTextSize(14);
 
                             editText.setEnabled(true);
 
@@ -497,6 +502,7 @@ public class MilestoneActivity extends AppCompatActivity {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position,
                                                    long id) {
+                            //((TextView) parent.getChildAt(0)).setTextSize(14);
                             try {
 
                                 if (fieldModel.isChild()) {
@@ -551,15 +557,15 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 }
 
                                                 if (spinnerChild != null) {
-                                                    if (strValue.equalsIgnoreCase("UnSuccessFul")) {
+                                                    if (strValue.equalsIgnoreCase("Unsuccessful")) {
                                                         spinnerChild.setVisibility(View.VISIBLE);
                                                        // spinnerChild.setSelection(0);
-                                                        strCloseStatus = "UnSuccessFul";
+                                                        strCloseStatus = "Unsuccessful";
 
                                                     } else if (strValue.
-                                                            equalsIgnoreCase("SuccessFul")) {
+                                                            equalsIgnoreCase("Successful")) {
                                                         spinnerChild.setVisibility(View.GONE);
-                                                        strCloseStatus = "SuccessFul";
+                                                        strCloseStatus = "Successful";
                                                     }
                                                 }
                                             }
@@ -1793,8 +1799,14 @@ public class MilestoneActivity extends AppCompatActivity {
                         jsonObjectField.put("hide", fieldModel.isFieldView());
 
                     jsonObjectField.put("required", fieldModel.isFieldRequired());
-                    jsonObjectField.put("data", fieldModel.getStrFieldData());
-                    jsonObjectField.put("label", fieldModel.getStrFieldLabel());
+                    if (strCloseStatus.equalsIgnoreCase("Successful")
+                            && fieldModel.getStrFieldData().equalsIgnoreCase("Vendor")) {
+                        jsonObjectField.put("data", "");
+                        jsonObjectField.put("label", fieldModel.getStrFieldLabel());
+                    } else {
+                        jsonObjectField.put("data", fieldModel.getStrFieldData());
+                        jsonObjectField.put("label", fieldModel.getStrFieldLabel());
+                    }
                     jsonObjectField.put("type", fieldModel.getStrFieldType());
 
                     if (fieldModel.getStrFieldValues() != null && fieldModel.getStrFieldValues().

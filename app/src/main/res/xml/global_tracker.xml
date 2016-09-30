@@ -11,4 +11,7 @@
     <string name="com.hdfc.caregiver.DashboardActivity">CG - DashboardActivity</string>
 
     <string name="ga_trackingId">UA-82623362-1</string>
+
+    <!-- <string name="ga_trackingId">UA-84650723-1</string>  -->
+
 </resources>

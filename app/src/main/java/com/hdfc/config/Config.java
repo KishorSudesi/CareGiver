@@ -15,6 +15,7 @@ import com.hdfc.models.NotificationModel;
 import com.hdfc.models.PictureModel;
 import com.hdfc.models.ProviderModel;
 import com.hdfc.models.ServiceModel;
+import com.hdfc.models.UpdateVersionModel;
 
 import org.json.JSONObject;
 
@@ -42,12 +43,15 @@ public class Config {
     public static final String collectionNotification = "notification";
     public static final String collectionLoginLog = "login_log";
     public static final String collectionCheckInCare = "checkincare";
+    public static final String collectionUpdateVersion = "updateversion";
 
     public static final int iSdkVersion = Build.VERSION.SDK_INT;
     public static final int iAppVersion = BuildConfig.VERSION_CODE;
 
     public static final String strOs = "android";
     public static final String strAppId = "910502819263";
+    //sample for tessting
+    //public static final String strAppId = "425694689640";
 
     public static final int START_CAMERA_REQUEST_CODE = 1;
     public static final int START_GALLERY_REQUEST_CODE = 2;
@@ -96,6 +100,7 @@ public class Config {
     public static CustomerModel customerModel = null;
     public static DependentModel dependentModel = null;
     public static CheckInCareModel checkInCareModel = null;
+    public static UpdateVersionModel updateversionModel = null;
     public static JSONObject jsonObject = null;
     public static int intSelectedMenu = 0;
 
