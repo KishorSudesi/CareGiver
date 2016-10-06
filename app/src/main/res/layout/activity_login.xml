@@ -34,8 +34,7 @@
         style="@style/ButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/bottomversion"
         android:layout_margin="@dimen/margin_general"
         android:background="@drawable/round_button"
         android:gravity="center"
@@ -43,6 +42,18 @@
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
         android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/bottomversion"
+        style="@style/TextViewSmallStyle"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:text="@string/version"
+        android:textColor="@color/colorWhite" />
 
 
     <Button
