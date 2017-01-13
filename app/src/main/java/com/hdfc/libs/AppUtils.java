@@ -1852,7 +1852,7 @@ public class AppUtils {
             cursor = CareGiver.getDbCon().fetch(
                     DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT
                             , DbHelper.COLUMN_NEW_UPDATED},
-                    DbHelper.COLUMN_COLLECTION_NAME + "=?",
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? AND updated_date BETWEEN date('now','-15 day') and date('now')",
                     new String[]{Config.collectionNotification}, DbHelper.COLUMN_UPDATE_DATE
                             + " desc", null, true, null, null);
 

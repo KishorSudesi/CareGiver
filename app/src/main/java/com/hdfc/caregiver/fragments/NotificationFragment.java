@@ -130,11 +130,13 @@ public class NotificationFragment extends Fragment {
         appUtils = new AppUtils(getActivity());
         //   loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
 
+
         Bundle bundle = this.getArguments();
         boolean b = bundle.getBoolean("RELOAD", false);
 
         loadingPanel.setVisibility(View.VISIBLE);
         AppUtils.createNotificationModel();
+
         loadingPanel.setVisibility(View.GONE);
 
         notificationAdapter = new
