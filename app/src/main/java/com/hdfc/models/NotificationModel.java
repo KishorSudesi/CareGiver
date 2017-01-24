@@ -21,6 +21,9 @@ public class NotificationModel {
 
     private int iNew;
 
+
+    private String strDocId;
+
     public NotificationModel(String strMessage, String strDateTime, String strUserType,
                              String strCreatedByType, String strUserID, String strCreatedByID,
                              String strNotificationID) {
@@ -113,5 +116,13 @@ public class NotificationModel {
 
     public void setStrNotificationID(String strNotificationID) {
         this.strNotificationID = strNotificationID;
+    }
+
+    public String getStrDocId() {
+        return strDocId;
+    }
+
+    public void setStrDocId(String strDocId) {
+        this.strDocId = strDocId;
     }
 }

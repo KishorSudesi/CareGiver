@@ -69,4 +69,14 @@ public class StorageService {
     public void findAllDocs(String strCollectionName, App42CallBack app42CallBack) {
         asyncService.findAllDocuments(Config.dbName, strCollectionName, app42CallBack);
     }
+
+    public void deleteDocById(String strCollectionName, String strDocId,
+                              App42CallBack app42CallBack) {
+        try {
+            asyncService.deleteDocById(Config.dbName, strCollectionName, strDocId,
+                    app42CallBack);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

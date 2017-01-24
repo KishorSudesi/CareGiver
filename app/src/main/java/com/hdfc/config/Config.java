@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class Config {
 
-    public static final String dbName = "newzeal";
+    public static final String dbName = "newzeal";  //Create db name in App42 api
 
     public static final String collectionService = "service";
     /* public static final String collectionServiceHistory = "servicehistory";
@@ -49,7 +49,7 @@ public class Config {
     public static final int iAppVersion = BuildConfig.VERSION_CODE;
 
     public static final String strOs = "android";
-    public static final String strAppId = "910502819263";
+    public static final String strAppId = "910502819263"; //Google Devloper console (Project Number)
     //sample for tessting
     //public static final String strAppId = "425694689640";
 

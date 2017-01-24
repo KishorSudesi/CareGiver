@@ -36,13 +36,18 @@ import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 
 public class NotificationFragment extends Fragment {
 
     public static NotificationAdapter notificationAdapter;
     public ListView listViewActivities;
+    String currentDate = "";
     //private static ProgressDialog progressDialog;
     private RelativeLayout loadingPanel;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -130,12 +135,22 @@ public class NotificationFragment extends Fragment {
         appUtils = new AppUtils(getActivity());
         //   loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
 
+        Date myDate = new Date();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        calendar.setTime(myDate);
+        Date time = calendar.getTime();
+//        SimpleDateFormat outputFmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS zz");
+        SimpleDateFormat outputFmt = new SimpleDateFormat("yyyy-MM-dd");
+        currentDate = outputFmt.format(time);
+        System.out.println("Current Date =>" + currentDate);
 
         Bundle bundle = this.getArguments();
         boolean b = bundle.getBoolean("RELOAD", false);
 
         loadingPanel.setVisibility(View.VISIBLE);
-        AppUtils.createNotificationModel();
+        AppUtils.createNotificationModel(currentDate);
 
         loadingPanel.setVisibility(View.GONE);
 
@@ -299,7 +314,7 @@ public class NotificationFragment extends Fragment {
     }
 
     private void refreshNotifications() {
-        AppUtils.createNotificationModel();
+        AppUtils.createNotificationModel(currentDate);
         notificationAdapter.notifyDataSetChanged();
         listViewActivities.scheduleLayoutAnimation();
     }

@@ -377,6 +377,35 @@ public class AsyncApp42ServiceApi {
         }.start();
     }
 
+    public void deleteDocById(final String dbName, final String collectionName,
+                              final String strDocumentId, final App42CallBack callBack) {
+        final Handler callerThreadHandler = new Handler();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final App42Response response = storageService.deleteDocumentById(dbName,
+                            collectionName, strDocumentId);
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSuccess(response);
+                        }
+                    });
+                } catch (final App42Exception ex) {
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callBack != null) {
+                                callBack.onException(ex);
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
     public void findDocByDocIdApp42CallBack(final String dbName, final String collectionName,
                                             final String docId, final App42CallBack app42CallBack) {
         final Handler callerThreadHandler = new Handler();

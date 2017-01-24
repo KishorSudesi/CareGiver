@@ -51,7 +51,7 @@ public class DbCon {
         return dbHelper.fetch(tbl, names, where, args, order, limit, isDistinct, groupBy, having);
     }
 
-    private boolean delete(String tbl, String where, String args[]) {
+    public boolean delete(String tbl, String where, String args[]) {
         return dbHelper.delete(tbl, where, args);
     }
 

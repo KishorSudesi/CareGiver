@@ -49,12 +49,14 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
 /**
  * Created by Admin on 4/25/2016.
@@ -92,6 +94,8 @@ public class AppUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }*/
+
+
     }
 
     public static void logout(Context _context) {
@@ -187,6 +191,17 @@ public class AppUtils {
 
     public static void loadNotifications(final Context context) {
 
+        final String currentDate;
+        Date myDate = new Date();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        calendar.setTime(myDate);
+        Date time = calendar.getTime();
+        SimpleDateFormat outputFmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS zz");
+        currentDate = outputFmt.format(time);
+        System.out.println("Current Date =>" + currentDate);
+
         //todo optimize data fetch and multiple pushes
         if (Utils.isConnectingToInternet(context)) {
 
@@ -265,7 +280,7 @@ public class AppUtils {
                                                         context.getString(R.string.new_notification),
                                                         context);
                                             } else {
-                                                createNotificationModel();
+                                                createNotificationModel(currentDate);
                                                 if (NotificationFragment.notificationAdapter !=
                                                         null) {
                                                     NotificationFragment.notificationAdapter.
@@ -1841,18 +1856,22 @@ public class AppUtils {
     }
     //////////////////////////
 
-    public static void createNotificationModel() {
+    public static void createNotificationModel(String currentDate) {
 
         Cursor cursor = null;
         try {
 
             String strDocument;
             int iNew;
+            String strDocId;
 
+            // +  " AND updated_date = '"+currentDate+"'"
+            // select * from collections  where  collection_name = 'notification' and updated_date >= date('now','-15 day') and updated_date <= date('now') and updated_date like '2017-01-11%'
             cursor = CareGiver.getDbCon().fetch(
-                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_DOCUMENT
+                    DbHelper.strTableNameCollection, new String[]{DbHelper.COLUMN_OBJECT_ID, DbHelper.COLUMN_DOCUMENT
                             , DbHelper.COLUMN_NEW_UPDATED},
-                    DbHelper.COLUMN_COLLECTION_NAME + "=? AND updated_date BETWEEN date('now','-15 day') and date('now')",
+                    DbHelper.COLUMN_COLLECTION_NAME + "=? AND updated_date >= date('now','-15 day') and updated_date <= date('now')" +
+                            " OR updated_date like '" + currentDate + "%'",
                     new String[]{Config.collectionNotification}, DbHelper.COLUMN_UPDATE_DATE
                             + " desc", null, true, null, null);
 
@@ -1860,8 +1879,10 @@ public class AppUtils {
                 Config.notificationModels.clear();
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
-                    strDocument = cursor.getString(0);
-                    iNew = cursor.getInt(1);
+                    strDocId = cursor.getString(0);
+                    strDocument = cursor.getString(1);
+                    iNew = cursor.getInt(2);
+
 
                     JSONObject jsonObjectProvider = new JSONObject(strDocument);
 
@@ -1876,6 +1897,7 @@ public class AppUtils {
                                 jsonObjectProvider.getString("created_by"), "");
 
                         notificationModel.setiNew(iNew);
+                        notificationModel.setStrDocId(strDocId);
 
                         if (jsonObjectProvider.has("activity_id"))
                             notificationModel.setStrActivityId(jsonObjectProvider.
