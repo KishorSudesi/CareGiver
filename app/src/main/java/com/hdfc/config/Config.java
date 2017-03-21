@@ -105,7 +105,7 @@ public class Config {
     public static int intSelectedMenu = 0;
 
     public static ArrayList<ClientModel> clientModels = new ArrayList<>();
-
+    public static ArrayList<UpdateVersionModel> updateVersionModel = new ArrayList<>();
     public static ArrayList<NotificationModel> notificationModels = new ArrayList<>();
 
     public static ArrayList<CheckInCareModel> checkInCareModels = new ArrayList<>();

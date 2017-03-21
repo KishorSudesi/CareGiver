@@ -1,9 +1,16 @@
 package com.hdfc.caregiver;
 
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -27,6 +34,7 @@ import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
+import com.hdfc.models.UpdateVersionModel;
 import com.hdfc.views.CheckView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
@@ -38,6 +46,7 @@ import com.shephertz.app42.paas.sdk.android.user.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static String userName;
     private static ProgressDialog progressDialog;
+    private static StorageService storageService;
     ImageView logoimageview;
     private Utils utils;
     //private RelativeLayout relLayout;
@@ -77,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
         editEmail = (EditText) findViewById(R.id.editEmail);
         editPassword = (EditText) findViewById(R.id.editPassword);
         button = (Button) findViewById(R.id.button);
-        utils = new Utils();
+        utils = new Utils(LoginActivity.this);
         //AppUtils appUtils = new AppUtils(LoginActivity.this);
 
         //todo remove in live
@@ -129,6 +139,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });*/
 
+
+        updateVersion();
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,6 +297,153 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }*/
+
+    public void updateVersion() {
+
+        if (utils.isConnectingToInternet()) {
+
+            storageService = new StorageService(LoginActivity.this);
+
+            storageService.findAllDocs(Config.collectionUpdateVersion, new App42CallBack() {
+
+                @Override
+                public void onSuccess(Object o) {
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
+
+                    Storage response = (Storage) o;
+
+                    if (response != null) {
+
+                        if (response.getJsonDocList().size() > 0) {
+                            try {
+                                for (int i = 0; i < response.getJsonDocList().size(); i++) {
+
+                                    Storage.JSONDocument jsonDocument = response.
+                                            getJsonDocList().get(i);
+
+                                    String strDocument = jsonDocument.getJsonDoc();
+                                    try {
+                                        JSONObject jsonObjectActivity =
+                                                new JSONObject(strDocument);
+                                        //utils.createUpdateVersionModel(jsonObjectActivity);
+
+                                        UpdateVersionModel updateversionModel = new UpdateVersionModel();
+
+                                        updateversionModel.setStrAppVersion(jsonObjectActivity.optString("app_version"));
+                                        updateversionModel.setStrSourceName(jsonObjectActivity.optString("source_name"));
+                                        updateversionModel.setStrAppUrl(jsonObjectActivity.optString("app_url"));
+
+
+                                        Config.updateVersionModel.add(updateversionModel);
+
+                                        String version = updateversionModel.getStrAppVersion();
+
+                                        int latestversion = Integer.parseInt(version);
+
+
+                                        if (Config.iAppVersion < latestversion) {
+                                            AlertDialog.Builder builder1 = new AlertDialog.Builder(LoginActivity.this);
+                                            builder1.setMessage("Please update your App Version");
+                                            builder1.setCancelable(true);
+                                            builder1.setNeutralButton(android.R.string.ok,
+                                                    new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int id) {
+                                                            upgradeApp();
+                                                            dialog.cancel();
+                                                        }
+                                                    });
+
+                                            AlertDialog alert11 = builder1.create();
+                                            alert11.show();
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+
+                    } else {
+                        utils.toast(2, 2, getString(R.string.warning_internet));
+                    }
+                }
+
+                @Override
+                public void onException(Exception e) {
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
+
+                    if (e != null) {
+                        utils.toast(2, 2, getString(R.string.error));
+                    } else {
+                        utils.toast(2, 2, getString(R.string.warning_internet));
+                    }
+                }
+            });
+
+        } else {
+            if (progressDialog.isShowing())
+                progressDialog.dismiss();
+            utils.toast(2, 2, getString(R.string.warning_internet));
+        }
+    }
+
+    public void upgradeApp() {
+
+        //get destination to update file and set Uri
+        //TODO: First I wanted to store my update .apk file on internal storage for my app but apparently android does not allow you to open and install
+        //aplication with existing package from there. So for me, alternative solution is Download directory in external storage. If there is better
+        //solution, please inform us in comment
+        String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/";
+
+        destination += "NewZeal_v0.9.apk";
+        final Uri uri = Uri.parse("file://" + destination);
+
+        //Delete update file if exists
+        File file = new File(destination);
+        if (file.exists())
+            //file.delete() - test this, I think sometimes it doesnt work
+            file.delete();
+
+        //get url of app on server
+        String url = "https://play.google.com/store/apps/details?id=com.imangi.templerun&hl=en";
+
+        //set downloadmanager
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setDescription(getString(R.string.not_now));
+        request.setTitle(getString(R.string.app_name));
+
+        //set destination
+        request.setDestinationUri(uri);
+
+        // get download service and enqueue file
+        final DownloadManager manager = (DownloadManager) getSystemService
+                (Context.DOWNLOAD_SERVICE);
+        final long downloadId = manager.enqueue(request);
+
+        //set BroadcastReceiver to install app when .apk is downloaded
+        BroadcastReceiver onComplete = new BroadcastReceiver() {
+            public void onReceive(final Context ctxt, Intent intent) {
+                Intent install = new Intent(Intent.ACTION_VIEW);
+                install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                install.setDataAndType(uri,
+                        manager.getMimeTypeForDownloadedFile(downloadId));
+                startActivity(install);
+
+                unregisterReceiver(this);
+                finish();
+            }
+        };
+        //register receiver for when .apk download is compete
+        registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
 
     @Override
     protected void onDestroy() {
