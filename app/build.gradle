@@ -2,14 +2,15 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '24.0.2'
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         applicationId "com.hdfc.caregiver"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 8
-        versionName "New Zeal Specialist 0.8 (beta)"
+        versionCode 9
+        versionName "New Zeal Specialist 0.9 (beta)"
+
     }
 
     sourceSets.main {
@@ -22,8 +23,10 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
     }
     sourceSets { main { res.srcDirs = ['src/main/res', 'src/main/res/layout_xlarge'] } }
+
 }
 
 dependencies {

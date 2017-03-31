@@ -321,7 +321,7 @@ public class MilestoneActivity extends AppCompatActivity {
 
                                 Calendar cal = Calendar.getInstance(); // creates calendar
                                 cal.setTime(new Date()); // sets calendar time/date
-                                cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
+                                //cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
 
                                 Date date = cal.getTime();
                                 String date2 = Utils.writeFormat.format(date);
@@ -559,7 +559,7 @@ public class MilestoneActivity extends AppCompatActivity {
                                                 if (spinnerChild != null) {
                                                     if (strValue.equalsIgnoreCase("Unsuccessful")) {
                                                         spinnerChild.setVisibility(View.VISIBLE);
-                                                       // spinnerChild.setSelection(0);
+                                                        // spinnerChild.setSelection(0);
                                                         strCloseStatus = "Unsuccessful";
 
                                                     } else if (strValue.

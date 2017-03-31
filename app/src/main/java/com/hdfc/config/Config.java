@@ -70,7 +70,7 @@ public class Config {
     /*public static final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};*/
     public static final boolean isDebuggable = true;
     public static final String string = Utils.getStringJni();
-    public static final boolean release = false;
+    public static final boolean release = true;
     public static final boolean DEVELOPMENT = false;
 
     public final static String strCustomerImageName = "provider_image";
