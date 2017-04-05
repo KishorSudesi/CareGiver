@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "425694689640",
+    "firebase_url": "https://newzeal1-144312.firebaseio.com",
+    "project_id": "newzeal1-144312",
+    "storage_bucket": "newzeal1-144312.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425694689640:android:c161175b0baf843b",
+        "android_client_info": {
+          "package_name": "com.hdfc.caregiver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "425694689640-5ni5gq59n0k8q7tp7d52namtfi24ul5r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB62qHAn88ouemRM0KrVZ7Jr4UviKZ1mBQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

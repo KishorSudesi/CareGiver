@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CareGiver.iml" filepath="$PROJECT_DIR$/CareGiver.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/slideDateTimePicker/slideDateTimePicker.iml" filepath="$PROJECT_DIR$/slideDateTimePicker/slideDateTimePicker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/caregiver.iml" filepath="$PROJECT_DIR$/.idea/caregiver.iml" />
     </modules>
   </component>
 </project>
