@@ -1,12 +1,8 @@
 package com.hdfc.caregiver;
 
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,6 +30,7 @@ import com.hdfc.libs.AsyncApp42ServiceApi;
 import com.hdfc.libs.CrashLogger;
 import com.hdfc.libs.SessionManager;
 import com.hdfc.libs.Utils;
+import com.hdfc.models.SourceModel;
 import com.hdfc.models.UpdateVersionModel;
 import com.hdfc.views.CheckView;
 import com.shephertz.app42.paas.sdk.android.App42CallBack;
@@ -43,13 +40,20 @@ import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.shephertz.app42.paas.sdk.android.user.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -69,6 +73,9 @@ public class LoginActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private RelativeLayout loadingPanel, relativelayout;
     private TextView textView;
+    private List<SourceModel> sourcelist = new ArrayList<>();
+    private String strVersion, strUrl;
+    DownloadAsync downloadAsync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -301,6 +308,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void updateVersion() {
 
+        downloadAsync = new DownloadAsync();
+
         if (utils.isConnectingToInternet()) {
 
             storageService = new StorageService(LoginActivity.this);
@@ -329,29 +338,68 @@ public class LoginActivity extends AppCompatActivity {
                                                 new JSONObject(strDocument);
                                         //utils.createUpdateVersionModel(jsonObjectActivity);
 
-                                        final UpdateVersionModel updateversionModel = new UpdateVersionModel();
+                                        UpdateVersionModel updateVersionModel = new UpdateVersionModel();
 
-                                        updateversionModel.setStrAppVersion(jsonObjectActivity.optString("app_version"));
-                                        updateversionModel.setStrSourceName(jsonObjectActivity.optString("source_name"));
-                                        updateversionModel.setStrAppUrl(jsonObjectActivity.optString("app_url"));
+                                        JSONArray source = jsonObjectActivity.optJSONArray("source");
+
+                                        try {
+                                            if (source != null && source.length() > 0) {
+
+                                                for (int m = 0; m < source.length(); m++) {
+                                                    JSONObject jsonObject = source.getJSONObject(m);
 
 
-                                        Config.updateVersionModel.add(updateversionModel);
+                                                    if (jsonObject != null && jsonObject.length() > 0) {
 
-                                        String version = updateversionModel.getStrAppVersion();
+                                                        SourceModel sourceModels = new SourceModel();
 
+                                                        sourceModels.setStrAppVersion(jsonObject.getString("app_version"));
+                                                        sourceModels.setStrSourceName(jsonObject.getString("source_name"));
+                                                        sourceModels.setStrAppUrl(jsonObject.getString("app_url"));
+
+                                                        updateVersionModel.setSourchModels(sourceModels);
+                                                        Config.updateVersionModel.add(updateVersionModel);
+
+                                                    }
+
+                                                }
+
+                                            }
+
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        sourcelist = Config.updateVersionModel.get(i).getSourchModels();
+
+
+                                        if (sourcelist != null) {
+
+                                            for (int x = 0; x < sourcelist.size(); x++) {
+
+                                                if (sourcelist.get(x).getStrSourceName().equalsIgnoreCase("caretaker")) {
+                                                    strVersion = sourcelist.get(x).getStrAppVersion();
+                                                    strUrl = sourcelist.get(x).getStrAppUrl();
+
+                                                }
+                                            }
+                                        }
+
+                                        String version = strVersion;
                                         int latestversion = Integer.parseInt(version);
 
 
                                         if (Config.iAppVersion < latestversion) {
                                             AlertDialog.Builder builder1 = new AlertDialog.Builder(LoginActivity.this);
                                             builder1.setTitle("Update Version");
-                                            builder1.setMessage("Please update your App Version");
+                                            builder1.setMessage("Server have Latest APK Version.Please update your App Version");
                                             builder1.setCancelable(true);
                                             builder1.setNeutralButton(android.R.string.ok,
                                                     new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            upgradeApp(updateversionModel);
+//                                                            upgradeApp(strUrl);
+                                                            downloadAsync.execute();
                                                             dialog.cancel();
                                                         }
                                                     });
@@ -398,7 +446,43 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void upgradeApp(UpdateVersionModel updateversionModel) {
+    class DownloadAsync extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog	progress = new ProgressDialog(LoginActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+
+            super.onPreExecute();
+
+            progress.setMessage("Downloading...Please Wait...");
+            progress.setCancelable(false);
+            progress.show();
+
+//			mProgress.show(LoginActivity.this, "Downloading",
+//					"Please wait Operation perform With the server.");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            // TODO Auto-generated method stub
+            Update(strUrl);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+            progress.dismiss();
+        }
+
+    }
+
+   /* public void upgradeApp(String strUrl) {
 
         //get destination to update file and set Uri
         //TODO: First I wanted to store my update .apk file on internal storage for my app but apparently android does not allow you to open and install
@@ -416,7 +500,7 @@ public class LoginActivity extends AppCompatActivity {
             file.delete();
 
         //get url of app on server
-        String url = updateversionModel.getStrAppUrl();// "https://play.google.com/store/apps/details?id=com.imangi.templerun&hl=en";
+        String url = strUrl;// "https://play.google.com/store/apps/details?id=com.imangi.templerun&hl=en";
 
         //set downloadmanager
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
@@ -446,6 +530,50 @@ public class LoginActivity extends AppCompatActivity {
         };
         //register receiver for when .apk download is compete
         registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }*/
+
+    public void Update(String strUrl) {
+        try {
+            URL url = new URL(strUrl);
+            HttpURLConnection c = (HttpURLConnection) url.openConnection();
+            c.setRequestMethod("GET");
+            c.setDoOutput(false);
+            c.connect();
+
+            String PATH = Environment.getExternalStorageDirectory()
+                    + "/download/";
+            File file = new File(PATH);
+            file.mkdirs();
+            File outputFile = new File(file, "New Zeal Specialist.apk");
+            FileOutputStream fos = new FileOutputStream(outputFile);
+
+            InputStream is = c.getInputStream();
+
+            byte[] buffer = new byte[1024];
+            int len1 = 0;
+            while ((len1 = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len1);
+            }
+            fos.close();
+            is.close();//
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(
+                    Uri.fromFile(new File(Environment
+                            .getExternalStorageDirectory()
+                            + "/download/"
+                            + "New Zeal Specialist.apk")),
+                    "application/vnd.android.package-archive");
+            startActivity(intent);
+
+//			mProgress.dismiss();
+
+        } catch (IOException e) {
+			/*Toast.makeText(getApplicationContext(), "Update error!",
+					Toast.LENGTH_LONG).show();*/
+
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -553,6 +681,10 @@ public class LoginActivity extends AppCompatActivity {
                     ArrayList<String> roleList = user.getRoleList();
 
                     Utils.log(String.valueOf(roleList.size()), " ROLES ");
+
+                 /*   if(userName.equalsIgnoreCase(App42API.getLoggedInUser())){
+
+                    }*/
 
                     //todo check rolelist
                     //roleList.size()>0 && roleList.get(0).equalsIgnoreCase("provider")
