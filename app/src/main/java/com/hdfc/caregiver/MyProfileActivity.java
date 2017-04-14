@@ -555,7 +555,14 @@ public class MyProfileActivity extends AppCompatActivity {
         try {
             UploadService uploadService = new UploadService(this);
 
-            uploadService.uploadImageCommon(strCustomerImgName, "provider_image",
+            Calendar calendar = Calendar.getInstance();
+            String strnameimg = String.valueOf(calendar.getTimeInMillis());
+
+            String emailid = Config.providerModel.getStrEmail();
+            String imagename = emailid.substring(0,4);
+            imagename = imagename.concat("_"+strnameimg);
+
+            uploadService.uploadImageCommon(strCustomerImgName, imagename,
                     "Profile Picture", Config.providerModel.getStrEmail(),
                     UploadFileType.IMAGE, new App42CallBack() {
 
